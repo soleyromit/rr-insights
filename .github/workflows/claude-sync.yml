@@ -1,16 +1,8 @@
 name: Claude Sync
 on:
-  workflow_dispatch:
-    inputs:
-      path:
-        description: 'File path'
-        required: true
-      content:
-        description: 'base64 file content'
-        required: true
-      message:
-        description: 'Commit message'
-        required: true
+  push:
+    paths:
+      - 'claude-inbox/**'
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -23,11 +15,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.token.outputs.token }}
-      - run: |
-          mkdir -p "$(dirname '${{ inputs.path }}')"
-          echo '${{ inputs.content }}' | base64 -d > '${{ inputs.path }}'
+      - name: Apply inbox updates
+        run: |
+          for f in claude-inbox/*.ts claude-inbox/*.tsx; do
+            [ -f "$f" ] || continue
+            dest=$(cat "$f" | head -1 | sed 's|// dest: ||')
+            tail -n +2 "$f" > "$dest"
+            echo "Wrote $dest"
+          done
           git config user.email "claude@rr-insights"
           git config user.name "Claude Sync"
-          git add '${{ inputs.path }}'
-          git commit -m '${{ inputs.message }}'
+          git add src/
+          git commit -m "data: Claude auto-sync" || echo "nothing to commit"
           git push
