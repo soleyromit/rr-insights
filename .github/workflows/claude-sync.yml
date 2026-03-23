@@ -1,0 +1,33 @@
+name: Claude Sync
+on:
+  workflow_dispatch:
+    inputs:
+      path:
+        description: 'File path'
+        required: true
+      content:
+        description: 'base64 file content'
+        required: true
+      message:
+        description: 'Commit message'
+        required: true
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.token.outputs.token }}
+      - run: |
+          mkdir -p "$(dirname '${{ inputs.path }}')"
+          echo '${{ inputs.content }}' | base64 -d > '${{ inputs.path }}'
+          git config user.email "claude@rr-insights"
+          git config user.name "Claude Sync"
+          git add '${{ inputs.path }}'
+          git commit -m '${{ inputs.message }}'
+          git push
