@@ -9,10 +9,10 @@ on:
 
 # Explicit permissions required for GitHub Pages deployment
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
-  actions: read
+  actions: write
 
 concurrency:
   group: pages
