@@ -1,56 +1,179 @@
-// ─────────────────────────────────────────────
-//  data/personas.ts
-// ─────────────────────────────────────────────
-import type { PersonaMeta } from '../types';
+import type { PersonaMeta, WhiteboardArtifact, VersionEntry, Milestone, TimelineItem } from '../types';
 
 export const PERSONAS: PersonaMeta[] = [
-{
-  id: 'student',
-  name: 'Student',
-  role: 'Clinical program enrollee · Test-taker · Competency earner',
-  avatarInitials: 'St',
-  avatarColor: 'rgba(139,127,245,0.2)'
-},
-{
-  id: 'dce',
-  name: 'DCE / Faculty',
-  role: 'Director of Clinical Education · Question author · Admin',
-  avatarInitials: 'DC',
-  avatarColor: 'rgba(46,196,160,0.2)'
-},
-{
-  id: 'scce',
-  name: 'SCCE',
-  role: 'Site Coordinator of Clinical Education · Preceptor',
-  avatarInitials: 'SC',
-  avatarColor: 'rgba(245,166,35,0.2)'
-},
-{
-  id: 'program-director',
-  name: 'Program Director',
-  role: 'Accreditation owner · Executive stakeholder · Cohort lead',
-  avatarInitials: 'PD',
-  avatarColor: 'rgba(120,170,245,0.2)'
-}];
+  {
+    id: 'student',
+    name: 'Student',
+    role: 'Clinical Education Student (PT, OT, PA, Nursing, Social Work)',
+    avatarInitials: 'ST',
+    avatarColor: '#6d5ed4',
+    priority: 'very-high',
+    products: ['exam-management', 'faas', 'skills-checklist', 'learning-contracts'],
+    currentTools: ['Exxat', 'Excel (competency tracking)', 'Canvas/Moodle', 'ChatGPT (remediation)', 'Paper passport'],
+    greatDay: 'Completes rotation with every skill logged, exam taken equitably with accommodations active, and PANCE readiness score visible on their dashboard.',
+    poorDay: 'Accessibility barrier blocks exam — form submission error discovered weeks later — cannot answer "have I done this skill across all rotations" — builds third external spreadsheet this semester.',
+    empathyMap: {
+      thinks: ['"Which spreadsheet has my latest competency log?"', '"Will my accommodation actually work in the lockdown browser this time?"', '"I have no idea if I am on track to graduate."', '"Why do I have to log the same information in three different places?"'],
+      feels: ['Anxious about accessibility gaps during high-stakes exams', 'Frustrated by redundant data entry across systems', 'Invisible — no one system shows my complete progress', 'Motivated to succeed — the clinical stakes are real'],
+      says: ['"I just use Excel. It is easier than the platform."', '"Can you just email me the form? The system is down again."', '"I submitted it, but I got no confirmation it actually went through."', '"I passed the rotation but I still do not know if I am ready for boards."'],
+      does: ['Builds personal competency spreadsheets outside the platform', 'Screenshots form confirmations as personal proof of submission', 'Asks classmates to verify whether a form submitted correctly', 'Uses ChatGPT to analyse EOR weaknesses and build remediation plans'],
+    },
+    frictions: ['No cross-rotation skill visibility', 'Accessibility tools blocked by LockDown browser', 'Form submission errors discovered weeks later', 'No personalised PANCE readiness signal'],
+    motivations: ['Graduate on time with board-certified competence', 'Maintain accreditation-required clinical evidence', 'Receive fair evaluation regardless of disability status'],
+    povStatement: 'Students in accredited healthcare programs need a single system that tracks their clinical evidence across every rotation — because today, 80-90% of them are building external spreadsheets to answer questions the platform cannot.',
+  },
+  {
+    id: 'dce',
+    name: 'DCE / Faculty',
+    role: 'Director of Clinical Education',
+    avatarInitials: 'DC',
+    avatarColor: '#0d9488',
+    priority: 'very-high',
+    products: ['exam-management', 'faas', 'course-eval', 'skills-checklist', 'learning-contracts'],
+    currentTools: ['Exxat', 'ExamSoft', 'Excel (curriculum mapping)', 'Canvas', 'Teams', 'SmartEval'],
+    greatDay: 'Configures assessment once, deploys to cohort, monitors progress in one view. No support tickets. Curriculum mapping does not require a separate spreadsheet.',
+    poorDay: 'Student form submission fails silently — multi-campus exam sharing requires manual copy-paste — curriculum mapping done in Excel — support ticket filed for the 11th time this semester.',
+    empathyMap: {
+      thinks: ['"If I change this tag spelling, will it break every form for 200 students?"', '"The California campus is on a different ExamSoft version. How do I share this question bank?"', '"I cannot map this course to ARC-PA standards without opening another spreadsheet."', '"I have been using ExamSoft for 8 years. The analytics are just better."'],
+      feels: ['Overwhelmed by fragmented configuration across three systems', 'Protective of faculty training investment in ExamSoft', 'Responsible for students who will fail boards if assessments are poor quality', 'Frustrated that Exxat requires support tickets for tasks that should be self-service'],
+      says: ['"We tried to leave ExamSoft twice. We always came back for the analytics."', '"One typo in the tag field and the entire compliance form breaks."', '"I do not have time to learn a new platform every two years."', '"If Exxat could do what ExamSoft does, I would switch tomorrow."'],
+      does: ['Maintains curriculum map in Excel alongside Exxat', 'Emails questions between campuses when multi-campus sharing fails', 'Files support tickets for form configuration tasks', 'Uses Enflux to analyse exam performance because Exxat analytics are insufficient'],
+    },
+    frictions: ['Multi-campus exam sharing broken — manual copy-paste workflow', 'Curriculum mapping lives in Excel, not the platform', 'FaaS compliance configuration requires support ticket', 'No form preview before publishing to 200 students'],
+    motivations: ['Maintain accreditation compliance without manual overhead', 'Give students equitable, high-quality assessments', 'Have one system instead of six'],
+    povStatement: 'DCEs managing clinical programs need a platform that handles the governance of forms, assessments, and curriculum mapping in one place — because today, three separate systems and a spreadsheet are required to do what should be one configuration screen.',
+  },
+  {
+    id: 'scce',
+    name: 'SCCE',
+    role: 'Site Coordinator of Clinical Education',
+    avatarInitials: 'SC',
+    avatarColor: '#b45309',
+    priority: 'high',
+    products: ['faas', 'skills-checklist', 'learning-contracts'],
+    currentTools: ['Email', 'Phone', 'Exxat (infrequent)', 'Mobile browser', 'Paper forms'],
+    greatDay: 'Opens platform, immediately sees what needs attention, evaluates three students in under 8 minutes, does not have to relearn the interface next semester.',
+    poorDay: 'Cannot find what needs approval — guidelines buried — calls DCE for help — 45-minute back-and-forth via email — submits a paper form instead.',
+    empathyMap: {
+      thinks: ['"I log in once a semester. I have no idea where anything is."', '"Why are the instructions buried in a tiny sidebar I cannot read?"', '"I am between patient rounds. I have 5 minutes. This form is asking for 20 fields."', '"Is this student really on track? I cannot tell from this interface."'],
+      feels: ['Time-pressured — evaluations happen in clinical gaps between patients', 'Frustrated by relearning the platform every 6 months', 'Responsible for students who are in real clinical environments', 'Underserved — the platform was clearly not designed for them'],
+      says: ['"Just email me the link. The platform is too complicated."', '"I submitted the evaluation but I am not sure it saved."', '"Why do I see so many students at once? I only supervise one."'],
+      does: ['Submits evaluations via email when platform friction is too high', 'Uses mobile browser — the desktop interface is not accessible at the clinical site', 'Relies on DCE to explain what needs to be done each rotation'],
+    },
+    frictions: ['Platform relearning burden every 6 months due to infrequent use', 'Approval reviewer UX broken — guidelines buried, no side-by-side view', 'No mobile-optimised interface for clinical site use', 'Three separate UI styles across FaaS compliance system'],
+    motivations: ['Evaluate students accurately without disrupting clinical workflow', 'Fulfill accreditation obligations with minimal overhead', 'Support students who are genuinely learning in their site'],
+    povStatement: 'SCCEs are the most underserved users in clinical education platforms — they use the system infrequently, from mobile, between patient encounters, and the current interface was designed for daily desktop users, not external clinical supervisors.',
+  },
+  {
+    id: 'program-director',
+    name: 'Program Director',
+    role: 'Program Director / Accreditation Coordinator',
+    avatarInitials: 'PD',
+    avatarColor: '#dc2626',
+    priority: 'high',
+    products: ['exam-management', 'faas', 'course-eval'],
+    currentTools: ['Exxat', 'Excel', 'Enflux', 'SmartEval', 'ExamSoft', 'ChatGPT', 'Qualtrics'],
+    greatDay: 'Login — cohort dashboard — PANCE predictor flags 3 at-risk students — export accreditation-ready PDF in 2 clicks. No Excel, no ChatGPT, no 10-system workflow.',
+    poorDay: 'Accreditation self-study due in 3 weeks — data in 7 systems — manually exports each CSV — aggregates in Excel — pastes survey comments into ChatGPT — writes 75-page Word document.',
+    empathyMap: {
+      thinks: ['"I have 7 tools open to answer one accreditation question."', '"If 2 more students fail PANCE, we trigger a modified self-study."', '"Why can I not see a student\'s complete picture — didactic + clinical + boards — in one place?"', '"Enflux does the analytics ExamSoft cannot. But that is a third platform I have to maintain."'],
+      feels: ['Responsible for program survival — one bad PANCE cohort triggers ARC-PA scrutiny', 'Frustrated by the absence of a unified student performance dashboard', 'Overloaded by accreditation reporting overhead that should be automated', 'Hopeful that Exxat could replace 3 of the 7 tools in their stack'],
+      says: ['"I submitted a 75-page statistical analysis to ARC-PA. That should be automated."', '"ChatGPT extracts survey themes faster than any tool I have."', '"If Exxat gave me one dashboard for every student across every system, I would never leave."'],
+      does: ['Builds custom PANCE predictive models in Excel using Pearson correlations', 'Exports CSV files from PAEA and uploads manually to Enflux', 'Uses ChatGPT to analyse open-ended survey responses', 'Writes 10+ page self-study narratives quarterly for ARC-PA'],
+    },
+    frictions: ['No unified student dashboard across didactic + clinical + standardised exams', 'Accreditation reports generated manually from 7 separate systems', 'No predictive PANCE readiness score in Exxat', 'Survey analytics insufficient compared to SmartEval/Enflux'],
+    motivations: ['Maintain accreditation without a 3-week annual data assembly marathon', 'Identify at-risk students before they fail boards, not after', 'Consolidate the technology stack from 7 systems to 2-3'],
+    povStatement: 'Program Directors in healthcare education programs need a research-grade analytics platform that can predict board exam readiness, generate accreditation reports automatically, and surface student risk signals before they become compliance failures.',
+  },
+];
 
-
-// ─────────────────────────────────────────────
-//  data/roadmap.ts
-// ─────────────────────────────────────────────
-import type { TimelineItem } from '../types';
-
+// Legacy export — used by ExamManagementView.tsx
 export const EXAM_TIMELINE: TimelineItem[] = [
-{ title: 'April 17 demo', date: 'Apr 17, 2026', description: 'Student + admin + faculty prototypes. Question bank entry points. Accessibility V0.', color: '#8b7ff5', status: 'active' },
-{ title: 'May — Architecture review', date: 'May 2026', description: 'Role-based access. No AI yet. Q-bank architecture locked.', color: '#2ec4a0', status: 'upcoming' },
-{ title: 'July — UNF pilot', date: 'Jul 2026', description: 'Annual graduation exam. Accessibility must be complete. MCQ format.', color: '#f5a623', status: 'upcoming' },
-{ title: 'AI sprint', date: 'Jul–Aug 2026', description: 'Bloom\'s tagging, question gen, PANCE predictor. Live before Cohere.', color: '#8b7ff5', status: 'upcoming' },
-{ title: 'ExamSoft-competitive launch', date: 'Nov–Dec 2026', description: 'Full AI + security posture. Cannot launch half-baked.', color: '#e8604a', status: 'upcoming' }];
+  { title: 'Apr 17, 2026', date: 'April 17', description: 'Student + Admin + Faculty experience demo', color: '#dc2626', status: 'upcoming' },
+  { title: 'May 2026', date: 'May', description: 'AI capabilities integration sprint', color: '#b45309', status: 'upcoming' },
+  { title: 'Jul 2026', date: 'July', description: 'AI heavy — working demo components', color: '#b45309', status: 'upcoming' },
+  { title: 'Aug 2026', date: 'August', description: 'Cohere conference readiness', color: '#16a34a', status: 'upcoming' },
+  { title: 'Nov-Dec 2026', date: 'Nov-Dec', description: 'ExamSoft-competitive full launch', color: '#6d5ed4', status: 'upcoming' },
+];
 
-
+// Legacy export — used by old OverviewView (kept for backward compat, new OverviewView uses insights directly)
 export const PLATFORM_SIGNALS = [
-{ label: 'AI opportunity layer', count: 5, color: '#2ec4a0', isNew: true },
-{ label: 'Multi-campus fragmentation', count: 3, color: '#f5a623', isNew: true },
-{ label: 'Reporting deficit', count: 3, color: '#e8604a', isNew: false },
-{ label: 'Cognitive overload', count: 3, color: '#8b7ff5', isNew: false },
-{ label: 'Standalone skills entity', count: 2, color: '#e87ab5', isNew: true },
-{ label: 'Mobile gap (SCCE)', count: 2, color: '#78aaf5', isNew: false }];
+  { label: 'AI opportunity layer', count: 8, color: '#0d9488', isNew: true },
+  { label: 'Manual configuration debt', count: 6, color: '#b45309', isNew: true },
+  { label: 'Reporting deficit', count: 5, color: '#dc2626', isNew: false },
+  { label: 'Cognitive overload (student)', count: 4, color: '#6d5ed4', isNew: false },
+  { label: 'Standalone skills entity', count: 3, color: '#db2777', isNew: true },
+  { label: 'SCCE mobile gap', count: 3, color: '#2563eb', isNew: false },
+];
+
+export const MILESTONES: Milestone[] = [
+  { date: 'Apr 17, 2026', label: 'Exam Management demo', status: 'upcoming', productId: 'exam-management', description: 'Student + Admin + Faculty experience. Basic accessibility. UAD environment.', isHardDeadline: true },
+  { date: 'Apr 15, 2026', label: 'FaaS compliance planning', status: 'upcoming', productId: 'faas', description: 'ASU team stakeholder alignment. Fast migration coordination.', isHardDeadline: true },
+  { date: 'Apr 2026', label: 'Course Eval design workshop', status: 'upcoming', productId: 'course-eval', description: 'Full module scope. Hybrid form design. Touro survey coverage.' },
+  { date: 'May 2026', label: 'Exam AI integration', status: 'upcoming', productId: 'exam-management', description: 'Blueprint assembly. PANCE predictor. Personalized remediation.' },
+  { date: 'Aug 2026', label: 'Cohere conference', status: 'upcoming', productId: 'exam-management', description: 'ExamSoft-competitive feature set. First migration target.', isHardDeadline: true },
+  { date: 'Jan 1, 2027', label: 'Skills Checklist launch', status: 'upcoming', productId: 'skills-checklist', description: 'Full production launch after Q2-Q4 development cycle.', isHardDeadline: true },
+];
+
+export const COMPETITOR_FEATURES = [
+  { name: 'Curriculum mapping',        exxat: 'partial' as const, examsoft: true,               blackboard: 'partial' as const, d2l: false },
+  { name: 'Formula-based questions',   exxat: false,              examsoft: false,               blackboard: true,               d2l: true },
+  { name: 'Hotspot image questions',   exxat: true,               examsoft: false,               blackboard: true,               d2l: 'partial' as const },
+  { name: 'Bulk accommodation assign', exxat: 'partial' as const, examsoft: false,               blackboard: false,              d2l: false },
+  { name: 'Clinical education IA',     exxat: true,               examsoft: false,               blackboard: false,              d2l: false },
+  { name: 'Integrated surveys',        exxat: 'partial' as const, examsoft: false,               blackboard: true,               d2l: true },
+  { name: 'AI remediation',            exxat: false,              examsoft: false,               blackboard: false,              d2l: false },
+  { name: 'PANCE predictor',           exxat: false,              examsoft: false,               blackboard: false,              d2l: false },
+  { name: 'WCAG AA accessibility',     exxat: 'partial' as const, examsoft: false,               blackboard: 'partial' as const, d2l: 'partial' as const },
+  { name: 'Cross-campus sharing',      exxat: false,              examsoft: false,               blackboard: true,               d2l: true },
+  { name: 'Accreditation reports',     exxat: 'partial' as const, examsoft: 'partial' as const,  blackboard: false,              d2l: false },
+  { name: 'Procedure min tracking',    exxat: false,              examsoft: false,               blackboard: false,              d2l: false },
+];
+
+export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
+  { id: 'wb-product-context', title: 'Product Context Framework', source: 'Whiteboard Mar 20 — Photo 1+2', category: 'product-context', color: '#6d5ed4', items: ['What the product is + what it solves for', 'Who does it solve for', 'Day-to-day user lifecycle (current state)', 'Frustrations / Gaps / Concerns', 'Happy path / Alternatives', 'Scenario-based journeys', 'Features used most vs least', 'How products and features connect', 'Different perspectives needing attention'] },
+  { id: 'wb-gaps', title: 'Current Research Gaps', source: 'Whiteboard Mar 20 — highlighted red', category: 'product-context', color: '#dc2626', items: ['No Pendo analytics — usage frequency data unavailable', 'No Teams Meeting recordings connected', 'No VSTS / Azure DevOps sprint data', 'No live NPS data beyond FaaS baseline 2/5', 'No ExamSoft item analytics for direct comparison', 'No accreditor-specific report templates'] },
+  { id: 'wb-users', title: 'User Stakeholder Map', source: 'Whiteboard Mar 20 — Photo 1+2', category: 'persona', color: '#0d9488', items: ['Stakeholder mapping — Exxat internal', 'Accreditation committee', 'Curriculum committee', 'University — Faculty, Admin', 'DCE, Didactic, Coordinators', 'Students — clinical education', 'Clinical site, clinics, hospital', 'Tenants — multi-tenant configuration layer'] },
+  { id: 'wb-product-experience', title: 'Product Experience Lifecycle', source: 'Whiteboard Mar 20 — Photo 1+2', category: 'product-context', color: '#6d5ed4', items: ['Didactic phase', 'Clinical rotation phase', 'Culminating experience', 'Advisory', 'Internship', 'Jobs', 'Continuing Education'] },
+  { id: 'wb-persona-methods', title: 'Persona Research Methods', source: 'Whiteboard Mar 20 — Photo 3', category: 'persona', color: '#b45309', items: ['Existing vs new types of users', 'Sentimental analysis — per feature and product', 'Mental model mapping', 'Journey mapping', 'Service design', 'Archetypes', 'SWOT + Affinity mapping', 'Empathy maps', 'Day-to-day responsibility', 'Workflow analysis — Forecast / Admin', 'Tools and platforms used', 'POV statements', 'User flows and task flows', 'Visual models and frameworks', 'Opportunity Canvas', 'Mind maps + How Might We (HMW)', 'Why are they not using Exxat products?', 'How AI can support their concerns'] },
+  { id: 'wb-competitor', title: 'Competitor Analysis Framework', source: 'Whiteboard Mar 20 — Photo 3', category: 'competitor', color: '#dc2626', items: ['Name of the competitor', 'Reviews, rating, topics, themes', 'How can Exxat improve?', 'Competitor lifecycle', 'Opportunities and concerns for Exxat', 'Data visualisation to understand competitors better'] },
+  { id: 'wb-product-1', title: 'Product Architecture Template', source: 'Whiteboard Mar 20 — Photo 4', category: 'feature', color: '#2563eb', items: ['Context, vision, objectives', 'Personas', 'Workflow / Architecture / Lifecycle', 'Features (existing) + Dependencies', 'Competitor analysis: features, outliers, what they do best', 'Pendo analytics', 'AMs / PMs / Sales / Product pipeline / Enhancement requests', 'Gaps / Concerns: Dev, UX, UI, Product', 'Dependency to other features / products'] },
+  { id: 'wb-new-features', title: 'New Feature Design Framework', source: 'Whiteboard Mar 20 — Photo 4', category: 'feature', color: '#7c3aed', items: ['AI involvement first — every feature must consider AI upfront', 'What problem are we solving?', 'UX / UI / Interaction', 'Backtracking / Plan of action', 'Micro interaction', 'Simplicity', 'Design System — existing component usage only', 'Design / Interaction pattern', 'Content / Visual / Information hierarchy', 'Visualisation / graphs / charts / reports / tree dependency'] },
+  { id: 'wb-strategic', title: 'Strategic UX Researcher Framework', source: 'Whiteboard Mar 20 — Photo 5', category: 'strategic', color: '#db2777', items: ['Measure — Progress — Success', 'Who is having a great day?', 'Who is having a poor day?', 'How did our products make their day better or worse?', 'Why are they having different days?', '1) Who the users are', '2) What the user needs', '3) What their current experience looks like', 'Measure what delightful experience looks like', 'How we make experience better', 'That is what we are gonna build — Changes — Delightful Experience'] },
+  { id: 'wb-maturity', title: 'Measure Our Maturity', source: 'Whiteboard Mar 20 — Photo 5', category: 'strategic', color: '#16a34a', items: ['Delivering insights', 'Clean expertise', 'Research agendas', 'Iterative delivery', 'Team members understand customers, users, employees', 'Whose lives are we making better'] },
+];
+
+export const VERSION_HISTORY: VersionEntry[] = [
+  {
+    version: 'v3.1',
+    date: 'Mar 23, 2026',
+    summary: 'Persona-mapped Granola intelligence. Named voices: Ed Razenbach (Emory & Henry), Dr. Vicky Mody (Touro), Dr. T (Touro PA), Harsha (FaaS internal), Wilson (Exxat Sales), MedStar team. Full whiteboard product shell — 8 tabs per product covering every Photo 4 item.',
+    insightCount: 42,
+    sessionsAdded: 0,
+    changedFiles: ['data/voices.ts (new)', 'data/products.ts (extended)', 'views/products/ProductViewShell.tsx (8 tabs)', 'types/index.ts'],
+  },
+  {
+    version: 'v3.0',
+    date: 'Mar 23, 2026',
+    summary: 'Complete rebuild from audit. All whiteboard frameworks. Empathy maps. Day-in-life flows. Sentiment scores. HMW. Narrative insight cards. Priority intelligence from 40 Granola sessions.',
+    insightCount: 42,
+    sessionsAdded: 5,
+    changedFiles: ['All files'],
+  },
+  {
+    version: 'v2.0',
+    date: 'Mar 23, 2026',
+    summary: 'Full architecture rebuild. Whiteboard artifacts. Data viz. Changelog. Competitive analysis.',
+    insightCount: 38,
+    sessionsAdded: 5,
+    changedFiles: ['index.css', 'data/personas.ts', 'views/WhiteboardView.tsx', 'views/CompetitiveView.tsx'],
+  },
+  {
+    version: 'v1.0',
+    date: 'Mar 20, 2026',
+    summary: 'Initial deploy. Exam Management deep-dive. FaaS competitive analysis.',
+    insightCount: 17,
+    sessionsAdded: 3,
+    changedFiles: ['Initial commit'],
+  },
+];

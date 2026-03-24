@@ -1,153 +1,88 @@
-// ─────────────────────────────────────────────
-//  components/layout/Sidebar.tsx
-//  Navigation driver. Adding a new product =
-//  add to PRODUCTS in data/products.ts — sidebar
-//  auto-generates the product nav item.
-// ─────────────────────────────────────────────
-import {
-  LayoutDashboardIcon,
-  FileTextIcon,
-  FormInputIcon,
-  GraduationCapIcon,
-  CheckSquareIcon,
-  FileSignatureIcon,
-  UsersIcon,
-  TagIcon,
-  MapIcon,
-  TrendingUpIcon,
-  PresentationIcon,
-  SparklesIcon } from
-'lucide-react';
+import { LayoutDashboardIcon, FileTextIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon, UsersIcon, TagIcon, MapIcon, TrendingUpIcon, PresentationIcon, LayersIcon, GitBranchIcon, BookOpenIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
+import { VERSION_HISTORY } from '../../data/personas';
 import type { ProductId } from '../../types';
 
 type ViewId = string;
-
-interface SidebarProps {
-  activeView: ViewId;
-  onNav: (view: ViewId) => void;
-}
+interface Props { activeView: ViewId; onNav: (v: ViewId) => void; }
 
 const PRODUCT_ICONS: Record<ProductId, React.ElementType> = {
-  'exam-management': FileTextIcon,
-  faas: FormInputIcon,
-  'course-eval': GraduationCapIcon,
-  'skills-checklist': CheckSquareIcon,
-  'learning-contracts': FileSignatureIcon
+  'exam-management': FileTextIcon, faas: FormInputIcon, 'course-eval': GraduationCapIcon,
+  'skills-checklist': CheckSquareIcon, 'learning-contracts': FileSignatureIcon,
 };
+const URGENCY_ICON: Record<string, React.ElementType> = { fire: FlameIcon, warn: AlertTriangleIcon, ok: CheckCircleIcon };
+const URGENCY_COLOR: Record<string, string> = { fire: '#dc2626', warn: '#b45309', ok: '#16a34a' };
 
-const STATUS_BADGE: Record<string, {label: string;color: string;}> = {
-  active: { label: 'Active', color: 'text-[#4caf7d] bg-[rgba(76,175,125,0.12)]' },
-  wip: { label: 'WIP', color: 'text-[#f5a623] bg-[rgba(245,166,35,0.12)]' },
-  planned: { label: 'Planned', color: 'text-[#2ec4a0] bg-[rgba(46,196,160,0.10)]' },
-  scoped: { label: 'Scoped', color: 'text-[#e87ab5] bg-[rgba(232,122,181,0.10)]' }
-};
-
-function NavItem({
-  id,
-  label,
-  icon: Icon,
-  active,
-  badge,
-  badgeStyle,
-  onNav
-
-
-
-
-
-
-
-
-}: {id: string;label: string;icon: React.ElementType;active: boolean;badge?: string;badgeStyle?: string;onNav: (v: string) => void;}) {
+function NavItem({ id, label, icon: Icon, active, badge, badgeColor, onNav, urgency }: {
+  id: string; label: string; icon: React.ElementType; active: boolean;
+  badge?: string; badgeColor?: string; onNav: (v: string) => void; urgency?: string;
+}) {
+  const UrgencyIcon = urgency ? URGENCY_ICON[urgency] : null;
   return (
-    <button
-      onClick={() => onNav(id)}
-      className={`relative flex items-center gap-2 w-full px-2.5 py-1.5 mx-1.5 rounded-md text-[12px] transition-all duration-100 text-left
-        ${active ?
-      'bg-[rgba(139,127,245,0.1)] text-[var(--accent)] before:absolute before:left-[-6px] before:top-1/2 before:-translate-y-1/2 before:w-0.5 before:h-3.5 before:rounded-sm before:bg-[var(--accent)]' :
-      'text-[var(--text2)] hover:bg-[var(--bg3)] hover:text-[var(--text)]'}`
-      }>
-      
-      <Icon size={13} className="flex-shrink-0 opacity-70" />
+    <button onClick={() => onNav(id)} className={`nav-item ${active ? 'active' : ''}`}>
+      <Icon size={14} className="flex-shrink-0" style={{ opacity: 0.65 }} />
       <span className="flex-1 truncate">{label}</span>
-      {badge &&
-      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium font-mono flex-shrink-0 ${badgeStyle}`}>
+      {UrgencyIcon && urgency && <UrgencyIcon size={10} style={{ color: URGENCY_COLOR[urgency], flexShrink: 0 }} />}
+      {badge && !urgency && (
+        <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 mono"
+          style={{ background: badgeColor ? `${badgeColor}15` : 'var(--bg3)', color: badgeColor ?? 'var(--text3)' }}>
           {badge}
         </span>
-      }
-    </button>);
-
+      )}
+    </button>
+  );
 }
 
-function SidebarSection({ label }: {label: string;}) {
-  return (
-    <div className="px-3.5 pt-4 pb-1 text-[9px] uppercase tracking-[0.1em] text-[var(--text3)] font-semibold">
-      {label}
-    </div>);
-
+function Section({ label }: { label: string }) {
+  return <div className="px-3 pt-5 pb-1.5 eyebrow">{label}</div>;
 }
 
-export function Sidebar({ activeView, onNav }: SidebarProps) {
+export function Sidebar({ activeView, onNav }: Props) {
+  const v = VERSION_HISTORY[0];
   return (
-    <div className="w-[228px] min-w-[228px] bg-[var(--bg2)] border-r border-[var(--border)] flex flex-col overflow-y-auto">
-      {/* Logo */}
-      <div className="px-4 py-4 flex items-center gap-2.5 border-b border-[var(--border)]">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--teal)] flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
-          ✦
-        </div>
-        <div>
-          <div className="font-display text-[15px] text-[var(--text)] leading-tight">Insight Hub</div>
-          <div className="text-[9px] font-mono text-[var(--text3)]">exxat-rr-insights</div>
-        </div>
-      </div>
-
-      {/* Workspace */}
-      <SidebarSection label="Workspace" />
-      <NavItem id="overview" label="Overview" icon={LayoutDashboardIcon} active={activeView === 'overview'} onNav={onNav} />
-
-      {/* Products — auto-generated from PRODUCTS array */}
-      <SidebarSection label="Products" />
-      {PRODUCTS.map((p) => {
-        const Icon = PRODUCT_ICONS[p.id] ?? FileTextIcon;
-        const b = STATUS_BADGE[p.status];
-        return (
-          <NavItem
-            key={p.id}
-            id={p.id}
-            label={p.name}
-            icon={Icon}
-            active={activeView === p.id}
-            badge={b.label}
-            badgeStyle={b.color}
-            onNav={onNav} />);
-
-
-      })}
-
-      {/* Intelligence */}
-      <SidebarSection label="Intelligence" />
-      <NavItem id="personas" label="Persona Map" icon={UsersIcon} active={activeView === 'personas'} onNav={onNav} />
-      <NavItem id="themes" label="Theme Clusters" icon={TagIcon} active={activeView === 'themes'} onNav={onNav} />
-      <NavItem id="roadmap" label="Roadmap" icon={MapIcon} active={activeView === 'roadmap'} onNav={onNav} />
-
-      {/* Portfolio */}
-      <SidebarSection label="Portfolio" />
-      <NavItem id="portfolio" label="Staff Signal" icon={TrendingUpIcon} active={activeView === 'portfolio'} onNav={onNav} />
-      <NavItem id="stakeholder" label="Stakeholder Deck" icon={PresentationIcon} active={activeView === 'stakeholder'} onNav={onNav} />
-
-      {/* Footer */}
-      <div className="mt-auto p-3 border-t border-[var(--border)]">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--teal)] flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0">
-            RS
-          </div>
+    <div className="w-[220px] min-w-[220px] flex flex-col overflow-y-auto border-r" style={{ background: '#fff', borderColor: 'var(--border)' }}>
+      <div className="px-4 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
+        <div className="flex items-center gap-2.5 mb-2.5">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[11px] font-semibold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>✦</div>
           <div>
-            <div className="text-[11px] font-medium text-[var(--text)]">Romit Soley</div>
-            <div className="text-[9px] text-[var(--text3)]">Designer II · Exxat</div>
+            <div className="text-[14px] font-semibold" style={{ color: 'var(--text)', letterSpacing: '-0.01em' }}>Insight Hub</div>
+            <div className="text-[10px] mono" style={{ color: 'var(--text3)' }}>rr-insights</div>
+          </div>
+        </div>
+        <span className="version-badge"><span style={{ color: '#6d5ed4' }}>●</span>{v.version} · {v.date}</span>
+      </div>
+      <div className="px-2 py-1 flex-1">
+        <Section label="Workspace" />
+        <NavItem id="overview" label="Overview" icon={LayoutDashboardIcon} active={activeView === 'overview'} onNav={onNav} />
+        <NavItem id="whiteboard" label="Whiteboard artifacts" icon={LayersIcon} active={activeView === 'whiteboard'} onNav={onNav} badge="10" />
+        <Section label="Products — by priority" />
+        {PRODUCTS.map(p => {
+          const Icon = PRODUCT_ICONS[p.id] ?? FileTextIcon;
+          return (
+            <NavItem key={p.id} id={p.id} label={p.shortName} icon={Icon} active={activeView === p.id}
+              badge={p.daysToDeadline ? `${p.daysToDeadline}d` : undefined}
+              badgeColor={p.accentColor} urgency={p.urgencyLevel} onNav={onNav} />
+          );
+        })}
+        <Section label="Intelligence" />
+        <NavItem id="personas" label="Persona map" icon={UsersIcon} active={activeView === 'personas'} onNav={onNav} />
+        <NavItem id="competitive" label="Competitive analysis" icon={GitBranchIcon} active={activeView === 'competitive'} onNav={onNav} />
+        <NavItem id="themes" label="Theme clusters" icon={TagIcon} active={activeView === 'themes'} onNav={onNav} />
+        <NavItem id="roadmap" label="Roadmap" icon={MapIcon} active={activeView === 'roadmap'} onNav={onNav} />
+        <Section label="Delivery" />
+        <NavItem id="portfolio" label="Staff signal" icon={TrendingUpIcon} active={activeView === 'portfolio'} onNav={onNav} />
+        <NavItem id="stakeholder" label="Stakeholder deck" icon={PresentationIcon} active={activeView === 'stakeholder'} onNav={onNav} />
+        <NavItem id="changelog" label="Changelog" icon={BookOpenIcon} active={activeView === 'changelog'} onNav={onNav} badge={v.version} badgeColor="#6d5ed4" />
+      </div>
+      <div className="p-3 border-t" style={{ borderColor: 'var(--border)' }}>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>RS</div>
+          <div>
+            <div className="text-[12px] font-medium" style={{ color: 'var(--text)' }}>Romit Soley</div>
+            <div className="text-[10px]" style={{ color: 'var(--text3)' }}>Designer II · Exxat</div>
           </div>
         </div>
       </div>
-    </div>);
-
+    </div>
+  );
 }
