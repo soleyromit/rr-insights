@@ -45,7 +45,7 @@ export function Sidebar({ activeView, onNav }: Props) {
         <div className="flex items-center gap-2.5 mb-2.5">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[11px] font-semibold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>✦</div>
           <div>
-            <div className="text-[14px] font-semibold" style={{ color: 'var(--text)', letterSpacing: '-0.01em' }}>Insight Hub</div>
+            <div className="text-[15px] font-semibold" style={{ color: 'var(--text)', letterSpacing: '-0.01em' }}>Insight Hub</div>
             <div className="text-[10px] mono" style={{ color: 'var(--text3)' }}>rr-insights</div>
           </div>
         </div>
@@ -78,7 +78,7 @@ export function Sidebar({ activeView, onNav }: Props) {
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>RS</div>
           <div>
-            <div className="text-[12px] font-medium" style={{ color: 'var(--text)' }}>Romit Soley</div>
+            <div className="text-[13px] font-medium" style={{ color: 'var(--text)' }}>Romit Soley</div>
             <div className="text-[10px]" style={{ color: 'var(--text3)' }}>Designer II · Exxat</div>
           </div>
         </div>

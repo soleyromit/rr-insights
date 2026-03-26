@@ -1,65 +1,54 @@
-// ─────────────────────────────────────────────
-//  components/ui/Card.tsx  —  surface containers
-// ─────────────────────────────────────────────
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface CardProps {
   children: ReactNode;
   className?: string;
-  variant?: 'default' | 'flat' | 'ai';
+  style?: React.CSSProperties;
 }
 
-export function Card({ children, className = '', variant = 'default' }: CardProps) {
-  const base = 'rounded-xl border transition-colors duration-150';
-  const variants: Record<string, string> = {
-    default: 'bg-[var(--bg2)] border-[var(--border)] hover:border-[var(--border2)] p-4',
-    flat: 'bg-[var(--bg3)] border-[var(--border)] p-3',
-    ai: 'bg-[rgba(139,127,245,0.06)] border-[rgba(139,127,245,0.2)] p-3'
-  };
-  return <div className={`${base} ${variants[variant]} ${className}`}>{children}</div>;
-}
-
-export function CardTitle({
-  children,
-  sub
-
-
-
-}: {children: ReactNode;sub?: ReactNode;}) {
+export function Card({ children, className = '', style }: CardProps) {
   return (
-    <div className="flex items-center justify-between mb-3">
-      <span className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[var(--text)]">
-        {children}
-      </span>
-      {sub &&
-      <span className="text-[9px] text-[var(--text3)] font-normal normal-case tracking-normal">
-          {sub}
-        </span>
-      }
-    </div>);
-
+    <div className={`card ${className}`} style={style}>
+      {children}
+    </div>
+  );
 }
 
-// ─────────────────────────────────────────────
-//  components/ui/MetricCard.tsx
-// ─────────────────────────────────────────────
+interface CardTitleProps {
+  children: ReactNode;
+  sub?: string;
+}
+
+export function CardTitle({ children, sub }: CardTitleProps) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', lineHeight: 1.3, marginBottom: sub ? 4 : 0 }}>
+        {children}
+      </h3>
+      {sub && (
+        <p style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.4 }}>{sub}</p>
+      )}
+    </div>
+  );
+}
+
 interface MetricCardProps {
   label: string;
   value: string | number;
   delta?: string;
   deltaVariant?: 'up' | 'down' | 'neutral';
-  valueColor?: string;
+  accent?: string;
 }
 
-export function MetricCard({ label, value, delta, deltaVariant = 'neutral', valueColor }: MetricCardProps) {
-  const deltaColors = { up: 'text-[#4caf7d]', down: 'text-[#e8604a]', neutral: 'text-[var(--text3)]' };
+export function MetricCard({ label, value, delta, deltaVariant = 'neutral', accent }: MetricCardProps) {
+  const deltaColor = deltaVariant === 'up' ? 'var(--teal)' : deltaVariant === 'down' ? 'var(--coral)' : 'var(--text3)';
   return (
-    <div className="bg-[var(--bg2)] border border-[var(--border)] hover:border-[var(--border2)] rounded-lg p-3.5 transition-colors">
-      <div className="text-[9px] uppercase tracking-[0.06em] text-[var(--text3)] mb-1.5">{label}</div>
-      <div className="font-mono font-semibold leading-none mb-1.5 text-2xl" style={valueColor ? { color: valueColor } : { color: 'var(--text)' }}>
-        {value}
-      </div>
-      {delta && <div className={`text-[10px] ${deltaColors[deltaVariant]}`}>{delta}</div>}
-    </div>);
-
+    <div className="stat-card">
+      <div className="eyebrow" style={{ marginBottom: 8 }}>{label}</div>
+      <div className="metric-value" style={{ color: accent || 'var(--text)' }}>{value}</div>
+      {delta && (
+        <div style={{ fontSize: 12, color: deltaColor, marginTop: 6, lineHeight: 1.3 }}>{delta}</div>
+      )}
+    </div>
+  );
 }

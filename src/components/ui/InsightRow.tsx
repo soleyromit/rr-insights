@@ -1,91 +1,140 @@
-// ─────────────────────────────────────────────
-//  components/ui/InsightRow.tsx
-//  Renders a single sourced insight entry.
-//  Used in every product view and the overview.
-// ─────────────────────────────────────────────
 import type { Insight } from '../../types';
-import { TagList } from './Badge';
+
+const TAG_CONFIG: Record<string, { label: string; cls: string }> = {
+  gap:        { label: 'Gap',      cls: 'badge badge-gap' },
+  theme:      { label: 'Theme',    cls: 'badge badge-theme' },
+  opportunity:{ label: 'Opp',     cls: 'badge badge-opp' },
+  persona:    { label: 'Persona',  cls: 'badge badge-persona' },
+  ai:         { label: 'AI',       cls: 'badge badge-ai' },
+  platform:   { label: 'Platform', cls: 'badge badge-platform' },
+  new:        { label: 'New',      cls: 'badge badge-new' },
+  architecture:{ label: 'Arch',   cls: 'badge badge-theme' },
+};
+
+const SEV_COLOR: Record<string, string> = {
+  critical: 'var(--coral)',
+  high:     'var(--amber)',
+  medium:   'var(--blue)',
+  low:      'var(--teal)',
+};
 
 interface InsightRowProps {
   insight: Insight;
+  showSoWhat?: boolean;
 }
 
-export function InsightRow({ insight }: InsightRowProps) {
+export function InsightRow({ insight, showSoWhat = false }: InsightRowProps) {
   return (
-    <div className="py-2.5 border-b border-[var(--border)] last:border-0">
-      <div className="flex flex-wrap gap-1 mb-1.5">
-        <TagList tags={insight.tags} />
+    <div className="insight-card" style={{ marginBottom: 8 }}>
+      {/* Severity indicator + tags row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
+        {insight.severity && (
+          <span style={{
+            width: 7, height: 7, borderRadius: '50%',
+            background: SEV_COLOR[insight.severity] || 'var(--border2)',
+            flexShrink: 0, display: 'inline-block',
+          }} />
+        )}
+        {insight.tags.slice(0, 3).map(tag => {
+          const cfg = TAG_CONFIG[tag];
+          return cfg ? (
+            <span key={tag} className={cfg.cls}>{cfg.label}</span>
+          ) : null;
+        })}
+        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>
+          {insight.source?.split('·')[0]?.trim()}
+        </span>
       </div>
-      <p className="text-[12px] text-[var(--text2)] leading-[1.55]">{insight.text}</p>
-      <p className="text-[9px] text-[var(--text3)] font-mono mt-1">{insight.source}</p>
-    </div>);
 
+      {/* Pull quote */}
+      {insight.pullQuote && (
+        <div className="pull-quote" style={{ fontSize: 14, marginBottom: 8 }}>
+          "{insight.pullQuote}"
+          {insight.pullQuoteSource && (
+            <div style={{ fontSize: 11, color: 'var(--text3)', fontStyle: 'normal', marginTop: 4 }}>
+              — {insight.pullQuoteSource}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Insight text */}
+      <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.6 }}>{insight.text}</p>
+
+      {/* So what */}
+      {showSoWhat && insight.soWhat && (
+        <div style={{
+          marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)',
+          fontSize: 13, color: 'var(--accent)', lineHeight: 1.5,
+        }}>
+          <span style={{ fontWeight: 600 }}>So what: </span>{insight.soWhat}
+        </div>
+      )}
+    </div>
+  );
 }
 
-// ─────────────────────────────────────────────
-//  components/ui/ProgressBar.tsx
-// ─────────────────────────────────────────────
+/* ── AIStrip ── */
+export function AIStrip({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="ai-strip">
+      <span style={{ marginRight: 8, fontSize: 14 }}>✦</span>
+      {children}
+    </div>
+  );
+}
+
+/* ── Progress Bar ── */
 interface ProgressBarProps {
   label: string;
   sublabel?: string;
-  value: number; // 0–100
+  value: number;
   color?: string;
   valueLabel?: string;
 }
 
-export function ProgressBar({ label, sublabel, value, color = '#8b7ff5', valueLabel }: ProgressBarProps) {
+export function ProgressBar({ label, sublabel, value, color = 'var(--accent)', valueLabel }: ProgressBarProps) {
   return (
-    <div className="flex items-center gap-3 py-2 border-b border-[var(--border)] last:border-0">
-      <div className="flex-1 min-w-0">
-        <div className="text-[11px] text-[var(--text2)]">{label}</div>
-        {sublabel && <div className="text-[9px] text-[var(--text3)] mt-0.5">{sublabel}</div>}
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 5 }}>
+        <div>
+          <span style={{ fontSize: 13.5, color: 'var(--text)', fontWeight: 500 }}>{label}</span>
+          {sublabel && <span style={{ fontSize: 11, color: 'var(--text3)', marginLeft: 8 }}>{sublabel}</span>}
+        </div>
+        <span style={{ fontSize: 12, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>
+          {valueLabel || `${value}%`}
+        </span>
       </div>
-      <div className="w-24 h-1.5 bg-[var(--bg4)] rounded-full overflow-hidden flex-shrink-0">
-        <div
-          className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${value}%`, background: color }} />
-        
+      <div className="progress-track">
+        <div style={{ width: `${Math.min(value, 100)}%`, height: '100%', background: color, borderRadius: 3, transition: 'width 0.4s ease' }} />
       </div>
-      <div className="text-[11px] font-mono font-medium text-[var(--text)] min-w-[36px] text-right">
-        {valueLabel ?? `${value}%`}
-      </div>
-    </div>);
-
+    </div>
+  );
 }
 
-// ─────────────────────────────────────────────
-//  components/ui/AIStrip.tsx
-// ─────────────────────────────────────────────
-import { ReactNode } from 'react';
-
-export function AIStrip({ children }: {children: ReactNode;}) {
-  return (
-    <div className="flex gap-2.5 items-start p-3 rounded-lg bg-[rgba(139,127,245,0.06)] border border-[rgba(139,127,245,0.2)] mb-4">
-      <div className="w-6 h-6 rounded-md bg-[var(--accent)] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-        ✦
-      </div>
-      <div className="text-[11px] text-[var(--text2)] leading-[1.55] flex-1">{children}</div>
-    </div>);
-
+/* ── Timeline item ── */
+interface TimelineItem {
+  date: string;
+  label: string;
+  status: 'done' | 'active' | 'upcoming';
+  description?: string;
+  isHardDeadline?: boolean;
 }
 
-// ─────────────────────────────────────────────
-//  components/ui/TimelineItem.tsx
-// ─────────────────────────────────────────────
-import type { TimelineItem as TI } from '../../types';
-
-export function TimelineItemRow({ item }: {item: TI;}) {
+export function TimelineItemRow({ item }: { item: TimelineItem }) {
+  const colors = { done: 'var(--teal)', active: 'var(--accent)', upcoming: 'var(--text3)' };
+  const bgColors = { done: 'rgba(13,148,136,0.08)', active: 'rgba(109,94,212,0.08)', upcoming: 'transparent' };
   return (
-    <div className="flex gap-3 py-2.5 border-b border-[var(--border)] last:border-0">
-      <div
-        className="w-2 h-2 rounded-full mt-1 flex-shrink-0"
-        style={{ background: item.color }} />
-      
-      <div className="flex-1">
-        <div className="text-[12px] font-medium text-[var(--text)]">{item.title}</div>
-        <div className="text-[9px] font-mono text-[var(--text3)] mt-0.5">{item.date}</div>
-        <div className="text-[11px] text-[var(--text3)] mt-1 leading-[1.4]">{item.description}</div>
+    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 10, padding: '8px 10px', background: bgColors[item.status], borderRadius: 'var(--radius-sm)' }}>
+      <div style={{ width: 8, height: 8, borderRadius: '50%', background: colors[item.status], flexShrink: 0, marginTop: 5 }} />
+      <div style={{ flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: colors[item.status], fontWeight: 600 }}>{item.date}</span>
+          <span style={{ fontSize: 13.5, color: 'var(--text)', fontWeight: item.status === 'active' ? 600 : 400 }}>{item.label}</span>
+          {item.isHardDeadline && <span className="badge badge-gap" style={{ fontSize: 10 }}>Hard deadline</span>}
+        </div>
+        {item.description && <p style={{ fontSize: 12, color: 'var(--text3)', marginTop: 3, lineHeight: 1.4 }}>{item.description}</p>}
       </div>
-    </div>);
-
+    </div>
+  );
 }
