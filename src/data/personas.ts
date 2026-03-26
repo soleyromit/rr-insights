@@ -145,6 +145,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v3.2',
+    date: 'Mar 25, 2026',
+    summary: 'Exam Management deep product intelligence. 7-tab ExamManagementView: Insights, Service Blueprint, Feature Map, Analytics, Accessibility (admin→student map, accommodation profiles), Competitive (12-feature parity matrix vs ExamSoft/Blackboard/Canvas/D2L), Design Decisions. 44 insights. Automated GitHub push via claude-inbox workflow.',
+    insightCount: 44,
+    sessionsAdded: 3,
+    changedFiles: ['ExamManagementView.tsx (7 tabs)', 'data/insights.ts (44 insights)', 'data/version.ts (new)', '.github/workflows/claude-sync.yml (fixed)', 'sync.sh', 'watch-sync.sh', 'CLAUDE.md'],
+  },
+  {
     version: 'v3.1',
     date: 'Mar 23, 2026',
     summary: 'Persona-mapped Granola intelligence. Named voices: Ed Razenbach (Emory & Henry), Dr. Vicky Mody (Touro), Dr. T (Touro PA), Harsha (FaaS internal), Wilson (Exxat Sales), MedStar team. Full whiteboard product shell — 8 tabs per product covering every Photo 4 item.',
