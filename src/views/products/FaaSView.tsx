@@ -11,13 +11,14 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'faas';
-type TabId = 'insights' | 'control-types' | 'ux-gaps' | 'q2-scope' | 'stories' | 'decisions';
+type TabId = 'insights' | 'control-types' | 'ux-gaps' | 'q2-scope' | 'architecture' | 'stories' | 'decisions';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'control-types', label: 'Control types' },
   { id: 'ux-gaps', label: 'UX gaps' },
   { id: 'q2-scope', label: 'Q2 scope' },
   { id: 'stories', label: 'UX stories' },
+  { id: 'architecture', label: 'Architecture' },
   { id: 'decisions', label: 'Design decisions' },
 ];
 
@@ -315,6 +316,89 @@ export function FaaSView() {
                 </div>
               </Card>
             ))}
+          </div>
+        )}
+
+        {/* ── ARCHITECTURE TAB ── */}
+        {tab === 'architecture' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <AIStrip text="FaaS architecture from Arun/VB strategy session (Mar 3), India team (Mar 5), Harsha compliance interview (Mar 20), Day 5 migration plan (Mar 6). FaaS is an internal embedded component library — never standalone." />
+            <Card>
+              <CardTitle sub="Arun: cannot fundamentally rewrite backend — UI can be completely redesigned">Core constraint</CardTitle>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {[
+                  { label: 'What can change', items: ['Complete UI redesign', 'New React components', 'AI-powered features on top of existing API', 'New workflow engine (Q2–Q3)', 'New reporting layer per question type'], color: '#10B981' },
+                  { label: 'What cannot change (without Anand sign-off)', items: ['Core form data model', 'Existing form template structures', 'Module API contracts', 'Client-facing form instances (80k+ patient logs)'], color: '#EF4444' },
+                ].map((col, i) => (
+                  <div key={i} style={{ padding: '12px 14px', borderRadius: 10, background: i === 0 ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)', border: `1px solid ${i === 0 ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: col.color, marginBottom: 8 }}>{col.label}</div>
+                    {col.items.map((item, j) => (
+                      <div key={j} style={{ display: 'flex', gap: 6, fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                        <span style={{ color: col.color, flexShrink: 0 }}>{i === 0 ? '✓' : '×'}</span>{item}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </Card>
+            <Card>
+              <CardTitle sub="FaaS serves 5 modules — each adds its own layer">Embedded module architecture</CardTitle>
+              {[
+                { module: 'Patient Log (Prism)', adds: 'ICD/CPT lookups, specialized visualizations, procedure tracking triggers', fastProvides: 'Form rendering, validation, section logic' },
+                { module: 'Evaluations (Prism)', adds: 'Competency mapping, approval workflows, DCE review queue', fastProvides: 'Rating scales, rubric controls, scoring formulas' },
+                { module: 'Surveys', adds: 'Distribution lists, response analytics, scheduling', fastProvides: 'Question types, conditional logic, basic reporting' },
+                { module: 'Site Assessment', adds: 'Site profile integration, accreditation PDF export', fastProvides: 'Form controls, e-signature, document upload' },
+                { module: 'Compliance (CAS)', adds: 'Expiration date intelligence, approval queue, audit trail', fastProvides: 'Form fields, tag mapping, document collection' },
+              ].map((row, i) => (
+                <div key={i} style={{ padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <Badge variant="default">{row.module}</Badge>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 12 }}>
+                    <div><span style={{ color: 'var(--text-muted)' }}>Module adds: </span><span style={{ color: 'var(--text-secondary)' }}>{row.adds}</span></div>
+                    <div><span style={{ color: 'var(--text-muted)' }}>FaaS provides: </span><span style={{ color: 'var(--text-secondary)' }}>{row.fastProvides}</span></div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+            <Card>
+              <CardTitle sub="Harsha compliance interview (Mar 20) — three-system fragmentation">Compliance system pain: 3 systems, no cohesion</CardTitle>
+              {[
+                { system: 'ExactOne', role: 'Manages placement data', pain: 'Source of truth for placement records but isolated from compliance logic' },
+                { system: 'CAS (Compliance as a Service)', role: 'Stores requirement setup and response data', pain: 'Tags manually entered by support team — spelling mistakes break business logic. No dropdown validation. No preview.' },
+                { system: 'FaaS (FAST)', role: 'Form rendering and data capture', pain: 'Different UI styles from ExactOne. Cognitive overload from multiple borders, inconsistent fonts. Should be "headless application with consistent frontend."' },
+              ].map((row, i) => (
+                <div key={i} style={{ padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <Badge variant={i === 1 ? 'error' : 'default'}>{row.system}</Badge>
+                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{row.role}</span>
+                  </div>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{row.pain}</p>
+                </div>
+              ))}
+              <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>Day 5 resolution (Mar 6):</strong> Migrate to unified CAS. Centralized intelligence for expiration dates, completion validation, universal integrations. Maintain existing UI initially — backend transition first. Timeline: April compliance migration meeting.
+                </p>
+              </div>
+            </Card>
+            <Card>
+              <CardTitle sub="Day 5 migration plan (Mar 6)">Patient Log database migration</CardTitle>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[
+                  { label: 'From', val: 'Transactional: Cosmos DB · Reporting: Elastic + Mongo · 4 copies of data across systems' },
+                  { label: 'To', val: 'Single Mongo transactional DB · Unified reporting (Elastic + Mongo) · End of March target' },
+                  { label: 'Scale', val: '80,000+ forms require individual review and validation — high confidence required (nursing/PA programs)' },
+                  { label: 'Exception', val: 'CRNA transition deferred until after summer — too complex for April rollout' },
+                  { label: 'Q1–Q4 phases', val: 'Q1–Q2: Simple forms no scoring → Simple forms with scoring → Complex forms with active components. Q4: PTSCs, CITs, PT Max (custom rendering).' },
+                ].map((row, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', width: 64, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
+                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{row.val}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </div>
         )}
 
