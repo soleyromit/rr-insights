@@ -175,13 +175,11 @@ export function AskClaudeView() {
         content: m.content,
       }));
 
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      // Calls /api/claude — a Cloudflare Pages Function that proxies to Anthropic.
+      // The API key lives server-side in Cloudflare env vars; it never reaches the browser.
+      const res = await fetch('/api/claude', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-request-proxy': 'true',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1500,
@@ -200,7 +198,7 @@ export function AskClaudeView() {
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: `**Could not reach Claude.**\n\n\`\`\`\n${err}\n\`\`\`\n\nIf this is a CORS error, check that \`anthropic-dangerous-request-proxy\` is supported in this environment. If it's a 401, the API key may not be configured.`,
+        content: `**Could not reach Claude.**\n\n\`${err}\`\n\n**Setup checklist:**\n- Deployed to Cloudflare Pages (not GitHub Pages)?\n- \`ANTHROPIC_API_KEY\` set in Cloudflare Pages → Settings → Environment variables?\n- \`functions/api/claude.js\` present in the repo root?`,
         timestamp: new Date(),
       }]);
     } finally {
@@ -272,6 +270,22 @@ export function AskClaudeView() {
             )}
           </div>
         </div>
+
+        {/* Setup required banner — shows on GitHub Pages where /api/claude doesn't exist */}
+        {messages.length === 0 && (
+          <div style={{
+            padding: '10px 16px', marginBottom: 12, borderRadius: 10,
+            background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)',
+            fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6,
+          }}>
+            <strong style={{ color: '#D97706' }}>Setup required for Ask Claude:</strong>
+            {' '}Deploy to <strong>Cloudflare Pages</strong> and set{' '}
+            <code style={{ fontFamily: 'monospace', background: 'var(--surface-secondary)', padding: '1px 4px', borderRadius: 3 }}>
+              ANTHROPIC_API_KEY
+            </code>
+            {' '}as an environment variable. See <strong>DEPLOY.md</strong> in the repo. GitHub Pages does not support server-side functions.
+          </div>
+        )}
 
         {/* Suggested prompts — only when no messages */}
         {messages.length === 0 && (
