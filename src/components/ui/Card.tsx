@@ -37,11 +37,14 @@ interface MetricCardProps {
   value: string | number;
   delta?: string;
   deltaVariant?: 'up' | 'down' | 'neutral';
+  deltaPositive?: boolean;
   accent?: string;
 }
 
-export function MetricCard({ label, value, delta, deltaVariant = 'neutral', accent }: MetricCardProps) {
-  const deltaColor = deltaVariant === 'up' ? 'var(--teal)' : deltaVariant === 'down' ? 'var(--coral)' : 'var(--text3)';
+export function MetricCard({ label, value, delta, deltaVariant, deltaPositive, accent }: MetricCardProps) {
+  // Support both deltaVariant ('up'/'down'/'neutral') and deltaPositive (boolean)
+  const resolvedVariant = deltaVariant ?? (deltaPositive === true ? 'up' : deltaPositive === false ? 'down' : 'neutral');
+  const deltaColor = resolvedVariant === 'up' ? 'var(--teal)' : resolvedVariant === 'down' ? 'var(--coral)' : 'var(--text3)';
   return (
     <div className="stat-card">
       <div className="eyebrow" style={{ marginBottom: 8 }}>{label}</div>

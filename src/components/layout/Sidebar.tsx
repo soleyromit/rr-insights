@@ -1,4 +1,4 @@
-import { LayoutDashboardIcon, FileTextIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon, UsersIcon, TagIcon, MapIcon, TrendingUpIcon, PresentationIcon, LayersIcon, GitBranchIcon, BookOpenIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
+import { LayoutDashboardIcon, FileTextIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon, UsersIcon, TagIcon, MapIcon, TrendingUpIcon, PresentationIcon, LayersIcon, GitBranchIcon, BookOpenIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon, SparklesIcon } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
 import { VERSION_HISTORY } from '../../data/personas';
 import type { ProductId } from '../../types';
@@ -72,6 +72,7 @@ export function Sidebar({ activeView, onNav }: Props) {
         <Section label="Delivery" />
         <NavItem id="portfolio" label="Staff signal" icon={TrendingUpIcon} active={activeView === 'portfolio'} onNav={onNav} />
         <NavItem id="stakeholder" label="Stakeholder deck" icon={PresentationIcon} active={activeView === 'stakeholder'} onNav={onNav} />
+        <NavItem id="ask-claude" label="Ask Claude" icon={SparklesIcon} active={activeView === 'ask-claude'} onNav={onNav} badge="AI" badgeColor="#E31C79" />
         <NavItem id="changelog" label="Changelog" icon={BookOpenIcon} active={activeView === 'changelog'} onNav={onNav} badge={v.version} badgeColor="#6d5ed4" />
       </div>
       <div className="p-3 border-t" style={{ borderColor: 'var(--border)' }}>

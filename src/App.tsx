@@ -15,6 +15,7 @@ import { ThemesView } from './views/ThemesView';
 import { RoadmapView } from './views/RoadmapView';
 import { PortfolioView } from './views/PortfolioView';
 import { StakeholderView } from './views/StakeholderView';
+import { AskClaudeView } from './views/AskClaudeView';
 import type { ProductId } from './types';
 
 const PRODUCT_IDS = new Set<ProductId>(['exam-management','faas','course-eval','skills-checklist','learning-contracts']);
@@ -37,6 +38,7 @@ export function App() {
     if (activeView === 'roadmap')          return <RoadmapView />;
     if (activeView === 'portfolio')        return <PortfolioView />;
     if (activeView === 'stakeholder')      return <StakeholderView />;
+    if (activeView === 'ask-claude')       return <AskClaudeView />;
     // Product deep-dives — each now has its own dedicated view
     if (activeView === 'exam-management')  return <ExamManagementView />;
     if (activeView === 'faas')             return <FaaSView />;

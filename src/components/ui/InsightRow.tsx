@@ -75,11 +75,11 @@ export function InsightRow({ insight, showSoWhat = false }: InsightRowProps) {
 }
 
 /* ── AIStrip ── */
-export function AIStrip({ children }: { children: React.ReactNode }) {
+export function AIStrip({ children, text }: { children?: React.ReactNode; text?: string }) {
   return (
     <div className="ai-strip">
       <span style={{ marginRight: 8, fontSize: 14 }}>✦</span>
-      {children}
+      {text ?? children}
     </div>
   );
 }
