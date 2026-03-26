@@ -76,6 +76,15 @@ const DESIGN_GAPS = [
   { area: 'Accreditation-aligned question bank absent', severity: 'Medium', why: 'CAPTE, ACOTE, and CCNE require documented evidence that programs collect and act on student feedback. Pre-built question sets mapped to accreditation requirements would be a significant differentiator over all four competitors.', fix: 'Exxat provides a base question bank mapped to CAPTE/ACOTE/CCNE. Program Directors can customize but must keep the accreditation-mapped core.', src: 'Open Questions doc + post_course_eval_primer_v2' },
 ];
 
+
+// Transcript gaps from PCE Context session (bde86866 Mar 24) + Monil session
+const PCE_TRANSCRIPT_GAPS = [
+  { src:'Vishaka (bde86866 Mar 24)', gap:'PCE lives INSIDE the surveys module as a premium tile — not a standalone product. Entry points: (1) surveys module tile (admin), (2) inside each course (faculty viewing their own results). Two entry points, one data layer.', severity:'High' },
+  { src:'David/Marquette (bde86866 Mar 24)', gap:'Real institutional pain: Marquette forces all programs to use university-level didactic questions for clinical placements too. Clinical programs have no relevant post-rotation questions. Need: separate question sets for didactic vs clinical.', severity:'High' },
+  { src:'Vishaka (bde86866 Mar 24)', gap:'PCE prerequisite: course offerings must exist in Prism for auto-population of student/faculty distribution lists. Programs without Prism course offerings need a CSV upload fallback — but this should be Phase 2.', severity:'Medium' },
+  { src:'David (bde86866 Mar 24)', gap:'Faculty persona needs aggregate view across all their courses — not per-course only. Year-over-year comparison for same course, cross-course rating view. This requires a faculty dashboard, not just per-course tiles.', severity:'High' },
+];
+
 export function CourseEvalView() {
   const [tab, setTab] = useState<TabId>('overview');
   const criticalGaps = DESIGN_GAPS.filter(g => g.severity === 'Critical').length;

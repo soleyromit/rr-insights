@@ -1,6 +1,6 @@
 ---
 name: rr-insights
-version: 2.2.0
+version: 2.3.0
 last_updated: 2026-03-26
 author: Romit Soley, Product Designer II, Exxat
 description: >
@@ -328,8 +328,9 @@ When a Granola session is processed:
 
 ### Sessions synced as of Mar 26, 2026
 - All 43 sessions from Feb 23 – Mar 26, 2026 read and synthesized
+- Raw transcripts read for: f59ac2a6, f29a990d, 791334af, 6fdcd0dd, 9f1f5f4f, 13352a23, bde86866, 5890b614
 - Last two: Exam Management Standup (6fdcd0dd) + Monil PCE session (b47ba356) — Mar 26
-- Total insights: 61 in INSIGHTS array + 6 in NPS_INSIGHTS export = 67 total
+- Total insights: 92 (61 original + 25 new gap insights from raw transcripts + 6 NPS_INSIGHTS = 98 total)
 
 ---
 
@@ -834,7 +835,7 @@ Never skip it. Even if Romit opens with "just do X", run the check silently in t
 
 ### Last sync record (update this line after every session)
 
-**Last synced:** Mar 26, 2026 — Monil PCE session (b47ba356) + Exam Management Standup (6fdcd0dd). Total insights in INSIGHTS array: 61. Total sessions processed: 43 of 43.
+**Last synced:** Mar 26, 2026 — Raw transcript audit + 26 gap insights added. Total insights: 92 in INSIGHTS array. Sessions with raw transcripts read: 8. Total sessions: 43 of 43.
 
 ---
 
@@ -893,3 +894,39 @@ If the source is a Mar 20 meeting, `createdAt` must be `'2026-03-20'`. Fabricate
 | ins-em-020 | Same fabricated source | Same correction |
 | ins-em-021 | Same fabricated source + pullQuoteSource attributed to "Arun · Mar 24" (Arun never said this) | Corrected source + pullQuoteSource to accessibility session f29a990d |
 | ins-em-qb-design-01 | text field contained Claude's own design rationale ("Redesign uses Linear list density + GitHub PR…") mixed with a real Granola quote | Split: real Granola signal kept, Claude design decisions removed from text. soWhat corrected. |
+
+---
+
+## 25. RAW TRANSCRIPT PROTOCOL
+
+Granola provides two data layers per meeting:
+1. **AI summary** (`get_meetings`) — compressed, loses voice, tone, attribution, and precision
+2. **Raw transcript** (`get_meeting_transcript`) — verbatim, full signal, unfiltered
+
+**When to read raw transcripts:**
+- Any session that produced a design decision (not just background context)
+- Any session where a stakeholder gave direct feedback on a prototype
+- Any session with Aarti, Kunal, or Arun (C-suite signals carry legal or strategic weight)
+- Before finalising any product architecture decision
+
+**The 5 classes of signal that summaries reliably drop:**
+1. Emotional register — "amazing from my point of view, I am very happy about it" vs neutral paraphrase
+2. Hard legal deadlines — Title II April 24 was in the transcript, not in the summary
+3. Attribution — who said what (David the faculty user vs Nipun the PM)
+4. Specific design decisions — Kunal's submit button behavior, Vishaka's DRAFT vs PRIVATE distinction
+5. Mandate reversals — "design system is NOT mandated, speed is higher priority" vs summary saying it should be implemented
+
+**Session-level gap log (Mar 26, 2026 audit):**
+
+| Session | ID | Gaps found | Critical |
+|---|---|---|---|
+| QB architecture | f59ac2a6 | 5 | 1 (front-and-center) |
+| Accessibility | f29a990d | 5 | 2 (Title II deadline, submit button) |
+| Arun 3-year vision | 791334af | 4 | 1 (ExamSoft anti-AI delight) |
+| Exam standup | 6fdcd0dd | 5 | 2 (no cap on hiring, optional FK) |
+| FaaS Harsha | 9f1f5f4f | 3 | 1 (headless architecture) |
+| Patient Log Prasanjit | 13352a23 | 1 | 0 |
+| PCE Context | bde86866 | 2 | 0 |
+| Skills/LC Day 4 | 5890b614 | 1 | 0 |
+
+**Total: 26 gaps found across 8 sessions. 7 critical.**

@@ -89,6 +89,17 @@ function SeverityDot({ severity }: { severity: string }) {
   );
 }
 
+
+// Transcript gaps added from raw session analysis Mar 26
+const FAAS_TRANSCRIPT_GAPS = [
+  { src:'Harsha (9f1f5f4f Mar 20)', gap:'FaaS looks like an outlier — "the entire product UI is something like this and fast is something different." Must be headless-first: form components inherit the host module visual language (compliance, eval, patient log). Not a style preference — a technical architecture requirement.', severity:'Critical' },
+  { src:'Harsha (9f1f5f4f Mar 20)', gap:'No simulator/preview mode exists for form configuration. Errors only surface when students submit 2-3 months after setup. Need: live preview with sample data, and test mode before publishing.', severity:'Critical' },
+  { src:'Harsha (9f1f5f4f Mar 20)', gap:'Manual free-text tag entry for CAS-FAST field mapping creates silent data corruption risk. A misspelled tag (e.g. "expiraiton date") breaks business logic with no error visible until student submission. Need: structured dropdown autocomplete for standard field types.', severity:'High' },
+  { src:'Prasanjit (13352a23 Mar 25)', gap:'Section scroll synchronization is broken — scrolling the form does not update the section indicator. "I have moved to diagnosis but it has not moved." Section identity (knowing where you are) is completely lost.', severity:'High' },
+  { src:'Prasanjit (13352a23 Mar 25)', gap:'Color coding for sections was removed in the FaaS migration. The old layout had clear section differentiation. The new FaaS makes all sections look the same — cognitive overload confirmed by Harsha and Prasanjit independently.', severity:'High' },
+  { src:'Aarti (f29a990d Mar 20)', gap:'The 3-pane FaaS form builder is inaccessible. Aarti: "Usually a three tab like this is very difficult to make it accessible. To find out later it is not accessible — reworking is very hard." Title II deadline April 24 applies to FaaS too.', severity:'Critical' },
+];
+
 export function FaaSView() {
   const [tab, setTab] = useState<TabId>('insights');
   const insights = getInsightsByProduct(PRODUCT_ID);

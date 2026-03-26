@@ -123,6 +123,14 @@ const architectureDecisions = [
   },
 ];
 
+
+// Transcript gap from Day 4 Marriott session (5890b614 Mar 5)
+const SC_TRANSCRIPT_GAPS = [
+  { src:'Day 4 Marriott (5890b614 Mar 5)', gap:'Skills are program-scoped goals, NOT placement-scoped. A student can satisfy any skill in any placement. Current system ties skills to individual placements — forcing students to track completion in external spreadsheets. Fix: program-level aggregate view spanning all placements.', severity:'Critical' },
+  { src:'Day 4 Marriott (5890b614 Mar 5)', gap:'PA programs use a "passport" model — procedure-based checklist, not competency-based. Lower-degree programs (PTA, lab assistant) focus on did-you-do-it. Higher-degree programs (PA, OT) focus on confidence and competency. Skills Checklist must support both models.', severity:'High' },
+  { src:'Day 4 Marriott (5890b614 Mar 5)', gap:'Students trigger their own evaluation when they feel ready — faculty/preceptor does NOT initiate. The student decides "I am ready to be evaluated on this skill" and sends the form. This is fundamentally different from faculty-initiated evaluation.', severity:'High' },
+];
+
 export function SkillsChecklistView() {
   const [tab, setTab] = useState<TabId>('insights');
   const insights = getInsightsByProduct(PRODUCT_ID);
