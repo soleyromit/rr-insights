@@ -86,7 +86,7 @@ export function OverviewView({ onNav }: OverviewViewProps) {
         <div>
           <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Platform Overview</h1>
           <p className="text-[11px] text-[var(--text3)]">
-            5 products · 4 personas · 43 Granola sessions synthesized · {INSIGHTS.length} insights
+            5 products · 4 personas · 43 sessions · {INSIGHTS.length} insights · SKILL.md v5.0
           </p>
         </div>
         {/* Live build timestamp — auto-updates on every GitHub push */}
@@ -121,16 +121,13 @@ export function OverviewView({ onNav }: OverviewViewProps) {
 
       {/* AI strip */}
       <AIStrip>
-        <strong className="text-[var(--accent)] font-medium">6 platform-level signals detected</strong> from 39 Granola
-        meetings. AI opportunity layer confirmed across all 5 products. Multi-campus fragmentation is Touro's #1 pain.
-        Skills standalone entity is the Q2–Q4 architectural unlock. Course Eval is a strategic recovery play after
-        Blue/Canvas displacement.
+        <strong className="text-[var(--accent)] font-medium">Intelligence agency v5.0 — 108 insights, 43 sessions, 15 views.</strong>{" "}Platform-level signals: AI everywhere on admin side (all 5 products), external spreadsheet dependency (Skills/FaaS/Exam), submit-only validation anti-pattern (FaaS), Monster Grid replacement is the north star. April 17 milestone: student + faculty + admin entry points. ADA Title II: April 24 hard deadline.
       </AIStrip>
 
       {/* Metrics */}
       <div className="grid grid-cols-4 gap-2.5 mb-5">
-        <MetricCard label="Insights tagged" value={totalInsights} delta="+38 from Granola sync" deltaVariant="up" />
-        <MetricCard label="Platform signals" value={platformSignals} delta="3 new this week" deltaVariant="up" />
+        <MetricCard label="Insights tagged" value={totalInsights} delta="108 total · +16 this session" deltaVariant="up" />
+        <MetricCard label="Platform signals" value={platformSignals} delta="7 platform-level signals" deltaVariant="up" />
         <MetricCard label="Critical gaps" value={totalCritical} delta="Across 5 products" />
         <MetricCard label="Staff signal score" value="87" delta="+4 this month" deltaVariant="up" />
       </div>
