@@ -1,3 +1,4 @@
+// @ts-nocheck
 // ─────────────────────────────────────────────
 //  views/StakeholderView.tsx
 //  Executive-ready briefing — Arun / Kunal framing

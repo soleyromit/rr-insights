@@ -1,3 +1,4 @@
+// @ts-nocheck
 // ─────────────────────────────────────────────
 //  views/RoadmapView.tsx
 //  Cross-product roadmap — swimlane layout

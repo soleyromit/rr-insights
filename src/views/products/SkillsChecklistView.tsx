@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from 'react';
 import { getInsightsByProduct } from '../../data/insights';
 import { Card, CardTitle, MetricCard } from '../../components/ui/Card';

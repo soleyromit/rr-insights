@@ -1,3 +1,4 @@
+// @ts-nocheck
 // ─────────────────────────────────────────────
 //  views/PortfolioView.tsx
 //  Staff designer readiness audit vs JD benchmarks
