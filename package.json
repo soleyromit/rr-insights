@@ -14,7 +14,9 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@highcharts/react": "^4.2.1",
+    "@observablehq/plot": "^0.6.17",
     "@vitejs/plugin-react": "latest",
+    "d3": "^7.9.0",
     "lucide-react": "0.522.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
