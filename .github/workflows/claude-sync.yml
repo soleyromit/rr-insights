@@ -3,28 +3,46 @@ on:
   push:
     paths:
       - 'claude-inbox/**'
+
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/create-github-app-token@v1
-        id: token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
-          token: ${{ steps.token.outputs.token }}
-      - name: Apply inbox updates
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Apply inbox updates to src/
         run: |
+          set -e
+          CHANGED=0
           for f in claude-inbox/*.ts claude-inbox/*.tsx; do
             [ -f "$f" ] || continue
-            dest=$(cat "$f" | head -1 | sed 's|// dest: ||')
+            # First line is: // dest: src/path/to/file.tsx
+            dest=$(head -1 "$f" | sed 's|// dest: ||')
+            if [ -z "$dest" ] || [ "$dest" = "$(head -1 "$f")" ]; then
+              echo "Skipping $f — no dest header"
+              continue
+            fi
+            mkdir -p "$(dirname "$dest")"
             tail -n +2 "$f" > "$dest"
-            echo "Wrote $dest"
+            echo "Wrote $f -> $dest"
+            CHANGED=1
           done
-          git config user.email "claude@rr-insights"
-          git config user.name "Claude Sync"
-          git add src/
-          git commit -m "data: Claude auto-sync" || echo "nothing to commit"
-          git push
+          if [ "$CHANGED" = "1" ]; then
+            git config user.email "soleyromit@gmail.com"
+            git config user.name "Romit Soley"
+            git add src/
+            git commit -m "data: Claude auto-sync $(date +%Y-%m-%d)"
+            git push
+            echo "Pushed src/ changes"
+          else
+            echo "No valid inbox files found"
+          fi
+
+      - name: Trigger deploy
+        if: success()
+        run: echo "Deploy workflow will trigger automatically on the push above"
