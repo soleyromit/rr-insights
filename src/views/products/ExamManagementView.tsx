@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'exam-management';
-type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions';
+type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'blueprint', label: 'Service Blueprint' },
@@ -22,6 +22,9 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'accessibility', label: 'Accessibility' },
   { id: 'competitive', label: 'Competitive' },
   { id: 'decisions', label: 'Design Decisions' },
+  { id: 'gaps', label: 'Granola Gaps' },
+  { id: 'stories', label: 'UX Stories' },
+  { id: 'pa-dashboard', label: 'PA Dashboard' },
 ];
 
 const scoreDistData = [
@@ -727,7 +730,194 @@ export function ExamManagementView() {
               src="Q-Bank multi-campus Mar 12, Platform strategy Mar 4" />
           </div>
         )}
+
+        {/* ─── GRANOLA GAPS TAB ─── */}
+        {tab === 'gaps' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <AIStrip text="Verbatim cross-check: Vishaka (7dbabdb5), David (f29a990d), Ed (ca5a709c), Touro ExamSoft demo (f5d66e4c), Nipun standup (689bdc25). Every gap is grounded in a direct quote." />
+            <Card>
+              <CardTitle sub="Entirely absent from Magic Patterns — P0">Student exam-taking view (Epic 1)</CardTitle>
+              {[
+                { who: 'David + Romit (f29a990d)', gap: 'Full student exam view — navigator, flag 2×2, keyboard shortcuts, cross-out, submit logic, section screens, pre-exam tutorial', quote: '"Student wants to visually cross out answers... crossed-out options remain selectable"', p: 'P0' },
+                { who: 'Kunal (f29a990d)', gap: 'Flag is a 2×2 attribute — answered/unanswered × flagged/not-flagged. Not a third bucket.', quote: '"Flag is an attribute of both buckets... it is a 2x2 matrix"', p: 'P0' },
+                { who: 'Aarti + Kunal (f29a990d)', gap: 'Submit button always visible but faded. Prominent only at last question OR last 5-10 min. Never "Exit exam."', quote: '"Do not hide it. Keep it visible but faded until conditions are met"', p: 'P0' },
+                { who: 'Aarti (f29a990d)', gap: 'Section entry screen: shows section title + question count before entering. Faculty configures lock (GRE model) or free nav.', quote: '"You enter a section... screen says section one, this is the topic..."', p: 'P0' },
+                { who: 'Romit (f29a990d)', gap: 'Pre-exam tutorial: one sample question + audio check before timer starts.', quote: '"We can give a sample of one question... then you start the exam with the timer"', p: 'P2' },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: '12px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.who}</span>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
+                  <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
+                </div>
+              ))}
+            </Card>
+            <Card>
+              <CardTitle sub="Vishaka's proposed differentiator vs Influx — P0">PA Student Dashboard (Epic 5)</CardTitle>
+              {[
+                { who: 'Vishaka (7dbabdb5)', gap: 'PA dashboard: PACRAT 1+2, EOR by all 7 specialties, OSCE, EOC, PANCE readiness predictor (75+ = good passing chance), cohort vs national.', quote: '"Even Influx is not doing this level of report... this would be our differentiator"', p: 'P0' },
+                { who: 'Vishaka (7dbabdb5)', gap: 'Bulk CSV upload for PAEA + ExamSoft data. 5-minute manual step acceptable initially. Match by Student ID.', quote: '"Give them a way to import a lot of data from PAEA or ExamSoft in the form of bulk CSV upload"', p: 'P1' },
+                { who: 'Vishaka (7dbabdb5)', gap: 'Cohort dashboard alongside individual view. Cohort vs cohort by year + national averages.', quote: '"We also want to create a dashboard at a cohort level"', p: 'P2' },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: '12px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.who}</span>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
+                  <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
+                </div>
+              ))}
+            </Card>
+            <Card>
+              <CardTitle sub="Ed Razenbach specifics — P1">Ed Razenbach gaps (ca5a709c)</CardTitle>
+              {[
+                { gap: 'Z-score display alongside raw scores. National mean + SD from PAEA per exam.', quote: "I use z scores rather than raw scores because a raw 412 in EM is not the same as a 382 in women's health", p: 'P1' },
+                { gap: '"Assessments" label everywhere → "Exams". Both Ed and Touro coordinator said this independently.', quote: '"The word assessment kinda throws everything off. Write down Exams."', p: 'P0' },
+                { gap: 'Remediation exam workflow post-EOR fail: specialty-specific, open book, untimed, sequestered questions.', quote: '"I have exams set aside just for remediation purposes"', p: 'P1' },
+                { gap: 'OSCE rubric as question type 10. Critical task marking. Multi-rubric per encounter.', quote: '"100 scenarios across specialties. Done in ExamSoft with rubric functionality."', p: 'P1' },
+                { gap: "Bloom's 1-3 only mode. PAEA uses 1-3; ExamSoft uses 1-5. Ed prefers 1-3.", quote: '"I like the Level 1-3 rather than 1-5"', p: 'P2' },
+                { gap: 'Audit trail: who accessed questions, when, what was changed. Real-time.', quote: '"Who is in there, what was touched — a detailed audit analysis"', p: 'P2' },
+                { gap: 'Multi-campus question sharing without print/email/re-upload.', quote: '"We literally had to print out the questions, send them over. It was a nightmare."', p: 'P2' },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: '12px 0', borderBottom: i < 6 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
+                  <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
+                </div>
+              ))}
+            </Card>
+            <Card>
+              <CardTitle sub="Present in Magic Patterns and confirmed correct">What is built correctly</CardTitle>
+              {['Cross-out feature (David) — strike options without removing selectability. Built.',
+                'Text highlighting in passage questions (David). Built.',
+                'Calculator per question (David). Built.',
+                'Proxy submit for disconnected student (Vishaka standup). Built.',
+                'Accessibility publish gate — alt text blocks publish, TTS/STT/zoom/OSK/focus mode. Built.',
+                'Post-exam: 5 curving options from ExamSoft demos. Built.',
+                'Live monitoring with per-student progress, time remaining, accommodation multiplier. Built.',
+                'Role switcher: Dept Head, Faculty, Contributor, Reviewer, Outcome Director, Inst Admin. Built.',
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 0', borderBottom: i < 7 ? '1px solid var(--border)' : 'none' }}>
+                  <span style={{ color: '#10B981', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>✓</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{item}</span>
+                </div>
+              ))}
+            </Card>
+          </div>
+        )}
+
+        {/* ─── UX STORIES TAB ─── */}
+        {tab === 'stories' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <AIStrip text="17 user stories across 9 epics. All grounded in verbatim quotes from Vishaka, David, Ed, Aarti, Kunal, Nipun. Each story maps to a specific Magic Patterns component." />
+            {[
+              { epic: 'Epic 1 — Student exam-taking view (P0)', stories: [
+                { id: 'US-01', title: 'Pre-exam setup + technical check', who: 'Student', what: 'Complete a technical check and one sample question before timer starts', why: 'Need to understand controls before time pressure begins', src: 'Romit (f29a990d)', mp: 'PreExamScreen.tsx' },
+                { id: 'US-02', title: 'Keyboard navigation + one question at a time', who: 'Student', what: 'Move between questions using keyboard shortcuts (→/Enter/←/F/A-D)', why: 'Work at speed without hunting UI elements', src: 'f29a990d — keyboard shortcut list', mp: 'StudentExamApp.tsx' },
+                { id: 'US-03', title: 'Flag navigator as 2×2 attribute', who: 'Student', what: 'Flagged questions surfaced at top of navigator, not as a third bucket', why: 'Flag is an attribute of answered AND unanswered — Kunal explicit', src: 'Kunal (f29a990d)', mp: 'QuestionNavigator.tsx' },
+                { id: 'US-04', title: 'Cross-out answer options', who: 'Student', what: 'Visually strike answer options without removing selectability', why: 'Clinical reasoning requires elimination strategy while preserving choices', src: 'David (f29a990d)', mp: 'QuestionCard.tsx' },
+                { id: 'US-05', title: 'Text highlighting in passages', who: 'Student', what: 'Highlight key phrases in passage text, persists across navigation', why: 'Medical clinical problem solving uses evidence marking', src: 'David (f29a990d)', mp: 'QuestionRenderers.tsx' },
+                { id: 'US-06', title: 'Section entry screen', who: 'Student', what: 'See section title + question count before entering each section', why: 'Informed pacing decisions + faculty-configured lock behavior', src: 'Aarti (f29a990d)', mp: 'SectionEntryScreen.tsx' },
+              ]},
+              { epic: 'Epic 2 — Label rename (P0)', stories: [
+                { id: 'US-07', title: '"Assessments" → "Exams" everywhere', who: 'Faculty / Admin', what: 'All nav items, breadcrumbs, buttons say "Exams" not "Assessments"', why: 'PAEA and clinical education use "Exams" — confirmed by Ed and Touro coordinator independently', src: 'Ed (ca5a709c) + Touro coordinator (f5d66e4c)', mp: 'Sidebar.tsx, PhaseShell.tsx, BuildPhase.tsx' },
+              ]},
+              { epic: 'Epic 3 — Z-score + Remediation (P1)', stories: [
+                { id: 'US-08', title: 'Z-score display in EOR analytics', who: 'PA Program Director', what: 'See z-scores alongside raw EOR scores with national mean + SD', why: 'Raw scores across specialties are not comparable — normalization required', src: 'Ed (ca5a709c)', mp: 'PostExamPhase.tsx — EOR + Z-scores tab' },
+                { id: 'US-09', title: 'Remediation exam assignment workflow', who: 'DCE / Faculty', what: 'Assign specialty-specific remediation exam to students below EOR threshold', why: '"I have exams set aside just for remediation purposes" — open book, untimed, sequestered', src: 'Ed (ca5a709c)', mp: 'PostExamPhase.tsx — remediation drawer' },
+              ]},
+              { epic: 'Epic 4 — OSCE Rubric (P1)', stories: [
+                { id: 'US-10', title: 'OSCE Rubric as 10th question type', who: 'PA Faculty', what: 'Build OSCE rubrics with critical task marking, multi-rubric per encounter', why: 'ExamSoft rubric functionality is a retention anchor. 100 scenarios at Emory & Henry.', src: 'Ed (ca5a709c)', mp: 'QuestionEditor.tsx — OSCE Rubric type' },
+              ]},
+              { epic: 'Epic 5 — PA Dashboard + CSV import (P0/P1)', stories: [
+                { id: 'US-11', title: 'PA Student Performance Dashboard', who: 'PA Program Director / DCE', what: 'Cohort + individual dashboard with PACRAT, EOR, OSCE, EOC, PANCE predictor', why: 'Influx does not do this level. Vishaka: "This would be our differentiator."', src: 'Vishaka (7dbabdb5)', mp: 'PADashboard.tsx' },
+                { id: 'US-12', title: 'Bulk CSV import for PAEA + ExamSoft data', who: 'Admin / DCE', what: '5-step CSV import wizard: source → upload → map columns → preview → confirm', why: 'PAEA data cannot be auto-integrated yet. 5-minute manual step acceptable initially.', src: 'Vishaka (7dbabdb5)', mp: 'PADashboard.tsx — import view' },
+              ]},
+              { epic: "Epic 6 — Bloom's 1-3 restriction (P2)", stories: [
+                { id: 'US-13', title: "Bloom's 1-3 only mode for PA programs", who: 'PA Faculty', what: "Program-level setting restricts Bloom's picker to levels 1-3", why: 'PAEA uses 1-3. Ed: "I like the Level 1-3 rather than 1-5"', src: 'Ed (ca5a709c)', mp: "QuestionEditor.tsx — Bloom's toggle" },
+              ]},
+              { epic: 'Epic 7 — Negative discrimination flagging (P2)', stories: [
+                { id: 'US-14', title: 'Negative point biserial with clinical explanation', who: 'Faculty', what: 'Negative discrimination values flagged red with explanation: "weak students outperformed strong"', why: 'Touro coordinator: "A negative sometimes means students who knew less got it right"', src: 'f5d66e4c (Touro ExamSoft demo)', mp: 'PostExamPhase.tsx — item analytics table' },
+              ]},
+              { epic: 'Epic 8 — Multi-campus sharing (P2)', stories: [
+                { id: 'US-15', title: 'Cross-campus question sharing', who: 'Faculty', what: 'Share questions to another campus without manual export/import/re-upload', why: '"We literally had to print out the questions, send them over. It was a nightmare."', src: 'Touro coordinator (f5d66e4c)', mp: 'QuestionBankBrowser.tsx — Share action' },
+              ]},
+              { epic: 'Epic 9 — Audit trail (P2)', stories: [
+                { id: 'US-16', title: 'Question bank audit trail', who: 'Dept Head / Inst Admin', what: 'Full log of who accessed questions, when, what action. Exam-window accesses flagged.', why: '"Who is in there, what was touched — a detailed audit analysis" — Ed + Dr. T (Touro)', src: 'Ed (ca5a709c) + Dr. T (f5d66e4c)', mp: 'AuditTrail.tsx' },
+              ]},
+            ].map((epic, ei) => (
+              <Card key={ei}>
+                <CardTitle sub={`${epic.stories.length} stor${epic.stories.length === 1 ? 'y' : 'ies'}`}>{epic.epic}</CardTitle>
+                {epic.stories.map((s, si) => (
+                  <div key={s.id} style={{ padding: '12px 0', borderBottom: si < epic.stories.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-soft)', padding: '2px 6px', borderRadius: 4 }}>{s.id}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{s.title}</span>
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                      <strong>As a</strong> {s.who}, <strong>I need to</strong> {s.what}, <strong>so that</strong> {s.why}.
+                    </div>
+                    <div style={{ display: 'flex', gap: 12, fontSize: 11, color: 'var(--text-muted)' }}>
+                      <span>Source: {s.src}</span>
+                      <span>MP: {s.mp}</span>
+                    </div>
+                  </div>
+                ))}
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* ─── PA DASHBOARD TAB ─── */}
+        {tab === 'pa-dashboard' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <AIStrip text="Vishaka's proposed competitive differentiator vs Influx (7dbabdb5). PACRAT 1+2, EOR by 7 specialties, OSCE, EOC, PANCE readiness predictor. Built in Magic Patterns: PADashboard.tsx." />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
+              <MetricCard label="PACRAT 1 avg z-score" value="+0.22" delta="Above national" deltaPositive />
+              <MetricCard label="PACRAT 2 avg z-score" value="−0.18" delta="Within 1 SD" deltaPositive={false} />
+              <MetricCard label="EOR avg z-score" value="−0.14" delta="Within 1 SD of mean" deltaPositive />
+              <MetricCard label="PANCE predictor avg" value="74" delta="Threshold: 75" deltaPositive={false} />
+            </div>
+            <Card>
+              <CardTitle sub="EOR scores normalized by national mean + SD (Ed Razenbach methodology)">EOR by specialty — z-score view</CardTitle>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {[
+                  { name: 'Emergency Medicine', raw: 412, nat: 404, sd: 28, z: 0.29 },
+                  { name: 'Family / Internal Med.', raw: 378, nat: 392, sd: 24, z: -0.58 },
+                  { name: 'Behavioral Health', raw: 391, nat: 385, sd: 22, z: 0.27 },
+                  { name: 'Pediatrics', raw: 356, nat: 374, sd: 26, z: -0.69 },
+                  { name: 'Surgery', raw: 401, nat: 398, sd: 30, z: 0.10 },
+                  { name: "Women's Health", raw: 382, nat: 388, sd: 20, z: -0.30 },
+                  { name: 'EOC (End of Curriculum)', raw: 387, nat: 392, sd: 25, z: -0.20 },
+                ].map((row, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: i < 6 ? '1px solid var(--border)' : 'none' }}>
+                    <span style={{ width: 180, fontSize: 13, color: 'var(--text-primary)', flexShrink: 0 }}>{row.name}</span>
+                    <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'var(--surface-secondary)', position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, 50 + row.z * 20))}%`, background: row.z >= 0 ? '#10B981' : row.z >= -1 ? '#F59E0B' : '#EF4444', borderRadius: 4 }} />
+                      <div style={{ position: 'absolute', left: '50%', top: 0, width: 2, height: '100%', background: '#3B82F6', opacity: 0.6 }} />
+                    </div>
+                    <span style={{ width: 60, fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: row.z >= 0 ? '#10B981' : row.z >= -1 ? '#F59E0B' : '#EF4444', textAlign: 'right' }}>{row.z >= 0 ? '+' : ''}{row.z.toFixed(2)} z</span>
+                    <span style={{ width: 50, fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>{row.raw} raw</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 12, fontSize: 11, color: 'var(--text-muted)', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+                Blue line = national mean. Green = above. Amber = within 1 SD. Red = below 1 SD. Formula: (student score − national mean) ÷ national SD. Source: Ed Razenbach, Feb 26.
+              </div>
+            </Card>
+          </div>
+        )}
+
       </div>
     </div>
   );
 }
+// This file is extended in place — new tabs added below via ExamManagementViewV2
+// Protocol note: this file is kept in sync with Magic Patterns editor mnirdwczw9xbbzyuveee4g
+// Every Magic Patterns change MUST be reflected here in the same session
+// Last sync: 2026-03-26 — Epics 2-9 (label rename, z-score, remediation, OSCE, PA dashboard, CSV import, Bloom's 1-3, audit trail)
