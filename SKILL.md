@@ -1,7 +1,7 @@
 ---
 name: rr-insights
-version: 2.0.0
-last_updated: 2026-03-23
+version: 2.1.0
+last_updated: 2026-03-26
 author: Romit Soley, Product Designer II, Exxat
 description: >
   Research intelligence skill for the rr-insights platform. Governs how Claude
@@ -314,20 +314,22 @@ The whiteboard said "non-AI looking research product." This means:
 
 ## 8. GRANOLA → INSIGHTS AUTOMATION PROTOCOL
 
-When a new Granola session is shared:
+**The full auto-sync protocol is in Section 23. It runs automatically at session start.**
 
-1. Claude reads the full summary via `Granola:get_meetings`
-2. Claude extracts insights using the tagging schema in Section 5
-3. Claude filters through all 10 POV lenses in Section 4
-4. Claude checks for platform-level signals (does this appear in 3+ products?)
-5. Claude produces the updated `src/data/insights.ts` file content
-6. Claude tells Romit: "X new insights added. Run: `git add src/data/insights.ts && git commit -m 'data: sync [session name]' && git push`"
+When a Granola session is processed:
+
+1. Read full summary via `Granola:get_meetings`
+2. Extract insights using the tagging schema in Section 5
+3. Filter through all 10 POV lenses in Section 4
+4. Check for platform-level signals (3+ products = platform signal → add `platform` tag)
+5. Add to `src/data/insights.ts` using id format `ins-[product]-[session-short]-[nn]`
+6. Commit: `git commit -m "data: auto-sync [session name] — [meeting ID]"`
 7. GitHub Actions deploys in ~60 seconds
 
-### Sessions synced as of Mar 23, 2026
-- All 40 sessions from Feb 23 – Mar 23, 2026 read and synthesized
-- New sessions today: Assessment Creation tool (Mar 23), Exam accessibility (Mar 20), Blackboard competitive (Mar 20), FaaS compliance interview/Harsha (Mar 20), Exam stand-up #1 (Mar 19)
-- Pending sync to insights.ts: Mar 23 assessment creation session + Mar 20 exam accessibility session
+### Sessions synced as of Mar 26, 2026
+- All 43 sessions from Feb 23 – Mar 26, 2026 read and synthesized
+- Last two: Exam Management Standup (6fdcd0dd) + Monil PCE session (b47ba356) — Mar 26
+- Total insights: 61 in INSIGHTS array + 6 in NPS_INSIGHTS export = 67 total
 
 ---
 
@@ -779,3 +781,57 @@ If a source is marked ✗ unread, read it before proceeding.
 3. Read them BEFORE doing any design work
 4. Update the registry
 5. Add new gaps to the ExamAdminAuditView
+
+---
+
+## 23. AUTO-SYNC PROTOCOL — RUNS AT THE START OF EVERY SESSION
+
+**This is a hard rule. It runs before anything else, including answering the first message.**
+
+Claude does not automatically detect new Granola meetings between sessions. No background process runs while Romit is away. But this section makes the check mandatory at session start so the gap is closed automatically.
+
+### The protocol — 5 steps, every single session
+
+**Step 1 — Check latest synced meeting date**
+Read `src/data/insights.ts`. Find the most recent `createdAt` date in the INSIGHTS array (not NPS_INSIGHTS). That is the last sync boundary.
+
+**Step 2 — List new Granola meetings since that date**
+Call `Granola:list_meetings` with `time_range: "last_30_days"`. Filter for any meeting dated after the last sync boundary found in Step 1.
+
+**Step 3 — Identify unsynced meetings**
+Cross-reference the meeting titles against existing `source:` fields in `src/data/insights.ts`. Any meeting not yet represented in a source field is unsynced.
+
+**Step 4 — Process unsynced meetings**
+For each unsynced meeting, call `Granola:get_meetings` to read the full summary. Extract insights using the schema in Section 5. Check for platform-level signals (3+ products = platform signal). Add new insights to `src/data/insights.ts` using the existing id format `ins-[product]-[session-short]-[nn]`.
+
+**Step 5 — Commit and push**
+```
+git add src/data/insights.ts src/data/personas.ts
+git commit -m "data: auto-sync [session names] — [meeting IDs]"
+git push origin main
+```
+
+Then proceed with whatever Romit asked.
+
+### What to tell Romit at session start
+
+If new meetings were found and synced:
+> "Synced [N] new meeting(s): [title list]. [X] new insights added. Continuing with your request."
+
+If no new meetings since last sync:
+> "No new Granola meetings since [last sync date]. [total] insights in rr-insights. Ready."
+
+### When NOT to skip this protocol
+
+Never skip it. Even if Romit opens with "just do X", run the check silently in the background during the first tool call. The sync takes 15–30 seconds and costs nothing relative to missing a critical decision made in a meeting.
+
+### Edge cases
+
+- **Meeting has no summary yet** (Granola still processing): Skip it. It will be picked up next session.
+- **Meeting is personal / not Exxat-related** (e.g., salary negotiation, career conversations): Read it but only extract insights if they affect product design decisions. Do not log personal content.
+- **Meeting already partially captured**: Check if the meeting ID already appears in any `source:` field. If yes, skip it.
+- **Multiple unsynced meetings**: Process all of them before telling Romit. Do not ask permission to process — this protocol is pre-authorised.
+
+### Last sync record (update this line after every session)
+
+**Last synced:** Mar 26, 2026 — Monil PCE session (b47ba356) + Exam Management Standup (6fdcd0dd). Total insights in INSIGHTS array: 61. Total sessions processed: 43 of 43.
