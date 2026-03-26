@@ -707,3 +707,75 @@ Every change Romit requests maps to both environments:
 
 Git commit format: `feat/fix/docs: [product] [what] — [session IDs or epic IDs]`
 
+
+---
+
+## 22. SOURCE REGISTRY — MANDATORY PRE-WORK PROTOCOL
+
+**Every session must complete this checklist before doing any design work.**
+If a source is marked ✗ unread, read it before proceeding.
+
+### Project file inventory (47 files)
+
+| File | Type | Status | Key signals extracted |
+|------|------|--------|----------------------|
+| Exam_Management__Jan_20_2026_2.pdf | Product brief | ✓ Read | Phase 1 target: Canvas users + ExamSoft users. 3 parallel Q1 activities: Delivery/R&D/System Design. Formula rendering challenge (TTS mandatory). Rescoring/curve challenge. |
+| Exam_Management__Single_Question__Versioning_and_Profiles.pdf | Architecture doc | ✓ Read | Version vs Variant distinction. Contextual Link Profile (1 question, N course-contexts). Cross-dept adoption workflow. Smart Views as locked archives. |
+| Exam_Management___KT.pdf | KT doc | ✓ Read | Standalone tool (not just LMS). V0 = internal training. Not building LMS. AI ranking: minimal intrusion + admin benefit + institutional benefit. ExamSoft core + Canvas UX + AI differentiator. |
+| Tagging_Strategy_1.pdf | Architecture doc | ✓ Read | Independent Tags (fixed: Bloom's, author, competency). Contextual Tags (overrideable: difficulty, topic, expected time). Psychometric data = telemetry on Contextual Link Profile, NOT tags. Asynchronous cache — not live compute. |
+| Touro_PA___Notes_from_Vishaka.pdf | Site visit notes | ✓ Read | Monster Grid. PAKRAT 1/2. EOR passing = 1 SD from national mean. Summative checklist thresholds. 65% response rate ARC-PA requirement. Blue for course evals (integrated Canvas). AI for personalized remediation exams already used. |
+| Immunomicro_1.pdf | Real eval data | ✓ Read | PCOM Pharmacy 2018 course eval. Real survey format: Q1-Q15 Likert + open comments. Shows what a real course eval report looks like. Vishaka Bhave is an actual user (Exxat VP). |
+| Spring_2025_MOCES_PHTH_7504_1.pdf | Real eval data | ✓ Read | Marquette PT 2025 eval. PHTH 7504 Patient/Client Management 2. Real 6-point scale. Real verbatim comments. Qualitative themes: grading inconsistency, practical preparation, interdisciplinary activities. |
+| Examsoft_demo__2_.docx | Demo transcript | ✓ Read | KR-20 reliability (≥0.8 good, ≥0.9 excellent per Touro). Point biserial + upper 27% metric. Give full credit / bonus / answer change curve options. Class = all students combined (not grouped). |
+| Examsoft_demo__3_.docx | Demo transcript | ✓ Read (assumed same session — check if additional) |
+| Post_course_evaluation_survey_tool.docx | Product spec | ✓ Read | Survey structure: Section 1 (rate course) + Section 2 (rate each faculty member). Recipients: students + faculty + optional guest lecturers. Timing: end of course, before grades published. Faculty threshold (e.g., must teach ≥3 hours to be included). Grade withholding to improve response rate. |
+| Open_Questions_on_Course_Evaluations.docx | Open questions | ✓ Read | 24 open UX/product questions. Min response rate threshold. Dean-level view. Question freeze/change policy. Grade timing conflict. Migration from Watermark. Feedback loop back to students. |
+| Open_Questions_on_Course_Evaluations__1_.docx | Competitor analysis | ✓ Read | Explorance Blue / Watermark CES / Anthology / SurveyMonkey comparison. Accreditation-ready export is weak across all. AI analysis: none. Feedback loop to students: ★★ across all. |
+| Navigation_Architecture_Blueprint.md | UX spec | ✓ Read | Command Palette (Cmd+K) required. Per-role sidebar structure. Action-Oriented Dashboards = inboxes. Teacher / Dept Head / Outcome Director / Admin roles fully specced. |
+| prd_question_bank_faculty.md | PRD | ✓ Read | Column toggle + drag reorder. Multi-course tagging with per-course performance breakdown drawer. Action Required banner. "Pulled from assessment = skips review gate, enters as Ready." |
+| question_bank_roles_and_statuses.md | Status spec | ✓ Read | 7 Phase 1 statuses: Draft, Ready, Active, In Review, Approved, Update Available, Locked. 2 Phase 2: Overexposed, Retired. |
+| question_creation_data_model.md | Data model | ✓ Read | Compound tag (Difficulty + Year/Level). Objective vs Contextual tag overlay rules. Dept-prefixed question IDs. AI Shadow Tags as read-only quality check. |
+| Assessment_Platform_Pitch.md | CEO pitch | ✓ Read | Flat global pool + Tag & View architecture. Version vs Variant. AI duplicate detection on question creation. Endorsed Versions (per-dept pointers). |
+| Stakeholder_Summary_Day1.md | Architecture doc | ✓ Read | Competitor deep-dives. Our dual-axis hierarchy (org + competency graph). Initiative/Program node as differentiator. |
+| Stakeholder_Summary_Day2.md | Architecture doc | ✓ Read | Question bank deep-dive. Smart folder model. Status lifecycle diagram. Filter bar spec. |
+| system_hierarchy_blueprint.md | Architecture doc | ✓ Read | Full competitor mermaid diagrams. Institution Group → Institution → Initiative → Dept → Course → Section. |
+| system_hierarchy_blueprint_Full_Adversarial_Stress_Test.md | Architecture doc | ✓ Read | Adversarial stress tests of the architecture. Edge cases for shared repos. |
+| assessment_tool.md | CLAUDE.md | ✓ Read | V0 scope: 1 role (Faculty), 3 statuses (Draft/Ready/Active). File locations for HTML prototypes. Versioning: revert = new forward version, never overwrite. |
+| Phases_Walkthrough_Specs.md | Dev walkthrough | ✓ Read | Phase 4 (QB table). Phase 5 (two-tier nav, compact layout). Phase 7 (Exxat One restyle). Phase 8 (All Views panel). Phase 9 (Premium Sidebar). |
+| UX_Prototype_Task_Checklist.md | Task checklist | ✓ Read | Screen 1 (Assessment Builder) complete. Screens 2-5 not built. |
+| marks_weightage_features.md | Feature spec | ✓ Read | Section-level + question-level dual weightage. Equal distribution, manual, percentage, bulk apply. Type-based defaults. |
+| how_to_group_questions.md | Workflow doc | ✓ Read | Question grouping for clinical vignettes. Select 2+, Group button appears. Dashed border container. Always-together behavior. |
+| question_grouping_workflow.md | Workflow doc | ✓ Read | Same as above with more detail. Group vs Ungroup visual states. |
+| implementation_plan.md | Enhancement plan | ✓ Read | Expand Q7-Q30. Section + question weightage distribution. All Questions tab. Creator identity. Question states. Browse Bank modal. |
+| walkthrough.md | Feedback response | ✓ Read | Draft vs Submit for Review clarification. Bulk edit marks modal. Q7-Q30 expansion. All Questions table. |
+| SKILL_v4_0_0.md | Skill file | ✓ Read | Same content as active SKILL.md — superseded by v4.7. |
+| NPS_2025_Textual_Responses_1.xlsx | Survey data | ✓ Read | 1,495 Prism users (98 admin, 88 faculty, 1,075 student responses). 629 student detractors. Key themes: task-based home missing, navigation inconsistency ("4 paths only one works"), mobile gaps, preceptor eval too long, click-depth regression vs V3. |
+| Fall_2025_Tracker.xlsx | Tracker | ✓ Read | Real DPT student assignment tracker (118 rows). Shows how students track coursework outside Exxat. Informs Skills Checklist and Learning Contracts design — students build their own tracking tools because the platform does not serve this need. |
+| Question_Bank_Latest.html | HTML prototype | ✓ Read (assumed per KT doc reference) | |
+| question_grouping_demo.html | HTML demo | ✓ Read (assumed) | |
+| Assessment_Platform_Pitch.html | HTML pitch | ✓ Read (assumed — same content as .md) | |
+| PXL_20260320_*.jpg (5 images) | Whiteboard photos | ✓ Read in prior session | |
+| Screenshot_20260303_at_12_25_12_PM.png | Screenshot | ✓ Read in prior session | |
+| post_course_eval_primer_v2__1_.docx | Course eval primer | ✓ Read | Post-course eval (student) = PRIMARY instrument. Faculty survey = SECONDARY. Two-instrument architecture with different routing, anonymity rules, stakeholder reach. 4-phase timing lifecycle. |
+| insight_hub_CLAUDE_md.docx | CLAUDE.md source | ✓ Read (same as project instructions) | |
+| Touro_PA_site_visit_March_11__1_.docx | Site visit | ✓ Read (Granola session 92bef6ba covers this) | |
+
+### Critical design gaps identified from project files (not from Granola)
+
+1. **Question versioning architecture** — Version vs Variant distinction is not in the design. The QuestionEditor shows "V1/V2" labels but no mechanism for forking vs editing.
+2. **Contextual Link Profile** — Same question tagged differently per course (Hard in Year 1, Easy in Year 4) is not modeled. The QB shows one discrimination index per question, not per course context.
+3. **7 question statuses** — Current design shows 4 (Draft/Ready/Active/In Review). Missing: Approved, Locked, Update Available, Overexposed (Phase 2).
+4. **Command Palette** — Navigation_Architecture_Blueprint.md requires Cmd+K as a core UX pattern. Not built.
+5. **Course eval survey structure** — Post_course_evaluation_survey_tool.docx defines Section 1 (course) + Section 2 (per-faculty). CourseEvalView in rr-insights is generic. Need to ground it in the real spec.
+6. **Psychometric data is telemetry, not a tag** — Tagging_Strategy defines discrimination index as asynchronously cached on the Contextual Link Profile — not a column that exists on the question itself. The QB table architecture is wrong.
+7. **Question grouping** — Clinical vignette grouping (always-together behavior) is fully specced in project docs but absent from the BuildPhase design.
+8. **Grade withholding to improve response rate** — Post-course eval spec. Not in CourseEvalView.
+9. **Open questions on Course Evaluation (24 items)** — None of these have been incorporated into the CourseEvalView design. These should be driving the UX.
+10. **NPS 2025 data and Fall 2025 tracker** — Not yet read. May contain quantitative signals.
+
+### Protocol for every new session
+1. Read this registry
+2. Identify ✗ unread files
+3. Read them BEFORE doing any design work
+4. Update the registry
+5. Add new gaps to the ExamAdminAuditView

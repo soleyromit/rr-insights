@@ -145,6 +145,13 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v4.8',
+    date: '2026-03-26',
+    summary: 'Source Registry completed. All 47 project files now read and catalogued. Critical gaps identified from unread docs: two-instrument architecture (post-course eval vs faculty survey are different products with different routing), 24 open product questions blocking CourseEval design, ARC-PA 65% response rate monitoring missing, anonymity/grade-timing controls absent, longitudinal dashboard absent. NPS 2025 analysis: 629 student detractors, 37 admin detractors, 51 faculty detractors. Key themes: task-based home screen absent (NPS 1/10 admin), 4 paths to same info only one works (navigation architecture), mobile gaps, form length causing preceptor abandonment. CourseEvalView fully rebuilt from primer + open questions + NPS + competitive analysis. 10 new insights (ins-66 to ins-75). SKILL.md Section 22 Source Registry added.',
+    author: 'Romit Soley',
+    changedFiles: ['src/views/products/CourseEvalView.tsx (rebuilt from primer)', 'src/data/insights.ts (+10 insights, 75 total)', 'SKILL.md (Section 22 Source Registry — 47 files catalogued)'],
+  },
+  {
     version: 'v4.7',
     date: '2026-03-26',
     summary: 'Full Exam Management admin design complete. 7 new screens in Magic Patterns v9: ReviewQueue (full question review workflow with inline approve/reject/comment), OutcomeDashboard (4-tab accreditation view: blueprint coverage, Bloom distribution, competency map, cohort trends), CloneExamModal (source selection + inherit settings), AccommodationManager (program-level profiles + bulk assignment — the D2L 70→1 differentiator), LivePhase v2 (question flag heatmap with >20% alert, time extension modal with real-time confirmation), PostExamPhase v2 (bulk select flagged questions + grade impact preview before applying curve), ExamDashboard v2 (Clone Previous wired to modal). Sidebar updated with Review Queue, Accommodations, Outcome & Accreditation nav items.',
