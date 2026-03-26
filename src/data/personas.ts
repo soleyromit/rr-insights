@@ -149,7 +149,7 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
-    version: 'v4.9',
+    version: 'v4.10',
     date: '2026-03-26',
     summary: 'Full continuation: LearningContractsView rebuilt (246 lines, 5 tabs: overview/lifecycle/personas/gaps/roadmap). Magic Patterns v11 published (140c10f4) — BuildPhase now has clinical vignette question grouping with checkbox selection, bulk action bar, VignetteGroup container, always-together label, and ungroup flow. 2 new ThemesView themes (navigation inconsistency, task-based home). NPS 2025 data integrated platform-wide. 10 new insights (ins-nps-admin-01 to ins-ce-openqs-01) from NPS 2025 + project docs. 2 new themes added (Navigation inconsistency / Task-based home). FaaSView updated with NPS verbatims. PLATFORM_SIGNALS updated with 4 NPS signals. ThemesView: 8 total themes now including NPS-grounded patterns. Magic Patterns v10 published with correct QB architecture (7 statuses, Contextual Link Profiles, Version vs Variant).',
     insightCount: 63, sessionsAdded: 2, changedFiles: ["src/views/products/LearningContractsView.tsx", "src/views/ThemesView.tsx", "src/data/personas.ts", "src/data/insights.ts"],
