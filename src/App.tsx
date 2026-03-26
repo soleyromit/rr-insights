@@ -6,7 +6,10 @@ import { WhiteboardView } from './views/WhiteboardView';
 import { CompetitiveView } from './views/CompetitiveView';
 import { ChangelogView } from './views/ChangelogView';
 import { ExamManagementView } from './views/products/ExamManagementView';
-import { ProductViewShell } from './views/products/ProductViewShell';
+import { FaaSView } from './views/products/FaaSView';
+import { CourseEvalView } from './views/products/CourseEvalView';
+import { SkillsChecklistView } from './views/products/SkillsChecklistView';
+import { LearningContractsView } from './views/products/LearningContractsView';
 import { PersonaMapView } from './views/PersonaMapView';
 import { ThemesView } from './views/ThemesView';
 import { RoadmapView } from './views/RoadmapView';
@@ -15,7 +18,6 @@ import { StakeholderView } from './views/StakeholderView';
 import type { ProductId } from './types';
 
 const PRODUCT_IDS = new Set<ProductId>(['exam-management','faas','course-eval','skills-checklist','learning-contracts']);
-const FULL_VIEWS = new Set<ProductId>(['exam-management']);
 type ViewId = string;
 
 export function App() {
@@ -26,20 +28,22 @@ export function App() {
     if (el) el.scrollTop = 0;
   }
   function renderView() {
-    if (activeView === 'overview')    return <OverviewView onNav={handleNav} />;
-    if (activeView === 'whiteboard')  return <WhiteboardView />;
-    if (activeView === 'competitive') return <CompetitiveView />;
-    if (activeView === 'changelog')   return <ChangelogView />;
-    if (activeView === 'personas')    return <PersonaMapView />;
-    if (activeView === 'themes')      return <ThemesView />;
-    if (activeView === 'roadmap')     return <RoadmapView />;
-    if (activeView === 'portfolio')   return <PortfolioView />;
-    if (activeView === 'stakeholder') return <StakeholderView />;
-    if (PRODUCT_IDS.has(activeView as ProductId)) {
-      if (FULL_VIEWS.has(activeView as ProductId)) return <ExamManagementView />;
-      return <ProductViewShell productId={activeView as ProductId} />;
-    }
-    return <div className="flex-1 flex items-center justify-center" style={{color:'var(--text3)',fontSize:14}}>View not found.</div>;
+    if (activeView === 'overview')         return <OverviewView onNav={handleNav} />;
+    if (activeView === 'whiteboard')       return <WhiteboardView />;
+    if (activeView === 'competitive')      return <CompetitiveView />;
+    if (activeView === 'changelog')        return <ChangelogView />;
+    if (activeView === 'personas')         return <PersonaMapView />;
+    if (activeView === 'themes')           return <ThemesView />;
+    if (activeView === 'roadmap')          return <RoadmapView />;
+    if (activeView === 'portfolio')        return <PortfolioView />;
+    if (activeView === 'stakeholder')      return <StakeholderView />;
+    // Product deep-dives — each now has its own dedicated view
+    if (activeView === 'exam-management')  return <ExamManagementView />;
+    if (activeView === 'faas')             return <FaaSView />;
+    if (activeView === 'course-eval')      return <CourseEvalView />;
+    if (activeView === 'skills-checklist') return <SkillsChecklistView />;
+    if (activeView === 'learning-contracts') return <LearningContractsView />;
+    return <div style={{color:'var(--text3)',fontSize:14,display:'flex',flex:1,alignItems:'center',justifyContent:'center'}}>View not found.</div>;
   }
   return (
     <div className="flex h-screen overflow-hidden" style={{background:'var(--bg)'}}>
