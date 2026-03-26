@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'skills-checklist';
-type TabId = 'insights' | 'architecture' | 'domains' | 'workflows' | 'accreditation' | 'stories';
+type TabId = 'insights' | 'architecture' | 'domains' | 'workflows' | 'accreditation' | 'stories' | 'procedure-tracker';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'architecture', label: 'System architecture' },
@@ -17,6 +17,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'workflows', label: 'Workflows' },
   { id: 'accreditation', label: 'Accreditation' },
   { id: 'stories', label: 'UX stories' },
+  { id: 'procedure-tracker', label: 'Procedure Tracker — “Just the reds”' },
 ];
 
 const radarData = [
@@ -401,6 +402,129 @@ export function SkillsChecklistView() {
             ))}
           </div>
         )}
+
+
+        {/* ── PROCEDURE TRACKER — "Just the reds" ──────────────────────────────── */}
+        {/* Source: Dr. T Touro 92bef6ba: "I just want the reds. Just the students */}
+        {/* missing their procedure minimums." Confirmed UX decision — toggle not sort. */}
+        {tab === 'procedure-tracker' && (() => {
+          const [showOnlyReds, setShowOnlyReds] = (useState as Function)(true);
+          const PROCEDURES = [
+            'Venipuncture', 'IV placement', 'Urinary catheter', 'NG tube', 'Pelvic exam',
+            'Suturing', 'Injection (IM/SC)', 'Breast exam', 'Wound care', 'ABG collection',
+          ];
+          const STUDENTS = [
+            { name: 'Marcus T.', cohort: 'PA2', counts: [5,3,2,1,2,3,5,2,4,1], threshold: 3, risk: true },
+            { name: 'Sarah K.', cohort: 'PA3', counts: [8,5,4,3,3,5,7,4,6,3], threshold: 3, risk: false },
+            { name: 'Elena R.', cohort: 'PA2', counts: [3,2,1,0,1,2,3,1,2,0], threshold: 3, risk: true },
+            { name: 'James W.', cohort: 'PA3', counts: [9,6,5,4,4,6,8,5,7,4], threshold: 3, risk: false },
+            { name: 'Priya P.', cohort: 'PA2', counts: [2,1,0,0,1,1,2,0,1,0], threshold: 3, risk: true },
+            { name: 'David K.', cohort: 'PA3', counts: [7,4,4,3,3,5,6,4,5,3], threshold: 3, risk: false },
+            { name: 'Aisha W.', cohort: 'PA2', counts: [4,3,2,1,2,3,4,2,3,1], threshold: 3, risk: true },
+            { name: 'Chris P.', cohort: 'PA3', counts: [10,7,6,5,5,7,9,6,8,5], threshold: 3, risk: false },
+          ];
+          const displayed = showOnlyReds ? STUDENTS.filter(s => s.risk) : STUDENTS;
+
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* The "just the reds" story */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.2)', borderLeft: '4px solid #dc2626' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+                  Dr. T, Touro PA Program · Mar 11, 2026 · session 92bef6ba
+                </div>
+                <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+                  "I just want the reds. Just the students missing their procedure minimums."
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+                  This is a confirmed UX decision: the program director wants a toggle that shows <strong>only</strong> deficient students —
+                  not all students with a red indicator mixed in. The difference is intent: this is an action-oriented view,
+                  not an overview. Default to reds-only on load.
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 10, background: '#fff', border: '1px solid var(--border)' }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>
+                  {showOnlyReds ? `${displayed.length} students below threshold` : `${STUDENTS.length} students total`}
+                </span>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', marginLeft: 'auto' }}>
+                  <span style={{ fontSize: 12, color: 'var(--text2)' }}>Show only reds</span>
+                  <div style={{ width: 36, height: 20, borderRadius: 10, background: showOnlyReds ? '#dc2626' : 'var(--border2)', position: 'relative', cursor: 'pointer', flexShrink: 0 }}
+                    onClick={() => setShowOnlyReds(!showOnlyReds)}>
+                    <div style={{ position: 'absolute', top: 3, width: 14, height: 14, borderRadius: '50%', background: '#fff', left: showOnlyReds ? 19 : 3, transition: 'left 0.12s' }} />
+                  </div>
+                </label>
+                <div style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', color: '#dc2626', fontWeight: 600 }}>
+                  Threshold: 3 per procedure
+                </div>
+              </div>
+
+              {/* Procedure matrix */}
+              <div style={{ overflowX: 'auto', borderRadius: 10, border: '1px solid var(--border)', background: '#fff' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800 }}>
+                  <thead>
+                    <tr style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--border)' }}>
+                      <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em', minWidth: 120 }}>Student</th>
+                      {PROCEDURES.map(p => (
+                        <th key={p} style={{ padding: '8px 6px', fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', minWidth: 72 }}>
+                          {p.split(' ')[0]}
+                        </th>
+                      ))}
+                      <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gaps</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {displayed.map((s, si) => {
+                      const gaps = s.counts.filter(c => c < s.threshold).length;
+                      return (
+                        <tr key={s.name} style={{ borderBottom: si < displayed.length - 1 ? '1px solid var(--border)' : 'none', background: s.risk ? 'rgba(220,38,38,0.02)' : 'transparent' }}>
+                          <td style={{ padding: '10px 14px' }}>
+                            <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text)' }}>{s.name}</div>
+                            <div style={{ fontSize: 11, color: 'var(--text3)' }}>{s.cohort}</div>
+                          </td>
+                          {s.counts.map((count, pi) => {
+                            const isRed = count < s.threshold;
+                            return (
+                              <td key={pi} style={{ padding: '8px 6px', textAlign: 'center' }}>
+                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 28, borderRadius: 6, background: isRed ? 'rgba(220,38,38,0.1)' : count >= s.threshold * 2 ? 'rgba(16,163,74,0.08)' : 'rgba(217,119,6,0.08)', border: `1px solid ${isRed ? 'rgba(220,38,38,0.25)' : count >= s.threshold * 2 ? 'rgba(16,163,74,0.2)' : 'rgba(217,119,6,0.2)'}` }}>
+                                  <span style={{ fontSize: 12, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: isRed ? '#dc2626' : count >= s.threshold * 2 ? '#16a34a' : '#d97706' }}>{count}</span>
+                                </div>
+                              </td>
+                            );
+                          })}
+                          <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                            <span style={{ fontSize: 13, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: gaps > 0 ? '#dc2626' : '#16a34a' }}>
+                              {gaps > 0 ? `${gaps} gaps` : '✓'}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Legend + design note */}
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {[['rgba(220,38,38,0.1)', '#dc2626', 'Below threshold (< 3)'], ['rgba(217,119,6,0.08)', '#d97706', 'Near threshold (3–5)'], ['rgba(16,163,74,0.08)', '#16a34a', 'Well above (6+)']].map(([bg, color, label]) => (
+                  <div key={label as string} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ width: 24, height: 20, borderRadius: 5, background: bg as string, border: `1px solid ${color as string}40` }} />
+                    <span style={{ fontSize: 11, color: 'var(--text3)' }}>{label as string}</span>
+                  </div>
+                ))}
+                <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)' }}>Threshold per Dr. T: 3 per procedure · Source: session 92bef6ba</div>
+              </div>
+
+              {/* Overflow / culminating slot note */}
+              <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.15)', fontSize: 12, color: 'var(--text2)' }}>
+                <span style={{ fontWeight: 700, color: '#6d5ed4' }}>Edge case (Dr. T, session 92bef6ba):</span>{' '}
+                "We need a space where if a student comes back and says I never did an IV on all my clinicals."
+                Skills checklist must support an overflow/culminating rotation slot (rotation 10 at Touro) where students can log
+                missed procedures retroactively. This is not theoretical — it is a known scenario at Touro PA program.
+              </div>
+            </div>
+          );
+        })()}
 
       </div>
     </div>
