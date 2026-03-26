@@ -145,6 +145,13 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v4.7',
+    date: '2026-03-26',
+    summary: 'Full Exam Management admin design complete. 7 new screens in Magic Patterns v9: ReviewQueue (full question review workflow with inline approve/reject/comment), OutcomeDashboard (4-tab accreditation view: blueprint coverage, Bloom distribution, competency map, cohort trends), CloneExamModal (source selection + inherit settings), AccommodationManager (program-level profiles + bulk assignment — the D2L 70→1 differentiator), LivePhase v2 (question flag heatmap with >20% alert, time extension modal with real-time confirmation), PostExamPhase v2 (bulk select flagged questions + grade impact preview before applying curve), ExamDashboard v2 (Clone Previous wired to modal). Sidebar updated with Review Queue, Accommodations, Outcome & Accreditation nav items.',
+    author: 'Romit Soley',
+    changedFiles: ['components/ReviewQueue.tsx (new)', 'components/OutcomeDashboard.tsx (new)', 'components/CloneExamModal.tsx (new)', 'components/AccommodationManager.tsx (new)', 'components/phases/LivePhase.tsx (v2)', 'components/phases/PostExamPhase.tsx (v2)', 'components/ExamDashboard.tsx (v2)', 'components/Sidebar.tsx (v2)', 'pages/ExamAdminApp.tsx (v2)'],
+  },
+  {
     version: 'v4.5',
     date: '2026-03-26',
     summary: 'Bug fixes + Ask Claude AI feature + 9 new sessions + ExxatOne view. Fixed AIStrip text prop crash and MetricCard deltaPositive mismatch affecting all 4 new product views. Ask Claude: full Claude Sonnet integration with 10 scope filters, 10 suggested prompts, markdown rendering. ExxatOne view: Student + School platform intelligence from Feb 25 Aarti reviews. New insights: D2L accommodation finding (70→1), accessibility V0/V1 phases, React FINAL decision, KKR business thesis, revenue model documentation.',
