@@ -152,6 +152,16 @@ const INDIRECT: IndirectCompetitor[] = [
     source: '7dbabdb5 Aarti + Vishaka PA Dashboard session.',
   },
   {
+    name: 'CORE (PeopleGrove / RxPC)',
+    category: 'ELMS — Experiential Learning Management System',
+    color: '#2563EB',
+    productOverlap: 'Placements, preceptor intake, compliance, evaluations, patient logs, skills tracking, job board',
+    whyTheyWin: 'A la carte pricing (programs buy only what they need). Clean evaluation taxonomy: student-on / preceptor-on / self-evaluation — not generic "forms". Preceptor benefits module (payment tracking, CME credits, awards). Job board connects students directly to employers.',
+    exxatGap: 'CORE exposes domain-named experiences not raw forms — users always know they are doing "a preceptor evaluation" not "filling a form". Exxat FaaS is confusing because it exposes the form engine. Arun verbatim: "We ourselves are getting confused between evaluation and surveys and forms. No wonder the user is confused."',
+    exxatFix: 'FaaS headless architecture (confirmed by Arun dd800362) is the right answer: form engine never shown directly, always shown in domain context. Course Eval = a course evaluation, not a form.',
+    source: '857b7460 Day 2 Enflux CORE review Feb 27 (live demo with real program data).',
+  },
+    {
     name: 'Meditrek',
     category: 'Skills Checklist — Clinical hours tracking',
     color: '#5B2D8E',

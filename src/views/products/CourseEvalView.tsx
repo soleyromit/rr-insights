@@ -4,7 +4,7 @@ import { AIStrip } from '../../components/ui/InsightRow';
 import { Badge } from '../../components/ui/Badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 
-type TabId = 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions';
+type TabId = 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star';
 const TABS: { id: TabId; label: string; alert?: boolean }[] = [
   { id: 'overview',       label: 'Overview' },
   { id: 'instruments',    label: 'Instruments' },
@@ -12,6 +12,7 @@ const TABS: { id: TabId; label: string; alert?: boolean }[] = [
   { id: 'gaps',           label: 'Design gaps', alert: true },
   { id: 'competitive',    label: 'Competitive' },
   { id: 'open-questions', label: 'Open questions (24)', alert: true },
+  { id: 'north-star', label: '★ North star' },
 ];
 
 const ts = (tab: TabId, cur: TabId) => ({
@@ -341,6 +342,100 @@ export function CourseEvalView() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+
+        {/* ─── NORTH STAR TAB ─────────────────────────────────────────────────────── */}
+        {/* Source: PRISM Day 3 (c7a8d32e) — Aarti's verbatim leadership questions */}
+        {/* "Which courses are doing better? Which faculty are not doing better?     */}
+        {/* How are my cohorts perceiving my curriculum?"                            */}
+        {/* Anti-pattern: "If I see a button that says click here to get AI         */}
+        {/* insights, I am done." AI must be embedded, not bolted on.               */}
+        {tab === 'north-star' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Aarti verbatim */}
+            <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid var(--brand)' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--brand)', marginBottom: 8 }}>
+                Aarti · PRISM Day 3 · Mar 4, 2026 · session c7a8d32e
+              </div>
+              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
+                "Which courses are doing better? Which faculty are not doing better? How are my cohorts perceiving my curriculum, and what changes do I need to make? I want AI insights embedded in the dashboard — not a button I click to get AI insights. If I see a button that says click here to get AI insights, I am done."
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+                This single statement defines the entire course evaluation north star. The product is not a form tool with a reporting tab. It is a <strong>program quality intelligence dashboard</strong> where the leadership questions are answered before the director clicks anything.
+              </div>
+            </div>
+
+            {/* Three leadership views */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+              {[
+                { title: 'Course leaderboard', question: 'Which courses are doing best — and worst — this semester?', content: 'All courses ranked by average score. Trending up ↑ or down ↓ vs last semester. Courses below threshold flagged automatically. New courses marked for closer monitoring.', aarti: 'The leaderboard IS the AI insight. Not a separate panel.', source: 'c7a8d32e Aarti PRISM Day 3' },
+                { title: 'Faculty leaderboard', question: 'Which faculty need attention — and who should be recognized?', content: 'All faculty ranked by student perception score. Year-over-year trend per faculty. New faculty automatically flagged for extra observation period. Score fed back into faculty development.', aarti: 'This is what keeps the dean up at night. Show it at the top.', source: 'c7a8d32e Aarti PRISM Day 3' },
+                { title: 'Cohort trend', question: 'How does the class of 2026 perceive the curriculum vs class of 2025?', content: 'Cohort-level comparison: how each graduating class rated courses and faculty. Signals curriculum drift, faculty turnover impact, or program improvement over time.', aarti: 'Cohort comparison is the accreditation story. Programs must show improvement.', source: 'c7a8d32e Aarti PRISM Day 3' },
+              ].map((v, i) => (
+                <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)', background: 'var(--bg2)' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{v.title}</div>
+                    <div style={{ fontSize: 11, color: 'var(--brand)', marginTop: 2, fontStyle: 'italic' }}>{v.question}</div>
+                  </div>
+                  <div style={{ padding: '12px 14px', flex: 1 }}>
+                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: '0 0 10px', lineHeight: 1.6 }}>{v.content}</p>
+                    <div style={{ padding: '8px 10px', borderRadius: 7, background: 'rgba(109,94,212,0.06)', border: '1px solid rgba(109,94,212,0.15)' }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', marginBottom: 2 }}>Aarti's framing</div>
+                      <div style={{ fontSize: 11, color: 'var(--text2)', fontStyle: 'italic' }}>{v.aarti}</div>
+                    </div>
+                  </div>
+                  <div style={{ padding: '6px 14px', borderTop: '1px solid var(--border)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{v.source}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Anti-patterns */}
+            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 18px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Anti-patterns to avoid — Aarti verbatim</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  { pattern: '"Click here to get AI insights" button', why: 'AI insights are embedded in the leaderboard layout itself. The leaderboard IS the insight. There is no separate AI panel.', source: 'c7a8d32e PRISM Day 3' },
+                  { pattern: 'Flat list of courses → click → course report', why: 'Director never wants to click into individual reports to understand program health. Show the picture first. Details are drill-downs, not the entry point.', source: 'c7a8d32e PRISM Day 3' },
+                  { pattern: 'No time dimension — courses sorted alphabetically', why: 'Evaluations happen at semester end. Directors always look at the previous semester. The UI must be organized by term. Sort by rating, filter by term, trending up/down are all required.', source: 'c7a8d32e PRISM Day 3' },
+                  { pattern: 'Collecting data without connecting it to decisions', why: 'Qualtrics and SurveyMonkey collect feedback too. Our differentiation is connecting evaluation data to curriculum changes, accreditation reports, and faculty development. Data without decision context has no moat.', source: 'c7a8d32e PRISM Day 3' },
+                ].map((ap, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 12px', borderRadius: 9, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.15)' }}>
+                    <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#dc2626', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✗</div>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>{ap.pattern}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{ap.why}</div>
+                      <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 4 }}>{ap.source}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* D2L gaps to fill */}
+            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 18px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>D2L gaps that become Exxat opportunities</div>
+              <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>Source: D2L BrightSpace demo Mar 4 · session c7a8d32e</div>
+              {[
+                { gap: 'No in-document annotation feedback', opp: 'Allow faculty to annotate submitted PDFs directly — comments, highlights, ink markup — and publish to students. Standard expectation from Canvas/D2L. Missing from Exxat.' },
+                { gap: 'No publish/draft state for grades', opp: 'Faculty grade all students first, review, then publish at once. Currently grades appear live as faculty grade. All LMS have this. Exxat does not.' },
+                { gap: 'No auto-alert for inactive students', opp: 'Faculty set rule: if student has not logged in for X days, notify me. D2L has this built in. Exxat has no equivalent.' },
+                { gap: 'ExamSoft being sold by Turnitin', opp: 'Displacement window is open. LMS platforms now doing what ExamSoft did. Exxat can take the clinical education slice that LMS cannot serve (preceptors, placements, accreditation-specific analytics).' },
+              ].map((r, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderBottom: i < 3 ? '1px solid var(--border)' : 'none', padding: '10px 0' }}>
+                  <div style={{ paddingRight: 14 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#dc2626', marginBottom: 2 }}>Gap</div>
+                    <div style={{ fontSize: 12, color: 'var(--text2)' }}>{r.gap}</div>
+                  </div>
+                  <div style={{ paddingLeft: 14, borderLeft: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', marginBottom: 2 }}>Exxat opportunity</div>
+                    <div style={{ fontSize: 12, color: 'var(--text2)' }}>{r.opp}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
