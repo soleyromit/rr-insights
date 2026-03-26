@@ -17,6 +17,7 @@ import { PortfolioView } from './views/PortfolioView';
 import { StakeholderView } from './views/StakeholderView';
 import { AskClaudeView } from './views/AskClaudeView';
 import { ExxatOneView } from './views/products/ExxatOneView';
+import { ExamAdminAuditView } from './views/products/ExamAdminAuditView';
 import type { ProductId } from './types';
 
 const PRODUCT_IDS = new Set<ProductId>(['exam-management','faas','course-eval','skills-checklist','learning-contracts']);
@@ -41,6 +42,7 @@ export function App() {
     if (activeView === 'stakeholder')      return <StakeholderView />;
     if (activeView === 'ask-claude')       return <AskClaudeView />;
     if (activeView === 'exactone')         return <ExxatOneView />;
+    if (activeView === 'exam-audit')        return <ExamAdminAuditView />;
     // Product deep-dives — each now has its own dedicated view
     if (activeView === 'exam-management')  return <ExamManagementView />;
     if (activeView === 'faas')             return <FaaSView />;
