@@ -1,53 +1,43 @@
-# ─────────────────────────────────────────────────────────────────────────────
 # manual-sync.yml
-# Triggered by Claude via GitHub API (workflow_dispatch) OR manually.
-# No container token needed — Claude calls the GitHub API with your PAT
-# which is stored as a repo secret (GITHUB_TOKEN is always available).
-# ─────────────────────────────────────────────────────────────────────────────
+# Triggered manually from GitHub Actions UI (workflow_dispatch).
+# Runs the same build+deploy pipeline as deploy.yml.
 name: Manual sync + deploy
 
 on:
   workflow_dispatch:
     inputs:
       commit_message:
-        description: 'Commit message'
+        description: 'What changed (informational only)'
         required: false
-        default: 'feat: rr-insights sync via GitHub Actions'
-      files_changed:
-        description: 'Which files were updated (informational)'
-        required: false
-        default: 'data/insights.ts, ExamManagementView.tsx'
+        default: 'Manual sync triggered'
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  sync-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
       - run: npm ci
-
       - run: npm run build
-
       - uses: actions/configure-pages@v4
-
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    needs: sync-and-deploy
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
