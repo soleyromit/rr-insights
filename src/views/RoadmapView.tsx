@@ -173,7 +173,7 @@ const STATUS_DOT: Record<string, string> = {
 export function RoadmapView() {
   return (
     <div className="p-5 overflow-y-auto flex-1">
-      <h1 className="font-display text-[24px] tracking-tight text-[var(--text)] mb-1">Cross-Product Roadmap</h1>
+      <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Cross-Product Roadmap</h1>
       <p className="text-[11px] text-[var(--text3)] mb-4">Q1 2026 → Jan 2027 · Sourced from PRISM Marriott sessions + Granola standups</p>
 
       {/* Milestone metrics */}

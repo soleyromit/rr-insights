@@ -94,7 +94,7 @@ export function ThemesView() {
 
   return (
     <div className="p-5 overflow-y-auto flex-1">
-      <h1 className="font-display text-[24px] tracking-tight text-[var(--text)] mb-1">Theme Clusters</h1>
+      <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Theme Clusters</h1>
       <p className="text-[11px] text-[var(--text3)] mb-4">
         Synthesised from 39 Granola sessions + project documents · 6 platform-level patterns · March 2026
       </p>

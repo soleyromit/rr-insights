@@ -81,7 +81,7 @@ export function PortfolioView() {
 
   return (
     <div className="p-5 overflow-y-auto flex-1">
-      <h1 className="font-display text-[24px] tracking-tight text-[var(--text)] mb-1">Staff Designer Signal Audit</h1>
+      <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Staff Designer Signal Audit</h1>
       <p className="text-[11px] text-[var(--text3)] mb-4">
         Market positioning vs Staff / Principal Product Designer JD benchmarks · March 2026
       </p>

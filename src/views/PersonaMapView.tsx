@@ -49,7 +49,7 @@ const SEV_STYLE: Record<string, string> = {
 export function PersonaMapView() {
   return (
     <div className="p-5 overflow-y-auto flex-1">
-      <h1 className="font-display text-[24px] tracking-tight text-[var(--text)] mb-1">Cross-Product Persona Challenge Map</h1>
+      <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Cross-Product Persona Challenge Map</h1>
       <p className="text-[11px] text-[var(--text3)] mb-4">Updated with 39 Granola sessions · 6 platform-level signals · Click any cell for detail</p>
 
       <div className="flex gap-2 mb-4 flex-wrap">

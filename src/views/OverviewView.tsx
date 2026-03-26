@@ -65,7 +65,7 @@ export function OverviewView({ onNav }: OverviewViewProps) {
     <div className="p-5 overflow-y-auto flex-1">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="font-display text-[24px] tracking-tight text-[var(--text)] mb-1">Platform Overview</h1>
+        <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Platform Overview</h1>
         <p className="text-[11px] text-[var(--text3)]">
           5 products · 4 personas · 39 Granola sessions synthesized · Last updated Mar 19, 2026
         </p>

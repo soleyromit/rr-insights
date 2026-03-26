@@ -150,7 +150,7 @@ export function ExamManagementView() {
     <div className="flex flex-col flex-1 overflow-hidden">
       <div className="mx-5 mt-5 mb-0 bg-[var(--bg2)] border border-[var(--border)] rounded-xl p-4 flex items-start justify-between gap-5">
         <div className="flex-1">
-          <h1 className="font-display text-[22px] text-[var(--text)] tracking-tight mb-1">{product.name}</h1>
+          <h1 className="rr-serif text-[22px] text-[var(--text)] tracking-tight mb-1">{product.name}</h1>
           <p className="text-[13px] text-[var(--text3)] leading-[1.55] max-w-xl">{product.description}</p>
           <div className="flex gap-1.5 mt-3 flex-wrap">
             {['Student', 'DCE / Faculty', 'Admin', 'Program Director'].map(p => (
