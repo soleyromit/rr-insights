@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'faas';
-type TabId = 'insights' | 'control-types' | 'ux-gaps' | 'q2-scope' | 'architecture' | 'stories' | 'decisions';
+type TabId = 'insights' | 'control-types' | 'ux-gaps' | 'q2-scope' | 'architecture' | 'stories' | 'decisions' | 'inline-validation' | 'site-assessment';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'control-types', label: 'Control types' },
@@ -412,6 +412,216 @@ export function FaaSView() {
                 ))}
               </div>
             </Card>
+          </div>
+        )}
+
+
+        {/* ─── INLINE VALIDATION STORY TAB ──────────────────────────────────────── */}
+        {/* Source: Prasanjit session 13352a23 — the submit-only validation anti-pattern */}
+        {/* SKILL.md Section 1.1: The Prasanjit Example — template for information connection */}
+        {tab === 'inline-validation' && (() => {
+          const [demoVal, setDemoVal] = (useState as any)('');
+          const [submitted, setSubmitted] = (useState as any)(false);
+          const [inlineMode, setInlineMode] = (useState as any)(true);
+          const isInvalid = demoVal !== '' && (isNaN(Number(demoVal)) || Number(demoVal) > 99 || Number(demoVal) < 0);
+          const showError = inlineMode ? (demoVal !== '' && isInvalid) : (submitted && isInvalid);
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {/* The story */}
+              <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(232,96,74,0.04)', border: '1px solid rgba(232,96,74,0.2)', borderLeft: '4px solid #e8604a' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: '#e8604a', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+                  Prasanjit · FaaS Patient Log · Mar 25, 2026 · session 13352a23
+                </div>
+                <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
+                  "Mandatory field errors only appear on submit, not during input. Numeric limits only validated at submission. Students don't get immediate feedback when entering invalid data."
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7 }}>
+                  A student enters 150 minutes into a procedure duration field. The form accepts it silently.
+                  They complete 20 more fields. They hit submit. Then: a red error banner at the top of the page.
+                  They must scroll back up, find the field, fix it, and resubmit. This is the submit-only validation
+                  anti-pattern — and it is a WCAG 3.3.1 violation on top of a UX failure.
+                </div>
+              </div>
+
+              {/* Live demo */}
+              <div style={{ padding: '16px 20px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Interactive demo — feel the difference</div>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+                    {([true, false] as const).map(mode => (
+                      <button key={String(mode)} onClick={() => { setInlineMode(mode); setSubmitted(false); setDemoVal(''); }}
+                        style={{ fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 20, border: `1px solid ${inlineMode === mode ? (mode ? '#0d9488' : '#e8604a') : 'var(--border)'}`, background: inlineMode === mode ? (mode ? 'rgba(13,148,136,0.08)' : 'rgba(232,96,74,0.08)') : '#fff', color: inlineMode === mode ? (mode ? '#0d9488' : '#e8604a') : 'var(--text3)', cursor: 'pointer' }}>
+                        {mode ? '✓ Inline validation (fixed)' : '✗ Submit-only (current)'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ maxWidth: 360 }}>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                    Procedure duration (0–99 minutes)
+                    <span style={{ color: '#e8604a', marginLeft: 3 }}>*</span>
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="number" value={demoVal} placeholder="Enter minutes"
+                      onChange={e => { setDemoVal(e.target.value); setSubmitted(false); }}
+                      style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1.5px solid ${showError ? '#e8604a' : 'var(--border)'}`, fontSize: 13, outline: 'none', background: showError ? 'rgba(232,96,74,0.04)' : '#fff', boxSizing: 'border-box' }}
+                    />
+                    {!inlineMode && (
+                      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 10, color: 'var(--text3)' }}>max 99</span>
+                    )}
+                    {inlineMode && demoVal !== '' && (
+                      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 10, color: isInvalid ? '#e8604a' : '#0d9488', fontWeight: 700 }}>
+                        {isInvalid ? '✗' : '✓'}
+                      </span>
+                    )}
+                  </div>
+                  {showError && (
+                    <div style={{ marginTop: 5, fontSize: 12, color: '#e8604a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      ⚠ Please enter a number between 0 and 99
+                    </div>
+                  )}
+                  {!showError && demoVal !== '' && !isInvalid && inlineMode && (
+                    <div style={{ marginTop: 5, fontSize: 12, color: '#0d9488' }}>✓ Valid duration</div>
+                  )}
+                  {!inlineMode && (
+                    <button onClick={() => setSubmitted(true)} style={{ marginTop: 12, padding: '8px 16px', borderRadius: 8, background: '#6d5ed4', color: '#fff', border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                      Submit form
+                    </button>
+                  )}
+                  {!inlineMode && submitted && !isInvalid && demoVal !== '' && (
+                    <div style={{ marginTop: 8, fontSize: 12, color: '#0d9488' }}>✓ Submitted successfully</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Information connection graph */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>
+                  Information connection — how one observation becomes a design decision
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  {[
+                    { node: 'Session 13352a23', type: 'S', color: '#6d5ed4', desc: 'Prasanjit shows FaaS numeric field. Student can type 999. Error only on submit.', edge: 'source-of' },
+                    { node: 'Gap ins-faas-gap-23', type: 'I', color: '#e8604a', desc: 'No inline field validation. Submit-only error pattern across all FaaS form controls.', edge: 'violates' },
+                    { node: 'WCAG 3.3.1', type: 'P', color: '#d97706', desc: 'Error identification: "If an input error is automatically detected, the item in error is identified and the error is described to the user in text." — must be immediate, not deferred.', edge: 'requires' },
+                    { node: 'SurveyMonkey / Typeform / Google Forms', type: 'C', color: '#94a3b8', desc: 'All three validate inline. This is the baseline expectation users bring from any form tool.', edge: 'blocks' },
+                    { node: 'FaaS self-service launch', type: 'F', color: '#0d9488', desc: 'Design fix: real-time validation with visible limits as helper text, error on blur not submit.', edge: null },
+                  ].map((n, i, arr) => (
+                    <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 24 }}>
+                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, color: '#fff' }}>{n.type}</div>
+                        {i < arr.length - 1 && <div style={{ width: 2, flex: 1, background: 'var(--border)', minHeight: 24, marginTop: 2 }} />}
+                      </div>
+                      <div style={{ paddingBottom: i < arr.length - 1 ? 16 : 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: n.color, marginBottom: 2 }}>{n.node}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5 }}>{n.desc}</div>
+                        {n.edge && (
+                          <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 2 }}>→ {n.edge}</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* FaaS design fixes */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                {[
+                  { title: 'Inline validation', fix: 'Every form control validates on blur. Character/number limits shown as helper text before user types. Error message is specific ("Enter 0–99") not generic ("Invalid value").', severity: 'critical', wcag: '3.3.1' },
+                  { title: 'Scroll sync', fix: 'Moving to a new section must update the section indicator in the left nav. Currently broken — user navigates blind.', severity: 'high', wcag: '2.4.3' },
+                  { title: 'Section color coding', fix: 'Color coding for sections was removed in FaaS migration. Restore to help users distinguish sections at a glance. Color alone not sufficient — use color + icon + label.', severity: 'high', wcag: '1.4.1' },
+                ].map((f, i) => (
+                  <div key={i} style={{ padding: '12px 14px', borderRadius: 10, background: '#fff', border: `1px solid ${f.severity === 'critical' ? 'rgba(220,38,38,0.25)' : 'var(--border)'}`, borderLeft: `3px solid ${f.severity === 'critical' ? '#dc2626' : '#d97706'}` }}>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: f.severity === 'critical' ? '#dc2626' : '#d97706' }}>{f.title}</span>
+                      <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 8, background: 'rgba(109,94,212,0.08)', color: '#6d5ed4', fontFamily: 'JetBrains Mono, monospace' }}>WCAG {f.wcag}</span>
+                    </div>
+                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{f.fix}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ─── SITE ASSESSMENT TAB ─────────────────────────────────────────────── */}
+        {/* Source: Pratiksha session 1a0cd25e — site assessment deep dive */}
+        {tab === 'site-assessment' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Story */}
+            <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(13,148,136,0.04)', border: '1px solid rgba(13,148,136,0.2)', borderLeft: '4px solid #0d9488' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+                Pratiksha · FaaS Site Assessment · Mar 18, 2026 · session 1a0cd25e
+              </div>
+              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+                "They need to present the site assessment to accreditation bodies. For that they need one PDF. But step 1 and step 3 are outside FaaS. So we cannot give them one PDF. That is the problem."
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7 }}>
+                A program director visits a clinical site. She records the assessment across 3 steps — site details (step 1), assessment questions (step 2 via FaaS), and form metadata (step 3). When her accreditor asks for documentation, she needs one unified PDF. Exxat gives her an Excel export of step 2 only. She manually stitches steps 1–3 together in Word. Every cycle.
+              </div>
+            </div>
+
+            {/* 3-step visual */}
+            <div style={{ padding: '16px 20px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Site assessment: 3-step lifecycle</div>
+              <div style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
+                {[
+                  { step: 'Step 1', label: 'Site details', location: 'Site module (hardcoded)', status: 'outside-faas', desc: 'Site name, address, accreditation type, capacity. Not configurable by FaaS.' },
+                  { step: 'Step 2', label: 'Assessment form', location: 'FaaS (configurable)', status: 'in-faas', desc: 'Custom questions configured per school. Up to 5 form variations. This is what FaaS controls.' },
+                  { step: 'Step 3', label: 'Form metadata', location: 'Site module (hardcoded)', status: 'outside-faas', desc: 'Completion date, reviewer name, submission status. Not configurable by FaaS.' },
+                ].map((s, i) => (
+                  <div key={i} style={{ flex: 1, padding: '12px 14px', background: s.status === 'in-faas' ? 'rgba(13,148,136,0.06)' : 'rgba(232,96,74,0.05)', border: `1px solid ${s.status === 'in-faas' ? 'rgba(13,148,136,0.25)' : 'rgba(232,96,74,0.25)'}`, borderRadius: i === 0 ? '10px 0 0 10px' : i === 2 ? '0 10px 10px 0' : 0, borderLeft: i > 0 ? 'none' : undefined }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: s.status === 'in-faas' ? '#0d9488' : '#e8604a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{s.step}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{s.label}</div>
+                    <div style={{ fontSize: 10, padding: '2px 6px', borderRadius: 6, display: 'inline-block', background: s.status === 'in-faas' ? 'rgba(13,148,136,0.12)' : 'rgba(232,96,74,0.12)', color: s.status === 'in-faas' ? '#0d9488' : '#e8604a', marginBottom: 6, fontFamily: 'JetBrains Mono, monospace' }}>{s.location}</div>
+                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', fontSize: 12, color: 'var(--text2)' }}>
+                <strong style={{ color: '#dc2626' }}>Accreditation blocker:</strong> FaaS PDF download exports step 2 only. Accreditors need steps 1+2+3 as one document. Clients manually stitch in Word or Excel every accreditation cycle.
+              </div>
+            </div>
+
+            {/* Key asks + PIF */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div style={{ padding: '14px 16px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Top client asks (confirmed by Pendo + Pratiksha)</div>
+                {[
+                  { ask: 'Download form responses as PDF', priority: 'P0', detail: 'Not Excel. The accreditation audience reads PDFs, not spreadsheets. Must include all 3 steps as unified document.' },
+                  { ask: 'Unpublish form without deleting', priority: 'P1', detail: 'Clients need to take a form offline temporarily (seasonal sites, under review) without losing the configuration.' },
+                  { ask: 'No requests for more control types', priority: 'Note', detail: 'Current control set (single/multi choice, short/long answer, dropdown, date, signature) is sufficient for assessment use case.' },
+                ].map((a, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, paddingBottom: i < 2 ? 10 : 0, marginBottom: i < 2 ? 10 : 0, borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
+                    <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: a.priority === 'P0' ? 'rgba(220,38,38,0.1)' : a.priority === 'P1' ? 'rgba(217,119,6,0.1)' : 'rgba(148,163,184,0.1)', color: a.priority === 'P0' ? '#dc2626' : a.priority === 'P1' ? '#d97706' : '#94a3b8', flexShrink: 0, height: 'fit-content', marginTop: 1 }}>{a.priority}</span>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{a.ask}</div>
+                      <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{a.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ padding: '14px 16px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Preceptor Intake Form (PIF) — new FaaS surface</div>
+                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.7, marginBottom: 10 }}>
+                  FaaS powers a new global preceptor profile system. A preceptor fills the form once — their credentials, license, certifications sync to every school that uses them.
+                </div>
+                {[
+                  { label: 'Standardized fields', val: 'Locked. Cannot be renamed. First name, credentials, license, certifications. Maps directly to global profile.' },
+                  { label: 'Custom section', val: 'School adds program-specific questions. These stay local, not synced to global profile.' },
+                  { label: 'License expiry', val: 'Feeds into placement clearance dashboard — flags preceptors with expiring credentials before rotation starts.' },
+                  { label: 'Design implication', val: 'Two-section form: standardized (read-only field labels) + custom (editable). Visual distinction required.' },
+                ].map((r, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 8, paddingBottom: i < 3 ? 8 : 0, marginBottom: i < 3 ? 8 : 0, borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#0d9488', width: 120, flexShrink: 0, marginTop: 1 }}>{r.label}</span>
+                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{r.val}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 

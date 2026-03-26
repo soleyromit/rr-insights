@@ -1,433 +1,449 @@
 import { useState } from 'react';
 
-type CompetitorId = 'examsoft' | 'blackboard' | 'd2l' | 'canvas' | 'core' | 'surveymonkey' | 'typhon';
+// ─── Competitive Intelligence View ───────────────────────────────────────────
+// Rich competitor analysis with use cases, scenarios, real feature gaps,
+// and direct connections to what Exxat is building.
+// Every entry sourced from Granola sessions or project documents.
+// "I want examples, visuals, use cases and scenarios to support each
+//  information piece. Connect the dots with features we are building."
+// — Romit's prompt, Mar 26, 2026
 
-interface Competitor {
-  id: CompetitorId;
+interface Feature {
   name: string;
-  category: 'direct' | 'lms' | 'indirect';
-  categoryLabel: string;
-  color: string;
-  tagline: string;
+  examsoft: 'yes' | 'no' | 'partial';
+  blackboard: 'yes' | 'no' | 'partial';
+  canvas: 'yes' | 'no' | 'partial';
+  d2l: 'yes' | 'no' | 'partial';
+  exxat: 'yes' | 'no' | 'partial' | 'planned';
   source: string;
-  satisfaction?: string;
-  revenue?: string;
-  strengths: string[];
-  weaknesses: string[];
-  retentionAnchors?: string[];
-  exxatWins: string[];
-  keyQuote?: string;
-  keyQuoteSource?: string;
+  exxatNote?: string;
 }
 
-const COMPETITORS: Competitor[] = [
+interface UseCase {
+  scenario: string;
+  who: string;
+  currentPain: string;
+  exxatFix: string;
+  builtIn: string; // which Magic Patterns component addresses this
+  source: string;
+}
+
+interface IndirectCompetitor {
+  name: string;
+  category: string;
+  color: string;
+  productOverlap: string;
+  whyTheyWin: string;
+  exxatGap: string;
+  exxatFix: string;
+  source: string;
+}
+
+const FEATURE_MATRIX: Feature[] = [
+  { name: 'Flat pool + Smart Views (no folder silos)', examsoft: 'no', blackboard: 'yes', canvas: 'partial', d2l: 'partial', exxat: 'yes', source: 'f59ac2a6 Nipun + Stakeholder Day 1', exxatNote: 'Industry-first: flat pool with school-shared + personal Smart Views. ExamSoft folder trap eliminated.' },
+  { name: 'Online review/approval workflow', examsoft: 'no', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'yes', source: '8c94698f Nipun', exxatNote: 'ReviewQueue.tsx — Approve/reject/revise with inline comment. ExamSoft uses email.' },
+  { name: 'AI question generation from slides', examsoft: 'no', blackboard: 'partial', canvas: 'partial', d2l: 'no', exxat: 'planned', source: 'f5d66e4c Ed Razenbach + 791334af Arun', exxatNote: 'ExamDashboard AI panel — upload lecture PDF, AI drafts questions. ExamSoft publicly anti-AI.' },
+  { name: 'Blueprint assembly (describe → system builds)', examsoft: 'no', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'planned', source: '791334af Arun', exxatNote: 'Industry first. Describe the exam in natural language, system assembles from bank.' },
+  { name: 'AI personalised remediation per student', examsoft: 'no', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'planned', source: 'ca5a709c Ed Razenbach', exxatNote: 'PostExamPhase — per-student weak-area question sets. Ed already does manually with Claude.' },
+  { name: 'Formula/variable injection questions', examsoft: 'no', blackboard: 'yes', canvas: 'yes', d2l: 'yes', exxat: 'yes', source: '2768ba8d Dr. Vicky Mody', exxatNote: 'FormulaQuestionEditor.tsx — anti-cheating by design. ExamSoft gap confirmed.' },
+  { name: 'Ordering / sequence question type', examsoft: 'no', blackboard: 'yes', canvas: 'yes', d2l: 'yes', exxat: 'yes', source: '2768ba8d Dr. Vicky Mody', exxatNote: 'QuestionEditor ordering type. Glycolysis steps, pathophysiology sequences.' },
+  { name: 'Bulk accommodation profile (assign once, applies to all exams)', examsoft: 'no', blackboard: 'no', canvas: 'partial', d2l: 'no', exxat: 'yes', source: 'f29a990d Aarti + D2L demo Mar 4', exxatNote: 'AccommodationManager.tsx — program-level profile. D2L requires 70 manual ops per 7 students × 10 quizzes.' },
+  { name: 'WCAG 2.1 AA + ACR/VPAT report', examsoft: 'partial', blackboard: 'yes', canvas: 'yes', d2l: 'yes', exxat: 'yes', source: '4c9b94f5 Nipun + f29a990d Aarti', exxatNote: 'PublishPhase ACR panel — 11 WCAG criteria, Export VPAT. Required for UNF pilot + ADA Title II Apr 24.' },
+  { name: 'Platform-embedded TTS/STT in lockdown', examsoft: 'no', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'planned', source: 'Mar 16 accessibility session', exxatNote: 'No competitor has this. All rely on OS-level tools that lockdown browser blocks.' },
+  { name: 'KR-20 + point-biserial + upper/lower 27%', examsoft: 'yes', blackboard: 'partial', canvas: 'no', d2l: 'partial', exxat: 'yes', source: 'f5d66e4c Mary + ca5a709c Ed', exxatNote: 'PostExamPhase psychometrics tab — built.' },
+  { name: 'Curve options (full credit / bonus / answer change)', examsoft: 'yes', blackboard: 'partial', canvas: 'partial', d2l: 'partial', exxat: 'yes', source: 'f5d66e4c ExamSoft demo', exxatNote: 'PostExamPhase curves tab — 3 options built.' },
+  { name: 'Watch-list: auto-flag at-risk students', examsoft: 'no', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'yes', source: '92bef6ba Dr. T Touro', exxatNote: 'ExamDashboard watch-list widget. Dr. T: "Wouldn\'t it be nice if the computer flagged them automatically."' },
+  { name: 'Full audit trail per question access', examsoft: 'partial', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'yes', source: '92bef6ba Dr. T Touro', exxatNote: 'AuditTrail.tsx — ExamSoft had incidents where they couldn\'t tell who accessed an exam.' },
+  { name: 'PA performance dashboard (PACRAT + EOR + PANCE predictor)', examsoft: 'no', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'yes', source: '7dbabdb5 Aarti + Vishaka', exxatNote: 'PADashboard.tsx — Aarti: "Even Influx is not doing this level of report."' },
+  { name: 'Marks: Bloom\'s-based distribution', examsoft: 'no', blackboard: 'no', canvas: 'no', d2l: 'no', exxat: 'yes', source: 'marks_weightage_features.md', exxatNote: 'MarksWeightage.tsx — Phase 3 feature. No competitor has this.' },
+  { name: 'Immutable question versioning (exams pin to version used)', examsoft: 'no', blackboard: 'no', canvas: 'partial', d2l: 'no', exxat: 'yes', source: 'Stakeholder Day 1 + Day 2', exxatNote: 'ExamSoft: editing a question loses the exam link. Exxat: every edit creates a new immutable version.' },
+];
+
+const USE_CASES: UseCase[] = [
   {
-    id: 'examsoft',
-    name: 'ExamSoft',
-    category: 'direct',
-    categoryLabel: 'Primary target',
-    color: '#e8604a',
-    tagline: 'Comprehensive features, 20-year-old UX, publicly anti-AI',
-    source: 'Dr. Vicky Mody · Mar 20 + Day 1 Marriott · Mar 2',
-    satisfaction: '1/5',
-    revenue: '~$60M',
-    strengths: [
-      'Curriculum mapping already established at client sites',
-      'Faculty training built over years — high switching cost',
-      'Strong item analytics: p-value, discrimination index, KR-20',
-      'Blueprint-based exam building with NCCPA cell coverage',
-      'Deep medical education domain fit',
-      'Question + answer randomisation, secure client delivery',
-    ],
-    weaknesses: [
-      'User satisfaction 1/5 — "worst UX in edtech"',
-      'Multi-campus sharing = print / email / re-upload manually',
-      'No bulk accommodation assignment — 70 manual ops for 7 students × 10 quizzes',
-      'No built-in accessibility — blocked by lockdown browser',
-      'No AI features — cannot AI-first a 20-year-old codebase',
-      'Manual course ID sync with LMS every semester',
-      'Curriculum mapping lives in Excel outside the system',
-    ],
-    retentionAnchors: [
-      'Curriculum mapping already done — "8 cohorts of questions. Rebuilding takes a year."',
-      'Faculty training built over years — retraining would take a year',
-      'Strong item analytics — 5 evaluation criteria per question',
-    ],
-    exxatWins: [
-      'Modern UX — Canvas-level interface vs 20-year-old design',
-      'Built-in accessibility within lockdown browser (Pearson model)',
-      'Accommodation profile system — 70 ops → 1 operation',
-      'AI-first architecture from day one',
-      'Flat tagging replaces folder silos — cross-campus sharing',
-      'Prism integration — student/course/faculty data already exists',
-    ],
-    keyQuote: 'We have 8 cohorts of questions in ExamSoft. The curriculum mapping is done. Retraining faculty would take a year.',
-    keyQuoteSource: 'Dr. Vicky Mody · Touro · Mar 20, 2026',
+    scenario: 'Faculty wants to build a 42-question exam covering 3 competency areas',
+    who: 'Dr. Vicky Mody (Touro PA, Pharmacy)',
+    currentPain: 'In ExamSoft: navigate 3 separate folder banks, manually check blueprint coverage, no AI. Takes 3–4 hours.',
+    exxatFix: 'Blueprint prompt: "30 MCQ: 10 hard CV Pharm Apply-level, 10 medium Pulm Understand-level, 10 easy Neuro recall. Exclude last 2 exams." AI builds the set. Faculty reviews.',
+    builtIn: 'ExamDashboard AI Generate panel — Blueprint assembly. BuildPhase AI suggest per section.',
+    source: '791334af Arun + f5d66e4c Ed Razenbach',
   },
   {
-    id: 'blackboard',
-    name: 'Blackboard Ultra',
-    category: 'lms',
-    categoryLabel: 'LMS competitor',
-    color: '#f5a623',
-    tagline: 'Best question type variety, AI generation, dropped folders entirely',
-    source: 'Dr. Vicky Mody Blackboard session · Mar 20, 2026',
-    strengths: [
-      '8+ question types ExamSoft lacks: formula-based with random variables, hotspot, jumbled sentence ordering',
-      'AI question generation from syllabi and course materials',
-      'Survey integration eliminates separate SurveyMonkey subscriptions',
-      'WCAG 2.1 AA certified with ACR documentation',
-      'High contrast mode, browser accessibility built-in',
-      'Warning on publish if images missing alt text',
-    ],
-    weaknesses: [
-      'Dropped folders entirely — may be too unstructured for clinical faculty',
-      'Browser-based accessibility blocked by LockDown browser (same as ExamSoft)',
-      'No clinical education differentiation — generic LMS',
-      'Curriculum mapping disabled for faculty at Touro to prevent duplicates',
-      'No accommodation profile system — per-attempt only',
-      'Faculty still mapping curriculum in Excel outside both systems',
-    ],
-    exxatWins: [
-      'Clinical-specific IA — not a generic LMS bolted onto healthcare',
-      'Accommodation profiles at program level — Blackboard is per-attempt',
-      'Built-in accessibility within lockdown (Blackboard relies on browser)',
-      'Publish gate blocks deploy until all a11y items resolved',
-    ],
-    keyQuote: 'Ordering questions — like ranking glycolysis enzyme steps — ExamSoft simply cannot do that.',
-    keyQuoteSource: 'Dr. Vicky Mody · Mar 20, 2026',
+    scenario: 'Two students fail the same EOR — need different remediation',
+    who: 'Ed Razenbach (DCE, Touro PA)',
+    currentPain: 'Ed manually runs PACRAT results through Claude, generates per-student question sets. Completely manual, not scalable.',
+    exxatFix: 'PostExamPhase remediation tab: click "Generate remediation set" per student. AI uses their weak competency tags to build a personalised question set. Faculty reviews before sending.',
+    builtIn: 'PostExamPhase — Remediation tab with AI generate per student.',
+    source: 'ca5a709c Ed Razenbach: "Two students failed family med but each got different question sets from me."',
   },
   {
-    id: 'd2l',
-    name: 'D2L BrightSpace',
-    category: 'lms',
-    categoryLabel: 'LMS competitor',
-    color: '#78aaf5',
-    tagline: 'Good LMS integration, broken accommodation workflow',
-    source: 'D2L BrightSpace demo · Mar 4, 2026',
-    strengths: [
-      'Respondus LockDown Browser integration built-in',
-      'Remote proctoring with camera monitoring',
-      'Quiz statistics and distribution analysis',
-      'Canvas-style clean UX',
-      'Broad institutional use across North America',
-    ],
-    weaknesses: [
-      'Per-student per-quiz accommodation setup — no bulk assignment',
-      '7 students × 10 quizzes = 70 individual manual setups. No bulk option.',
-      'No clinical education differentiation',
-      'Browser-based accessibility blocked by LockDown',
-      'No accommodation profile system at any level',
-    ],
-    exxatWins: [
-      'Accommodation profile system: D2L\'s 70-operation gap → 1 operation',
-      'This is the single strongest UX competitive differentiator vs D2L',
-      'Clinical-specific IA, accreditation vocabulary, placement integration',
-    ],
-    keyQuote: '7 students with accommodations. 10 quizzes each. That is 70 individual setups. No bulk option.',
-    keyQuoteSource: 'D2L BrightSpace demo · Mar 4, 2026',
+    scenario: 'Student with ADHD needs extended time + TTS + on-screen keyboard',
+    who: 'Students with disabilities (WCAG, UNF pilot)',
+    currentPain: 'ExamSoft/Respondus blocks OS-level tools. Students with disabilities have no in-exam accommodations. Programs file ADA complaints.',
+    exxatFix: 'Accommodation profile: 1.5× time + TTS + on-screen keyboard set once. Applies automatically to all of their exams. ADA Title II compliant by April 24.',
+    builtIn: 'AccommodationManager.tsx + PublishPhase ACR panel + student PreExamScreen accessibility toolbar.',
+    source: 'f29a990d Aarti: "Title Two is going into law on April 24. Anything we release has to be accessible from day one."',
   },
   {
-    id: 'canvas',
-    name: 'Canvas (New Quizzes)',
-    category: 'lms',
-    categoryLabel: 'LMS competitor',
-    color: '#2ec4a0',
-    tagline: 'Best UX in class, two-systems trap, no clinical differentiation',
-    source: 'Platform strategy sessions · Mar 2026',
-    strengths: [
-      'Modern UX — the benchmark faculty compare everything against',
-      'Shareable item banks in New Quizzes (not locked to course)',
-      'WCAG 2.1 AA certified',
-      'Alt text required on image upload',
-      'LTI integration ecosystem',
-    ],
-    weaknesses: [
-      '"Two systems" trap: Classic Quizzes ≠ New Quizzes — professors must migrate manually',
-      'Browser-based zoom blocked by LockDown browser',
-      'No clinical education differentiation, no accreditation vocabulary',
-      'No accommodation profile system — group sections only',
-      'No lockdown-safe accessibility tools',
-    ],
-    exxatWins: [
-      'Clinical-specific IA that Canvas will never build (not their market)',
-      'Built-in accessibility within lockdown',
-      'Accommodation profiles vs Canvas group sections only',
-      'No migration nightmare — flat tagging from day one, no Classic vs New problem',
-    ],
+    scenario: 'Program director wants to see which students are at risk before graduation',
+    who: 'Dr. T (Touro PA program), Mary (coordinator)',
+    currentPain: '"Monster Grid" — Excel combining PACRAT, EOR, PANCE predictor, procedure minimums, GPA. Updated manually each rotation.',
+    exxatFix: '"Just the reds" toggle: single click shows only students below any threshold. PANCE predictor, EOR z-scores, procedure gaps all in one dashboard. CSV import for PAEA data.',
+    builtIn: 'PADashboard.tsx — cohort view with at-risk sort + watch-list widget on ExamDashboard.',
+    source: '92bef6ba Dr. T: "I just want the reds." 7dbabdb5 Aarti: "Even Influx is not doing this."',
   },
   {
-    id: 'core',
-    name: 'CORE Elsevier',
-    category: 'direct',
-    categoryLabel: 'Direct competitor',
-    color: '#6d5ed4',
-    tagline: 'Domain language navigation, 23 modules, preceptor-centric model',
-    source: 'Day 2 — Enflux and CORE review · Feb 27, 2026',
-    strengths: [
-      'Uses natural domain language: "preceptor evaluations" not "FaaS forms"',
-      '23 active modules covering the full clinical education lifecycle',
-      'More intuitive navigation than Exxat — users understand it immediately',
-      'Preceptor-based model designed for clinical site users',
-    ],
-    weaknesses: [
-      'No AI-first approach',
-      'Less clinical placement depth than Exxat ExactOne',
-      'No exam management module',
-    ],
-    exxatWins: [
-      'Lesson: Rename FaaS surfaces to domain language — "Compliance requirements" not "FaaS forms"',
-      'Deeper placement data via ExactOne',
-      'AI-first architecture CORE cannot match',
-    ],
-    keyQuote: 'CORE users understand "preceptor evaluations" immediately. Nobody understands what "FaaS forms" means.',
-    keyQuoteSource: 'Day 2 — Enflux and CORE review · Feb 27, 2026',
+    scenario: 'Head professor wants 3 associates to each build one section of a 100-question exam',
+    who: 'Nipun (PM), confirmed at Touro',
+    currentPain: 'No platform supports this. Head emails associates "give me 5 hard Apply-level cardiology questions," receives them by email, manually adds to ExamSoft.',
+    exxatFix: 'Multi-professor collaboration: head defines section scope, assigns to contributor roles. Each contributor sees their section only. Head reviews question level (Approve/reject from ReviewQueue).',
+    builtIn: 'ReviewQueue.tsx + BuildPhase contributor role + PhaseShell role-based access.',
+    source: '84c94044 Nipun: "Up to now, there is no tool which does this kind of collaboration."',
   },
   {
-    id: 'surveymonkey',
-    name: 'SurveyMonkey / Qualtrics',
-    category: 'indirect',
-    categoryLabel: 'Indirect — FaaS / Course Eval',
-    color: '#4caf7d',
-    tagline: 'Self-service baseline faculty expect from any form builder',
-    source: 'Touro session + synthesized · Mar 2026',
-    strengths: [
-      'Zero-friction self-service form creation — the mental model faculty bring',
-      'Qualtrics: advanced survey analysis, theme extraction, reporting',
-      'Touro uses Qualtrics for 7 survey types instead of Exxat eval',
-      '~$5K/yr standalone — price competitive with module add-ons',
-    ],
-    weaknesses: [
-      'No clinical education context — generic survey tools',
-      'No accreditation mapping, no ARC-PA/CAPTE vocabulary',
-      'Data in separate silos from placement and exam data',
-      'No AI theme extraction built-in (users manually paste into ChatGPT)',
-    ],
-    exxatWins: [
-      'Integration moat: one platform for surveys + placements + exams + competencies',
-      'Accreditation-ready reports automatic vs 20+ hours manual compilation',
-      'AI theme extraction inside Exxat vs ChatGPT workaround',
-    ],
-    keyQuote: 'I paste all the open-ended responses into ChatGPT and ask it to extract themes. It saves hours and hours every cycle.',
-    keyQuoteSource: 'Ed Razenbach · Feb 26, 2026',
-  },
-  {
-    id: 'typhon',
-    name: 'Typhon / CompetencyAI',
-    category: 'indirect',
-    categoryLabel: 'Indirect — Skills Checklist',
-    color: '#e8604a',
-    tagline: 'Skills checklist head-to-head — timeline risk in Q3–Q4',
-    source: 'Day 4 Marriott — Skills and LC · Mar 5, 2026',
-    strengths: [
-      'Established skills tracking in PA and nursing programs',
-      'Typhon has deep clinical hours tracking',
-      'CompetencyAI specifically targeting the same gap Exxat is building',
-    ],
-    weaknesses: [
-      'No placement integration — standalone skills only',
-      'No AI-first approach',
-      'No exam management, no FaaS — siloed tool',
-    ],
-    exxatWins: [
-      'Full lifecycle context: placement + skills + exam in one platform',
-      'Accelerate Cohere prototype — demo at August locks early adopters before Typhon capitalises',
-      'AI graduation readiness predictor Typhon cannot match',
-    ],
+    scenario: 'Faculty wants to understand why Question 18 was flagged by 44% of students',
+    who: 'David Stocker (faculty, Touro)',
+    currentPain: 'ExamSoft shows flag count but no psychometric context. "Is it a bad question or just a hard concept?" Cannot tell without KR-20 + point-biserial analysis.',
+    exxatFix: 'PostExamPhase psychometrics: Q18 shows point-biserial −0.09 (weaker students scored higher), 44% flag rate, upper-27% vs lower-27% split. Action: "Review" badge, retire from bank.',
+    builtIn: 'PostExamPhase — Psychometrics tab with per-question analysis.',
+    source: 'f5d66e4c Mary: "Negative means weaker students got it right — that\'s a bad question."',
   },
 ];
 
-const CATEGORY_FILTERS = [
-  { id: 'all', label: 'All' },
-  { id: 'direct', label: 'Direct' },
-  { id: 'lms', label: 'LMS' },
-  { id: 'indirect', label: 'Indirect' },
+const INDIRECT: IndirectCompetitor[] = [
+  {
+    name: 'SurveyMonkey / Typeform',
+    category: 'FaaS 2.0 — Form creation',
+    color: '#00BF6F',
+    productOverlap: 'Form creation UX, branching logic, inline validation, response analytics',
+    whyTheyWin: 'Zero-friction creation. Inline validation on every field (not submit-only). Preview before publish. Free tier eliminates procurement friction.',
+    exxatGap: 'FaaS has NO inline validation — Prasanjit confirmed: numeric fields accept any value, error only on submit. This is WCAG 3.3.1 violation AND baseline UX expectation.',
+    exxatFix: 'Inline validation with visible field limits on all FaaS form controls. Error on blur, not submit.',
+    source: '13352a23 Prasanjit: "Mandatory field errors only appear on submit, not during input."',
+  },
+  {
+    name: 'Qualtrics / Blue',
+    category: 'Course Eval — Survey analysis',
+    color: '#0033A0',
+    productOverlap: 'Survey analysis, theme extraction from open-text, benchmarking, reporting',
+    whyTheyWin: 'AI theme extraction saves hours from qualitative analysis. Export-ready accreditation reports. Touro uses Blue for all 7 eval types instead of Exxat.',
+    exxatGap: 'No AI theme extraction from open-ended responses. Excel-only export. 7 survey types run outside Exxat.',
+    exxatFix: 'PCE module: AI theme extraction from open-text responses is the single highest-ROI feature to compete with Qualtrics.',
+    source: 'f5d66e4c Touro: "It saves hours and hours." bde86866 Vishaka: PCE = special kind of survey.',
+  },
+  {
+    name: 'Google Forms',
+    category: 'FaaS 2.0 — Zero-friction baseline',
+    color: '#4285F4',
+    productOverlap: 'Form creation baseline expectation for all users',
+    whyTheyWin: 'Zero setup. No training. If you can type, you can make a form. Free. This is what every new user compares FaaS to.',
+    exxatGap: 'FaaS is significantly harder than Google Forms for basic form creation. Low self-service adoption confirmed by Pendo (Pratiksha: "not many clients who go and do the setup themselves").',
+    exxatFix: 'Template-first entry (Akshit Q2 strategy): 80-85% of creation is cloning existing template. Don\'t open with blank canvas.',
+    source: '19c032d2 Akshit: "80-85% are just addition of questions or options on existing questions." 1a0cd25e Pratiksha: Pendo shows low event count.',
+  },
+  {
+    name: 'Influx',
+    category: 'PA Dashboard — Student performance',
+    color: '#FF6B35',
+    productOverlap: 'PA student performance tracking, some didactic data from ExamSoft',
+    whyTheyWin: 'Some ExamSoft data integration. Established in PA programs. Familiar interface.',
+    exxatGap: 'Influx cannot get clinical data — no placement context. Cannot combine didactic + clinical in one view.',
+    exxatFix: 'Exxat owns the clinical layer. PA Dashboard combines PACRAT + EOR + OSCE + procedure minimums + placement data. Aarti: "Even Influx is not doing this level of report."',
+    source: '7dbabdb5 Aarti + Vishaka PA Dashboard session.',
+  },
+  {
+    name: 'Meditrek',
+    category: 'Skills Checklist — Clinical hours tracking',
+    color: '#5B2D8E',
+    productOverlap: 'Procedure minimums tracking, clinical hours, competency logging',
+    whyTheyWin: 'Purpose-built for procedure tracking. Simple mobile interface. Programs have used it for years.',
+    exxatGap: 'Skills must be program-scoped (not placement-scoped). Students cannot answer "how many IVs have I done total across all rotations?" in current Exxat system — same limitation as Meditrek.',
+    exxatFix: 'Skills Checklist program-scoped redesign + "just the reds" filter + overflow/culminating rotation slot + mobile-first logging.',
+    source: '5890b614 Day 4 Marriott: 80-90% use external spreadsheets. 92bef6ba Dr. T: "Typhon replaced by Exxat."',
+  },
+  {
+    name: 'Notion',
+    category: 'rr-insights — Research repository',
+    color: '#000000',
+    productOverlap: 'Research intelligence, note-taking, knowledge management',
+    whyTheyWin: 'Beautiful UX. Flexible structure. Everyone already uses it.',
+    exxatGap: 'Notion has no clinical education domain intelligence, no Granola auto-sync, no product-aware insight tagging.',
+    exxatFix: 'rr-insights: Granola → insights pipeline, force-directed knowledge graph, domain expert breakdown, story-driven product views. Notion cannot connect a transcript to a Magic Patterns component.',
+    source: 'SKILL.md v5.0 — rr-insights as intelligence agency.',
+  },
 ];
+
+const STATUS_COLORS = { yes: '#16a34a', no: '#dc2626', partial: '#d97706', planned: '#6d5ed4' };
+const STATUS_BG = { yes: 'rgba(22,163,74,0.08)', no: 'rgba(220,38,38,0.07)', partial: 'rgba(217,119,6,0.08)', planned: 'rgba(109,94,212,0.08)' };
+const STATUS_LABELS = { yes: '✓', no: '✗', partial: '~', planned: '⬡' };
+
+type ViewTab = 'matrix' | 'use-cases' | 'indirect' | 'retention';
 
 export function CompetitiveView() {
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [expandedId, setExpandedId] = useState<CompetitorId | null>('examsoft');
-  const [activeSection, setActiveSection] = useState<'weaknesses' | 'strengths' | 'exxat'>('weaknesses');
+  const [tab, setTab] = useState<ViewTab>('matrix');
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [filterProduct, setFilterProduct] = useState<'all' | 'exxat-wins' | 'exxat-gaps' | 'exxat-planned'>('all');
 
-  const filtered = activeFilter === 'all'
-    ? COMPETITORS
-    : COMPETITORS.filter(c => c.category === activeFilter);
+  const filteredFeatures = FEATURE_MATRIX.filter(f => {
+    if (filterProduct === 'exxat-wins') return f.exxat === 'yes';
+    if (filterProduct === 'exxat-gaps') return f.exxat === 'no' || f.exxat === 'partial';
+    if (filterProduct === 'exxat-planned') return f.exxat === 'planned';
+    return true;
+  });
 
-  const expanded = COMPETITORS.find(c => c.id === expandedId);
+  const wins = FEATURE_MATRIX.filter(f => f.exxat === 'yes').length;
+  const planned = FEATURE_MATRIX.filter(f => f.exxat === 'planned').length;
+  const gaps = FEATURE_MATRIX.filter(f => f.exxat === 'no' || f.exxat === 'partial').length;
 
   return (
-    <div className="flex-1 overflow-y-auto" style={{ background: 'var(--bg)' }}>
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '24px 24px 48px' }}>
+    <div style={{ padding: 24, fontFamily: 'Inter, sans-serif', background: 'var(--bg)', minHeight: '100vh' }}>
 
-        <p className="eyebrow mb-2">Competitive analysis</p>
-        <h1 className="serif text-[22px] font-medium mb-1" style={{ color: 'var(--text)' }}>
-          7 competitors · sourced from 114 Granola sessions
+      {/* Header */}
+      <div style={{ marginBottom: 20 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
+          Competitive Intelligence
         </h1>
-        <p className="text-[13px] mb-6" style={{ color: 'var(--text3)' }}>
-          Every entry is grounded in real stakeholder sessions, demos, and product comparisons. Click a competitor to expand.
+        <p style={{ fontSize: 13, color: 'var(--text2)', margin: 0 }}>
+          Real use cases, real gaps, direct connections to what we are building. Every entry sourced from Granola sessions.
         </p>
+      </div>
 
-        {/* Filter */}
-        <div className="flex gap-2 mb-6">
-          {CATEGORY_FILTERS.map(f => (
-            <button key={f.id} onClick={() => setActiveFilter(f.id)} style={{
-              padding: '5px 14px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
-              fontWeight: activeFilter === f.id ? 600 : 400, transition: 'all .15s',
-              border: `1px solid ${activeFilter === f.id ? '#6d5ed4' : 'var(--border)'}`,
-              background: activeFilter === f.id ? 'rgba(109,94,212,0.08)' : 'var(--bg2)',
-              color: activeFilter === f.id ? '#6d5ed4' : 'var(--text2)',
-            }}>{f.label}</button>
-          ))}
-        </div>
+      {/* Summary KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10, marginBottom: 20 }}>
+        {[
+          { label: 'Features built', val: wins, color: '#16a34a', sub: 'Exxat leads or matches', filter: 'exxat-wins' as const },
+          { label: 'Planned', val: planned, color: '#6d5ed4', sub: 'Industry-first or Q3+', filter: 'exxat-planned' as const },
+          { label: 'Still gaps', val: gaps, color: '#dc2626', sub: 'Needs work', filter: 'exxat-gaps' as const },
+          { label: 'Indirect competitors', val: INDIRECT.length, color: '#d97706', sub: 'Feature-level collision', filter: 'all' as const },
+        ].map(k => (
+          <button key={k.label} onClick={() => { setFilterProduct(k.filter); setTab('matrix'); }}
+            style={{ textAlign: 'left', padding: '12px 14px', borderRadius: 10, background: '#fff', border: `1px solid var(--border)`, cursor: 'pointer' }}>
+            <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: k.color }}>{k.val}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginTop: 1 }}>{k.label}</div>
+            <div style={{ fontSize: 11, color: 'var(--text3)' }}>{k.sub}</div>
+          </button>
+        ))}
+      </div>
 
-        {/* Two-panel layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 16, alignItems: 'start' }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 0, marginBottom: 20, borderBottom: '1px solid var(--border)' }}>
+        {([
+          { id: 'matrix', label: 'Feature matrix' },
+          { id: 'use-cases', label: 'Real use cases' },
+          { id: 'indirect', label: 'Indirect competitors' },
+          { id: 'retention', label: 'Retention anchors' },
+        ] as { id: ViewTab; label: string }[]).map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            style={{ padding: '10px 18px', fontSize: 13, fontWeight: tab === t.id ? 600 : 400, color: tab === t.id ? 'var(--brand)' : 'var(--text3)', background: 'none', border: 'none', borderBottom: `2px solid ${tab === t.id ? 'var(--brand)' : 'transparent'}`, marginBottom: -1, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            {t.label}
+          </button>
+        ))}
+      </div>
 
-          {/* Left: competitor list */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {filtered.map(c => (
-              <button key={c.id} onClick={() => setExpandedId(c.id)}
-                style={{
-                  textAlign: 'left', padding: '10px 12px', borderRadius: 'var(--radius)',
-                  border: `1px solid ${expandedId === c.id ? c.color : 'var(--border)'}`,
-                  background: expandedId === c.id ? `${c.color}10` : 'var(--bg2)',
-                  cursor: 'pointer', transition: 'all .15s',
-                }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: expandedId === c.id ? c.color : 'var(--text)', marginBottom: 2 }}>
-                  {c.name}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--text3)' }}>{c.categoryLabel}</div>
-                {c.satisfaction && (
-                  <div style={{ fontSize: 10, color: '#e8604a', marginTop: 3, fontWeight: 600 }}>
-                    Satisfaction {c.satisfaction}
-                  </div>
-                )}
+      {/* FEATURE MATRIX */}
+      {tab === 'matrix' && (
+        <div>
+          {/* Filter pills */}
+          <div style={{ display: 'flex', gap: 6, marginBottom: 14, flexWrap: 'wrap' }}>
+            {([['all', 'All features'], ['exxat-wins', '✓ Exxat wins'], ['exxat-planned', '⬡ Planned'], ['exxat-gaps', '✗ Gaps']] as const).map(([f, label]) => (
+              <button key={f} onClick={() => setFilterProduct(f)}
+                style={{ fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 20, border: `1px solid ${filterProduct === f ? 'var(--brand)' : 'var(--border)'}`, background: filterProduct === f ? 'var(--brand-soft)' : '#fff', color: filterProduct === f ? 'var(--brand)' : 'var(--text3)', cursor: 'pointer' }}>
+                {label}
               </button>
             ))}
+            <span style={{ fontSize: 11, color: 'var(--text3)', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
+              {(['yes', 'partial', 'no', 'planned'] as const).map(s => (
+                <span key={s} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ width: 20, height: 18, borderRadius: 4, background: STATUS_BG[s], color: STATUS_COLORS[s], fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{STATUS_LABELS[s]}</span>
+                  <span style={{ color: 'var(--text3)', fontSize: 11, textTransform: 'capitalize' }}>{s === 'planned' ? 'Exxat planned' : s === 'yes' ? 'Yes' : s === 'no' ? 'No' : 'Partial'}</span>
+                </span>
+              ))}
+            </span>
           </div>
 
-          {/* Right: expanded detail */}
-          {expanded && (
-            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-              {/* Header */}
-              <div style={{
-                padding: '18px 22px', borderBottom: '1px solid var(--border)',
-                background: `${expanded.color}08`,
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{expanded.name}</h2>
-                      <span style={{
-                        fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em',
-                        padding: '2px 8px', borderRadius: 10,
-                        background: `${expanded.color}18`, color: expanded.color,
-                      }}>{expanded.categoryLabel}</span>
+          {/* Matrix table */}
+          <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', background: '#fff' }}>
+            {/* Header */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 120px 100px 100px 140px', gap: 0, padding: '10px 16px', background: 'var(--bg2)', borderBottom: '1px solid var(--border)' }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Feature</span>
+              {['ExamSoft', 'Blackboard Ultra', 'Canvas LMS', 'D2L', 'Exxat target'].map(h => (
+                <span key={h} style={{ fontSize: 10, fontWeight: 700, color: h === 'Exxat target' ? 'var(--brand)' : 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>{h}</span>
+              ))}
+            </div>
+            {filteredFeatures.map((f, i) => (
+              <div key={f.name}>
+                <div
+                  onClick={() => setExpanded(expanded === f.name ? null : f.name)}
+                  style={{ display: 'grid', gridTemplateColumns: '1fr 100px 120px 100px 100px 140px', gap: 0, padding: '10px 16px', borderBottom: '1px solid var(--border)', cursor: 'pointer', background: expanded === f.name ? 'var(--bg2)' : 'transparent' }}
+                  onMouseEnter={e => { if (expanded !== f.name) e.currentTarget.style.background = 'var(--bg2)'; }}
+                  onMouseLeave={e => { if (expanded !== f.name) e.currentTarget.style.background = 'transparent'; }}>
+                  <span style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.4, paddingRight: 12 }}>{f.name}</span>
+                  {(['examsoft', 'blackboard', 'canvas', 'd2l', 'exxat'] as const).map(comp => (
+                    <div key={comp} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontSize: comp === 'exxat' ? 13 : 12, fontWeight: 700, width: comp === 'exxat' ? 52 : 32, height: 24, borderRadius: 6, background: STATUS_BG[f[comp]], color: STATUS_COLORS[f[comp]], display: 'inline-flex', alignItems: 'center', justifyContent: 'center', letterSpacing: comp === 'exxat' && f[comp] === 'planned' ? '0em' : '0em' }}>
+                        {comp === 'exxat' && f[comp] === 'planned' ? 'Planned' : STATUS_LABELS[f[comp]]}
+                      </span>
                     </div>
-                    <p style={{ fontSize: 13, color: 'var(--text2)' }}>{expanded.tagline}</p>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    {expanded.satisfaction && (
-                      <div style={{ fontSize: 22, fontWeight: 700, color: '#e8604a' }}>{expanded.satisfaction}</div>
-                    )}
-                    {expanded.satisfaction && (
-                      <div style={{ fontSize: 10, color: 'var(--text3)' }}>user satisfaction</div>
-                    )}
-                    {expanded.revenue && (
-                      <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 4 }}>{expanded.revenue} revenue</div>
-                    )}
-                  </div>
+                  ))}
                 </div>
-
-                {/* Key quote */}
-                {expanded.keyQuote && (
-                  <div className="pull-quote" style={{ marginTop: 12, marginBottom: 0 }}>
-                    "{expanded.keyQuote}"
-                    <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4, fontStyle: 'normal' }}>
-                      — {expanded.keyQuoteSource}
+                {expanded === f.name && (
+                  <div style={{ padding: '12px 16px 14px', background: 'rgba(109,94,212,0.03)', borderBottom: '1px solid var(--border)', borderLeft: '3px solid var(--brand)' }}>
+                    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                      {f.exxatNote && (
+                        <div style={{ flex: 1, minWidth: 280 }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Exxat design note</div>
+                          <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.6 }}>{f.exxatNote}</p>
+                        </div>
+                      )}
+                      <div style={{ flexShrink: 0 }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Source</div>
+                        <div style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{f.source}</div>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-              {/* Section tabs */}
-              <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 22px' }}>
-                {([
-                  { id: 'weaknesses', label: 'Weaknesses' },
-                  { id: 'strengths', label: 'Strengths' },
-                  { id: 'exxat', label: 'Where Exxat wins' },
-                ] as const).map(tab => (
-                  <button key={tab.id} onClick={() => setActiveSection(tab.id)} style={{
-                    padding: '10px 14px', fontSize: 12, cursor: 'pointer',
-                    fontWeight: activeSection === tab.id ? 600 : 400,
-                    color: activeSection === tab.id ? expanded.color : 'var(--text2)',
-                    background: 'transparent', border: 'none',
-                    borderBottom: `2px solid ${activeSection === tab.id ? expanded.color : 'transparent'}`,
-                    transition: 'all .15s',
-                  }}>{tab.label}</button>
-                ))}
+      {/* USE CASES */}
+      {tab === 'use-cases' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ padding: '10px 14px', borderRadius: 9, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.15)', fontSize: 12, color: 'var(--text2)' }}>
+            Every use case is real — sourced from Granola sessions with Touro faculty, DCEs, and program directors. Each maps directly to a built or planned Magic Patterns component.
+          </div>
+          {USE_CASES.map((uc, i) => (
+            <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden' }}>
+              <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg2)' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Use case {i + 1} · {uc.who}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', lineHeight: 1.4 }}>{uc.scenario}</div>
               </div>
-
-              {/* Section content */}
-              <div style={{ padding: '16px 22px' }}>
-                {activeSection === 'weaknesses' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {expanded.weaknesses.map((w, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <span style={{ color: '#e8604a', flexShrink: 0, fontWeight: 700, fontSize: 12, marginTop: 1 }}>✕</span>
-                        <span style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{w}</span>
-                      </div>
-                    ))}
-                    {expanded.retentionAnchors && (
-                      <div style={{ marginTop: 12, padding: '12px 14px', background: 'rgba(232,96,74,0.06)', borderRadius: 8, border: '1px solid rgba(232,96,74,0.15)' }}>
-                        <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#e8604a', marginBottom: 8 }}>
-                          Retention anchors — why clients stay despite bad UX
-                        </p>
-                        {expanded.retentionAnchors.map((r, i) => (
-                          <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 5 }}>
-                            <span style={{ color: '#e8604a', flexShrink: 0, fontSize: 12, marginTop: 1 }}>⚓</span>
-                            <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{r}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {activeSection === 'strengths' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {expanded.strengths.map((s, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <span style={{ color: expanded.color, flexShrink: 0, fontWeight: 700, fontSize: 12, marginTop: 1 }}>+</span>
-                        <span style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{s}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {activeSection === 'exxat' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {expanded.exxatWins.map((w, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <span style={{ color: '#2ec4a0', flexShrink: 0, fontWeight: 700, fontSize: 12, marginTop: 1 }}>→</span>
-                        <span style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{w}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+                <div style={{ padding: '12px 16px', borderRight: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Current pain</div>
+                  <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.6 }}>{uc.currentPain}</p>
+                </div>
+                <div style={{ padding: '12px 16px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Exxat solution</div>
+                  <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.6 }}>{uc.exxatFix}</p>
+                </div>
               </div>
-
-              {/* Source footer */}
-              <div style={{
-                padding: '10px 22px', borderTop: '1px solid var(--border)',
-                fontSize: 10, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace',
-              }}>
-                Source: {expanded.source}
+              <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border)', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                <div>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Built in: </span>
+                  <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text2)' }}>{uc.builtIn}</span>
+                </div>
+                <div style={{ marginLeft: 'auto' }}>
+                  <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>{uc.source}</span>
+                </div>
               </div>
             </div>
-          )}
+          ))}
         </div>
-      </div>
+      )}
+
+      {/* INDIRECT */}
+      {tab === 'indirect' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ padding: '10px 14px', borderRadius: 9, background: 'rgba(217,119,6,0.05)', border: '1px solid rgba(217,119,6,0.15)', fontSize: 12, color: 'var(--text2)' }}>
+            Indirect competitors do not compete at the category level, but they set user expectations at the feature level. Users compare FaaS to SurveyMonkey, PCE to Qualtrics, and skills tracking to Meditrek regardless of whether they are in the same space.
+          </div>
+          {INDIRECT.map((c, i) => (
+            <div key={i} style={{ borderRadius: 12, background: '#fff', border: `1px solid ${c.color}25`, overflow: 'hidden', borderLeft: `4px solid ${c.color}` }}>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', gap: 12, alignItems: 'center' }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: `${c.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: c.color, flexShrink: 0 }}>
+                  {c.name.slice(0, 1)}
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{c.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text3)' }}>{c.category}</div>
+                </div>
+                <div style={{ marginLeft: 'auto', fontSize: 11, padding: '3px 10px', borderRadius: 20, background: `${c.color}10`, color: c.color, fontWeight: 600 }}>
+                  {c.productOverlap.split(' — ')[0]}
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 0 }}>
+                {[
+                  { label: 'Why they win', text: c.whyTheyWin, color: '#dc2626' },
+                  { label: 'Exxat gap', text: c.exxatGap, color: '#d97706' },
+                  { label: 'Exxat fix', text: c.exxatFix, color: '#16a34a' },
+                ].map((col, ci) => (
+                  <div key={ci} style={{ padding: '12px 14px', borderRight: ci < 2 ? '1px solid var(--border)' : 'none' }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: col.color, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>{col.label}</div>
+                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.6 }}>{col.text}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ padding: '8px 14px', borderTop: '1px solid var(--border)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>
+                {c.source}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* RETENTION ANCHORS */}
+      {tab === 'retention' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.2)', borderLeft: '4px solid #dc2626' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+              Why schools stay on ExamSoft — confirmed verbatim
+            </div>
+            <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+              "Curriculum mapping already done in ExamSoft — 8 cohorts of questions. Faculty training built over years. Strong item analytics. These are the exact three things Exxat must match or exceed."
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text3)' }}>Dr. Vicky Mody, Touro School of Pharmacy · Mar 20, 2026 · session 2768ba8d</div>
+          </div>
+
+          {[
+            {
+              anchor: '1. Curriculum mapping established',
+              detail: '8 cohorts of question-to-competency mapping already done in ExamSoft. Rebuilding this in a new system takes 12–18 months of faculty time. This is the highest switching cost.',
+              exxatCounter: 'AI tag suggestion: faculty types "heart drugs" → AI suggests "Cardiovascular Pharmacology" → one click to accept. Rebuilding the map becomes hours not months. Flat pool means questions can be retagged in bulk.',
+              sessions: '2768ba8d Dr. Vicky Mody + Stakeholder Day 1',
+            },
+            {
+              anchor: '2. Faculty training built over years',
+              detail: 'Faculty have 5–10 years of ExamSoft muscle memory. Question creation, exam assembly, scoring — all feel automatic. Switching means retraining a department.',
+              exxatCounter: 'QB landing = assessment builder mode (Nipun confirmed). Three entry points to questions. No folder navigation — just search and filter. Onboarding must feel like ExamSoft, then reveal the upgrades.',
+              sessions: '2768ba8d Dr. Vicky Mody + f59ac2a6 David Stocker',
+            },
+            {
+              anchor: '3. Strong item analytics',
+              detail: 'ExamSoft shows KR-20, point-biserial, difficulty index, discrimination index, 5 criteria per question per exam. Faculty trust these numbers for accreditation.',
+              exxatCounter: 'PostExamPhase psychometrics: KR-20, point-biserial, upper/lower 27%, per-question action badges (Good/Flag/Remove). Plus AI remediation — ExamSoft cannot do this.',
+              sessions: 'f5d66e4c Mary Touro + ca5a709c Ed Razenbach',
+            },
+            {
+              anchor: 'ExamSoft security failures (opportunity)',
+              detail: 'Dr. T: "If you edit a question it loses the exam link. You can\'t tell who accessed an exam. Printed copies left on desks caused cheating incidents." These are not minor UX issues — they are institutional integrity risks.',
+              exxatCounter: 'Immutable versioning: every edit creates a new version, past exams pinned. Full audit trail per access. Export/print control. These are switching triggers, not just improvements.',
+              sessions: '92bef6ba Dr. T Touro clinical team',
+            },
+          ].map((r, i) => (
+            <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden' }}>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', background: i === 3 ? 'rgba(16,163,74,0.04)' : 'rgba(220,38,38,0.03)' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: i === 3 ? '#16a34a' : '#dc2626' }}>{r.anchor}</div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+                <div style={{ padding: '12px 16px', borderRight: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: i === 3 ? '#16a34a' : '#dc2626', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>
+                    {i === 3 ? 'Why this is an opportunity' : 'Why it keeps schools on ExamSoft'}
+                  </div>
+                  <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.6 }}>{r.detail}</p>
+                </div>
+                <div style={{ padding: '12px 16px' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#6d5ed4', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>Exxat counter</div>
+                  <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.6 }}>{r.exxatCounter}</p>
+                </div>
+              </div>
+              <div style={{ padding: '8px 14px', borderTop: '1px solid var(--border)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{r.sessions}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
