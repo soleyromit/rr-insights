@@ -792,7 +792,28 @@ export function ExamManagementView() {
               ))}
             </Card>
             <Card>
-              <CardTitle sub="Present in Magic Patterns and confirmed correct">What is built correctly</CardTitle>
+              </Card>
+            <Card>
+              <CardTitle sub="D2L BrightSpace demo (c7a8d32e) + Nipun UNF pilot (4c9b94f5) + Accessibility session (77fc2588)">Accessibility + D2L gaps</CardTitle>
+              {[
+                { src: 'D2L BrightSpace demo · Mar 4', gap: 'Bulk accommodation assignment: D2L requires 7 students × 10 quizzes = 70 manual setups. Program-level accommodation profile = 1 setup. First-to-market differentiator.', p: 'P0', built: false },
+                { src: 'Nipun UNF pilot · Mar 11', gap: 'V0 accessibility for UNF Australia pilot (July): magnification, high contrast, extra time accommodations. ACR (Accessibility Compliance Report) validation required.', p: 'P0', built: true },
+                { src: 'Accessibility session · Mar 16', gap: 'On-screen keyboard (OSK) must be platform-embedded. No external software allowed — LockDown browser blocks all external a11y tools. Pearson Education (GRE/SAT/TOEFL) is reference architecture.', p: 'P1', built: false },
+                { src: 'Accessibility session · Mar 16', gap: 'Two-phase approach confirmed: Phase 1 = minimum changes for UNF pilot. Phase 2 = comprehensive revamp during student portal overhaul.', p: 'P0', built: false },
+                { src: 'Nipun UNF pilot · Mar 11', gap: 'Question rationale/explanation feature: teacher-defined per question, shown after submission or full assessment. AI assistance for content creation. Low-stakes exam differentiator.', p: 'P2', built: false },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: '12px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
+                    {item.built && <Badge variant="success">Built</Badge>}
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.src}</span>
+                  </div>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item.gap}</div>
+                </div>
+              ))}
+            </Card>
+            <Card>
+                            <CardTitle sub="Present in Magic Patterns and confirmed correct">What is built correctly</CardTitle>
               {['Cross-out feature (David) — strike options without removing selectability. Built.',
                 'Text highlighting in passage questions (David). Built.',
                 'Calculator per question (David). Built.',

@@ -65,6 +65,7 @@ export function Sidebar({ activeView, onNav }: Props) {
           );
         })}
         <Section label="Intelligence" />
+        <NavItem id="exactone" label="ExxatOne" icon={LayoutDashboardIcon} active={activeView === 'exactone'} onNav={onNav} badge="New" badgeColor="#F59E0B" />
         <NavItem id="personas" label="Persona map" icon={UsersIcon} active={activeView === 'personas'} onNav={onNav} />
         <NavItem id="competitive" label="Competitive analysis" icon={GitBranchIcon} active={activeView === 'competitive'} onNav={onNav} />
         <NavItem id="themes" label="Theme clusters" icon={TagIcon} active={activeView === 'themes'} onNav={onNav} />

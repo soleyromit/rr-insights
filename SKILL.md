@@ -619,3 +619,91 @@ Before every chart ask: "If I removed this chart, what decision could the reader
 | 3.0.0 | 2026-03-25 | Added Sections 13–14: Exam Management deep product intelligence, product template standard |
 | 2.0.0 | 2026-03-23 | Initial SKILL.md with 5 products, 10 POV lenses, Claude architecture whiteboard |
 
+
+---
+
+## 19. NEW SESSIONS PROCESSED (v4.5 batch — 2026-03-26)
+
+### Sessions ingested this batch
+
+| ID | Title | Date | Key signals |
+|----|-------|------|-------------|
+| 77fc2588 | Accessibility features for exam platform | Mar 16 | OSK, platform-embedded only, Pearson Education model (GRE/SAT/TOEFL), two-phase approach |
+| 4c9b94f5 | Romit<>Nipun UNF pilot tasks | Mar 11 | UNF Australia pilot July, V0 = magnification/high contrast/extra time, ACR validation |
+| c7a8d32e | Exam Management — D2L BrightSpace demo | Mar 4 | D2L per-student accommodation = 7 students × 10 quizzes = 70 manual setups, bulk accommodation as differentiator |
+| f665622e | Day 2 Marriott — PRISM | Mar 3 | React front-end FINAL decision, AI-first everywhere, exam management as flagship UX, design agency for jobs module, 40% demo close rate |
+| e9e48150 | Day 1 Marriott — PRISM product strategy | Mar 2 | KKR expects $300M→$1B TAM, clinical education consolidates to 1-3 players, ExamSoft NPS 1/5, student success analytics vision |
+| 00302142 | Romit<>Himanshu design system | Feb 27 | MagicPatterns vs Figma design system tension, VSTS access needed, placement design completed |
+| 1c4e0f01 | Romit<>Himanshu FaaS placement UX | Feb 24 | Jobs module overhaul Q2, task-based homepage, full modal approach, kanban board |
+| 72f8b82e | Aarti<>Romit ExxatOne School | Feb 25 | Plan→Place→Monitor→Review pipeline, payment as primary CTA, site availability-based model |
+| d4c622ef | Aarti<>Romit ExxatOne Student | Feb 25 | Payment = only revenue trigger, left panel hierarchy broken, Airbnb/Uber ecosystem model |
+
+### Critical decisions from this batch
+
+**D2L accommodation finding (c7a8d32e):**
+- 7 students with disabilities × 10 quizzes = 70 individual accommodation setups in D2L
+- Accommodation profile as program-level object = 1 setup, not 70
+- This is a documented competitive differentiator vs every LMS
+
+**Accessibility architecture (77fc2588 + 4c9b94f5):**
+- Platform-embedded ONLY — no external software allowed (LockDown browser constraint)
+- Pearson Education (GRE/SAT/TOEFL) is the reference architecture for in-platform a11y
+- Two phases: V0 = magnification/high contrast/extra time for UNF pilot (July)
+- V1 = OSK, TTS, full WCAG 2.1 AA during student portal overhaul
+- ACR (Accessibility Compliance Report) required for pilot sign-off
+
+**React front-end (f665622e):**
+- FINAL decision made at Day 2 Marriott: React front-end for entire app (admin + student)
+- AI-first: every screen must consider AI integration upfront — cannot retrofit later
+- Exam management identified as the flagship UX showcase
+
+**Business context (e9e48150):**
+- KKR investment thesis: TAM must grow from $300M → $1B
+- SaaS Rule of 40 target: growth rate + margin = 50-60
+- Clinical education space will consolidate to 1-3 players — Exxat must be one of them
+- ExamSoft NPS is 1/5 — the bar is extremely low for beating them on experience
+
+**ExxatOne revenue model (d4c622ef + 72f8b82e):**
+- ExactOne ONLY generates revenue when students pay for accepted placements
+- Not on account creation, not on browsing, not on contracts
+- Payment must be primary CTA — current left panel hierarchy buries it
+- Uber/Airbnb ecosystem expansion model: placements → jobs → observerships → CME
+
+---
+
+## 20. EXXAT PRODUCT ECOSYSTEM (complete map)
+
+This is the full product surface Romit designs across — 5 core + 2 adjacent:
+
+### Core 5 (Prism platform)
+1. **Exam Management** — clinical knowledge assessment, ExamSoft competitor
+2. **FaaS 2.0** — form platform serving all 5 modules
+3. **Course & Faculty Evaluation** — post-course eval, PCE module
+4. **Skills Checklist** — clinical competency tracking, Jan 2027 launch
+5. **Learning Contracts** — rotation + remediation contracts
+
+### Adjacent (ExxatOne platform)
+6. **ExxatOne Student** — placement onboarding, compliance, wish list
+7. **ExxatOne School** — placement pipeline management (Plan→Place→Monitor→Review)
+
+### Shared infrastructure
+- **FaaS** — forms engine used by all modules
+- **CAS** — Compliance as a Service (separate from FaaS)
+- **Leo AI** — cross-module AI assistant (exists, being enhanced)
+
+---
+
+## 21. DUAL-UPDATE PROTOCOL (formal)
+
+Every change Romit requests maps to both environments:
+
+| Request type | Magic Patterns action | rr-insights action |
+|---|---|---|
+| New Exam Mgmt feature | Write component in `mnirdwczw9xbbzyuveee4g` + publish | Update `ExamManagementView.tsx` UX Stories + Granola Gaps tabs |
+| New Granola session | Read with `get_meetings` | Update relevant product view + AskClaude system prompt |
+| Bug fix | Fix in Magic Patterns | Log in `src/docs/bugfixes.md` |
+| New product view | Build `*View.tsx` in rr-insights | No MP action unless design work starts |
+| SKILL.md update | No MP action | Update `SKILL.md` + bump version in changelog section |
+
+Git commit format: `feat/fix/docs: [product] [what] — [session IDs or epic IDs]`
+

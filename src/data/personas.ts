@@ -145,6 +145,13 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v4.5',
+    date: '2026-03-26',
+    summary: 'Bug fixes + Ask Claude AI feature + 9 new sessions + ExxatOne view. Fixed AIStrip text prop crash and MetricCard deltaPositive mismatch affecting all 4 new product views. Ask Claude: full Claude Sonnet integration with 10 scope filters, 10 suggested prompts, markdown rendering. ExxatOne view: Student + School platform intelligence from Feb 25 Aarti reviews. New insights: D2L accommodation finding (70→1), accessibility V0/V1 phases, React FINAL decision, KKR business thesis, revenue model documentation.',
+    author: 'Romit Soley',
+    changedFiles: ['src/components/ui/Card.tsx (MetricCard fix)', 'src/components/ui/InsightRow.tsx (AIStrip fix)', 'src/views/AskClaudeView.tsx (new)', 'src/views/products/ExxatOneView.tsx (new)', 'src/data/insights.ts (+8 insights, 61 total)', 'SKILL.md (sections 19-21)'],
+  },
+  {
     version: 'v4.0',
     date: 'Mar 26, 2026',
     summary: 'Full platform reset. Typography overhauled to Claude editorial scale (15px body, DM Serif Display headings, JetBrains Mono data). Unified 7-tab architecture across ALL products (Insights/Blueprint/Features/Analytics/Accessibility/Competitive/Decisions). 12 new insights from 4 missing Granola sessions (Arun 3-year vision, PCE context, Prasanjit Patient Log, Akshit Q2). Advanced Recharts data visualisation in every product. ProductViewShell rebuilt with rich content. 57 total insights.',

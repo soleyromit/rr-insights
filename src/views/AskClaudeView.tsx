@@ -15,6 +15,8 @@ const SCOPES: { id: ScopeId; label: string; color: string }[] = [
   { id: 'learning-contracts',label: 'Learning Contracts', color: '#EF4444' },
   { id: 'personas',          label: 'Personas',           color: '#6366F1' },
   { id: 'competitive',       label: 'Competitive',        color: '#14B8A6' },
+  { id: 'exactone',          label: 'ExxatOne',           color: '#F59E0B' },
+  { id: 'accessibility',     label: 'Accessibility',      color: '#6366F1' },
 ];
 
 const SUGGESTED: { label: string; prompt: string; scope: ScopeId }[] = [
@@ -37,7 +39,15 @@ You have deep knowledge of:
 - All stakeholder sessions: Ed Razenbach (PA program, ExamSoft power user), Dr. Vicky Mody (Blackboard comparison), Vishaka/David/Mohil (product team), Aarti & Kunal (exec), Arun Gautam (engineering lead), Prasanjit (FaaS domain expert), Akshit (PM Q2 requirements), Harsha (compliance), Nipun (junior PM), Dr. T Touro (clinical team)
 - Competitive landscape: ExamSoft, D2L BrightSpace, Canvas, Blackboard Ultra, CoreEval, Blue, SmartEval, Anthology, Typhon, CompetencyAI, Influx
 - Accreditation bodies: CAPTE, ACOTE, ARC-PA, CCNE, CSWE, CAAHEP
-- Personas: Student, DCE, SCCE, Program Director, Faculty, Admin
+- Personas: Student, DCE, SCCE, Program Director, Faculty, Admin, Site Coordinator, Program Director, CRNA/FNP/PNP students
+- ExxatOne platform (adjacent to Prism): ExxatOne Student (placement onboarding + compliance), ExxatOne School (placement pipeline: Plan→Place→Monitor→Review)
+- Business context: KKR investment, $300M→$1B TAM target, Rule of 40, clinical education consolidates to 1-3 players, ExamSoft NPS 1/5
+- Revenue model: ExxatOne only generates revenue when students pay for accepted placements — payment is the ONLY revenue trigger
+- Accessibility architecture: platform-embedded only (LockDown browser blocks external tools), Pearson Education (GRE/SAT/TOEFL) is reference model, ACR required for UNF pilot
+- D2L accommodation finding: 7 students × 10 quizzes = 70 manual setups in D2L. Exxat program-level accommodation profile = 1 setup
+- React front-end FINAL decision: made Day 2 Marriott (Mar 3). AI-first everywhere — cannot retrofit AI later
+- UNF pilot: July 2026, Australia North Rhoda college, annual graduation exam, MCQ, V0 accessibility required
+- Design system: MagicPatterns is current build env; Figma/Himanshu design system exists but early draft
 
 RESPONSE RULES:
 1. Always cite the specific Granola session by name + date when referencing stakeholder quotes
@@ -64,6 +74,8 @@ FORMAT:
     'learning-contracts': '\n\nFOCUS SCOPE: Learning Contracts. Key context: 2 types (rotation + remediation). Social work most complex model (EPAS 9×5=45 items). Prior merge with evaluations FAILED.',
     'personas': '\n\nFOCUS SCOPE: Personas. Focus on cross-product signals, shared frictions, and platform-level patterns.',
     'competitive': '\n\nFOCUS SCOPE: Competitive intelligence. Key competitors: ExamSoft (Year 2 target), D2L/Canvas/Blackboard (Year 1 benchmark), CoreEval/Blue/SmartEval (course eval), Typhon/CompetencyAI (skills).',
+    'exactone': '\n\nFOCUS SCOPE: ExxatOne platform (Student + School). Revenue model: only when students pay for placements. Key design problems: payment hierarchy buried in left panel, Uber/Airbnb ecosystem model needed, Plan→Place→Monitor→Review pipeline.',
+    'accessibility': '\n\nFOCUS SCOPE: Accessibility in Exam Management. Platform-embedded only. V0: magnification/high contrast/extra time (UNF pilot July). V1: OSK/TTS/WCAG 2.1 AA. Reference: Pearson Education (GRE/SAT/TOEFL). D2L baseline: 70 manual setups for 7 students.',
   };
 
   return base + (scopeAddendum[scope] || '');
