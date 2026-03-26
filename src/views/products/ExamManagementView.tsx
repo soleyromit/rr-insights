@@ -12,10 +12,11 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'exam-management';
-type TabId = 'insights' | 'blueprint' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions';
+type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'blueprint', label: 'Service Blueprint' },
+  { id: 'userflows', label: 'User Flows' },
   { id: 'features', label: 'Feature Map' },
   { id: 'analytics', label: 'Analytics' },
   { id: 'accessibility', label: 'Accessibility' },
@@ -261,6 +262,178 @@ export function ExamManagementView() {
               <AR feature="Focus mode" adm="Enable/disable per exam" stu="Removes chrome, question + answer only" wcag="N/A" p="new" />
               <AR feature="Dyslexia font" adm="Allow override per exam, per-student flag" stu="Font selector in toolbar, persists" wcag="N/A" p="new" />
               <AR feature="Publish gate" adm="Blocks publish until all CRITICAL items resolved" stu="Students never see a broken accessible exam" wcag="All" p="new" />
+            </Card>
+          </div>
+        )}
+
+
+        {/* USER FLOWS TAB */}
+        {activeTab === 'userflows' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div className="ai-strip">
+              3-lane system flow confirmed across 10 Granola sessions + migration pack. Admin/Faculty lane → Question Bank layer → Student lane → Analytics feedback loop. April 17 requires all 3 persona prototypes.
+            </div>
+
+            {/* 3-Lane System Flow */}
+            <Card>
+              <CardTitle sub="Confirmed from migration pack system architecture document">3-lane lifecycle — how the system flows</CardTitle>
+              <div style={{ overflowX: 'auto', paddingBottom: 8 }}>
+                <div style={{ minWidth: 720, display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  {/* Lane headers */}
+                  {[
+                    { label: 'Admin / Faculty', color: '#6d5ed4', bg: 'rgba(109,94,212,0.06)' },
+                    { label: 'Question Bank', color: '#0d9488', bg: 'rgba(13,148,136,0.06)' },
+                    { label: 'Student', color: '#8a8580', bg: 'rgba(138,133,128,0.06)' },
+                  ].map((lane, li) => {
+                    const laneFlows = [
+                      [
+                        { label: 'Create question', sub: 'Or import from file/QB', color: '#6d5ed4' },
+                        { label: 'Tag + version', sub: "Bloom's, topic, difficulty", color: '#6d5ed4' },
+                        { label: 'Submit for review', sub: 'Draft → In Review', color: '#d97706' },
+                        { label: 'Approve', sub: 'Status → Ready', color: '#0d9488' },
+                      ],
+                      [
+                        { label: 'Question Bank pool', sub: 'Flat, institution-wide, scoped views', color: '#0d9488' },
+                        { label: 'Assessment Builder', sub: 'Sections, marks, blueprint', color: '#0d9488' },
+                        { label: 'Configure + publish', sub: 'Schedule, proctoring, accommodations', color: '#0d9488' },
+                        { label: '', sub: '', color: 'transparent' },
+                      ],
+                      [
+                        { label: 'Exam available', sub: 'Lockdown browser', color: '#8a8580' },
+                        { label: 'Answer questions', sub: 'All question types', color: '#8a8580' },
+                        { label: 'Submit + flag', sub: 'Progress, navigator', color: '#8a8580' },
+                        { label: 'Graded result', sub: 'Auto-scored, LMS sync', color: '#0d9488' },
+                      ],
+                    ][li];
+                    return (
+                      <div key={lane.label} style={{ display: 'flex', background: lane.bg, borderBottom: '1px solid var(--border)', alignItems: 'stretch', minHeight: 80 }}>
+                        <div style={{ width: 110, minWidth: 110, padding: '12px 10px', display: 'flex', alignItems: 'center', borderRight: '1px solid var(--border)' }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: lane.color }}>{lane.label}</span>
+                        </div>
+                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '10px 16px', gap: 8 }}>
+                          {laneFlows.map((step, si) => step.label ? (
+                            <div key={si} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <div style={{ padding: '8px 12px', background: 'white', border: `1.5px solid ${step.color}30`, borderRadius: 8, minWidth: 120 }}>
+                                <div style={{ fontSize: 12, fontWeight: 600, color: step.color, marginBottom: 2 }}>{step.label}</div>
+                                <div style={{ fontSize: 11, color: 'var(--text3)', lineHeight: 1.3 }}>{step.sub}</div>
+                              </div>
+                              {si < laneFlows.length - 1 && laneFlows[si+1].label && (
+                                <span style={{ color: 'var(--text3)', fontSize: 16 }}>→</span>
+                              )}
+                            </div>
+                          ) : null)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {/* Analytics feedback */}
+                  <div style={{ padding: '10px 16px', background: 'rgba(109,94,212,0.04)', borderTop: '1px dashed var(--border2)' }}>
+                    <span style={{ fontSize: 11, color: 'var(--text3)', fontStyle: 'italic' }}>↻ Analytics feedback loop: psychometrics flag poor questions, update difficulty, inform next exam — this is the competitive moat against ExamSoft</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Question Lifecycle Flow */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <Card>
+                <CardTitle sub="5 states, auto-computed by system — faculty rarely set manually">Question lifecycle states</CardTitle>
+                {[
+                  { state: 'Draft', desc: 'Incomplete. Author-only. Cannot be used in any exam.', color: '#8a8580', dot: '#cdc8bf' },
+                  { state: 'In Review', desc: 'Submitted for QA. Reviewer approves, rejects, or comments.', color: '#d97706', dot: '#d97706' },
+                  { state: 'Ready', desc: 'All fields complete. Dept-visible. Available for assessments.', color: '#0d9488', dot: '#0d9488' },
+                  { state: 'Active', desc: 'Used in ≥1 delivered exam. System prevents deletion.', color: '#3b82f6', dot: '#3b82f6' },
+                  { state: 'Retired', desc: 'Pulled from use. Exists for historical exams only.', color: '#8a8580', dot: '#8a8580' },
+                ].map((s, i) => (
+                  <div key={s.state} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12, paddingBottom: 12, borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 4 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: s.dot, flexShrink: 0 }} />
+                      {i < 4 && <div style={{ width: 1, height: 24, background: 'var(--border)', marginTop: 4 }} />}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: s.color, marginBottom: 2 }}>{s.state}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{s.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </Card>
+
+              <Card>
+                <CardTitle sub="6 roles, each with fundamentally different needs and content">Role-based access — what each persona sees</CardTitle>
+                {[
+                  { role: 'Dept Head / PD', access: 'Full control', desc: 'Approve questions, endorse versions, cross-dept sharing, lock exam window', color: '#e8604a', initial: 'DH' },
+                  { role: 'Faculty / Course Dir.', access: 'Scoped edit', desc: 'Create questions, build assessments, submit for review', color: '#6d5ed4', initial: 'F' },
+                  { role: 'Institution Admin', access: 'Read-only all', desc: 'Full audit view, configure tag schemas, accreditation mapping', color: '#3b82f6', initial: 'IA' },
+                  { role: 'Contributor', access: 'Composable', desc: 'Creates questions for specific assessment — head faculty reviews', color: '#0d9488', initial: 'C' },
+                  { role: 'Initiative Lead', access: 'Read QB', desc: 'Cross-dept program-level assessments, assign sections', color: '#d97706', initial: 'IL' },
+                  { role: 'Reviewer', access: 'Review scope', desc: 'Assigned by Dept Head — approves/rejects before Ready status', color: '#8a8580', initial: 'R' },
+                ].map((r) => (
+                  <div key={r.role} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${r.color}20`, border: `1.5px solid ${r.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: r.color }}>{r.initial}</span>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 2 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{r.role}</span>
+                        <span className="badge badge-theme" style={{ fontSize: 10 }}>{r.access}</span>
+                      </div>
+                      <span style={{ fontSize: 12, color: 'var(--text3)' }}>{r.desc}</span>
+                    </div>
+                  </div>
+                ))}
+              </Card>
+            </div>
+
+            {/* Assessment Builder Flow */}
+            <Card>
+              <CardTitle sub="The primary workflow for Faculty / Course Director — all screen states">Assessment Builder — user flow (Faculty role)</CardTitle>
+              <div style={{ display: 'flex', gap: 0, overflowX: 'auto' }}>
+                {[
+                  { step: '01', screen: 'Dashboard', action: 'Action inbox', detail: '3 pending review · 2 exams · 1 draft', color: '#6d5ed4' },
+                  { step: '02', screen: 'New Assessment', action: 'Setup metadata', detail: 'Name, type, weightage · Duration · Schedule window', color: '#6d5ed4' },
+                  { step: '03', screen: 'Structure tab', action: 'Add sections', detail: 'Section A, B, C · Marks per section · Distribution method', color: '#3b82f6' },
+                  { step: '04', screen: 'Question Bank', action: 'Browse + add', detail: "Scoped views sidebar · Filter by Bloom's · Add to section", color: '#3b82f6' },
+                  { step: '05', screen: 'Accessibility tab', action: 'Configure', detail: 'TTS, STT, zoom · Accommodation profiles · Publish gate check', color: '#d97706' },
+                  { step: '06', screen: 'Submit for Review', action: 'HOD approval', detail: 'Draft → In Review · Reviewer notified · Comments inline', color: '#d97706' },
+                  { step: '07', screen: 'Published', action: 'Live exam', detail: 'Students notified · Lockdown browser · Admin monitors', color: '#0d9488' },
+                ].map((step, i) => (
+                  <div key={step.step} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+                    <div style={{ padding: '14px 16px', background: `${step.color}08`, border: `1.5px solid ${step.color}25`, borderRadius: 10, minWidth: 130, flexShrink: 0 }}>
+                      <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: step.color, fontWeight: 700, marginBottom: 6 }}>STEP {step.step}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>{step.screen}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 6 }}>{step.action}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text3)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{step.detail}</div>
+                    </div>
+                    {i < 6 && <div style={{ color: 'var(--text3)', fontSize: 18, padding: '0 6px', flexShrink: 0 }}>→</div>}
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Question types grid */}
+            <Card>
+              <CardTitle sub="All 9 question types admin can add — what students will experience">Question types — admin creates, student sees</CardTitle>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                {[
+                  { type: 'MCQ + MSQ', detail: "Single select / multiple select. Cross-out feature (David's request) — strike through options without removing selectability. Keyboard: A/B/C/D. Used in: PA pharmacology, didactic exams.", priority: 'P1', color: '#6d5ed4' },
+                  { type: 'Fill-in-the-blank', detail: 'Inline blanks within text. Student types or uses speech-to-text. Supports multiple blanks per question. Used in: medical calculations, drug dosage.', priority: 'P1', color: '#6d5ed4' },
+                  { type: 'Hotspot / Image', detail: 'Student clicks region on image (X-ray, anatomy diagram, EKG). Correctness = click within defined region. Used in: anatomy, radiology, cardiac rhythm.', priority: 'P1', color: '#6d5ed4' },
+                  { type: 'Passage-based', detail: "Long-form passage with 1+ questions. Text highlighting (David's request) — students highlight key phrases. Speech-to-text for open responses. Used in: clinical reasoning, case studies.", priority: 'P1', color: '#3b82f6' },
+                  { type: 'Match-the-following', detail: 'Student aligns items from one list to another. Supports per-pair scoring. Used in: drug-mechanism matching, anatomy labeling.', priority: 'P1', color: '#3b82f6' },
+                  { type: 'Audio-based', detail: 'Audio clip plays (heart sounds, lung sounds, speech). Captions + transcript displayed. Student responds via MCQ or short answer. Used in: clinical auscultation.', priority: 'P2', color: '#d97706' },
+                  { type: 'Video-based', detail: 'Video content with required captions. Transcript auto-generated in backend. Used in: surgical procedures, patient encounters, clinical skills.', priority: 'P2', color: '#d97706' },
+                  { type: 'PDF / Case study', detail: 'Embedded multi-page PDF viewer. Faculty uploads case document. Students scroll in PDF pane while answering. Used in: complex clinical scenarios spanning multiple pages.', priority: 'P2', color: '#d97706' },
+                  { type: 'Chart / Visual', detail: 'Chart or graph as stimulus. Alt text + description required (WCAG). Color cannot be sole indicator. Used in: lab values, vital signs trends, EKG strips.', priority: 'P2', color: '#8a8580' },
+                ].map(qt => (
+                  <div key={qt.type} style={{ padding: '12px 14px', background: `${qt.color}06`, border: `1px solid ${qt.color}20`, borderRadius: 'var(--radius)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: qt.color }}>{qt.type}</span>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: qt.priority === 'P1' ? '#0d9488' : '#d97706', fontFamily: 'JetBrains Mono, monospace' }}>{qt.priority}</span>
+                    </div>
+                    <p style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.55 }}>{qt.detail}</p>
+                  </div>
+                ))}
+              </div>
             </Card>
           </div>
         )}

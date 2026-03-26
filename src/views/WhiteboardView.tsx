@@ -236,6 +236,75 @@ const ARTIFACTS: WhiteboardArtifact[] = [
       'SmartEval feature parity definition needed before April workshop.',
     ],
   },
+
+  // EXAM MANAGEMENT — DEEP INTEL (from whiteboard screenshots + all 10 Granola sessions)
+  {
+    id: 'wb-em-01', category: 'exam-intel', color: '#e8604a',
+    title: 'What this product is (confirmed)', source: 'Exam Mgmt whiteboard · Mar 2026',
+    items: [
+      'The admin side of exams — university admins and faculty create, configure, and deploy assessments. Students see the output. This tool builds the input.',
+      'Two-module system: Assessment Builder (configure and publish exams) + Question Bank (institution-wide repository with tagging, versioning, lifecycle states).',
+      'ExamSoft target: August 2026 Cohere launch. Must be ExamSoft-competitive. ExamSoft retention anchors: curriculum mapping, faculty training, item analytics.',
+      'Year 1 goal (Arun, Mar 24): beat LMS quiz modules — Canvas parity + better UX + 1 flagship AI feature, free for Prism users.',
+      'Year 2: ExamSoft parity + charge. Year 3: AI proctoring, adaptive testing, custom lockdown browser.',
+      'ExamSoft is publicly anti-AI. That is the strategic opening. Exxat leans into AI everywhere.',
+    ],
+  },
+  {
+    id: 'wb-em-02', category: 'exam-intel', color: '#e8604a',
+    title: 'Roles in scope — 6 personas confirmed', source: 'Migration pack + Granola sessions · Mar 2026',
+    items: [
+      'Dept Head / Program Director: full control — approve questions, endorse versions, cross-dept sharing, lock during exam window.',
+      'Faculty / Course Director: create questions, build assessments, collaborate with contributors, submit for review.',
+      'Institution Admin: full audit view, configure tag schemas, accreditation mapping, multi-campus hierarchy.',
+      'Contributor (Faculty +): composable permission — creates questions for a specific assessment, head faculty reviews.',
+      'Initiative / Program Lead: read-only QB, build cross-dept program-level assessments, assign sections to faculty.',
+      'Reviewer (Faculty +): assigned by Dept Head for a scope — reviews drafts, approves/rejects before Ready status.',
+    ],
+  },
+  {
+    id: 'wb-em-03', category: 'exam-intel', color: '#e8604a',
+    title: 'Question bank — feature clusters confirmed', source: 'Migration pack PRD · Mar 2026',
+    items: [
+      'Question lifecycle: Draft (author-only, cannot be used in any exam) → In Review (submitted for QA, reviewer approves/rejects) → Ready (all fields complete, dept-visible, available for assessments) → Active (used in ≥1 delivered exam, system prevents deletion) → Retired (pulled from use, exists for historical exams only).',
+      'Versioning logic: every edit creates new immutable version (V1→V2→V3). Exams pin to exact version used at creation. Revert = new forward version with old content, never overwrite. Variant = fork with new ID, new owner, linked back to original. Dept Head can endorse a specific version per department.',
+      'Tagging: Subject/Topic (dept-defined tree, 3–4 levels deep e.g. Pharm→CV→Beta Blockers), Bloom\'s (Remember/Understand/Apply/Analyze/Evaluate/Create), Difficulty (Easy/Medium/Hard compound with Year/Level), USMLE/Competency (ARC-PA, PAEA, Step 1–3), AI shadow tags (hidden, quality check only), mandatory tags from predefined blueprints — no free-text drift.',
+      'Scoped views: flat pool, questions not siloed per course. Scoped Views = saved filter queries that look like smart folders. Auto-created per course on setup — faculty never face blank slate. Tier 1 (pinned views, recent items, My Courses accordion) + Tier 2 (Browse All Views sliding panel with search). 3-level drill-down with breadcrumb; sidebar collapses to icon mode.',
+    ],
+  },
+  {
+    id: 'wb-em-04', category: 'exam-intel', color: '#e8604a',
+    title: 'Assessment Builder — feature clusters confirmed', source: 'Migration pack + Granola sessions · Mar 2026',
+    items: [
+      'Assessment setup: name, type (quiz/formative/summative), weightage, delivery mode. Duration, total marks (auto-computed from sections). Schedule: publish date, availability window, time zone. Lifecycle stepper: Draft→Building→Review→Published→Scheduled→Live. LMS integration (Canvas LTI): auto-post results.',
+      'Section + question structure: multi-section exam with individual marks per section. Section-level weightage + question-level mark distribution. Equal distribution / manual / difficulty-based marks. Blueprint-based: specify % by content area + difficulty level. Auto-select matching questions + randomization. Question and answer option randomization per student.',
+      'Question types (what admin creates, student sees): MCQ (single) + MSQ (multiple) + cross-out. Fill-in-blank. Match-the-following. Hotspot / image-based. Audio + video with captions/transcripts. PDF/multi-page case studies. Passage-based with highlighting. Chart-based.',
+      'Security + proctoring: Respondus LockDown Browser. Admin live monitoring dashboard. Question + answer order randomization. Secure client delivery, restrict key combos. Accommodation settings per student: extended time, magnification, calculator.',
+      'Post-exam analytics: psychometrics (item difficulty, discrimination index, KR-20). 5 evaluation criteria per question. Auto-flag poor-performing questions. Content area performance vs. national benchmarks. Cross-course performance per cohort. Curriculum mapping output: standards ↔ curriculum.',
+    ],
+  },
+  {
+    id: 'wb-em-05', category: 'exam-intel', color: '#e8604a',
+    title: 'ExamSoft gaps vs. Exxat wins', source: 'ExamSoft demos (4h15m) + Touro meeting · Mar 2026',
+    items: [
+      'ExamSoft retention anchors (the real blockers): (1) Curriculum mapping already established. (2) Faculty training built over years — high switching cost. (3) Strong item analytics (difficulty, discrimination, KR-20). Must match all three by August 2026.',
+      'Where Exxat wins architecturally: flat pool + Scoped Views (not folder silos). Cross-dept question sharing without duplication. Prism integration: student/course/faculty data already exists. AI question generation from syllabi (Phase 2). Initiative/Program cross-dept competency tracking.',
+      'Multi-campus pain (confirmed by Touro): California campus on different ExamSoft version. Manual process: print questions, email, re-upload with pictures. EKG images require Box cloud sharing. This is a 45-minute workflow that should be a single click.',
+      'Item analytics ExamSoft offers (must match): KR-20 (>0.8 good, >0.9 for medical). Point biserial (closer to 1 = better, negative = question is misleading). Difficulty percentage. Upper 27% (top performers) vs. lower 27% discrimination.',
+      'Curving options ExamSoft has that Exxat needs: give full credit to all, assign as bonus question (does not affect 100% denominator), adjust correct answer after exam, add additional correct option. Assessment-level changes only — not retroactive across other assessments.',
+    ],
+  },
+  {
+    id: 'wb-em-06', category: 'exam-intel', color: '#e8604a',
+    title: 'System flow — 3-lane lifecycle', source: 'Migration pack + Granola synthesis · Mar 2026',
+    items: [
+      'Admin/Faculty lane: Create question (or import from file/QB) → Tag + version (Bloom\'s, topic, difficulty) → Submit for review (Draft→In Review) → Approve (Status→Ready).',
+      'Question Bank layer: Flat pool feeds Assessment Builder. Assessment Builder feeds Configure + Publish (schedule, proctoring, accommodations).',
+      'Student lane: Exam available (Lockdown browser) → Answer questions (all question types) → Submit + flag (progress, navigator) → Graded result (auto-scored, LMS sync).',
+      'Analytics feedback loop: psychometrics feed back — flag poor questions, update difficulty, inform next exam. This loop is the competitive moat against ExamSoft.',
+      'April 17 milestone: student prototype + admin prototype + faculty prototype. May: architecture review. July: AI heavy. August: Cohere launch.',
+    ],
+  },
 ];
 
 const CATEGORIES = [
@@ -245,6 +314,7 @@ const CATEGORIES = [
   { id: 'competitor', label: 'Competitive', count: ARTIFACTS.filter(a => a.category === 'competitor').length },
   { id: 'strategic', label: 'Strategic', count: ARTIFACTS.filter(a => a.category === 'strategic').length },
   { id: 'feature', label: 'Features', count: ARTIFACTS.filter(a => a.category === 'feature').length },
+  { id: 'exam-intel', label: 'Exam Management', count: ARTIFACTS.filter(a => a.category === 'exam-intel').length },
 ] as const;
 
 const CAT_COLORS: Record<string, string> = {
@@ -253,6 +323,7 @@ const CAT_COLORS: Record<string, string> = {
   'competitor': '#e8604a',
   'strategic': '#f5a623',
   'feature': '#78aaf5',
+  'exam-intel': '#e8604a',
 };
 
 export function WhiteboardView() {
