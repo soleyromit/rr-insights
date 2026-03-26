@@ -104,6 +104,11 @@ export const PLATFORM_SIGNALS = [
   { label: 'Cognitive overload (student)', count: 4, color: '#6d5ed4', isNew: false },
   { label: 'Standalone skills entity', count: 3, color: '#db2777', isNew: true },
   { label: 'SCCE mobile gap', count: 3, color: '#2563eb', isNew: false },
+,
+  'NPS 2025 (Admin, NPS 1): "No visible list of tasks on login. Notifications do not take me to the task." Task-based home screen missing across all 5 products — platform-level gap.',
+  'NPS 2025 (Admin, NPS 3): "4 different ways to get the same info, only 1 works." Navigation inconsistency is a platform architecture problem, not a product problem.',
+  'NPS 2025 (Admin, NPS 2): "Prism is a significant downgrade from V3 — twice as many clicks." Click-depth regression vs V3 is a measurable platform performance metric.',
+  'NPS 2025 (Student): "Preceptor eval too long — discouraging preceptors." Form length is a compliance risk across FaaS, Skills Checklist, and Learning Contracts.'
 ];
 
 export const MILESTONES: Milestone[] = [
@@ -144,6 +149,13 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 ];
 
 export const VERSION_HISTORY: VersionEntry[] = [
+  {
+    version: 'v4.9',
+    date: '2026-03-26',
+    summary: 'NPS 2025 data integrated platform-wide. 10 new insights (ins-nps-admin-01 to ins-ce-openqs-01) from NPS 2025 + project docs. 2 new themes added (Navigation inconsistency / Task-based home). FaaSView updated with NPS verbatims. PLATFORM_SIGNALS updated with 4 NPS signals. ThemesView: 8 total themes now including NPS-grounded patterns. Magic Patterns v10 published with correct QB architecture (7 statuses, Contextual Link Profiles, Version vs Variant).',
+    author: 'Romit Soley',
+    changedFiles: ['src/data/insights.ts (63 total)', 'src/data/personas.ts (PLATFORM_SIGNALS)', 'src/views/ThemesView.tsx (+2 NPS themes)', 'src/views/products/FaaSView.tsx (NPS signals)', 'src/views/products/CourseEvalView.tsx (rebuilt from primer)'],
+  },
   {
     version: 'v4.8',
     date: '2026-03-26',

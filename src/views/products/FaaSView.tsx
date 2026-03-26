@@ -116,6 +116,8 @@ export function FaaSView() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
               <MetricCard label="Configured forms" value="17,000+" delta="Across 11 types" />
               <MetricCard label="Annual support tickets" value="95,000" delta="NPS 2/5 baseline" deltaPositive={false} />
+              <MetricCard label="Admin NPS detractors" value="37" delta="Navigation & click-depth cited most" deltaPositive={false} />
+              <MetricCard label="Student detractors" value="629" delta="Preceptor eval length + mobile gaps" deltaPositive={false} />
               <MetricCard label="Q2 Phase 1 target" value="Internal only" delta="CI team + CIC exec" />
               <MetricCard label="Form change type" value="80–85%" delta="Incremental edits vs new" />
             </div>
