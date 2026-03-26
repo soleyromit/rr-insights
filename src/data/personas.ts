@@ -116,6 +116,9 @@ export const MILESTONES: Milestone[] = [
   { date: 'Apr 2026', label: 'Course Eval design workshop', status: 'upcoming', productId: 'course-eval', description: 'Full module scope. Hybrid form design. Touro survey coverage.' },
   { date: 'May 2026', label: 'Exam AI integration', status: 'upcoming', productId: 'exam-management', description: 'Blueprint assembly. PANCE predictor. Personalized remediation.' },
   { date: 'Aug 2026', label: 'Cohere conference', status: 'upcoming', productId: 'exam-management', description: 'ExamSoft-competitive feature set. First migration target.', isHardDeadline: true },
+  { date: 'Mar 27, 2026', label: 'PCE follow-up design session', status: 'upcoming', productId: 'course-eval', description: 'Monil + Romit. Resolve: who distributes surveys. Analytics differentiation brainstorm.', isHardDeadline: false },
+  { date: 'Apr 2026', label: 'PCE full design spec', status: 'upcoming', productId: 'course-eval', description: 'All 3 layers: template setup, distribution, analytics. Engineering handoff May 2026.', isHardDeadline: true },
+  { date: 'Apr 1, 2026', label: '2 senior engineers join Exam team', status: 'upcoming', productId: 'exam-management', description: 'React rebuild begins. Himanshu design system target. No dev cap.', isHardDeadline: false },
   { date: 'Jan 1, 2027', label: 'Skills Checklist launch', status: 'upcoming', productId: 'skills-checklist', description: 'Full production launch after Q2-Q4 development cycle.', isHardDeadline: true },
 ];
 
@@ -149,7 +152,7 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
-    version: 'v4.10',
+    version: 'v4.11',
     date: '2026-03-26',
     summary: 'Full continuation: LearningContractsView rebuilt (246 lines, 5 tabs: overview/lifecycle/personas/gaps/roadmap). Magic Patterns v11 published (140c10f4) — BuildPhase now has clinical vignette question grouping with checkbox selection, bulk action bar, VignetteGroup container, always-together label, and ungroup flow. 2 new ThemesView themes (navigation inconsistency, task-based home). NPS 2025 data integrated platform-wide. 10 new insights (ins-nps-admin-01 to ins-ce-openqs-01) from NPS 2025 + project docs. 2 new themes added (Navigation inconsistency / Task-based home). FaaSView updated with NPS verbatims. PLATFORM_SIGNALS updated with 4 NPS signals. ThemesView: 8 total themes now including NPS-grounded patterns. Magic Patterns v10 published with correct QB architecture (7 statuses, Contextual Link Profiles, Version vs Variant).',
     insightCount: 63, sessionsAdded: 2, changedFiles: ["src/views/products/LearningContractsView.tsx", "src/views/ThemesView.tsx", "src/data/personas.ts", "src/data/insights.ts"],
