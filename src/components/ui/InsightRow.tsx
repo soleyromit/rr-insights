@@ -115,9 +115,11 @@ export function ProgressBar({ label, sublabel, value, color = 'var(--accent)', v
 /* ── Timeline item ── */
 interface TimelineItem {
   date: string;
-  label: string;
+  label?: string;
+  title?: string;
   status: 'done' | 'active' | 'upcoming';
   description?: string;
+  color?: string;
   isHardDeadline?: boolean;
 }
 
@@ -130,7 +132,7 @@ export function TimelineItemRow({ item }: { item: TimelineItem }) {
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: colors[item.status], fontWeight: 600 }}>{item.date}</span>
-          <span style={{ fontSize: 13.5, color: 'var(--text)', fontWeight: item.status === 'active' ? 600 : 400 }}>{item.label}</span>
+          <span>{item.label ?? item.title ?? ""}</span>
           {item.isHardDeadline && <span className="badge badge-gap" style={{ fontSize: 10 }}>Hard deadline</span>}
         </div>
         {item.description && <p style={{ fontSize: 12, color: 'var(--text3)', marginTop: 3, lineHeight: 1.4 }}>{item.description}</p>}

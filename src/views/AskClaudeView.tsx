@@ -4,7 +4,7 @@ import { Send, Sparkles, RotateCcw, ChevronDown } from 'lucide-react';
 // ── Types ────────────────────────────────────────────────────────────────────
 type Role = 'user' | 'assistant';
 interface Message { role: Role; content: string; timestamp: Date; }
-type ScopeId = 'all' | 'exam-management' | 'faas' | 'course-eval' | 'skills-checklist' | 'learning-contracts' | 'personas' | 'competitive';
+type ScopeId = 'all' | 'exam-management' | 'faas' | 'course-eval' | 'skills-checklist' | 'learning-contracts' | 'personas' | 'competitive' | 'exactone' | 'accessibility';
 
 const SCOPES: { id: ScopeId; label: string; color: string }[] = [
   { id: 'all',               label: 'All products',       color: '#E31C79' },

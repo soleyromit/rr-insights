@@ -703,7 +703,7 @@ export function ProductViewShell({ productId }: Props) {
               {Object.entries(product.gapsByDiscipline).map(([disc, gaps]) => (
                 <div key={disc} style={{ marginBottom: 14 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: disc === 'dev' ? '#3b82f6' : disc === 'ux' ? '#6d5ed4' : disc === 'ui' ? '#db2777' : '#d97706', marginBottom: 6 }}>{disc}</div>
-                  {gaps.map((g, i) => (
+                  {gaps.map((g: string, i: number) => (
                     <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 5, fontSize: 13, color: 'var(--text2)' }}>
                       <span style={{ color: 'var(--border2)' }}>–</span>{g}
                     </div>

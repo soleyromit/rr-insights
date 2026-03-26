@@ -33,7 +33,7 @@ function ProductCard({ product, onNav }: {product: ProductMeta;onNav: (v: string
       <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${grad}`} />
       <div className="flex items-start justify-between mb-2">
         <div className="text-[12px] font-semibold text-[var(--text)]">{product.name}</div>
-        <Badge variant={product.status} />
+        <Badge variant={product.status}>{product.status}</Badge>
       </div>
       <div className="text-[10px] text-[var(--text3)] leading-[1.45] mb-3">{product.description}</div>
       <div className="flex gap-3 text-[10px]">

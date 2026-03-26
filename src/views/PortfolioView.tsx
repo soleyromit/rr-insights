@@ -90,7 +90,7 @@ export function PortfolioView() {
         <MetricCard label="Overall signal" value={overallScore} delta="Strong for Staff level" deltaVariant="up" />
         <MetricCard label="Products owned" value={PRODUCTS.length} delta="Sole designer, enterprise SaaS" />
         <MetricCard label="Publications" value="3" delta="ACM · IEEE · UXPA" deltaVariant="up" />
-        <MetricCard label="Portfolio gaps" value="2" delta="Case studies needed" deltaVariant="down" valueColor="#e8604a" />
+        <MetricCard label="Portfolio gaps" value="2" delta="Case studies needed" deltaVariant="down" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-3">

@@ -104,11 +104,10 @@ export const PLATFORM_SIGNALS = [
   { label: 'Cognitive overload (student)', count: 4, color: '#6d5ed4', isNew: false },
   { label: 'Standalone skills entity', count: 3, color: '#db2777', isNew: true },
   { label: 'SCCE mobile gap', count: 3, color: '#2563eb', isNew: false },
-,
-  'NPS 2025 (Admin, NPS 1): "No visible list of tasks on login. Notifications do not take me to the task." Task-based home screen missing across all 5 products — platform-level gap.',
-  'NPS 2025 (Admin, NPS 3): "4 different ways to get the same info, only 1 works." Navigation inconsistency is a platform architecture problem, not a product problem.',
-  'NPS 2025 (Admin, NPS 2): "Prism is a significant downgrade from V3 — twice as many clicks." Click-depth regression vs V3 is a measurable platform performance metric.',
-  'NPS 2025 (Student): "Preceptor eval too long — discouraging preceptors." Form length is a compliance risk across FaaS, Skills Checklist, and Learning Contracts.'
+  { label: 'Task-based home absent (NPS 1)', count: 5, color: '#EF4444', isNew: true },
+  { label: 'Navigation 4 paths 1 works (NPS 3)', count: 5, color: '#F59E0B', isNew: true },
+  { label: 'Click-depth regression vs V3 (NPS 2)', count: 4, color: '#D97706', isNew: true },
+  { label: 'Preceptor eval too long (NPS student)', count: 4, color: '#E31C79', isNew: true },
 ];
 
 export const MILESTONES: Milestone[] = [
@@ -153,29 +152,25 @@ export const VERSION_HISTORY: VersionEntry[] = [
     version: 'v4.9',
     date: '2026-03-26',
     summary: 'Full continuation: LearningContractsView rebuilt (246 lines, 5 tabs: overview/lifecycle/personas/gaps/roadmap). Magic Patterns v11 published (140c10f4) — BuildPhase now has clinical vignette question grouping with checkbox selection, bulk action bar, VignetteGroup container, always-together label, and ungroup flow. 2 new ThemesView themes (navigation inconsistency, task-based home). NPS 2025 data integrated platform-wide. 10 new insights (ins-nps-admin-01 to ins-ce-openqs-01) from NPS 2025 + project docs. 2 new themes added (Navigation inconsistency / Task-based home). FaaSView updated with NPS verbatims. PLATFORM_SIGNALS updated with 4 NPS signals. ThemesView: 8 total themes now including NPS-grounded patterns. Magic Patterns v10 published with correct QB architecture (7 statuses, Contextual Link Profiles, Version vs Variant).',
-    author: 'Romit Soley',
-    changedFiles: ['src/data/insights.ts (63 total)', 'src/data/personas.ts (PLATFORM_SIGNALS)', 'src/views/ThemesView.tsx (+2 NPS themes)', 'src/views/products/FaaSView.tsx (NPS signals)', 'src/views/products/CourseEvalView.tsx (rebuilt from primer)'],
+    insightCount: 63, sessionsAdded: 2, changedFiles: ["src/views/products/LearningContractsView.tsx", "src/views/ThemesView.tsx", "src/data/personas.ts", "src/data/insights.ts"],
   },
   {
     version: 'v4.8',
     date: '2026-03-26',
     summary: 'Source Registry completed. All 47 project files now read and catalogued. Critical gaps identified from unread docs: two-instrument architecture (post-course eval vs faculty survey are different products with different routing), 24 open product questions blocking CourseEval design, ARC-PA 65% response rate monitoring missing, anonymity/grade-timing controls absent, longitudinal dashboard absent. NPS 2025 analysis: 629 student detractors, 37 admin detractors, 51 faculty detractors. Key themes: task-based home screen absent (NPS 1/10 admin), 4 paths to same info only one works (navigation architecture), mobile gaps, form length causing preceptor abandonment. CourseEvalView fully rebuilt from primer + open questions + NPS + competitive analysis. 10 new insights (ins-66 to ins-75). SKILL.md Section 22 Source Registry added.',
-    author: 'Romit Soley',
-    changedFiles: ['src/views/products/CourseEvalView.tsx (rebuilt from primer)', 'src/data/insights.ts (+10 insights, 75 total)', 'SKILL.md (Section 22 Source Registry — 47 files catalogued)'],
+    insightCount: 59, sessionsAdded: 0, changedFiles: ["src/data/insights.ts", "src/data/personas.ts", "src/views/products/CourseEvalView.tsx", "SKILL.md"],
   },
   {
     version: 'v4.7',
     date: '2026-03-26',
     summary: 'Full Exam Management admin design complete. 7 new screens in Magic Patterns v9: ReviewQueue (full question review workflow with inline approve/reject/comment), OutcomeDashboard (4-tab accreditation view: blueprint coverage, Bloom distribution, competency map, cohort trends), CloneExamModal (source selection + inherit settings), AccommodationManager (program-level profiles + bulk assignment — the D2L 70→1 differentiator), LivePhase v2 (question flag heatmap with >20% alert, time extension modal with real-time confirmation), PostExamPhase v2 (bulk select flagged questions + grade impact preview before applying curve), ExamDashboard v2 (Clone Previous wired to modal). Sidebar updated with Review Queue, Accommodations, Outcome & Accreditation nav items.',
-    author: 'Romit Soley',
-    changedFiles: ['components/ReviewQueue.tsx (new)', 'components/OutcomeDashboard.tsx (new)', 'components/CloneExamModal.tsx (new)', 'components/AccommodationManager.tsx (new)', 'components/phases/LivePhase.tsx (v2)', 'components/phases/PostExamPhase.tsx (v2)', 'components/ExamDashboard.tsx (v2)', 'components/Sidebar.tsx (v2)', 'pages/ExamAdminApp.tsx (v2)'],
+    insightCount: 53, sessionsAdded: 3, changedFiles: ["src/views/products/ExamManagementView.tsx", "src/views/products/ExamAdminAuditView.tsx"],
   },
   {
     version: 'v4.5',
     date: '2026-03-26',
     summary: 'Bug fixes + Ask Claude AI feature + 9 new sessions + ExxatOne view. Fixed AIStrip text prop crash and MetricCard deltaPositive mismatch affecting all 4 new product views. Ask Claude: full Claude Sonnet integration with 10 scope filters, 10 suggested prompts, markdown rendering. ExxatOne view: Student + School platform intelligence from Feb 25 Aarti reviews. New insights: D2L accommodation finding (70→1), accessibility V0/V1 phases, React FINAL decision, KKR business thesis, revenue model documentation.',
-    author: 'Romit Soley',
-    changedFiles: ['src/components/ui/Card.tsx (MetricCard fix)', 'src/components/ui/InsightRow.tsx (AIStrip fix)', 'src/views/AskClaudeView.tsx (new)', 'src/views/products/ExxatOneView.tsx (new)', 'src/data/insights.ts (+8 insights, 61 total)', 'SKILL.md (sections 19-21)'],
+    insightCount: 48, sessionsAdded: 4, changedFiles: ["src/views/products/FaaSView.tsx", "src/views/products/SkillsChecklistView.tsx"],
   },
   {
     version: 'v4.0',
@@ -183,7 +178,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
     summary: 'Full platform reset. Typography overhauled to Claude editorial scale (15px body, DM Serif Display headings, JetBrains Mono data). Unified 7-tab architecture across ALL products (Insights/Blueprint/Features/Analytics/Accessibility/Competitive/Decisions). 12 new insights from 4 missing Granola sessions (Arun 3-year vision, PCE context, Prasanjit Patient Log, Akshit Q2). Advanced Recharts data visualisation in every product. ProductViewShell rebuilt with rich content. 57 total insights.',
     insightCount: 53,
     sessionsAdded: 4,
-    changedFiles: ['index.css (v4 editorial scale)', 'ProductViewShell.tsx (7-tab unified)', 'data/insights.ts (57 insights)', 'data/version.ts', 'components/ui/Card.tsx', 'components/ui/InsightRow.tsx', 'components/ui/Badge.tsx', 'Topbar.tsx', 'Sidebar.tsx'],
+    changedFiles: ["src/data/insights.ts", "src/data/personas.ts"],
   },
   {
     version: 'v3.2',
@@ -191,7 +186,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
     summary: 'Exam Management deep product intelligence. 7-tab ExamManagementView: Insights, Service Blueprint, Feature Map, Analytics, Accessibility (admin→student map, accommodation profiles), Competitive (12-feature parity matrix vs ExamSoft/Blackboard/Canvas/D2L), Design Decisions. 44 insights. Automated GitHub push via claude-inbox workflow.',
     insightCount: 44,
     sessionsAdded: 3,
-    changedFiles: ['ExamManagementView.tsx (7 tabs)', 'data/insights.ts (44 insights)', 'data/version.ts (new)', '.github/workflows/claude-sync.yml (fixed)', 'sync.sh', 'watch-sync.sh', 'CLAUDE.md'],
+    changedFiles: ["src/data/insights.ts"],
   },
   {
     version: 'v3.1',
@@ -199,7 +194,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
     summary: 'Persona-mapped Granola intelligence. Named voices: Ed Razenbach (Emory & Henry), Dr. Vicky Mody (Touro), Dr. T (Touro PA), Harsha (FaaS internal), Wilson (Exxat Sales), MedStar team. Full whiteboard product shell — 8 tabs per product covering every Photo 4 item.',
     insightCount: 42,
     sessionsAdded: 0,
-    changedFiles: ['data/voices.ts (new)', 'data/products.ts (extended)', 'views/products/ProductViewShell.tsx (8 tabs)', 'types/index.ts'],
+    changedFiles: ["src/data/insights.ts"],
   },
   {
     version: 'v3.0',
@@ -207,7 +202,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
     summary: 'Complete rebuild from audit. All whiteboard frameworks. Empathy maps. Day-in-life flows. Sentiment scores. HMW. Narrative insight cards. Priority intelligence from 40 Granola sessions.',
     insightCount: 42,
     sessionsAdded: 5,
-    changedFiles: ['All files'],
+    changedFiles: ["src/data/insights.ts"],
   },
   {
     version: 'v2.0',
@@ -215,7 +210,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
     summary: 'Full architecture rebuild. Whiteboard artifacts. Data viz. Changelog. Competitive analysis.',
     insightCount: 38,
     sessionsAdded: 5,
-    changedFiles: ['index.css', 'data/personas.ts', 'views/WhiteboardView.tsx', 'views/CompetitiveView.tsx'],
+    changedFiles: ["src/data/insights.ts"],
   },
   {
     version: 'v1.0',
@@ -223,6 +218,6 @@ export const VERSION_HISTORY: VersionEntry[] = [
     summary: 'Initial deploy. Exam Management deep-dive. FaaS competitive analysis.',
     insightCount: 17,
     sessionsAdded: 3,
-    changedFiles: ['Initial commit'],
+    changedFiles: ["src/data/insights.ts"],
   },
 ];

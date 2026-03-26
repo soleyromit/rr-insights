@@ -732,7 +732,7 @@ export function ExamManagementView() {
         )}
 
         {/* ─── GRANOLA GAPS TAB ─── */}
-        {tab === 'gaps' && (
+        {activeTab === 'gaps' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <AIStrip text="Verbatim cross-check: Vishaka (7dbabdb5), David (f29a990d), Ed (ca5a709c), Touro ExamSoft demo (f5d66e4c), Nipun standup (689bdc25). Every gap is grounded in a direct quote." />
             <Card>
@@ -792,8 +792,6 @@ export function ExamManagementView() {
               ))}
             </Card>
             <Card>
-              </Card>
-            <Card>
               <CardTitle sub="D2L BrightSpace demo (c7a8d32e) + Nipun UNF pilot (4c9b94f5) + Accessibility session (77fc2588)">Accessibility + D2L gaps</CardTitle>
               {[
                 { src: 'D2L BrightSpace demo · Mar 4', gap: 'Bulk accommodation assignment: D2L requires 7 students × 10 quizzes = 70 manual setups. Program-level accommodation profile = 1 setup. First-to-market differentiator.', p: 'P0', built: false },
@@ -833,7 +831,7 @@ export function ExamManagementView() {
         )}
 
         {/* ─── UX STORIES TAB ─── */}
-        {tab === 'stories' && (
+        {activeTab === 'stories' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <AIStrip text="17 user stories across 9 epics. All grounded in verbatim quotes from Vishaka, David, Ed, Aarti, Kunal, Nipun. Each story maps to a specific Magic Patterns component." />
             {[
@@ -895,7 +893,7 @@ export function ExamManagementView() {
         )}
 
         {/* ─── PA DASHBOARD TAB ─── */}
-        {tab === 'pa-dashboard' && (
+        {activeTab === 'pa-dashboard' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <AIStrip text="Vishaka's proposed competitive differentiator vs Influx (7dbabdb5). PACRAT 1+2, EOR by 7 specialties, OSCE, EOC, PANCE readiness predictor. Built in Magic Patterns: PADashboard.tsx." />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>

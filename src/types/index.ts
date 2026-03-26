@@ -42,7 +42,7 @@ export interface PersonaMeta {
 
 export interface WhiteboardArtifact {
   id: string; title: string; source: string;
-  category: 'product-context' | 'persona' | 'competitor' | 'strategic' | 'feature';
+  category: 'product-context' | 'persona' | 'competitor' | 'strategic' | 'feature' | 'exam-intel';
   color: string; items: string[];
 }
 
@@ -62,4 +62,6 @@ export interface TimelineItem {
   description: string;
   color: string;
   status: 'done' | 'active' | 'upcoming';
+  label?: string;
+  isHardDeadline?: boolean;
 }

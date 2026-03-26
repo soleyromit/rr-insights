@@ -360,7 +360,6 @@ export function CompetitiveView() {
                   <button key={tab.id} onClick={() => setActiveSection(tab.id)} style={{
                     padding: '10px 14px', fontSize: 12, cursor: 'pointer',
                     fontWeight: activeSection === tab.id ? 600 : 400,
-                    borderBottom: `2px solid ${activeSection === tab.id ? expanded.color : 'transparent'}`,
                     color: activeSection === tab.id ? expanded.color : 'var(--text2)',
                     background: 'transparent', border: 'none',
                     borderBottom: `2px solid ${activeSection === tab.id ? expanded.color : 'transparent'}`,
