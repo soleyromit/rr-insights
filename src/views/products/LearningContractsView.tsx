@@ -1,184 +1,245 @@
 import { useState } from 'react';
-import { getInsightsByProduct } from '../../data/insights';
 import { Card, CardTitle, MetricCard } from '../../components/ui/Card';
-import { InsightRow, AIStrip } from '../../components/ui/InsightRow';
+import { AIStrip } from '../../components/ui/InsightRow';
 import { Badge } from '../../components/ui/Badge';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis,
+} from 'recharts';
 
-const PRODUCT_ID = 'learning-contracts';
-type TabId = 'insights' | 'workflows' | 'social-work' | 'stories';
+type TabId = 'overview' | 'workflow' | 'personas' | 'gaps' | 'roadmap';
 const TABS: { id: TabId; label: string }[] = [
-  { id: 'insights', label: 'Insights' },
-  { id: 'workflows', label: 'Workflows' },
-  { id: 'social-work', label: 'Social work model' },
-  { id: 'stories', label: 'UX stories' },
+  { id: 'overview', label: 'Overview' },
+  { id: 'workflow', label: 'Lifecycle' },
+  { id: 'personas', label: 'Personas' },
+  { id: 'gaps', label: 'Design gaps' },
+  { id: 'roadmap', label: 'Roadmap' },
+];
+const ts = (t: TabId, cur: TabId) => ({
+  padding: '10px 18px', fontSize: 13,
+  fontWeight: cur === t ? 600 : 400,
+  color: cur === t ? 'var(--brand)' : 'var(--text-secondary)',
+  borderBottom: `2px solid ${cur === t ? 'var(--brand)' : 'transparent'}`,
+  marginBottom: -1, background: 'none', border: 'none',
+  cursor: 'pointer', whiteSpace: 'nowrap' as const,
+});
+const LIFECYCLE = [
+  { stage: 'Placement assigned', owner: 'DCE', action: 'System generates draft contract from template. DCE reviews and customises objectives.', pain: 'Template selection is manual. No link to previous rotations or student competency history.' },
+  { stage: 'Student acknowledgement', owner: 'Student', action: 'Student reviews objectives, signs digitally. Deadline tracked by system.', pain: 'Students often unaware a contract exists until DCE chases. No in-app notification.', nps: true },
+  { stage: 'Site supervisor review', owner: 'SCCE', action: 'Clinical supervisor reviews student goals and adds site-specific expectations.', pain: 'SCCE rarely uses Exxat. Re-learns the platform every rotation. Mobile experience inadequate.', nps: true },
+  { stage: 'Midpoint check-in', owner: 'DCE + Student', action: 'Optional midpoint review. Progress noted against objectives.', pain: 'No structured midpoint workflow. DCE uses email or phone. Progress notes lost outside system.' },
+  { stage: 'End-of-rotation review', owner: 'DCE + SCCE + Student', action: 'All three parties assess goal completion. Contract marked complete or carries over.', pain: 'Carryover logic not built. Incomplete goals from rotation 1 do not appear in rotation 2 contract.' },
+  { stage: 'Program archive', owner: 'System', action: 'Completed contracts archived. Program Director reviews aggregate goal attainment.', pain: 'No aggregate view. Program Director cannot see what percentage of students met a given goal.' },
+];
+const GAPS = [
+  { area: 'No cross-rotation continuity', severity: 'Critical', detail: 'Objectives completed in rotation 1 are invisible when building rotation 2. DCEs must manually remember what was agreed. Students cannot build on previous goals.', fix: 'Contract templates auto-populate incomplete goals from previous rotation. Show cumulative objective attainment across the entire clinical year.' },
+  { area: 'Skills Checklist is disconnected', severity: 'Critical', detail: 'Learning contracts set goals (perform 10 IV insertions). Skills Checklist tracks competency (IV insertion: observed/performed). These two systems are not linked. A student can meet a Skills item without the contract knowing, and vice versa.', fix: 'Bi-directional link: completing a Skills item marks contract objective progress. Contract objectives auto-suggest corresponding Skills items.' },
+  { area: 'SCCE has no context when opening the contract', severity: 'High', detail: 'The site supervisor sees a contract with no background on the student: no rotation number, no program context, no prior site history. Every rotation feels like the first interaction.', fix: 'Contract landing page for SCCE: student name, program, rotation number, prior site feedback, DCE contact. Mobile-first layout. 60-second read.' },
+  { area: 'No mobile-ready contract signing', severity: 'High', detail: 'NPS 2025 student feedback: mobile navigation is hard. Contract signing is a milestone action students and SCSEs must complete on any device in under 2 minutes.', fix: 'Mobile-first signing flow: progressive disclosure, one section at a time, signature on final screen. Works on a phone in a clinical hallway.' },
+  { area: 'Program Director has no aggregate view', severity: 'High', detail: 'No dashboard shows: what objectives are most commonly set, what percentage were met, which students are behind, which sites have the lowest completion rates.', fix: 'Program-level dashboard: objective frequency heat map, completion rate by site/student/type. CAPTE and ACOTE evidence export.' },
+  { area: 'Midpoint check-in is unstructured', severity: 'Medium', detail: 'The midpoint review happens outside Exxat via email or phone. No record exists unless DCE manually enters a note. There is no reminder workflow.', fix: 'Optional midpoint workflow: system reminder at rotation midpoint, DCE and student complete a 3-question progress form, note is timestamped.' },
+];
+const PERSONA_DATA = [
+  { persona: 'Student', pain: 4, mobile: 5, awareness: 2 },
+  { persona: 'DCE', pain: 3, mobile: 2, awareness: 5 },
+  { persona: 'SCCE', pain: 5, mobile: 5, awareness: 1 },
+  { persona: 'Program Dir.', pain: 3, mobile: 1, awareness: 3 },
+];
+const RADAR_DATA = [
+  { axis: 'Usability', current: 2, target: 8 },
+  { axis: 'Mobile', current: 1, target: 9 },
+  { axis: 'Continuity', current: 1, target: 8 },
+  { axis: 'Integration', current: 2, target: 9 },
+  { axis: 'Reporting', current: 1, target: 7 },
+];
+const ROADMAP = [
+  { phase: 'Q2 2026', label: 'Foundation', items: ['Mobile-first signing flow for SCCE + Student', 'SCCE landing page with full student context', 'In-app notifications for contract milestones', 'Cross-rotation objective carryover logic'] },
+  { phase: 'Q3 2026', label: 'Integration', items: ['Skills Checklist bi-directional link to contract objectives', 'Structured midpoint check-in workflow', 'Program Director aggregate dashboard', 'DCE objective bank reusable across cohorts'] },
+  { phase: 'Q4 2026', label: 'Intelligence', items: ['AI objective suggestion from competency gaps', 'Accreditation export — CAPTE / ACOTE goal attainment evidence', 'Site performance dashboard: which sites produce highest completion', 'Longitudinal competency map across all rotations'] },
 ];
 
-const tabStyle = (tab: TabId, id: TabId) => ({
-  padding: '10px 18px',
-  fontSize: 13,
-  fontWeight: tab === id ? 600 : 400,
-  color: tab === id ? 'var(--brand)' : 'var(--text-secondary)',
-  borderBottom: `2px solid ${tab === id ? 'var(--brand)' : 'transparent'}`,
-  marginBottom: -1,
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  whiteSpace: 'nowrap' as const,
-});
-
 export function LearningContractsView() {
-  const [tab, setTab] = useState<TabId>('insights');
-  const insights = getInsightsByProduct(PRODUCT_ID);
-
+  const [tab, setTab] = useState<TabId>('overview');
+  const critical = GAPS.filter(g => g.severity === 'Critical').length;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 0, height: '100%' }}>
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', background: 'var(--surface-primary)', flexShrink: 0 }}>
-        {TABS.map(t => <button key={t.id} onClick={() => setTab(t.id)} style={tabStyle(tab, t.id)}>{t.label}</button>)}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', background: 'var(--surface-primary)', flexShrink: 0, overflowX: 'auto' }}>
+        {TABS.map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={ts(t.id, tab)}>
+            {t.label}
+            {t.id === 'gaps' && critical > 0 && (
+              <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{critical}</span>
+            )}
+          </button>
+        ))}
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
 
-        {tab === 'insights' && (
+        {tab === 'overview' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Learning Contracts primary source: Day 4 Marriott (Mar 5) — social work integration is the most detailed model. Two distinct contract types: rotation learning objectives and academic remediation. Vaibhav FaaS review (Feb 27) — prior failed attempt to merge learning contracts with evaluations." />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-              <MetricCard label="Contract types" value="2" delta="Rotation objectives · Remediation plan" />
-              <MetricCard label="Sign-off parties" value="3" delta="Student · Supervisor · DCE/Faculty" />
-              <MetricCard label="Critical insight" value="Keep separate" delta="Prior attempt to merge with evals failed" deltaPositive={false} />
+            <AIStrip text="Sources: Day 4 Marriott (domain models, Mar 5), Day 5 FaaS session (Mar 6), NPS 2025 SCCE + student signals. No dedicated Learning Contracts session yet — synthesised from cross-product Granola notes." />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
+              <MetricCard label="Dedicated sessions" value="0" delta="Discovery session needed" deltaVariant="down" />
+              <MetricCard label="Critical gaps" value={String(critical)} delta="Cross-rotation + Skills link" deltaVariant="down" />
+              <MetricCard label="Personas" value="3" delta="Student / DCE / SCCE" />
+              <MetricCard label="Accreditation" value="CAPTE/ACOTE" delta="Goal attainment evidence required" deltaVariant="neutral" />
             </div>
             <Card>
-              <CardTitle sub="Vaibhav Feb 27 — critical architecture lesson">Why prior Learning Contract + Evaluation merge failed</CardTitle>
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>
-                A previous version of the product attempted to merge learning contracts into the evaluation form. This was reverted. Reason: the planning document (contract) and the assessment document (evaluation) serve different purposes at different times. The correct approach: keep them as separate entities, but show them side-by-side during evaluation. The evaluation references the contract — it does not replace it.
+              <CardTitle sub="Three parties, one agreement, every rotation">What Learning Contracts does</CardTitle>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, margin: '0 0 12px' }}>
+                A Learning Contract formalises the objectives a student will work toward during a clinical rotation. It involves three parties: the student, their DCE (academic side), and the SCCE (clinical site side). Contracts run across every rotation in a clinical year and must link to competency frameworks for accreditation evidence.
               </p>
-            </Card>
-            <Card>
-              <CardTitle sub="Most complex use case — requires dedicated design attention">Social work: the hardest Learning Contract model</CardTitle>
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.6 }}>
-                Social work programs run 6–12 month placements across multiple sites, sometimes spanning multiple semesters. A single learning contract covers the full placement. Preceptors change during the placement. The contract must remain continuous even as evaluators change. 9 EPAS competency areas × 5 sub-areas = 45 trackable items. Midterm + final evaluation both reference the same contract.
-              </p>
-            </Card>
-            {insights.slice(0, 4).map((ins, i) => <InsightRow key={i} insight={ins} />)}
-          </div>
-        )}
-
-        {tab === 'workflows' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Two contract workflows — both from Day 4 Marriott (Mar 5). Rotation contracts are relatively standardized. Remediation contracts are highly variable per student situation." />
-            {[
-              {
-                title: 'Rotation learning contract',
-                who: 'All disciplines with structured placements',
-                steps: [
-                  'Student proposes learning objectives for the rotation (drawn from program competency framework)',
-                  'Supervisor reviews and may modify objectives based on site capabilities',
-                  'Both parties sign electronically — contract is now live',
-                  'Mid-rotation check-in: student and supervisor assess progress informally',
-                  'Evaluation form opens — shows contract commitments alongside rating scales',
-                  'End-of-rotation: both parties sign off on achievement of objectives',
-                  'Contract archived to student program record — available for accreditation review',
-                ],
-              },
-              {
-                title: 'Academic improvement / remediation contract',
-                who: 'Any student who failed a course, EOR exam, or rotation',
-                steps: [
-                  'Program identifies at-risk student (failed course, EOR below threshold, rotation fail)',
-                  'DCE or faculty drafts remediation plan: specific action items, timeline, checkpoints',
-                  'Student signs acknowledging the plan and commitments',
-                  'System notifies DCE at each checkpoint date',
-                  'Progress documented at check-in dates — notes added to contract record',
-                  'Contract closed when all conditions met, or escalated to academic committee if not',
-                  'Closed contracts archived. Open contracts visible in DCE dashboard as active concerns.',
-                ],
-              },
-            ].map((w, i) => (
-              <Card key={i}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <CardTitle>{w.title}</CardTitle>
-                </div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 10 }}>Used by: {w.who}</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {w.steps.map((s, si) => (
-                    <div key={si} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{si + 1}</span>
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{s}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {tab === 'social-work' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Social work is the most demanding Learning Contract use case. Day 4 Marriott (Mar 5) documented the full EPAS-aligned model. 9 competencies, 5 sub-areas each, multi-semester placements, dual evaluator roles." />
-            <Card>
-              <CardTitle sub="EPAS 2022 framework — mandated by CSWE">9 competency areas × 5 sub-areas</CardTitle>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
                 {[
-                  'Professional identity and conduct',
-                  'Ethics and professional behavior',
-                  'Anti-racism and social justice',
-                  'Engage with research and evidence',
-                  'Policy analysis and advocacy',
-                  'Engage with individuals, families, groups',
-                  'Assessment and diagnostic reasoning',
-                  'Intervention planning and delivery',
-                  'Evaluation and professional development',
-                ].map((c, i) => (
-                  <div key={i} style={{ padding: '8px 12px', borderRadius: 8, background: 'var(--surface-secondary)', border: '1px solid var(--border)', fontSize: 12, color: 'var(--text-secondary)' }}>
-                    <span style={{ fontFamily: 'monospace', color: 'var(--brand)', marginRight: 8 }}>{i + 1}</span>{c}
+                  { role: 'Student', job: 'Review and acknowledge objectives. Track own progress.', gap: 'Unaware a contract exists until chased. No visibility into cross-rotation progress.' },
+                  { role: 'DCE', job: 'Create contracts, monitor progress across all students, escalate at-risk cases.', gap: 'No cross-rotation continuity. Manual templating. No aggregate dashboard.' },
+                  { role: 'SCCE', job: 'Review student objectives, add site expectations, confirm completion at rotation end.', gap: 'Platform unfamiliar — re-learns each rotation. No student context on arrival.' },
+                ].map((p, i) => (
+                  <div key={i} style={{ padding: '12px 14px', borderRadius: 10, background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', marginBottom: 6 }}>{p.role}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 6 }}><strong>Job: </strong>{p.job}</div>
+                    <div style={{ fontSize: 11, color: '#EF4444' }}><strong>Gap: </strong>{p.gap}</div>
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: 12, fontSize: 12, color: 'var(--text-muted)' }}>
-                Each competency has 5 sub-areas: Knowledge · Values · Skills · Cognitive · Affective. Total trackable items: 45 minimum per student per placement.
-              </div>
             </Card>
             <Card>
-              <CardTitle sub="What makes social work learning contracts uniquely complex">Design requirements specific to social work</CardTitle>
-              {[
-                { req: 'Multi-semester placement continuity', detail: 'Placements run 6–12 months across multiple semesters. One learning contract covers the entire period. The contract must survive preceptor changes, semester boundaries, and site transitions.' },
-                { req: 'Dual evaluator roles', detail: 'Site supervisor provides qualitative comments per competency. Faculty coordinator provides official numeric ratings. Both must be visible in the same view. Permissions differ: supervisor = comment only, faculty = rating + comment.' },
-                { req: 'Side-by-side contract + evaluation view', detail: 'Midterm and final evaluations must display the learning contract commitments alongside the rating scales. Evaluator sees what was committed and then rates achievement. Previous version did not have this — Vaibhav flagged it as a failure.' },
-                { req: 'Dynamic contract modification', detail: 'Contract can be modified throughout the placement if all parties agree. All versions must be preserved with timestamps and signatures. Not a static document — a living agreement.' },
-                { req: 'Integration with competency tracker', detail: 'When a student is assessed on a learning contract competency, the result should feed into the program-level competency tracker. Currently these are separate — a major gap for CSWE accreditation reporting.' },
-              ].map((r, i) => (
-                <div key={i} style={{ padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{r.req}</div>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{r.detail}</p>
+              <CardTitle sub="The untapped connection: Learning Contracts plus Skills Checklist">The missing link</CardTitle>
+              <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, margin: '0 0 10px' }}>
+                    Contracts set goals: <em>perform 10 IV insertions by end of rotation.</em> Skills Checklist tracks competency: <em>IV insertion — observed / performed.</em> These two systems are entirely disconnected. A student can complete the Skills item without the contract knowing.
+                  </p>
+                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>
+                    Connecting them creates a closed-loop competency system. Every contract objective maps to Skills Checklist items. Completing one drives progress in the other. No competitor has this.
+                  </p>
                 </div>
-              ))}
+                <div style={{ width: 200, flexShrink: 0 }}>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <RadarChart data={RADAR_DATA}>
+                      <PolarGrid stroke="var(--border)" />
+                      <PolarAngleAxis dataKey="axis" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
+                      <Radar name="Current" dataKey="current" stroke="#EF4444" fill="#EF4444" fillOpacity={0.15} />
+                      <Radar name="Target" dataKey="target" stroke="var(--brand)" fill="var(--brand)" fillOpacity={0.1} />
+                      <Tooltip contentStyle={{ background: 'var(--surface-primary)', border: '1px solid var(--border)', fontSize: 11 }} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                  <p style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center', margin: 0 }}>Current vs target (1-10)</p>
+                </div>
+              </div>
             </Card>
           </div>
         )}
 
-        {tab === 'stories' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Learning Contracts user stories. Higher confidence now after Day 4 Marriott social work model." />
-            {[
-              { id: 'LC-01', who: 'Student', what: 'Electronically sign my learning contract and access the signed version at any time during my placement', why: 'Currently paper-based. Students lose their copy. No record of original commitments. Legal importance for remediation contracts in particular.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'LC-02', who: 'DCE / Faculty', what: 'Create a remediation contract from a template with the failed areas pre-filled from the student record', why: 'Remediation contracts are customized per student situation but follow a consistent structure. Starting from a template with pre-filled context reduces setup time.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'LC-03', who: 'Social Work student', what: 'See my learning contract commitments side-by-side with the evaluation form when my supervisor is assessing me', why: 'The contract defines what success looks like. The evaluation measures it. Forcing the evaluator to remember what was committed without visual reference breaks the connection between planning and assessment.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'LC-04', who: 'Supervisor', what: 'Receive a mobile notification when a student submits learning objectives for my review and sign off with one action', why: 'Supervisors are in clinical settings. Desktop-only workflows mean delays of days. Mobile sign-off in the field is the only path to timely contract activation.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'LC-05', who: 'DCE', what: 'See all open remediation contracts with their checkpoint dates and current status in one dashboard view', why: 'Open remediation contracts represent active academic risk. A student whose remediation checkpoints are missed without intervention may fail to graduate. Visibility enables follow-up.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'LC-06', who: 'Program Director', what: 'Access the complete version history of a student learning contract including all amendments and who signed each version', why: 'Accreditation site visitors may request evidence of remediation processes. Version history is the audit trail. Must be exportable for site visit preparation.', src: 'Day 4 Marriott · Mar 5' },
-            ].map((s, i) => (
+        {tab === 'workflow' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <AIStrip text="Lifecycle synthesised from cross-product Granola notes. NPS signal tags indicate confirmed user verbatim from NPS 2025 data." />
+            {LIFECYCLE.map((stage, i) => (
               <Card key={i}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0 }}>{s.id}</span>
-                  <div>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
-                      <strong>As a</strong> {s.who}, <strong>I need to</strong> {s.what}, <strong>so that</strong> {s.why}.
-                    </p>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Source: {s.src}</span>
+                <div style={{ display: 'flex', gap: 16 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>{i + 1}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{stage.stage}</span>
+                      <Badge variant="default">{stage.owner}</Badge>
+                      {stage.nps && <Badge variant="error">NPS signal</Badge>}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}><strong>Action: </strong>{stage.action}</div>
+                    <div style={{ fontSize: 12, color: '#EF4444', padding: '6px 10px', background: 'rgba(239,68,68,0.06)', borderRadius: 8, borderLeft: '2px solid #EF4444' }}>
+                      <strong>Pain: </strong>{stage.pain}
+                    </div>
                   </div>
                 </div>
               </Card>
             ))}
           </div>
         )}
+
+        {tab === 'personas' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <AIStrip text="SCCE is the highest-risk persona: infrequent use, no mobile experience, no student context on arrival. NPS 2025 confirms mobile gap for students at contract signing." />
+            <Card>
+              <CardTitle sub="Pain level vs mobile need vs platform awareness (1-5 scale)">Persona friction chart</CardTitle>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={PERSONA_DATA} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="persona" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} />
+                  <YAxis tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} domain={[0, 6]} />
+                  <Tooltip contentStyle={{ background: 'var(--surface-primary)', border: '1px solid var(--border)', fontSize: 11 }} />
+                  <Bar dataKey="pain" fill="#EF4444" name="Pain level" radius={[4,4,0,0]} />
+                  <Bar dataKey="mobile" fill="#D97706" name="Mobile need" radius={[4,4,0,0]} />
+                  <Bar dataKey="awareness" fill="var(--brand)" name="Platform awareness" radius={[4,4,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+            {[
+              { persona: 'SCCE', color: '#EF4444', risk: 'Highest risk', points: ['Logs in once per rotation — platform is always unfamiliar', 'No student context on arrival: no rotation number, no prior feedback, no DCE contact', 'Mobile is the primary device in clinical settings — experience is desktop-only', 'Related: preceptor eval length discouraging completion (NPS 2025 student signal)'], design: 'SCCE landing page delivers full context in 60 seconds. Mobile-first signing. One primary action per screen.' },
+              { persona: 'Student', color: '#D97706', risk: 'High risk', points: ['Often unaware a contract exists until DCE sends a follow-up email', 'No visibility into how contract objectives map to Skills Checklist items', 'Cannot see cumulative progress across all rotations — each feels disconnected', 'NPS 2025: mobile navigation hard, especially for signing and time-sensitive actions'], design: 'Contract summary on clinical dashboard. Progress bar per objective. Mobile signing in 2 taps.' },
+              { persona: 'DCE', color: '#3B82F6', risk: 'Medium risk', points: ['Manual template selection with no suggestion based on student or site history', 'No cross-rotation objective carryover — must manually copy from previous contract', 'No alert when student has not signed or SCCE has not reviewed after N days', 'No aggregate view — cannot see which objectives are most commonly set or completed'], design: 'DCE home: contract queue sorted by action needed. Template suggestion from student profile. Cross-rotation carryover built in.' },
+            ].map((p, i) => (
+              <Card key={i}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: p.color }}>{p.persona}</div>
+                  <Badge variant={p.risk === 'Highest risk' ? 'error' : p.risk === 'High risk' ? 'warning' : 'default'}>{p.risk}</Badge>
+                </div>
+                {p.points.map((pt, j) => (
+                  <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 12, color: 'var(--text-secondary)' }}>
+                    <span style={{ color: p.color, flexShrink: 0 }}>•</span>{pt}
+                  </div>
+                ))}
+                <div style={{ marginTop: 8, padding: '8px 12px', borderRadius: 8, background: `${p.color}08`, borderLeft: `2px solid ${p.color}`, fontSize: 12, color: 'var(--text-secondary)' }}>
+                  <strong style={{ color: p.color }}>Design direction: </strong>{p.design}
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {tab === 'gaps' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <AIStrip text="Gaps inferred from cross-product synthesis. A dedicated Learning Contracts discovery session is needed to validate these before design work begins." />
+            {['Critical', 'High', 'Medium'].map(sev => {
+              const items = GAPS.filter(g => g.severity === sev);
+              if (!items.length) return null;
+              return (
+                <div key={sev}>
+                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', marginBottom: 8 }}>{sev} ({items.length})</div>
+                  {items.map((g, i) => (
+                    <Card key={i}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{g.area}</div>
+                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.6 }}>{g.detail}</p>
+                      <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(16,185,129,0.07)', borderLeft: '2px solid #10B981', fontSize: 12, color: 'var(--text-secondary)' }}>
+                        <strong style={{ color: '#10B981' }}>Fix: </strong>{g.fix}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {tab === 'roadmap' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <AIStrip text="Roadmap is a design proposal — not committed scope. Requires PM alignment before engineering handoff." />
+            {ROADMAP.map((phase, i) => (
+              <Card key={i}>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <div style={{ padding: '6px 12px', borderRadius: 8, background: 'var(--brand)', color: 'white', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{phase.phase}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>{phase.label}</div>
+                    {phase.items.map((item, j) => (
+                      <div key={j} style={{ display: 'flex', gap: 8, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                        <span style={{ color: 'var(--brand)', flexShrink: 0 }}>→</span>{item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   );

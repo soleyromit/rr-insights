@@ -152,7 +152,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
   {
     version: 'v4.9',
     date: '2026-03-26',
-    summary: 'NPS 2025 data integrated platform-wide. 10 new insights (ins-nps-admin-01 to ins-ce-openqs-01) from NPS 2025 + project docs. 2 new themes added (Navigation inconsistency / Task-based home). FaaSView updated with NPS verbatims. PLATFORM_SIGNALS updated with 4 NPS signals. ThemesView: 8 total themes now including NPS-grounded patterns. Magic Patterns v10 published with correct QB architecture (7 statuses, Contextual Link Profiles, Version vs Variant).',
+    summary: 'Full continuation: LearningContractsView rebuilt (246 lines, 5 tabs: overview/lifecycle/personas/gaps/roadmap). Magic Patterns v11 published (140c10f4) — BuildPhase now has clinical vignette question grouping with checkbox selection, bulk action bar, VignetteGroup container, always-together label, and ungroup flow. 2 new ThemesView themes (navigation inconsistency, task-based home). NPS 2025 data integrated platform-wide. 10 new insights (ins-nps-admin-01 to ins-ce-openqs-01) from NPS 2025 + project docs. 2 new themes added (Navigation inconsistency / Task-based home). FaaSView updated with NPS verbatims. PLATFORM_SIGNALS updated with 4 NPS signals. ThemesView: 8 total themes now including NPS-grounded patterns. Magic Patterns v10 published with correct QB architecture (7 statuses, Contextual Link Profiles, Version vs Variant).',
     author: 'Romit Soley',
     changedFiles: ['src/data/insights.ts (63 total)', 'src/data/personas.ts (PLATFORM_SIGNALS)', 'src/views/ThemesView.tsx (+2 NPS themes)', 'src/views/products/FaaSView.tsx (NPS signals)', 'src/views/products/CourseEvalView.tsx (rebuilt from primer)'],
   },
