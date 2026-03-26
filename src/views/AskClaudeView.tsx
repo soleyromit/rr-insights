@@ -177,7 +177,11 @@ export function AskClaudeView() {
 
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-request-proxy': 'true',
+        },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1500,
@@ -186,14 +190,17 @@ export function AskClaudeView() {
         }),
       });
 
-      if (!res.ok) throw new Error(`API error ${res.status}`);
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => '');
+        throw new Error(`API ${res.status}: ${errBody.slice(0, 200)}`);
+      }
       const data = await res.json();
       const reply = data.content?.find((b: any) => b.type === 'text')?.text ?? 'No response.';
       setMessages(prev => [...prev, { role: 'assistant', content: reply, timestamp: new Date() }]);
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: `**Error connecting to Claude.** Check the browser console for details.\n\n\`${err}\``,
+        content: `**Could not reach Claude.**\n\n\`\`\`\n${err}\n\`\`\`\n\nIf this is a CORS error, check that \`anthropic-dangerous-request-proxy\` is supported in this environment. If it's a 401, the API key may not be configured.`,
         timestamp: new Date(),
       }]);
     } finally {
