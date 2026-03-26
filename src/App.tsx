@@ -16,6 +16,8 @@ import { RoadmapView } from './views/RoadmapView';
 import { PortfolioView } from './views/PortfolioView';
 import { StakeholderView } from './views/StakeholderView';
 import { AskClaudeView } from './views/AskClaudeView';
+import { KnowledgeGraphView } from './views/KnowledgeGraphView';
+import { DomainExpertView } from './views/DomainExpertView';
 import { ExxatOneView } from './views/products/ExxatOneView';
 import { ExamAdminAuditView } from './views/products/ExamAdminAuditView';
 import type { ProductId } from './types';
@@ -42,6 +44,8 @@ export function App() {
     if (activeView === 'stakeholder')      return <StakeholderView />;
     if (activeView === 'ask-claude')       return <AskClaudeView />;
     if (activeView === 'exactone')         return <ExxatOneView />;
+    if (activeView === 'knowledge-graph') return <KnowledgeGraphView />;
+    if (activeView === 'domain-experts')   return <DomainExpertView />;
     if (activeView === 'exam-audit')        return <ExamAdminAuditView />;
     // Product deep-dives — each now has its own dedicated view
     if (activeView === 'exam-management')  return <ExamManagementView />;

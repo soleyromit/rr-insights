@@ -1,6 +1,6 @@
 export type ProductId = 'exam-management' | 'faas' | 'course-eval' | 'skills-checklist' | 'learning-contracts';
 export type SeverityLevel = 'critical' | 'high' | 'medium' | 'low' | 'na';
-export type InsightTag = 'theme' | 'gap' | 'opportunity' | 'persona' | 'platform' | 'ai' | 'new' | 'architecture';
+export type InsightTag = 'theme' | 'gap' | 'opportunity' | 'persona' | 'platform' | 'ai' | 'new' | 'architecture' | 'decision' | 'persona-signal';
 export type PersonaId = 'student' | 'dce' | 'scce' | 'program-director';
 export type UrgencyLevel = 'fire' | 'warn' | 'ok';
 

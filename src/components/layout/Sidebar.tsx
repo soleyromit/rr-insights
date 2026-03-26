@@ -1,4 +1,4 @@
-import { LayoutDashboardIcon, FileTextIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon, UsersIcon, TagIcon, MapIcon, TrendingUpIcon, PresentationIcon, LayersIcon, GitBranchIcon, BookOpenIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon, SparklesIcon } from 'lucide-react';
+import { LayoutDashboardIcon, FileTextIcon, NetworkIcon, BrainIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon, UsersIcon, TagIcon, MapIcon, TrendingUpIcon, PresentationIcon, LayersIcon, GitBranchIcon, BookOpenIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon, SparklesIcon } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
 import { VERSION_HISTORY } from '../../data/personas';
 import type { ProductId } from '../../types';
@@ -65,6 +65,8 @@ export function Sidebar({ activeView, onNav }: Props) {
           );
         })}
         <Section label="Intelligence" />
+        <NavItem id="knowledge-graph" label="Knowledge Graph" icon={NetworkIcon} active={activeView === 'knowledge-graph'} onNav={onNav} badge="New" badgeColor="#6d5ed4" />
+        <NavItem id="domain-experts" label="Domain Experts" icon={BrainIcon} active={activeView === 'domain-experts'} onNav={onNav} badge="4 experts" badgeColor="#0d9488" />
         <NavItem id="exam-audit" label="Exam Admin Audit" icon={FlameIcon} active={activeView === 'exam-audit'} onNav={onNav} badge="New" badgeColor="#EF4444" />
         <NavItem id="exactone" label="ExxatOne" icon={LayoutDashboardIcon} active={activeView === 'exactone'} onNav={onNav} badge="New" badgeColor="#F59E0B" />
         <NavItem id="personas" label="Persona map" icon={UsersIcon} active={activeView === 'personas'} onNav={onNav} />
