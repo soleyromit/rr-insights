@@ -203,7 +203,7 @@ export function RoadmapView() {
             <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${lane.rows.length}, 1fr)` }}>
               {lane.rows.map((row) =>
             <div key={row.phase}>
-                  <div className="text-[9px] uppercase tracking-[0.07em] font-semibold text-[var(--text3)] mb-2">{row.phase}</div>
+                  <div className="text-[11px] uppercase tracking-[0.07em] font-semibold text-[var(--text3)] mb-2">{row.phase}</div>
                   <div className="flex flex-col gap-1.5">
                     {row.items.map((item, i) =>
                 <div key={i} className="flex items-start gap-2">

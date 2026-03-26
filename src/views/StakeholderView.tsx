@@ -22,7 +22,7 @@ function BriefingSection({ label, text, highlight = false }: BriefingSectionProp
       'border-[var(--border)] bg-[var(--bg3)]'}`
       }>
       
-      <div className="text-[9px] uppercase tracking-[0.08em] font-semibold text-[var(--text3)] mb-1.5">
+      <div className="text-[11px] uppercase tracking-[0.08em] font-semibold text-[var(--text3)] mb-1.5">
         {label}
       </div>
       <p className={`text-[12px] leading-[1.6] ${highlight ? 'text-[var(--accent)]' : 'text-[var(--text2)]'}`}>
@@ -105,7 +105,7 @@ export function StakeholderView() {
               </div>
               <div>
                 <div className="text-[12px] font-medium text-[var(--text)]">{deck.audience}</div>
-                <div className="text-[9px] text-[var(--text3)]">{deck.role}</div>
+                <div className="text-[11px] text-[var(--text3)]">{deck.role}</div>
               </div>
             </div>
             <BriefingSection label="The problem" text={deck.problem} />
@@ -122,7 +122,7 @@ export function StakeholderView() {
           {SIGNAL_RISKS.map((s, i) =>
           <div key={i} className="flex items-start gap-2 py-2 border-b border-[var(--border)] last:border-0">
               <span
-              className="text-[9px] px-1.5 py-0.5 rounded font-mono flex-shrink-0 mt-0.5"
+              className="text-[11px] px-1.5 py-0.5 rounded font-mono flex-shrink-0 mt-0.5"
               style={{ background: `${s.color}15`, color: s.color }}>
               
                 {s.type}
@@ -137,7 +137,7 @@ export function StakeholderView() {
           {criticalInsights.map((i) =>
           <div key={i.id} className="py-2 border-b border-[var(--border)] last:border-0">
               <p className="text-[11px] text-[var(--text2)] leading-[1.5] mb-1">{i.text}</p>
-              <p className="text-[9px] text-[var(--text3)] font-mono">{i.source}</p>
+              <p className="text-[11px] text-[var(--text3)] font-mono">{i.source}</p>
             </div>
           )}
         </Card>

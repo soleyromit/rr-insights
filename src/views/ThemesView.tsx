@@ -87,7 +87,7 @@ const radarData = [
 { dim: 'Competitive risk', overload: 60, ai: 95, reporting: 80, multicampus: 90 }];
 
 
-const CHART_STYLE = { fontSize: 9, fill: '#5c5a57' };
+const CHART_STYLE = { fontSize: 11, fill: '#5c5a57' };
 
 export function ThemesView() {
   const platformInsights = INSIGHTS.filter((i) => i.tags.includes('platform'));
@@ -120,14 +120,14 @@ export function ThemesView() {
                   {theme.title}
                 </div>
                 <span
-                  className="text-[9px] px-1.5 py-0.5 rounded font-mono ml-2 flex-shrink-0"
+                  className="text-[11px] px-1.5 py-0.5 rounded font-mono ml-2 flex-shrink-0"
                   style={{ background: `${theme.color}18`, color: theme.color }}>
                   
                   {theme.products.length} products
                 </span>
               </div>
 
-              <div className="text-[9px] text-[var(--text3)] font-mono mb-2">
+              <div className="text-[11px] text-[var(--text3)] font-mono mb-2">
                 {productNames} {'\u00b7'} {theme.persona}
               </div>
 
@@ -143,7 +143,7 @@ export function ThemesView() {
 
               {relatedInsights.length > 0 &&
               <div>
-                  <div className="text-[9px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold mb-1.5">
+                  <div className="text-[11px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold mb-1.5">
                     Evidence
                   </div>
                   {relatedInsights.slice(0, 2).map((i) =>

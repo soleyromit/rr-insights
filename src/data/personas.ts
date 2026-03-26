@@ -148,7 +148,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
     version: 'v4.0',
     date: 'Mar 26, 2026',
     summary: 'Full platform reset. Typography overhauled to Claude editorial scale (15px body, DM Serif Display headings, JetBrains Mono data). Unified 7-tab architecture across ALL products (Insights/Blueprint/Features/Analytics/Accessibility/Competitive/Decisions). 12 new insights from 4 missing Granola sessions (Arun 3-year vision, PCE context, Prasanjit Patient Log, Akshit Q2). Advanced Recharts data visualisation in every product. ProductViewShell rebuilt with rich content. 57 total insights.',
-    insightCount: 57,
+    insightCount: 53,
     sessionsAdded: 4,
     changedFiles: ['index.css (v4 editorial scale)', 'ProductViewShell.tsx (7-tab unified)', 'data/insights.ts (57 insights)', 'data/version.ts', 'components/ui/Card.tsx', 'components/ui/InsightRow.tsx', 'components/ui/Badge.tsx', 'Topbar.tsx', 'Sidebar.tsx'],
   },

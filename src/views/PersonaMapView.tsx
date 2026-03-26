@@ -64,7 +64,7 @@ export function PersonaMapView() {
         <div key={s.label} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] border border-[rgba(139,127,245,0.2)] bg-[rgba(139,127,245,0.06)] text-[var(--accent)]" style={s.isNew ? { borderColor: 'rgba(46,196,160,0.3)', background: 'rgba(46,196,160,0.06)', color: '#2ec4a0' } : {}}>
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: s.color }} />
             {s.label}
-            {s.isNew && <span className="text-[8px] px-1 py-0.5 rounded bg-[rgba(46,196,160,0.15)] font-mono">New</span>}
+            {s.isNew && <span className="text-[10px] px-1 py-0.5 rounded bg-[rgba(46,196,160,0.15)] font-mono">New</span>}
           </div>
         )}
       </div>
@@ -73,9 +73,9 @@ export function PersonaMapView() {
         <table className="w-full text-[11px]" style={{ minWidth: 800 }}>
           <thead>
             <tr className="bg-[var(--bg3)]">
-              <th className="px-3 py-2 text-left text-[9px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold w-[140px]">Persona</th>
+              <th className="px-3 py-2 text-left text-[11px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold w-[140px]">Persona</th>
               {PRODUCTS.map((p) =>
-              <th key={p.id} className="px-3 py-2 text-left text-[9px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold border-l border-[var(--border)]">
+              <th key={p.id} className="px-3 py-2 text-left text-[11px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold border-l border-[var(--border)]">
                   {p.shortName}
                 </th>
               )}
@@ -86,27 +86,27 @@ export function PersonaMapView() {
             <tr key={persona.id} className="border-t border-[var(--border)] hover:bg-[rgba(255,255,255,0.01)] transition-colors">
                 <td className="px-3 py-3 align-top border-r border-[var(--border)]">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-semibold flex-shrink-0" style={{ background: persona.avatarColor }}>
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold flex-shrink-0" style={{ background: persona.avatarColor }}>
                       {persona.avatarInitials}
                     </div>
                     <div className="text-[11px] font-medium text-[var(--text)]">{persona.name}</div>
                   </div>
-                  <div className="text-[9px] text-[var(--text3)] leading-[1.3]">{persona.role}</div>
+                  <div className="text-[11px] text-[var(--text3)] leading-[1.3]">{persona.role}</div>
                 </td>
                 {PRODUCTS.map((product) => {
                 const cell = PERSONA_PRODUCT_FRICTION[persona.id]?.[product.id];
                 if (!cell) return <td key={product.id} className="px-3 py-3 border-l border-[var(--border)] text-[var(--text3)] text-[10px]">—</td>;
                 return (
                   <td key={product.id} className="px-3 py-3 border-l border-[var(--border)] align-top">
-                      <span className={`text-[8px] px-1.5 py-0.5 rounded font-medium ${SEV_STYLE[cell.severity]} inline-block mb-1.5`}>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SEV_STYLE[cell.severity]} inline-block mb-1.5`}>
                         {cell.severity.charAt(0).toUpperCase() + cell.severity.slice(1)}
                       </span>
                       <p className="text-[10px] text-[var(--text2)] leading-[1.4] mb-1">{cell.text}</p>
                       {cell.cross &&
-                    <div className="text-[9px] px-1.5 py-0.5 rounded bg-[rgba(139,127,245,0.1)] text-[var(--accent)] inline-block mr-1">⬦ {cell.cross}</div>
+                    <div className="text-[11px] px-1.5 py-0.5 rounded bg-[rgba(139,127,245,0.1)] text-[var(--accent)] inline-block mr-1">⬦ {cell.cross}</div>
                     }
                       {cell.ai &&
-                    <div className="text-[9px] px-1.5 py-0.5 rounded bg-[rgba(76,175,125,0.1)] text-[#4caf7d] inline-block">✦ {cell.ai}</div>
+                    <div className="text-[11px] px-1.5 py-0.5 rounded bg-[rgba(76,175,125,0.1)] text-[#4caf7d] inline-block">✦ {cell.ai}</div>
                     }
                     </td>);
 

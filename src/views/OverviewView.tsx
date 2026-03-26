@@ -113,7 +113,7 @@ export function OverviewView({ onNav }: OverviewViewProps) {
           <div key={s.label} className="flex items-center gap-3 py-2 border-b border-[var(--border)] last:border-0">
               <div className="flex-1 text-[11px] text-[var(--text2)] flex items-center gap-1.5">
                 {s.label}
-                {s.isNew && <span className="text-[8px] px-1 py-0.5 rounded bg-[rgba(46,196,160,0.12)] text-[#2ec4a0] font-mono">New</span>}
+                {s.isNew && <span className="text-[10px] px-1 py-0.5 rounded bg-[rgba(46,196,160,0.12)] text-[#2ec4a0] font-mono">New</span>}
               </div>
               <div className="w-24 h-1.5 bg-[var(--bg4)] rounded-full overflow-hidden">
                 <div className="h-full rounded-full" style={{ width: `${s.count / 5 * 100}%`, background: s.color }} />

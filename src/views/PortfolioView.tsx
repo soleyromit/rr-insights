@@ -74,7 +74,7 @@ const radarData = [
 { dim: 'AI thinking', score: 74 }];
 
 
-const CHART_STYLE = { fontSize: 9, fill: '#5c5a57' };
+const CHART_STYLE = { fontSize: 11, fill: '#5c5a57' };
 
 export function PortfolioView() {
   const overallScore = Math.round(DIMENSIONS.reduce((s, d) => s + d.value, 0) / DIMENSIONS.length);
@@ -139,7 +139,7 @@ export function PortfolioView() {
             <CardTitle>Staff-level narrative anchors</CardTitle>
             {ANCHORS.map((a) =>
             <div key={a.label} className="flex gap-2 py-2 border-b border-[var(--border)] last:border-0">
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[rgba(139,127,245,0.12)] text-[var(--accent)] font-mono h-fit flex-shrink-0 mt-0.5">
+                <span className="text-[11px] px-1.5 py-0.5 rounded bg-[rgba(139,127,245,0.12)] text-[var(--accent)] font-mono h-fit flex-shrink-0 mt-0.5">
                   {a.label}
                 </span>
                 <p className="text-[11px] text-[var(--text2)] leading-[1.5]">{a.text}</p>
@@ -161,7 +161,7 @@ export function PortfolioView() {
             
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span
-                className="text-[9px] px-1.5 py-0.5 rounded font-mono font-semibold"
+                className="text-[11px] px-1.5 py-0.5 rounded font-mono font-semibold"
                 style={{ background: `${g.color}20`, color: g.color }}>
                 
                   {g.priority}

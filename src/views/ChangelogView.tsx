@@ -69,7 +69,7 @@ export function ChangelogView() {
                     <span style={{ fontSize: 12, color: 'var(--text3)' }}>{entry.date}</span>
                     {i === 0 && (
                       <span style={{
-                        fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                        fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
                         background: 'rgba(109,94,212,0.1)', color: '#6d5ed4',
                         padding: '2px 7px', borderRadius: 10,
                       }}>

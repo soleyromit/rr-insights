@@ -319,7 +319,7 @@ export function CompetitiveView() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                       <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>{expanded.name}</h2>
                       <span style={{
-                        fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em',
+                        fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em',
                         padding: '2px 8px', borderRadius: 10,
                         background: `${expanded.color}18`, color: expanded.color,
                       }}>{expanded.categoryLabel}</span>
