@@ -1,6 +1,6 @@
 ---
 name: rr-insights
-version: 2.1.0
+version: 2.2.0
 last_updated: 2026-03-26
 author: Romit Soley, Product Designer II, Exxat
 description: >
@@ -835,3 +835,61 @@ Never skip it. Even if Romit opens with "just do X", run the check silently in t
 ### Last sync record (update this line after every session)
 
 **Last synced:** Mar 26, 2026 — Monil PCE session (b47ba356) + Exam Management Standup (6fdcd0dd). Total insights in INSIGHTS array: 61. Total sessions processed: 43 of 43.
+
+---
+
+## 24. INSIGHT INTEGRITY RULES — MANDATORY
+
+Every insight written to `src/data/insights.ts` must pass all of the following checks before commit. These rules exist because fabricated sources contaminate the research record and destroy trust in the platform.
+
+### Rule 1 — Every source must be a real Granola meeting or a real project file
+
+**Allowed source formats:**
+- `Granola session title · Mon DD (meeting-id)` — e.g. `Aarti<>Kunal<>Romit accessibility session · Mar 20 (f29a990d)`
+- `Project file name` — e.g. `Tagging_Strategy_1.pdf · project file`
+- `NPS 2025 Textual Responses · Exxat Prism Admin`
+- `Synthesized across Granola sessions · Mar 2026` — only for platform-level signals with no single source
+
+**Never allowed:**
+- Any name Claude invented: `"Exam Management University build"`, `"platform strategy session"`, `"internal planning meeting"` etc.
+- `"Inferred from all stakeholder sessions"` — this is an assumption, not evidence
+- Any session name that does not appear in `Granola:list_meetings` results
+
+### Rule 2 — pullQuote must be verbatim from the source
+
+If an insight has a `pullQuote`, the text must appear verbatim (or near-verbatim with minor cleaning) in the Granola meeting summary. It cannot be paraphrased or synthesized.
+
+If no direct quote exists, remove the `pullQuote` and `pullQuoteSource` fields entirely. An insight without a pull quote is fine. A fabricated pull quote is not.
+
+**Verification:** Before adding a pullQuote, confirm the text appears in `Granola:get_meetings` output.
+
+### Rule 3 — insight.text must describe what was said, not what Claude decided to design
+
+The `text` field is a research artifact. It records what stakeholders, users, or documents said. It is not a design decision log, a rationale for a Magic Patterns component, or Claude's own synthesis.
+
+**Not allowed in text:**
+- "Redesign uses Linear list density + GitHub PR review state header…"
+- "The table of 8 columns was replaced with sparse single-line rows…"
+- "Design analogies used: Linear, GitHub, Notion, Asana"
+
+These belong in a design decisions document, a commit message, or an rr-insights `ExamAdminAuditView.tsx` decisions tab — not in an insight record.
+
+### Rule 4 — soWhat must be an implication for Exxat, not a design instruction to Claude
+
+`soWhat` explains why the insight matters to the product or to Romit's work. It is not a directive to build a specific component.
+
+**Not allowed:** `"Never show 8 columns in a table when 4 rows with a slide-in detail pane will do."`
+**Allowed:** `"The primary job is building exams, not managing folders. Every design decision should be tested against this."`
+
+### Rule 5 — createdAt must match the actual meeting date
+
+If the source is a Mar 20 meeting, `createdAt` must be `'2026-03-20'`. Fabricated sources often carry a different date than the real meeting. Always use the real meeting date.
+
+### Anomalies found and fixed (Mar 26, 2026)
+
+| Insight ID | Problem | Fix applied |
+|---|---|---|
+| ins-em-019 | Source: "Exam Management University build · Mar 25" — fabricated | Corrected to: Aarti/Kunal/Romit accessibility session · Mar 20 (f29a990d) |
+| ins-em-020 | Same fabricated source | Same correction |
+| ins-em-021 | Same fabricated source + pullQuoteSource attributed to "Arun · Mar 24" (Arun never said this) | Corrected source + pullQuoteSource to accessibility session f29a990d |
+| ins-em-qb-design-01 | text field contained Claude's own design rationale ("Redesign uses Linear list density + GitHub PR…") mixed with a real Granola quote | Split: real Granola signal kept, Claude design decisions removed from text. soWhat corrected. |
