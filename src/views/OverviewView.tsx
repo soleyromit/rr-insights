@@ -11,6 +11,24 @@ import { AIStrip } from '../components/ui/InsightRow';
 import { Badge } from '../components/ui/Badge';
 import type { ProductMeta } from '../types';
 
+// Build metadata injected by vite.config.ts at GitHub Actions build time
+const BUILD_TIME = __BUILD_TIME__;
+const COMMIT_SHA = __COMMIT_SHA__;
+
+function formatBuildTime(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit',
+      timeZoneName: 'short',
+      timeZone: 'America/New_York',
+    });
+  } catch {
+    return iso;
+  }
+}
+
 interface OverviewViewProps {
   onNav: (view: string) => void;
 }
@@ -64,11 +82,41 @@ export function OverviewView({ onNav }: OverviewViewProps) {
   return (
     <div className="p-5 overflow-y-auto flex-1">
       {/* Header */}
-      <div className="mb-5">
-        <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Platform Overview</h1>
-        <p className="text-[11px] text-[var(--text3)]">
-          5 products · 4 personas · 39 Granola sessions synthesized · Last updated Mar 19, 2026
-        </p>
+      <div className="mb-5 flex items-start justify-between">
+        <div>
+          <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Platform Overview</h1>
+          <p className="text-[11px] text-[var(--text3)]">
+            5 products · 4 personas · 43 Granola sessions synthesized · {INSIGHTS.length} insights
+          </p>
+        </div>
+        {/* Live build timestamp — auto-updates on every GitHub push */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '4px 10px', borderRadius: 8,
+            background: 'var(--bg2)', border: '1px solid var(--border)',
+          }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#2ec4a0', flexShrink: 0 }} />
+            <span style={{ fontSize: 11, color: 'var(--text2)', fontWeight: 500 }}>
+              Updated {formatBuildTime(BUILD_TIME)}
+            </span>
+          </div>
+          <a
+            href={`https://github.com/soleyromit/rr-insights/commit/${COMMIT_SHA}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: 10, fontFamily: 'JetBrains Mono, monospace',
+              color: 'var(--text3)', textDecoration: 'none',
+              padding: '2px 7px', borderRadius: 5,
+              background: 'var(--bg3)', border: '1px solid var(--border)',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text3)')}
+          >
+            {COMMIT_SHA}
+          </a>
+        </div>
       </div>
 
       {/* AI strip */}
