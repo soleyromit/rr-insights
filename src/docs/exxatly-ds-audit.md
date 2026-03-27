@@ -181,3 +181,28 @@ Rules               5,020 chars  — dual-mode guidance + 6 NEVER rules
 | Exam Admin Dark | `4pe34lrvlzaqzayvspzr2s` | project-rich-macaroni-332.magicpatterns.app |
 | PCE Analytics | `x7nzrvdrqkmvnjwmz7s1qh` | project-truthful-apricot-326.magicpatterns.app |
 | FaaS Form Builder | `coh6xkx75pa4gmrj5j7giy` | project-noble-anchovy-330.magicpatterns.app |
+
+---
+
+## COMPONENT LIBRARY — Published
+
+**Design:** Exxatly Component Library — Dark + Light  
+**Editor:** `afbbaapuz9ds5ebwyjvvna`  
+**Preview:** `project-graceful-quail-855.magicpatterns.app`  
+
+All 10 components built side-by-side in dark and light mode:
+
+| # | Component | Dark | Light |
+|---|---|---|---|
+| 1 | Buttons | Primary (white/dark text), Ghost, Small, Ask Leo | Primary (brand purple), Ghost, Small, Ask Leo |
+| 2 | Form Inputs | Email, Required *, Optional, Select | Same with light surfaces |
+| 3 | Status Badges | All 7 with correct rgba backgrounds | Same (badges are mode-agnostic) |
+| 4 | Nav Badges | New (brand), Beta (amber), Notif (red) | Same |
+| 5 | Filter Tab Bar | `#222137` container, `#0b0b0e` active | `#ededf6` container, `#ffffff` active |
+| 6 | Avatars | Default pill + menu square (r:12px) | Same |
+| 7 | User Menu Dropdown | `#15161a` bg, avatar r:12px, 32px items | `#ffffff` bg, items hover `#ededf6` |
+| 8 | Tooltip | `#1a1a21` bg, r:6px, 12px | Same (tooltip stays dark in light mode) |
+| 9 | Stepper | Brand active, `#222137` inactive | Brand active, `#ededf6` inactive |
+| 10 | Checkbox | `#a1a4ac` border, `#5f53ae` checked | `#939599` border, `#5f53ae` checked |
+
+**fix applied:** Stripped all `var(--...)` refs from tailwind.config.js after AI generation.
