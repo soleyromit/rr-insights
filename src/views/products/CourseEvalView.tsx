@@ -5,7 +5,7 @@ import { AIStrip } from '../../components/ui/InsightRow';
 import { Badge } from '../../components/ui/Badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 
-type TabId = 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star' | 'pce-arch';
+type TabId = 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star' | 'pce-arch' | 'pce-build';
 const TABS: { id: TabId; label: string; alert?: boolean }[] = [
   { id: 'overview',       label: 'Overview' },
   { id: 'instruments',    label: 'Instruments' },
@@ -15,6 +15,7 @@ const TABS: { id: TabId; label: string; alert?: boolean }[] = [
   { id: 'open-questions', label: 'Open questions (24)', alert: true },
   { id: 'north-star', label: '★ North star' },
   { id: 'pce-arch', label: 'PCE Architecture' },
+  { id: 'pce-build', label: '★ PCE Build Plan', alert: true },
 ];
 
 const ts = (tab: TabId, cur: TabId) => ({
@@ -519,6 +520,155 @@ export function CourseEvalView() {
             </div>
           </div>
         )}
+
+        {/* ── PCE BUILD PLAN — Monil Mar 26 ─────────────────────────────── */}
+        {tab === 'pce-build' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Session banner */}
+            <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(14,148,163,0.06)', border: '1px solid rgba(14,148,163,0.25)', borderLeft: '4px solid #0d9488' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#0d9488', marginBottom: 4 }}>Monil — PCE Introduction · Mar 26, 2026</div>
+              <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>
+                PCE is the sales entry point for didactic programs not registered on Prism. End-to-April design target. Engineering handoff May 2026.
+              </div>
+            </div>
+
+            {/* Deadline strip */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+              {[
+                { label: 'Design deadline', value: 'End of April', sub: 'Full 3-layer scope', color: '#e8604a' },
+                { label: 'Engineering handoff', value: 'May 2026', sub: 'Spec → dev', color: '#6d5ed4' },
+                { label: 'Strategic value', value: 'Sales entry', sub: 'Non-Prism programs', color: '#0d9488' },
+              ].map((m, i) => (
+                <div key={i} style={{ padding: '14px 16px', borderRadius: 10, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>{m.label}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: m.color, lineHeight: 1.1, marginBottom: 3 }}>{m.value}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text3)' }}>{m.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* 3-layer architecture */}
+            <div style={{ borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)', padding: '18px 20px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>3-Layer Architecture — confirmed by Monil</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {[
+                  {
+                    n: '1', label: 'Template Setup', color: '#6d5ed4',
+                    who: 'Admin / Program Director',
+                    details: [
+                      'Select program + course type (clinical / didactic)',
+                      'Maximum 2 templates per program',
+                      'Fixed structure: course section (5–6 Qs) + faculty section (5–6 Qs)',
+                      'Templates saved at program level, reusable across offerings',
+                      'Toggle sections: enable/disable course vs faculty evaluation independently',
+                      'Add 1–3 supplemental questions beyond template base',
+                    ]
+                  },
+                  {
+                    n: '2', label: 'Distribution', color: '#e8604a',
+                    who: 'Admin / Program Director (TBD)',
+                    details: [
+                      'Select existing template for program + course type',
+                      'Choose specific course offering (e.g. "ABC Spring 2026")',
+                      'System auto-populates student and faculty lists from Prism',
+                      'Faculty management: review/edit assignments, handle guest faculty',
+                      'TA and part-time faculty included for performance evaluation',
+                      'Survey window configuration: open/close dates',
+                    ]
+                  },
+                  {
+                    n: '3', label: 'Analytics & Reporting', color: '#0d9488',
+                    who: 'Program Director + Faculty + Dean',
+                    details: [
+                      'Year-over-year faculty performance tracking',
+                      'Cross-faculty comparisons within programs',
+                      'Response rate monitoring per course',
+                      'Program-level performance benchmarking',
+                      'AI: sentiment classification of free-text (improvement vs compliment)',
+                      'AI: SWOT visualization from response data',
+                      'AI: cross-program common complaint analysis',
+                      'Top category rating extraction from qualitative responses',
+                    ]
+                  },
+                ].map((layer, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 16, padding: '14px 16px', borderRadius: 10, background: 'white', border: '1px solid var(--border)', borderLeft: `3px solid ${layer.color}` }}>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: layer.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, flexShrink: 0 }}>{layer.n}</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 8 }}>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: layer.color }}>{layer.label}</span>
+                        <span style={{ fontSize: 11, color: 'var(--text3)', background: 'var(--bg3)', padding: '2px 8px', borderRadius: 4 }}>{layer.who}</span>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+                        {layer.details.map((d, j) => (
+                          <div key={j} style={{ display: 'flex', gap: 6, fontSize: 12, color: 'var(--text2)', lineHeight: 1.4 }}>
+                            <span style={{ color: layer.color, flexShrink: 0, marginTop: 1 }}>›</span>
+                            <span>{d}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* AI differentiation */}
+            <div style={{ borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', padding: '16px 18px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#6d5ed4', marginBottom: 4 }}>AI differentiation strategy — without explicit "AI-powered" branding</div>
+              <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 12, lineHeight: 1.6 }}>
+                Competitors (Explorance Blue, Watermark) only provide basic mathematical reporting — median, mode, mean. Exxat differentiates through integrated AI insights that surface automatically.
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                {[
+                  { feature: 'Sentiment classification', desc: 'Free-text automatically tagged as improvement signal vs compliment signal', icon: '🏷' },
+                  { feature: 'SWOT visualization', desc: 'Responses auto-grouped into Strengths / Weaknesses / Opportunities / Threats per course', icon: '⊞' },
+                  { feature: 'Cross-program complaint analysis', desc: 'Identifies common issues appearing across multiple courses or programs', icon: '⟺' },
+                  { feature: 'Top category extraction', desc: 'Surfaces highest-rated and lowest-rated aspects from qualitative responses', icon: '↑' },
+                  { feature: 'Comment filtering by signal type', desc: 'PD can filter to see only improvement signals or only compliments', icon: '⊡' },
+                  { feature: 'Faculty vs program average comparison', desc: 'Auto-benchmarks each faculty member against program average without manual calculation', icon: '≈' },
+                ].map((f, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, padding: '10px 12px', borderRadius: 8, background: 'white', border: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: 18, flexShrink: 0 }}>{f.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{f.feature}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text3)', lineHeight: 1.4 }}>{f.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Open questions from Monil */}
+            <div style={{ borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)', padding: '16px 18px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Open questions — Monil session (Mar 26)</div>
+              {[
+                { q: 'Who distributes surveys — program director, course coordinator, or admin?', priority: 'P0' },
+                { q: 'What is the user value hierarchy — what does each persona care about and why?', priority: 'P0' },
+                { q: 'Student engagement: what response rate improvement tactics are in scope (incentives, gamification)?', priority: 'P1' },
+                { q: 'How do free-text comment links to specific question categories work?', priority: 'P1' },
+                { q: 'Cross-faculty comparison methodology and fairness considerations?', priority: 'P1' },
+                { q: 'Should future question bank integrate with exam management question banks?', priority: 'P2' },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < 5 ? '1px solid var(--border)' : 'none' }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: item.priority === 'P0' ? 'rgba(220,38,38,0.08)' : item.priority === 'P1' ? 'rgba(217,119,6,0.08)' : 'rgba(107,114,128,0.08)', color: item.priority === 'P0' ? '#dc2626' : item.priority === 'P1' ? '#d97706' : '#6b7280', flexShrink: 0, height: 'fit-content', marginTop: 1 }}>{item.priority}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item.q}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Competitors to analyze */}
+            <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(219,39,119,0.04)', border: '1px solid rgba(219,39,119,0.15)' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#db2777', marginBottom: 4 }}>Competitor walkthrough required (Monil directive)</div>
+              <div style={{ fontSize: 12, color: 'var(--text2)' }}>
+                Before any Analytics layer design — complete walkthroughs of <strong>Watermark CES</strong> and <strong>Explorance Blue</strong> video demos.
+                Focus: how they handle YoY comparison, response rate monitoring, and AI/insight summaries (they don't have any — that's the gap).
+              </div>
+            </div>
+
+          </div>
+        )}
+
       </div>
     </div>
   );
