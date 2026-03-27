@@ -7,13 +7,14 @@ import {
   ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis,
 } from 'recharts';
 
-type TabId = 'overview' | 'workflow' | 'personas' | 'gaps' | 'roadmap';
+type TabId = 'overview' | 'workflow' | 'personas' | 'gaps' | 'roadmap' | 'exactone';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'workflow', label: 'Lifecycle' },
   { id: 'personas', label: 'Personas' },
   { id: 'gaps', label: 'Design gaps' },
   { id: 'roadmap', label: 'Roadmap' },
+  { id: 'exactone', label: '★ ExactOne north star' },
 ];
 const ts = (t: TabId, cur: TabId) => ({
   padding: '10px 18px', fontSize: 13,
@@ -240,6 +241,52 @@ export function LearningContractsView() {
           </div>
         )}
 
+
+        {tab === 'exactone' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Aarti · ExxatOne Student + School · Feb 25 · sessions d4c622ef + 72f8b82e</div>
+              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+                "We are creating the concept of an allied health care student — just like Airbnb created the concept of a traveler."
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>ExactOne is not a schedule viewer. It is the student-facing platform for the entire allied health career lifecycle.</div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {[
+                { title: 'Airbnb model', items: ['Student lands on: pay > placement > jobs', 'Pre-login shows modules; post-login shows personal state', 'Become a host = register as site (secondary, visible)', 'New modules advertised inline as tabs/tiles'], color: '#6d5ed4' },
+                { title: 'Uber model', items: ['Payment-first: sooner student pays, sooner Exact gets paid', 'Reserve model: commit + pay ahead, remove friction', 'Every new module (jobs, CME) advertised inside app', 'Consolidated account for rides, food, groceries = one ID'], color: '#e8604a' },
+              ].map((col, i) => (
+                <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', borderLeft: '3px solid ' + col.color, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: col.color, marginBottom: 10 }}>{col.title}</div>
+                  {col.items.map((item, j) => (
+                    <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                      <span style={{ color: col.color, flexShrink: 0 }}>·</span>
+                      <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 16px' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Confirmed UX decisions from Aarti (Feb 25)</div>
+              {[
+                { decision: 'Payment is primary CTA', detail: 'First element on student dashboard when payment is due. Exact makes money only when student pays.', source: 'd4c622ef' },
+                { decision: 'Calendar view removed', detail: 'Rotations happen in 35-40 of 150 grad school weeks. Daily calendar not useful.', source: 'd4c622ef' },
+                { decision: 'Ongoing vs upcoming split', detail: 'Ongoing = already in clinic (compliant, no daily activity). Upcoming = onboarding phase. Prism handles school activity; ExactOne handles site activity.', source: 'd4c622ef' },
+                { decision: 'Placement vs Jobs = separate nav', detail: 'Placement = mandatory clinical internship. Jobs = first employment post-graduation. Cannot be merged.', source: '72f8b82e' },
+                { decision: 'Slot request replaces March 1 email', detail: 'Sites post availability; schools apply. Eliminates 300+ PT schools mass-emailing sites each March 1.', source: '72f8b82e' },
+              ].map((d, i) => (
+                <div key={i} style={{ display: 'flex', gap: 14, padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ flexShrink: 0, width: 180 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{d.decision}</div>
+                    <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 2 }}>{d.source}</div>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.55 }}>{d.detail}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
