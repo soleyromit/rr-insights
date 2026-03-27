@@ -244,3 +244,81 @@ export const NPS_INSIGHTS = [
 
 // Re-export NPS insights merged with main INSIGHTS for utility functions
 export const ALL_INSIGHTS = [...INSIGHTS, ...NPS_INSIGHTS];
+
+// ── NEW SESSIONS — March 25–27 2026 sync ────────────────────────────────────
+
+// Romit<>Nipun Kickoff (Mar 27)
+export const nipunKickoffInsights = [
+  { id: 'nk-001', product: 'exam-management', theme: 'Design System', tag: 'Gap', severity: 'high',
+    title: 'DS gaps: no voice narration, no on-screen keyboard, WCAG incomplete',
+    body: "Himanshu's design file confirmed running but nested list components need custom dev. Accessibility DS gaps: voice narration missing, on-screen keyboard absent, color blindness considerations incomplete.",
+    source: 'Romit<>Nipun Kickoff · Mar 27', persona: 'student' },
+  { id: 'nk-002', product: 'exam-management', theme: 'Scope', tag: 'Opportunity', severity: 'high',
+    title: 'Launch screen = question bank first — dashboard deferred 2+ months',
+    body: 'Decision confirmed: direct launch to question bank module. Dashboard functionality deferred. Focus on skeleton/navigation structure initially.',
+    source: 'Romit<>Nipun Kickoff · Mar 27', persona: 'dce' },
+  { id: 'nk-003', product: 'exam-management', theme: 'Roles', tag: 'Gap', severity: 'high',
+    title: 'Admin vs contributor permissions undefined — joint session needed',
+    body: 'Menu visibility and feature access by role undefined. Admin vs contributor permissions require joint discussion. Critical blocker for question bank IA.',
+    source: 'Romit<>Nipun Kickoff · Mar 27', persona: 'dce' },
+];
+
+// Monil — PCE Introduction (Mar 26)
+export const monilPCEInsights = [
+  { id: 'pce-001', product: 'course-eval', theme: 'Product Strategy', tag: 'Theme', severity: 'critical',
+    title: 'PCE = sales entry point for didactic programs not on Prism',
+    body: 'Post Course Evaluation is the entry point for programs only using didactic tools. Year-over-year faculty tracking + cross-program benchmarking differentiates from basic math-only competitors.',
+    source: 'Monil PCE Introduction · Mar 26', persona: 'program-director' },
+  { id: 'pce-002', product: 'course-eval', theme: 'Architecture', tag: 'Opportunity', severity: 'high',
+    title: 'PCE = 3-layer architecture: template setup → distribution → analytics',
+    body: '1. Admin creates template (program + course type, 2 templates max). 2. Distribution auto-populates student/faculty from Prism course offering. 3. Analytics: YoY tracking, cross-faculty comparisons, response rate monitoring.',
+    source: 'Monil PCE Introduction · Mar 26', persona: 'program-director' },
+  { id: 'pce-003', product: 'course-eval', theme: 'AI Opportunity', tag: 'Opportunity', severity: 'high',
+    title: 'AI diff: sentiment classification of comments → improvement vs compliment signals',
+    body: 'Competitors only do median/mode. Exxat differentiates with sentiment classification, SWOT visualization, cross-program complaint analysis, top category extraction — without explicit AI branding.',
+    source: 'Monil PCE Introduction · Mar 26', persona: 'program-director' },
+  { id: 'pce-004', product: 'course-eval', theme: 'Timeline', tag: 'Theme', severity: 'critical',
+    title: 'PCE deadline: end of April design, May engineering handoff',
+    body: 'Full scope: setup + distribution + analytics. Competitor walkthroughs: Watermark, Explorance Blue. Weekly follow-up sessions scheduled.',
+    source: 'Monil PCE Introduction · Mar 26', persona: 'program-director' },
+];
+
+// Prasanjit — Patient Log & FaaS (Mar 25)
+export const prasanjitFaaSInsights = [
+  { id: 'pras-001', product: 'faas', theme: 'Visual Design', tag: 'Gap', severity: 'critical',
+    title: 'Lost color coding for section differentiation — monochromatic FAST kills comprehension',
+    body: 'Previously: patient demographics in different colors, surgical vs clinical with distinct indentation. Current FAST: monochromatic. Students cannot identify which section they are in.',
+    source: 'Prasanjit FaaS Interview · Mar 25', persona: 'student' },
+  { id: 'pras-002', product: 'faas', theme: 'Validation', tag: 'Gap', severity: 'high',
+    title: 'Validation only on submit — no real-time feedback for mandatory fields or numeric limits',
+    body: 'Mandatory field errors and numeric limits only appear on form submission. Students receive batch errors. Pattern needed: validate on blur, not only on submit.',
+    source: 'Prasanjit FaaS Interview · Mar 25', persona: 'student' },
+  { id: 'pras-003', product: 'faas', theme: 'Control Types', tag: 'Gap', severity: 'high',
+    title: 'ICD/CPT codes display as long text strings — need chip pattern and clear delete',
+    body: 'Selected lookup options not visually distinct. Delete buttons unclear. "Observed vs Performed" workflow clunky for CPT codes. Multi-select inconsistencies across controls.',
+    source: 'Prasanjit FaaS Interview · Mar 25', persona: 'student' },
+  { id: 'pras-004', product: 'faas', theme: 'Governance', tag: 'Gap', severity: 'critical',
+    title: 'Self-service form creation disabled — all customization requires Exxat team intervention',
+    body: 'Universities cannot create/edit forms independently. Feature disabled for stability. 80-85% of changes are incremental but all require internal team. Matrix layout creation extremely confusing.',
+    source: 'Prasanjit FaaS Interview · Mar 25', persona: 'dce' },
+  { id: 'pras-005', product: 'faas', theme: 'Complex Controls', tag: 'Theme', severity: 'medium',
+    title: '4-level hierarchical questions (CRNA) collapse poorly at 7+ radio options per row',
+    body: 'CRNA programs use 4-level hierarchical questions: intrathoracic → heart → open heart → subspecialties. Matrix controls with embedded time pickers (99hr vs 999hr) display poorly in FAST.',
+    source: 'Prasanjit FaaS Interview · Mar 25', persona: 'student' },
+];
+
+// Akshit — Q2 Requirements (Mar 25)
+export const akshitQ2Insights = [
+  { id: 'q2-001', product: 'faas', theme: 'Usage Pattern', tag: 'Theme', severity: 'critical',
+    title: '80-85% of FaaS changes are incremental edits — template-first design implication',
+    body: '80-85% incremental changes to existing templates. Only 2-3% built from scratch. 90% start from predefined templates. Patient log: 90-95% derive from templates. Design must prioritize template-first, not blank canvas.',
+    source: 'Akshit Q2 Requirements · Mar 25', persona: 'dce' },
+  { id: 'q2-002', product: 'faas', theme: 'Rollout Strategy', tag: 'Opportunity', severity: 'high',
+    title: 'Q2 self-service: internal users only. Q3: limited end-user rollout without announcement',
+    body: 'Phase 1 (Q2): CI team, CIC exec, page server. Phase 2 (Q3): incremental exposure, no proactive comms, complex actions deferred. Weekly Wednesday cadence established.',
+    source: 'Akshit Q2 Requirements · Mar 25', persona: 'dce' },
+  { id: 'q2-003', product: 'faas', theme: 'AI Import', tag: 'Opportunity', severity: 'medium',
+    title: 'AI PDF import has limited adoption — need analytics before deciding UI prominence',
+    body: 'AI import recent feature with limited adoption data. Used for PDF uploads in specific modules. Not primary consumer for most modules yet. Analytics needed before determining UI prominence.',
+    source: 'Akshit Q2 Requirements · Mar 25', persona: 'dce' },
+];
