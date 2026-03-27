@@ -5,7 +5,7 @@ import { AIStrip } from '../../components/ui/InsightRow';
 import { Badge } from '../../components/ui/Badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 
-type TabId = 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star';
+type TabId = 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star' | 'pce-arch';
 const TABS: { id: TabId; label: string; alert?: boolean }[] = [
   { id: 'overview',       label: 'Overview' },
   { id: 'instruments',    label: 'Instruments' },
@@ -14,6 +14,7 @@ const TABS: { id: TabId; label: string; alert?: boolean }[] = [
   { id: 'competitive',    label: 'Competitive' },
   { id: 'open-questions', label: 'Open questions (24)', alert: true },
   { id: 'north-star', label: '★ North star' },
+  { id: 'pce-arch', label: 'PCE Architecture' },
 ];
 
 const ts = (tab: TabId, cur: TabId) => ({
@@ -440,6 +441,84 @@ export function CourseEvalView() {
           </div>
         )}
 
+
+        {tab === 'pce-arch' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Vishaka + Mohil + David - Mar 24, 2026 - session bde86866</div>
+              <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>
+                PCE is a special type of survey. Entry point must be the Survey section — not inside each course, not a standalone module. All feedback mechanisms in one place is the right UX for academia.
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {[
+                {
+                  title: 'Phase 1 scope', color: '#2ec4a0',
+                  items: [
+                    'Entry via Survey section — PCE is a survey tile/tab',
+                    'Program-level question sets (clinical vs didactic)',
+                    'Course offerings in Prism = prerequisite for full distribution',
+                    'CSV upload fallback for schools without Prism courses',
+                    'Faculty sees results per course AND aggregate dashboard',
+                    'Admin sees program-level analytics dashboard',
+                  ]
+                },
+                {
+                  title: 'Phase 2 additions', color: '#6d5ed4',
+                  items: [
+                    'Tenant-level (university) question sets — mandate questions for all programs',
+                    'Program override of university-mandated questions',
+                    'AI-assisted rationale generation per question/option',
+                    'Aggregate year-over-year faculty performance view',
+                    'Student cohort perception trend',
+                    'Cross-program discipline benchmarking',
+                  ]
+                },
+              ].map((col, i) => (
+                <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', borderLeft: '3px solid ' + col.color, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: col.color, marginBottom: 10 }}>{col.title}</div>
+                  {col.items.map((item, j) => (
+                    <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                      <span style={{ color: col.color, flexShrink: 0 }}>-</span>
+                      <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 18px' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Marquette pain point - David (Mar 24)</div>
+              <div style={{ padding: '12px 14px', borderRadius: 9, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.15)', marginBottom: 10 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 4 }}>University-level questions forced on clinical courses</div>
+                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+                  University set didactic-focused questions for all programs. Clinical placement students were forced to answer "Did this course expose you to diverse patient populations?" for classroom courses — forced artificially low ratings. This is a real pain point at programs where university mandates override clinical context.
+                </div>
+              </div>
+              <div style={{ padding: '10px 14px', borderRadius: 9, background: 'rgba(22,163,74,0.04)', border: '1px solid rgba(22,163,74,0.15)' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', marginBottom: 3 }}>Solution</div>
+                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+                  Phase 1: program directors create separate question sets for clinical vs didactic. Phase 2: tenant-level questions with program-level override capability.
+                </div>
+              </div>
+            </div>
+            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 18px' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Persona entry points</div>
+              {[
+                { persona: 'Program Director / Admin', entry: 'Survey section → PCE tile → program-level analytics dashboard (course leaderboard, faculty leaderboard, cohort trend)', source: 'c7a8d32e + bde86866' },
+                { persona: 'Faculty', entry: 'Course page → view survey results for this course (after admin publishes) AND faculty dashboard → aggregate view across all courses they teach', source: 'bde86866' },
+                { persona: 'Student', entry: 'Receives survey at course end via email or LMS. Survey is configured per course by admin.', source: 'bde86866' },
+              ].map((r, i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#6d5ed4', width: 180, flexShrink: 0 }}>{r.persona}</div>
+                  <div>
+                    <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{r.entry}</div>
+                    <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 3 }}>{r.source}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
