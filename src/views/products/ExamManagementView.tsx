@@ -1221,7 +1221,7 @@ export function ExamManagementView() {
 
 
         {/* Arun 3-year plan — source: session 791334af Mar 24, 2026 */}
-        {tab === 'arun-roadmap' && (
+        {activeTab === 'arun-roadmap' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Arun Gautam - Mar 24, 2026 - session 791334af</div>
