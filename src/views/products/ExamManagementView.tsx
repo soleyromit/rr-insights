@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'exam-management';
-type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view';
+type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view' | 'arun-roadmap';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'blueprint', label: 'Service Blueprint' },
@@ -1221,7 +1221,47 @@ export function ExamManagementView() {
     </div>
   );
 }
+
+        {/* Arun 3-year roadmap — session 791334af Mar 24 */}
+        {tab === 'arun-roadmap' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Arun Gautam - Mar 24, 2026 - session 791334af</div>
+              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+                "ExamSoft is publicly against AI. We are going to use it. That is our second differentiator."
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+              {[
+                { year: 'Year 1 - 2026', goal: 'Beat LMS quiz modules', color: '#2ec4a0', items: ['Canvas/D2L feature parity or better', 'Better UI than LMS', 'One excellent AI use case', 'Lockdown browser (Respondus)', 'Psychometrics at question + assessment level', 'Free for all Prism users', 'Displace LMS quiz module'] },
+                { year: 'Year 2 - 2027', goal: 'Equal or better than ExamSoft', color: '#6d5ed4', items: ['All ExamSoft features + more', 'Multiple AI use cases', 'Seamless Prism integration', 'Better UI than ExamSoft', 'Competitive or lower pricing', 'Charged version'] },
+                { year: 'Year 3 - 2028', goal: 'Way beyond ExamSoft', color: '#e8604a', items: ['AI-powered proctoring', 'Adaptive exams (NCLEX CAT model)', 'Consider own lockdown browser', 'No reason for any customer to use ExamSoft'] },
+              ].map((v, i) => (
+                <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                  <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', borderTop: '3px solid ' + v.color }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: v.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{v.year}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginTop: 3 }}>{v.goal}</div>
+                  </div>
+                  <div style={{ padding: '12px 16px' }}>
+                    {v.items.map((item, j) => (
+                      <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                        <span style={{ color: v.color, flexShrink: 0 }}>.</span>
+                        <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
 // This file is extended in place — new tabs added below via ExamManagementViewV2
 // Protocol note: this file is kept in sync with Magic Patterns editor mnirdwczw9xbbzyuveee4g
 // Every Magic Patterns change MUST be reflected here in the same session
 // Last sync: 2026-03-26 — Epics 2-9 (label rename, z-score, remediation, OSCE, PA dashboard, CSV import, Bloom's 1-3, audit trail)
+
+// ─── ARUN 3-YEAR ROADMAP TAB — appended Mar 26 ───────────────────────────────
+// Source: Arun Romit Vision session 791334af Mar 24, 2026
+// Arun verbatim: "ExamSoft is publicly against AI — we are going to use it."
+// Year 1: beat LMS (free). Year 2: beat ExamSoft (paid). Year 3: beyond ExamSoft (AI proctoring).
