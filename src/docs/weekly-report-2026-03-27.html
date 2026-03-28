@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Design Weekly — Week of Mar 23–27, 2026</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-muted: #5a5a5a;
+    --ink-faint: #9a9a9a;
+    --rule: #e0e0e0;
+    --bg: #fafaf8;
+    --bg-card: #ffffff;
+    --accent-exam: #1d3a6b;
+    --accent-faas: #7a2d00;
+    --accent-pce: #1a5c38;
+    --accent-nps: #4a1a6b;
+    --accent-platform: #2d2d2d;
+    --critical: #b91c1c;
+    --high: #b45309;
+    --medium: #1d4ed8;
+    --tag-bg: #f0f0ec;
+    font-family: 'Georgia', serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+  }
+  .masthead-label {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+  .masthead h1 {
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .masthead-meta {
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* ── EXEC SUMMARY ── */
+  .exec-summary {
+    background: var(--ink);
+    color: #fff;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+    border-radius: 2px;
+  }
+  .exec-summary .label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 10px;
+  }
+  .exec-summary p {
+    font-size: 14px;
+    line-height: 1.65;
+    opacity: 0.92;
+  }
+  .exec-summary strong { opacity: 1; }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 44px;
+  }
+  .stat {
+    background: var(--bg-card);
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .stat-number {
+    font-size: 30px;
+    font-weight: normal;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-number.critical { color: var(--critical); }
+  .stat-number.warn { color: var(--high); }
+  .stat-number.ok { color: #166534; }
+  .stat-label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 44px; }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+  }
+  .section-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    top: -2px;
+  }
+  .dot-exam { background: var(--accent-exam); }
+  .dot-faas { background: var(--accent-faas); }
+  .dot-pce  { background: var(--accent-pce); }
+  .dot-nps  { background: var(--accent-nps); }
+  .dot-plat { background: var(--accent-platform); }
+  .section-title {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Courier New', monospace;
+    font-weight: normal;
+  }
+  .section-count {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-left: auto;
+  }
+
+  /* ── INSIGHT CARD ── */
+  .card {
+    border-left: 3px solid var(--rule);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    background: var(--bg-card);
+    position: relative;
+  }
+  .card.critical { border-left-color: var(--critical); }
+  .card.high     { border-left-color: var(--high); }
+  .card.medium   { border-left-color: var(--medium); }
+  .card.decision { border-left-color: #1a5c38; }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--tag-bg);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--ink-muted);
+  }
+  .tag.critical-tag { background: #fef2f2; color: var(--critical); }
+  .tag.high-tag     { background: #fffbeb; color: var(--high); }
+  .tag.decision-tag { background: #f0fdf4; color: #166534; }
+  .tag.ai-tag       { background: #f5f3ff; color: #5b21b6; }
+  .card-source {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    color: var(--ink-faint);
+    margin-left: auto;
+  }
+  .card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .card .so-what {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-style: italic;
+    padding-top: 8px;
+    border-top: 1px solid var(--rule);
+  }
+  .card .so-what strong {
+    font-style: normal;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .pull-quote {
+    font-size: 14px;
+    font-style: italic;
+    border-left: 2px solid var(--rule);
+    padding: 4px 12px;
+    margin: 8px 0;
+    color: var(--ink-muted);
+  }
+
+  /* ── NPS VIZ ── */
+  .nps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .nps-bar-wrap { margin-bottom: 16px; }
+  .nps-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    margin-bottom: 4px;
+  }
+  .nps-bar-track {
+    height: 8px;
+    background: var(--tag-bg);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .nps-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .bar-detractor { background: var(--critical); }
+  .bar-passive   { background: var(--high); }
+  .bar-promoter  { background: #166534; }
+
+  .score-dist {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 60px;
+    margin: 12px 0;
+  }
+  .score-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .score-bar {
+    width: 100%;
+    border-radius: 2px 2px 0 0;
+    min-height: 2px;
+  }
+  .score-num {
+    font-family: 'Courier New', monospace;
+    font-size: 8px;
+    color: var(--ink-faint);
+  }
+
+  /* ── MEETING LOG ── */
+  .meeting-log {
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+    margin-bottom: 40px;
+  }
+  .meeting-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+  .meeting-row:last-child { border-bottom: none; }
+  .meeting-date {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    padding-top: 2px;
+  }
+  .meeting-title {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .meeting-title small {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 2px;
+  }
+  .meeting-product {
+    font-family: 'Courier New', monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 6px;
+    border-radius: 2px;
+    white-space: nowrap;
+    align-self: start;
+  }
+  .prod-exam { background: #eff6ff; color: var(--accent-exam); }
+  .prod-faas { background: #fff7ed; color: var(--accent-faas); }
+  .prod-pce  { background: #f0fdf4; color: var(--accent-pce); }
+  .prod-plat { background: var(--tag-bg); color: var(--ink-muted); }
+
+  /* ── ACTION ITEMS ── */
+  .action-table { width: 100%; border-collapse: collapse; }
+  .action-table th {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--tag-bg);
+  }
+  .action-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .action-table tr:last-child td { border-bottom: none; }
+  .action-owner {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .action-deadline {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--critical);
+    white-space: nowrap;
+  }
+  .priority-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ── ROADMAP MILESTONES ── */
+  .milestone-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .milestone-row::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background: var(--rule);
+    z-index: 0;
+  }
+  .milestone {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .milestone-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--rule);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    color: var(--ink-muted);
+  }
+  .milestone-circle.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+  .milestone-circle.critical-m {
+    background: var(--critical);
+    border-color: var(--critical);
+    color: #fff;
+  }
+  .milestone-label {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    line-height: 1.3;
+  }
+  .milestone-label strong {
+    display: block;
+    font-size: 10px;
+    color: var(--ink);
+    font-style: normal;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .footer-left { font-family: 'Courier New', monospace; font-size: 10px; color: var(--ink-faint); line-height: 1.6; }
+  .magic-link {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1px;
+  }
+  .magic-link:hover { color: var(--ink); }
+
+  @media (max-width: 600px) {
+    body { padding: 24px 16px 48px; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .nps-grid { grid-template-columns: 1fr; }
+    .meeting-row { grid-template-columns: 1fr; }
+    .meeting-date { display: none; }
+    .milestone-row { flex-direction: column; gap: 12px; }
+    .milestone-row::before { display: none; }
+    .milestone { text-align: left; display: flex; gap: 12px; align-items: center; }
+    .milestone-circle { margin: 0; flex-shrink: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-label">Exxat · Design Intelligence</div>
+  <h1>Week of March 23–27, 2026</h1>
+  <div class="masthead-meta">
+    <span>Prepared by Romit Soley, Product Designer II</span>
+    <span>For: Aarti (CEO)</span>
+    <span>Sent: Friday March 27, 2026</span>
+  </div>
+</div>
+
+<!-- EXEC SUMMARY -->
+<div class="exec-summary">
+  <div class="label">This Week at a Glance</div>
+  <p>
+    This week established the 3-year strategic framing for the exam platform, confirmed the full React rebuild starting April 1, and opened two new workstreams in parallel: Post-Course Evaluation (PCE) and Patient Log UX in FaaS. NPS 2025 data was fully analyzed: <strong>65% of students rate Exxat as detractors</strong>, with navigation and mobile experience as the two highest-leverage design levers. The Approve managed service reached a 9.6 average — the highest-satisfaction product in the portfolio, and a model for what good looks like. Eight Granola sessions captured. Twenty-three new insights added.
+  </p>
+</div>
+
+<!-- STAT ROW -->
+<div class="stat-row">
+  <div class="stat">
+    <div class="stat-number critical">65%</div>
+    <div class="stat-label">Student NPS Detractors</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number warn">8</div>
+    <div class="stat-label">Sessions This Week</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number ok">23</div>
+    <div class="stat-label">New Insights Added</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">Apr 17</div>
+    <div class="stat-label">Next Hard Deadline</div>
+  </div>
+</div>
+
+<!-- ROADMAP MILESTONES -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-dot dot-plat"></div>
+    <div class="section-title">Key Milestones</div>
+  </div>
+  <div class="milestone-row">
+    <div class="milestone">
+      <div class="milestone-circle active">NOW</div>
+      <div class="milestone-label"><strong>React Rebuild</strong>Engineers onboard Apr 1</div>
+    </div>
+    <div class="milestone">
+      <div class="milestone-circle critical-m">!</div>
+      <div class="milestone-label"><strong>Apr 17</strong>Student + Admin + Faculty Demo</div>
+    </div>
+    <div class="milestone">
+      <div class="milestone-circle">→</div>
+      <div class="milestone-label"><strong>Apr 30</strong>PCE full design + engineering handoff May</div>
+    </div>
+    <div class="milestone">
+      <div class="milestone-circle">→</div>
+      <div class="milestone-label"><strong>Aug 2026</strong>Cohere launch — ExamSoft competitive</div>
+    </div>
+    <div class="milestone">
+      <div class="milestone-circle">→</div>
+      <div class="milestone-label"><strong>Nov–Dec 2026</strong>Full ExamSoft feature parity</div>
+    </div>
+  </div>
+</div>
+
+<!-- MEETING LOG -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-dot dot-plat"></div>
+    <div class="section-title">Sessions This Week</div>
+    <div class="section-count">8 sessions</div>
+  </div>
+  <div class="meeting-log">
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 27</div>
+      <div class="meeting-title">Romit &lt;&gt; Nipun — Kickoff<small>Design system gaps, QB-first launch, WCAG audit for Himanshu DS</small></div>
+      <div class="meeting-product prod-exam">Exam</div>
+    </div>
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 26</div>
+      <div class="meeting-title">Monil — PCE Introduction<small>3-layer architecture, AI SWOT differentiation, distribution persona open</small></div>
+      <div class="meeting-product prod-pce">PCE</div>
+    </div>
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 26</div>
+      <div class="meeting-title">Exam Management Standup<small>React rebuild confirmed, 2 engineers April 1, sprint cadence, QB entry points</small></div>
+      <div class="meeting-product prod-exam">Exam</div>
+    </div>
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 25</div>
+      <div class="meeting-title">Romit &lt;&gt; Prasanjit — Patient Log + FaaS Concerns<small>Color regression, validation timing, CRNA 4-level hierarchy, preview absence</small></div>
+      <div class="meeting-product prod-faas">FaaS</div>
+    </div>
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 25</div>
+      <div class="meeting-title">Akshit &lt;&gt; Romit — Q2 Requirements<small>Template-first confirmed, Phase 1 internal users only, no requirements doc yet</small></div>
+      <div class="meeting-product prod-faas">FaaS</div>
+    </div>
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 24</div>
+      <div class="meeting-title">Arun &lt;&gt; Romit — Vision, Expectations, 3 Years<small>Year 1 beat Canvas / Year 2 beat ExamSoft / Year 3 beyond. AI anticipatory pattern.</small></div>
+      <div class="meeting-product prod-plat">Platform</div>
+    </div>
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 24</div>
+      <div class="meeting-title">Mohil &lt;&gt; Vishaka &lt;&gt; David — PCE Context<small>$5K vendor displacement, Phase 1 Prism-gated, Phase 2 CSV upload</small></div>
+      <div class="meeting-product prod-pce">PCE</div>
+    </div>
+    <div class="meeting-row">
+      <div class="meeting-date">Mar 23</div>
+      <div class="meeting-title">Romit &lt;&gt; Nipun — Assessment Creation Tool<small>QB flow scoping, collaborative exam creation, migration pack review</small></div>
+      <div class="meeting-product prod-exam">Exam</div>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM MANAGEMENT -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-dot dot-exam"></div>
+    <div class="section-title">Exam Management</div>
+    <div class="section-count">7 new insights</div>
+  </div>
+
+  <div class="card decision">
+    <div class="card-meta">
+      <span class="tag decision-tag">Decision</span>
+      <span class="tag">Architecture</span>
+      <span class="card-source">Exam Standup · Mar 26</span>
+    </div>
+    <p>Full React rebuild confirmed for admin and student sides. Current e1 pilot frozen after minor accessibility tweaks. Two senior engineers joining April 1. No development cap — hiring continues. Himanshu design system adopted across both surfaces. Sprint cadence: 2 sprints per month. Tuesday 90-minute slot with Aarti for demos.</p>
+    <div class="so-what"><strong>So What</strong>April 1 is the engineering start line. Design must be sprint-ahead at all times. QB module is Screen 1 — not the dashboard.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag high-tag">Gap</span>
+      <span class="tag">Accessibility</span>
+      <span class="card-source">Nipun Kickoff · Mar 27</span>
+    </div>
+    <p>Himanshu design system has confirmed WCAG gaps: voice narration missing, on-screen keyboard support absent, color blindness audit incomplete. Version history handling and nested component structures not yet built. DS is directionally correct — not production-ready. Romit providing accessibility checklist to Himanshu.</p>
+    <div class="so-what"><strong>So What</strong>The UNF pilot is blocked until accessibility V1 ships. WCAG gaps in the DS mean the ship date slips if not fixed now.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag">Decision</span>
+      <span class="card-source">Nipun Kickoff · Mar 27</span>
+    </div>
+    <p>Dashboard deferred 2+ months from launch. Question bank module is Screen 1. User role definitions — administrator vs contributor permissions, menu visibility by role — are a hard prerequisite for any navigation design. Joint session needed next week.</p>
+    <div class="so-what"><strong>So What</strong>Do not design the dashboard this sprint. Role definitions block QB navigation design. Joint session is the next critical path step.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag ai-tag">AI</span>
+      <span class="tag">Architecture</span>
+      <span class="card-source">Arun Vision · Mar 24</span>
+    </div>
+    <p>Anticipatory AI confirmed as the design pattern: not a button, not a modal — a dormant inline suggestion state that activates when context is ready. When a faculty member selects course objectives, the system suggests question types. When they enter content, it suggests difficulty and tags. Always optional. Never blocking. Arun: "AI should be just there."</p>
+    <div class="pull-quote">"AI should be just there — always ready to propose content without disrupting manual control." — Arun, Mar 24</div>
+    <div class="so-what"><strong>So What</strong>Every field in question creation needs a dormant AI suggestion state. Design system needs an AI suggestion token before QB handoff.</div>
+  </div>
+
+  <div class="card critical">
+    <div class="card-meta">
+      <span class="tag critical-tag">Strategic</span>
+      <span class="card-source">Arun Vision · Mar 24</span>
+    </div>
+    <p><strong>3-Year roadmap locked:</strong> Year 1 (2026) — beat LMS quiz modules, offered free to Prism users. Year 2 (2027) — ExamSoft parity, begin charging. Year 3 (2028) — AI proctoring, adaptive testing, potentially custom lockdown browser. ExamSoft is publicly anti-AI. That is the opening.</p>
+    <div class="so-what"><strong>So What</strong>Every design decision maps to one of 3 years. Year 1 = beat Canvas. Design for the year you are in.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag">Architecture</span>
+      <span class="card-source">Exam Standup · Mar 26</span>
+    </div>
+    <p>Question bank entry points confirmed: (1) direct QB access as separate menu section, (2) course-level entry with auto-tagging to course. No hard DB constraints on course assignment. Smart views = dynamic folders with filter criteria. Personal folders private by default. Draft mode private.</p>
+    <div class="so-what"><strong>So What</strong>Two entry points are architecture-level confirmed. Course-level with auto-tagging is the most common workflow — reduce friction there first.</div>
+  </div>
+</div>
+
+<!-- FAAS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-dot dot-faas"></div>
+    <div class="section-title">FaaS 2.0 — Forms as a Service</div>
+    <div class="section-count">6 new insights</div>
+  </div>
+
+  <div class="card critical">
+    <div class="card-meta">
+      <span class="tag critical-tag">Critical Gap</span>
+      <span class="card-source">Prasanjit · Mar 25</span>
+    </div>
+    <p>No form preview before student deployment. CRNA programs use 4-level hierarchical controls, repeater fields, and matrix layouts with embedded time pickers. A configuration error in any of these is invisible until students submit. Form simulator is the single highest-value missing FaaS feature.</p>
+    <div class="pull-quote">"We used to have color coding. Now everything is black and white. Students get lost in long forms." — Prasanjit, Mar 25</div>
+    <div class="so-what"><strong>So What</strong>Preview/simulator is not a nice-to-have. It is the difference between 1 reviewer catching a mistake and 200 students experiencing it.</div>
+  </div>
+
+  <div class="card critical">
+    <div class="card-meta">
+      <span class="tag critical-tag">Critical Gap</span>
+      <span class="card-source">Prasanjit · Mar 25</span>
+    </div>
+    <p>FaaS validation timing is broken: mandatory field errors appear only on submit, not during input. Numeric limits (e.g., minutes over 100) validated only at submission. ICD/CPT selections display as long text strings, not chips. Delete buttons unclear. Real-time field validation is table stakes in 2026.</p>
+    <div class="so-what"><strong>So What</strong>Every field error discovered at submit is a submission abandonment risk. Especially critical for CRNA and nursing programs using long complex forms.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag high-tag">Decision</span>
+      <span class="card-source">Akshit Q2 · Mar 25</span>
+    </div>
+    <p>FaaS template-first confirmed by usage data: 80-85% of changes are incremental (add questions/options to existing templates), 2-3% from scratch, 90% start from predefined templates. Current three-card entry point (AI import / library / scratch) must be reordered. Template library = primary. AI import = secondary. Scratch = tertiary.</p>
+    <div class="so-what"><strong>So What</strong>Redesign the creation entry screen. Template library leads. Do not bury the most common workflow behind the newest feature.</div>
+  </div>
+
+  <div class="card critical">
+    <div class="card-meta">
+      <span class="tag critical-tag">Blocker</span>
+      <span class="card-source">Akshit Q2 · Mar 25</span>
+    </div>
+    <p>No consolidated requirements document exists for FaaS Q2. Phase 1 targets internal users only (CI team, CIC exec, page server team). Workflows hard-coded by tech team. Ankit provides Q2 dependencies end of March. Design update is blocked until that document lands.</p>
+    <div class="so-what"><strong>So What</strong>Design cannot start Phase 1 work without the requirements doc. This is a Q2 schedule risk.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag">Theme</span>
+      <span class="card-source">Prasanjit · Mar 25</span>
+    </div>
+    <p>Domain experience tiers confirmed: PA — simple controls, clone-based. Nursing/CRNA — 4-level hierarchical, repeaters, advanced validation. SLP — matrix-heavy with time calculators. Same FaaS engine, three radically different domain experiences. One-size UI is the core problem.</p>
+    <div class="so-what"><strong>So What</strong>Self-service must show the right complexity tier per domain context. Progressive disclosure: PA sees simple builder, CRNA sees advanced.</div>
+  </div>
+</div>
+
+<!-- PCE -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-dot dot-pce"></div>
+    <div class="section-title">Post-Course Evaluation (PCE) — New Workstream</div>
+    <div class="section-count">5 new insights</div>
+  </div>
+
+  <div class="card critical">
+    <div class="card-meta">
+      <span class="tag ai-tag">AI Differentiator</span>
+      <span class="tag critical-tag">Strategic</span>
+      <span class="card-source">Monil · Mar 26</span>
+    </div>
+    <p>PCE AI differentiation stack: sentiment analysis of free-text, automatic improvement vs compliment categorization, comment filtering with summary generation, SWOT visualization from responses, faculty vs program average comparisons, cross-program trend identification. Competitors Watermark and Explorance Blue deliver only median and mode. No explicit "AI-powered" branding.</p>
+    <div class="so-what"><strong>So What</strong>SWOT generation from survey data is first-in-class. Design the analytics layer first — it is the demo hook and the competitive moat.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag">Architecture</span>
+      <span class="card-source">Monil · Mar 26</span>
+    </div>
+    <p>PCE distribution workflow: select template → choose course offering → system auto-populates students and faculty from Prism → guest faculty managed through course offering updates → supplemental questions (1-3 custom) allowed → section toggle (course eval vs faculty eval independently). End of April full design target. Engineering handoff May 2026.</p>
+    <div class="so-what"><strong>So What</strong>Auto-population from Prism is the feature that separates PCE from SurveyMonkey. This must be the design centerpiece of the distribution flow.</div>
+  </div>
+
+  <div class="card medium">
+    <div class="card-meta">
+      <span class="tag">Market</span>
+      <span class="card-source">Mohil · Mar 24</span>
+    </div>
+    <p>Programs currently pay separate vendors (CoreEval, Anthology, SmartEval) approximately $5K/year for post-course evaluation. PCE is priced as a separate paid add-on. Non-subscribers do not see the PCE tile in the UI — monetization gate built into navigation.</p>
+    <div class="so-what"><strong>So What</strong>PCE displaces a $5K/yr spend per program. Tile visibility is the product monetization signal — not just a UX detail.</div>
+  </div>
+
+  <div class="card high">
+    <div class="card-meta">
+      <span class="tag high-tag">Open Question</span>
+      <span class="card-source">Monil · Mar 26</span>
+    </div>
+    <p>Three open questions blocking distribution workflow design: (1) who distributes surveys — PD, course coordinator, or admin? (2) student response rate tactics — incentives or gamification? (3) cross-faculty comparison fairness methodology. Competitor walkthroughs (Watermark, Explorance Blue) scheduled next week.</p>
+    <div class="so-what"><strong>So What</strong>Template and analytics layers can proceed. Distribution workflow design is blocked pending persona decision on Question 1.</div>
+  </div>
+</div>
+
+<!-- NPS 2025 -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-dot dot-nps"></div>
+    <div class="section-title">NPS 2025 — Full Analysis</div>
+    <div class="section-count">1,282 responses · 3 products</div>
+  </div>
+
+  <!-- Score distribution viz -->
+  <div style="background:var(--bg-card); padding:20px; border:1px solid var(--rule); margin-bottom:16px;">
+    <div style="font-family:'Courier New',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:12px;">Student Score Distribution (n=1,282)</div>
+    <div class="score-dist">
+      <!-- heights proportional to counts: 207,73,86,107,96,160,107,115,104,74,153 — max=207 -->
+      <div class="score-col"><div class="score-bar" style="height:60px;background:var(--critical);opacity:0.9;"></div><div class="score-num">0</div><div class="score-num">207</div></div>
+      <div class="score-col"><div class="score-bar" style="height:21px;background:var(--critical);opacity:0.7;"></div><div class="score-num">1</div><div class="score-num">73</div></div>
+      <div class="score-col"><div class="score-bar" style="height:25px;background:var(--critical);opacity:0.7;"></div><div class="score-num">2</div><div class="score-num">86</div></div>
+      <div class="score-col"><div class="score-bar" style="height:31px;background:var(--critical);opacity:0.6;"></div><div class="score-num">3</div><div class="score-num">107</div></div>
+      <div class="score-col"><div class="score-bar" style="height:28px;background:var(--high);opacity:0.6;"></div><div class="score-num">4</div><div class="score-num">96</div></div>
+      <div class="score-col"><div class="score-bar" style="height:46px;background:var(--high);opacity:0.7;"></div><div class="score-num">5</div><div class="score-num">160</div></div>
+      <div class="score-col"><div class="score-bar" style="height:31px;background:var(--high);opacity:0.6;"></div><div class="score-num">6</div><div class="score-num">107</div></div>
+      <div class="score-col"><div class="score-bar" style="height:33px;background:#166534;opacity:0.5;"></div><div class="score-num">7</div><div class="score-num">115</div></div>
+      <div class="score-col"><div class="score-bar" style="height:30px;background:#166534;opacity:0.6;"></div><div class="score-num">8</div><div class="score-num">104</div></div>
+      <div class="score-col"><div class="score-bar" style="height:21px;background:#166534;opacity:0.8;"></div><div class="score-num">9</div><div class="score-num">74</div></div>
+      <div class="score-col"><div class="score-bar" style="height:44px;background:#166534;opacity:1;"></div><div class="score-num">10</div><div class="score-num">153</div></div>
+    </div>
+    <div style="font-family:'Courier New',monospace; font-size:9px; color:var(--ink-faint); margin-top:8px;">Bimodal pattern: mass at 0–3 and 5–6. Almost no 4s or 8–9s. Hate-or-tolerate. No delight zone.</div>
+  </div>
+
+  <div class="nps-grid">
+    <div>
+      <div style="font-family:'Courier New',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:12px;">Student (n=1,282) — Avg 4.86</div>
+      <div class="nps-bar-wrap">
+        <div class="nps-bar-label"><span>Detractors (0–6)</span><span style="color:var(--critical)">65% · 836</span></div>
+        <div class="nps-bar-track"><div class="nps-bar-fill bar-detractor" style="width:65%"></div></div>
+      </div>
+      <div class="nps-bar-wrap">
+        <div class="nps-bar-label"><span>Passives (7–8)</span><span>17% · 219</span></div>
+        <div class="nps-bar-track"><div class="nps-bar-fill bar-passive" style="width:17%"></div></div>
+      </div>
+      <div class="nps-bar-wrap">
+        <div class="nps-bar-label"><span>Promoters (9–10)</span><span style="color:#166534">18% · 227</span></div>
+        <div class="nps-bar-track"><div class="nps-bar-fill bar-promoter" style="width:18%"></div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:'Courier New',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:12px;">Persona Comparison</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <div class="nps-bar-label"><span>Admin avg</span><span style="color:#166534">6.76</span></div>
+          <div class="nps-bar-track"><div class="nps-bar-fill bar-promoter" style="width:67.6%; opacity:0.7;"></div></div>
+        </div>
+        <div>
+          <div class="nps-bar-label"><span>Student avg</span><span style="color:var(--critical)">4.86</span></div>
+          <div class="nps-bar-track"><div class="nps-bar-fill bar-detractor" style="width:48.6%; opacity:0.8;"></div></div>
+        </div>
+        <div>
+          <div class="nps-bar-label"><span>Faculty avg</span><span style="color:var(--critical)">4.83</span></div>
+          <div class="nps-bar-track"><div class="nps-bar-fill bar-detractor" style="width:48.3%; opacity:0.8;"></div></div>
+        </div>
+        <div>
+          <div class="nps-bar-label"><span>Approve avg</span><span style="color:#166534">~9.6</span></div>
+          <div class="nps-bar-track"><div class="nps-bar-fill bar-promoter" style="width:96%;"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card critical">
+    <div class="card-meta">
+      <span class="tag critical-tag">Platform Signal</span>
+      <span class="card-source">NPS 2025 · 1,282 responses</span>
+    </div>
+    <p>Top 5 student detractor themes from textual responses: (1) navigation — cannot find hour tracking, features in unexpected locations; (2) mobile — clocking in/out requires too many steps; (3) preceptor form length discouraging completion; (4) sign-in friction; (5) compliance false positives showing requirements as missing after program cleared them.</p>
+    <div class="so-what"><strong>So What</strong>Navigation and mobile are the top 2 design levers for NPS recovery. Nursing accounts for 47% of volume — Nursing-first fixes move the overall metric most.</div>
+  </div>
+
+  <div class="card medium">
+    <div class="card-meta">
+      <span class="tag">Insight</span>
+      <span class="card-source">NPS 2025 Approve · 8 responses</span>
+    </div>
+    <p>Approve reached approximately 9.6 average NPS — the highest-satisfaction product in the portfolio. Top valued attributes: expertise on requirements guidelines, responsiveness, turnaround time. Managed service model succeeds where self-service fails. The lesson: human expertise + speed = promoter.</p>
+    <div class="so-what"><strong>So What</strong>Every FaaS self-service feature should ask: can this match what Approve does manually? If not, it will generate tickets, not promoters.</div>
+  </div>
+</div>
+
+<!-- ACTION ITEMS -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-dot dot-plat"></div>
+    <div class="section-title">Action Items — Next Week</div>
+  </div>
+  <table class="action-table">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Owner</th>
+        <th>Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--critical);"></span>Role definitions session — admin vs contributor permissions, menu visibility by role</td>
+        <td class="action-owner">Romit + Nipun</td>
+        <td class="action-deadline">Apr 1</td>
+      </tr>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--critical);"></span>Accessibility checklist examples provided to Himanshu for DS audit</td>
+        <td class="action-owner">Romit → Himanshu</td>
+        <td class="action-deadline">Apr 1</td>
+      </tr>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--high);"></span>Nipun delivers detailed QB feature documentation (current docs too high-level)</td>
+        <td class="action-owner">Nipun</td>
+        <td class="action-deadline">Apr 3</td>
+      </tr>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--high);"></span>Ankit delivers Q2 FaaS dependencies and detailed scope — design blocked on this</td>
+        <td class="action-owner">Ankit</td>
+        <td class="action-deadline">Mar 28</td>
+      </tr>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--high);"></span>PCE distribution persona decision — who distributes surveys: PD, coordinator, or admin?</td>
+        <td class="action-owner">Monil + Vishaka</td>
+        <td class="action-deadline">Apr 3</td>
+      </tr>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--medium);"></span>Competitor PCE walkthrough — Watermark and Explorance Blue video analysis</td>
+        <td class="action-owner">Romit</td>
+        <td class="action-deadline">Apr 3</td>
+      </tr>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--medium);"></span>Prasanjit to compile FaaS support tickets related to patient log UX issues</td>
+        <td class="action-owner">Prasanjit</td>
+        <td class="action-deadline">Apr 3</td>
+      </tr>
+      <tr>
+        <td><span class="priority-dot" style="background:var(--medium);"></span>Nipun to create detailed year-end roadmap for Exam Management (high-level by sprint)</td>
+        <td class="action-owner">Nipun</td>
+        <td class="action-deadline">Apr 7</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-left">
+    <div>Romit Soley · Product Designer II · Exxat</div>
+    <div>rr-insights research repository · soleyromit.github.io/rr-insights</div>
+    <div>Generated: Friday March 27, 2026</div>
+  </div>
+  <a class="magic-link" href="https://project-humorous-seahorse-449.magicpatterns.app" target="_blank">Design preview →</a>
+</div>
+
+</body>
+</html>
