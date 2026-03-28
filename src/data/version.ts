@@ -1,9 +1,9 @@
 // Auto-updated by Claude — 2026-03-28
-export const VERSION = '5.6.1';
+export const VERSION = '5.6.2';
 export const LAST_UPDATED = '2026-03-28';
-export const LAST_PUSH = 'Claude automated push — 2026-03-28 (v5.6.1: DS Phase 2 complete — 11 components generated, audit doc updated)';
+export const LAST_PUSH = 'Claude automated push — 2026-03-28 (v5.6.2: all 31 DS components confirmed generated — Phase 1 in DS sidebar + Phase 2 standalone with preview URLs)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
-export const SKILL_VERSION = '5.6.1';
+export const SKILL_VERSION = '5.6.2';
 export const SESSIONS_SYNCED = 56;
 export const INSIGHTS_TOTAL = 246;
 export const PRODUCTS_COVERED = 5;
