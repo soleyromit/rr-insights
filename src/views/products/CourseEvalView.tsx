@@ -12,7 +12,7 @@ const TABS: { id: TabId; label: string; alert?: boolean }[] = [
   { id: 'stakeholders',   label: 'Stakeholder cascade' },
   { id: 'gaps',           label: 'Design gaps', alert: true },
   { id: 'competitive',    label: 'Competitive' },
-  { id: 'open-questions', label: 'Open questions (24)', alert: true },
+  { id: 'open-questions', label: 'Open questions — Answered ✓' },
   { id: 'north-star', label: '★ North star' },
   { id: 'pce-arch', label: 'PCE Architecture' },
   { id: 'pce-build', label: '★ PCE Build Plan', alert: true },
@@ -28,30 +28,30 @@ const ts = (tab: TabId, cur: TabId) => ({
 });
 
 const OPEN_QUESTIONS = [
-  { q: 'What is the minimum response rate threshold below which evaluation data is flagged as statistically unreliable?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'Can university-level question customization be done by program admins or does it require IT?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'Who (role) will set up the course evaluation survey?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'Will the course-related questions be the same across all didactic and clinical courses?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'Who decides and freezes the questions?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'What is the minimum number of responses required before results are visible to faculty — to prevent de-anonymization in small cohorts?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'Does the two-section survey (course + faculty) always appear together, or can program directors enable/disable sections independently?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'What is the notification channel for students — email only, in-app, LMS notification, or SMS?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'What does semester-over-semester comparison show when a course changes its name or question set between terms?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'Who creates and manages the survey schedule — does the PD set it manually each term, does it auto-generate from SIS enrollment data, or does a Prism admin configure it once at onboarding?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'What happens when a student does not complete the survey before the window closes — can they submit late, is it locked permanently, and does it affect response rate calculation?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'What if grades are received and the survey is still open — students will review based on grades received?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'What does migration from Watermark look like — do we import their historical evaluation data?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'What if the Program Director changes one of the questions after 2 years — do we allow it?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'Should Exxat create a predefined set of questions mapped to accreditation points (CAPTE, ACOTE, CCNE)?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'Do students know what changed in the curriculum because of their feedback last year — is there a feedback loop?', priority: 'P2', source: 'Open Questions doc' },
-  { q: 'What metrics will faculty want to measure?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'What metrics will the Program Director want to measure?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'What metrics will the Dean want to measure?', priority: 'P0', source: 'Open Questions doc' },
-  { q: 'ARC-PA requires 65% response rate — what is the threshold logic and who gets notified when a course falls below?', priority: 'P0', source: 'Touro PA site visit + Open Questions doc' },
-  { q: 'Request for access to Program Director or Dean-level view of incumbent portals (Explorance Blue, Watermark)', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'What % of total tenants use survey tools provided by LMS for post-course evaluation?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'Watermark has dean-level fixed questions that cannot be removed — should we give this ability?', priority: 'P1', source: 'Open Questions doc' },
-  { q: 'What is the one thing your current evaluation tool does that you would be devastated to lose — and what does not do that keeps you up at night?', priority: 'P0', source: 'Open Questions doc — should ask every customer' },
+  { q: 'What is the minimum response rate threshold?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Show rate + count only. No automatic flagging. Schools interpret themselves. ARC-PA recommends 65% minimum (unconfirmed). VB: most programs have poor rates and take what they get.' },
+  { q: 'Can university-level question customization be done by program admins or does it require IT?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Finalized at program level due to discipline nuances — even if standardized at university level, actionable insights always at program level by curriculum/assessment committee. VB confirmed.' },
+  { q: 'Who sets up the course evaluation survey?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Program administrator or program director. Nursing/Pharmacy/Medical = associate dean or assessment dean. PT/OT/PA = program directors.' },
+  { q: 'Will course-related questions be same across all didactic and clinical courses?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Same questions within all didactic courses in a program. Same within all clinical courses. Different between didactic and clinical course types. Max 2 templates per program.' },
+  { q: 'Who decides and freezes the questions?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Program director or high-level administrator.' },
+  { q: 'Minimum responses before faculty can see results — prevent de-anonymization in small cohorts?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'PCE is given to entire cohort — not a small group like preceptor evals. Even 3/30 responses has no anonymity risk because which 3 is never disclosed. For clinical courses with small cohorts (3+), sharing feedback is fine. Exception: faculty who taught <3 hours may be excluded from evaluation.' },
+  { q: 'Does the two-section survey (course + faculty) always appear together?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Best practice = combined survey for higher response rates. Some programs do separate. Give flexibility. Default = combined but allow program-level toggle. VB confirmed.' },
+  { q: 'Notification channel for students?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Email at minimum. SMS recommended — students more likely to respond to phone. Both email + SMS capability is ideal for P1.' },
+  { q: 'Semester-over-semester comparison when course name or question set changes?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Post-course evals finalized by school for academic year. Don\'t change term-to-term. Minor name change = can still associate. Major content change = break the series. VB: don\'t worry about this in P1.' },
+  { q: 'Who creates and manages the survey schedule?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Surveys scheduled by director/associate dean beforehand. System should auto-populate from student registrations. Timing: students complete after finals, before grade deadline. Faculty see results only after final grades posted. Build flexibility for admins to set survey open/close/feedback-sharing dates — do not hard-code rules.' },
+  { q: 'What happens when student misses survey window?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Student loses access. Counted as non-responder. No late submission. No modification after submission. Admin can extend the window if response rate insufficient. Once closed, no one can go back — unless admin explicitly extends.' },
+  { q: 'What if grades received before survey closes?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Survey timing is designed so student survey closes before grades visible. Schools use early grade release as incentive for completing surveys. Make it hard for students to see grades before completing, but don\'t hard-code rules. Give admin flexibility.' },
+  { q: 'Migration from Watermark — import historical evaluation data?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Not a P1 blocker. Schools can download reports from incumbent for past years and start using Exxat going forward. Migration very hard unless systems are similar. VB confirmed.' },
+  { q: 'Can PD change questions after 2 years?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Allowing additional supplemental questions is simpler than allowing question changes. VB: changing questions breaks longitudinal tracking. Not frequent in practice. For P1: allow 1-5 supplemental questions, lock core questions. Don\'t complicate P1.' },
+  { q: 'Should Exxat create accreditation-mapped predefined questions?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Good long-term enhancement. Short-term: give ability to manually map survey questions to accreditation standards — high value and differentiator. Auto-tagging to stds is P2+. Most PCE questions map to curriculum/assessment standards regardless. VB confirmed.' },
+  { q: 'Feedback loop — do students know what changed because of their input?', priority: 'P2', source: 'Open Questions doc', answered: true, answer: 'Not a P1 requirement. Some faculty show students implemented changes. Students who gave feedback often don\'t see next iteration anyway. VB: course syllabus maps to stds, any enhancement gets reflected. Don\'t solve for P1.' },
+  { q: 'What metrics will faculty want?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Visualizations — pie charts and line graphs over time. How have my ratings changed? Qualitative summary so they can consume and implement. Year-over-year for same course. Comparing to department/university average is a good indicator. Views across all my courses.' },
+  { q: 'What metrics will Program Director want?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Course performance across faculty at course + program level. Same course year-over-year comparison. Qualitative comment review with ability to hide unprofessional comments (never modify). Score thresholds flagged in red for courses below average. AI sentiment analysis on qualitative. Today admins are allowed to modify scores in Exxat — this must be prevented.' },
+  { q: 'What metrics will Dean want?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'High-level view across all programs. Compare PT vs OT vs PA program ratings on standardized questions. Drill down to flag specific programs, courses, or faculty dragging scores down. How many programs responding and student satisfaction level. Department-level trends.' },
+  { q: 'For cases where Prism has no course offerings — what is the journey to run PCE?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Phase 1: requires course offerings in Prism. Phase 2 (pending monetization timeline): CSV upload for non-Prism course management schools. Integration also supports LMS/ExamSoft data import in future.' },
+  { q: 'ARC-PA 65% response rate — threshold monitoring?', priority: 'P0', source: 'Touro PA + Open Questions doc', answered: true, answer: 'Show rate + count. ARC-PA 65% minimum is unconfirmed but referenced. P1: display rate clearly, let schools interpret. Future: configurable threshold with amber/red alert when approaching close with low rate.' },
+  { q: 'Can admin publish PCE without course offering in Prism?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Phase 1: No. Requires course offering. Phase 2: CSV upload option. Admin should not be blocked if school is not using Prism course management — design Phase 2 fallback.' },
+  { q: 'What question types and answer formats?', priority: 'P0', source: 'Open Questions doc', answered: false, answer: 'Pending. Likely: 5-point and 7-point Likert, numeric input, free text. University vs program level configurations. Needs design decision before P1 begins.' },
+  { q: 'Can first implementation be at program level, not university level?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Yes. Program-level first. University-level standardization is Phase 2.' },
 ];
 
 const COMPETITORS = [
@@ -317,36 +317,48 @@ export function CourseEvalView() {
         {/* OPEN QUESTIONS */}
         {tab === 'open-questions' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <AIStrip text="24 open product questions from Open_Questions_on_Course_Evaluations.docx — none answered yet. These are not nice-to-haves. P0 questions block design architecture decisions. Do not start building until P0 questions are answered." />
+            <AIStrip text="24 open questions — 23 answered. Source: Open_Questions_on_Course_Evaluations__2_.docx + Monil PCE session Mar 26 + Mohil/Vishaka/David PCE Context Mar 24 + PCE Primer v2. One question remains open: question types/formats (Likert scale variants). Design can now begin on P1 scope." />
             <Card>
-              <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
-                {[['P0 blockers', OPEN_QUESTIONS.filter(q => q.priority === 'P0').length, '#EF4444'], ['P1 important', OPEN_QUESTIONS.filter(q => q.priority === 'P1').length, '#D97706'], ['P2 nice-to-know', OPEN_QUESTIONS.filter(q => q.priority === 'P2').length, '#94A3B8']].map(([label, count, color]) => (
-                  <div key={String(label)} style={{ padding: '8px 14px', borderRadius: 8, background: `${color}10`, border: `1px solid ${color}25` }}>
+              <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+                {[
+                  ['Answered', OPEN_QUESTIONS.filter(q => q.answered).length, '#16a34a'],
+                  ['Still open', OPEN_QUESTIONS.filter(q => !q.answered).length, '#dc2626'],
+                  ['P0 blockers', OPEN_QUESTIONS.filter(q => q.priority === 'P0').length, '#b45309'],
+                ].map(([label, count, color]) => (
+                  <div key={String(label)} style={{ padding: '8px 14px', borderRadius: 8, background: `${color}12`, border: `1px solid ${color}25` }}>
                     <div style={{ fontSize: 18, fontWeight: 800, color: String(color) }}>{String(count)}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{String(label)}</div>
                   </div>
                 ))}
               </div>
             </Card>
-            {['P0', 'P1', 'P2'].map(prio => {
-              const questions = OPEN_QUESTIONS.filter(q => q.priority === prio);
-              return (
-                <div key={prio}>
-                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: prio === 'P0' ? '#EF4444' : prio === 'P1' ? '#D97706' : '#94A3B8', marginBottom: 8 }}>{prio} — {prio === 'P0' ? 'MUST answer before building' : prio === 'P1' ? 'Answer before detailed design' : 'Nice to know'}</div>
-                  {questions.map((q, i) => (
-                    <div key={i} style={{ display: 'flex', gap: 10, padding: '10px 14px', borderRadius: 8, background: 'var(--surface-primary)', border: '1px solid var(--border)', marginBottom: 6 }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: prio === 'P0' ? '#EF4444' : '#D97706', flexShrink: 0, marginTop: 1 }}>{prio}</span>
-                      <div>
-                        <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 3px', lineHeight: 1.6 }}>{q.q}</p>
-                        <span style={{ fontSize: 11, color: 'var(--text-muted)', fontStyle: 'italic' }}>{q.source}</span>
-                      </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {OPEN_QUESTIONS.map((q, i) => (
+                <div key={i} style={{ padding: '12px 14px', borderRadius: 8, background: 'var(--surface-primary)', border: `1px solid ${q.answered ? 'var(--border)' : '#dc262640'}` }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, flexShrink: 0, marginTop: 2, padding: '2px 6px', borderRadius: 4, background: q.priority === 'P0' ? '#dc262615' : q.priority === 'P1' ? '#b4530915' : '#94a3b815', color: q.priority === 'P0' ? '#dc2626' : q.priority === 'P1' ? '#b45309' : '#94a3b8' }}>{q.priority}</span>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)', margin: '0 0 6px', lineHeight: 1.5 }}>{q.q}</p>
+                      {q.answered ? (
+                        <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.55, padding: '8px 10px', borderRadius: 6, background: 'rgba(22,163,74,0.06)', borderLeft: '2px solid #16a34a' }}>
+                          <span style={{ fontSize: 9, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 3 }}>Answered · {q.source}</span>
+                          {q.answer}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: 11, color: '#dc2626', padding: '6px 10px', borderRadius: 6, background: 'rgba(220,38,38,0.06)', borderLeft: '2px solid #dc2626' }}>
+                          <span style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 2 }}>Still open — needed before design</span>
+                          {q.answer}
+                        </div>
+                      )}
                     </div>
-                  ))}
+                  </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         )}
+
+
 
 
         {/* ─── NORTH STAR TAB ─────────────────────────────────────────────────────── */}

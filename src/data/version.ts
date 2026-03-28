@@ -1,11 +1,11 @@
 // Auto-updated by Claude — 2026-03-28
-export const VERSION = '5.5.1';
+export const VERSION = '5.6.0';
 export const LAST_UPDATED = '2026-03-28';
-export const LAST_PUSH = 'Claude automated push — 2026-03-28 (v5.5.1: fix Procedure Tracker crash — remove premature INSIGHTS array close, all 225 insights now accessible)';
+export const LAST_PUSH = 'Claude automated push — 2026-03-28 (v5.6.0: full audit rebuild — new Overview storytelling screen, 21 new insights from all unsynced sessions, PCE open questions answered, 3-year vision indexed, tagging architecture, Touro signals)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
-export const SKILL_VERSION = '5.5.1';
+export const SKILL_VERSION = '5.6.0';
 export const SESSIONS_SYNCED = 56;
-export const INSIGHTS_TOTAL = 225;
+export const INSIGHTS_TOTAL = 246;
 export const PRODUCTS_COVERED = 5;
 export const MAGIC_PATTERNS_PCE = 'https://project-truthful-apricot-326.magicpatterns.app';
 export const MAGIC_PATTERNS_EXAM_ADMIN = 'https://project-rich-macaroni-332.magicpatterns.app';

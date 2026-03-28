@@ -1,17 +1,11 @@
-// ─────────────────────────────────────────────
-//  views/OverviewView.tsx
-//  Platform homepage — product cards + signals
-// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  OverviewView.tsx  — Storytelling-first entry point
+//  Philosophy: editorial front page, not a metrics dashboard.
+//  One dominant signal. Clear "what to look at first". Route to action.
+// ─────────────────────────────────────────────────────────────────────────────
 import { PRODUCTS } from '../data/products';
 import { INSIGHTS } from '../data/insights';
-import { PLATFORM_SIGNALS } from '../data/personas';
-import { Card, CardTitle, MetricCard } from '../components/ui/Card';
-import { InsightRow } from '../components/ui/InsightRow';
-import { AIStrip } from '../components/ui/InsightRow';
-import { Badge } from '../components/ui/Badge';
-import type { ProductMeta } from '../types';
 
-// Build metadata injected by vite.config.ts at GitHub Actions build time
 const BUILD_TIME = __BUILD_TIME__;
 const COMMIT_SHA = __COMMIT_SHA__;
 
@@ -21,153 +15,262 @@ function formatBuildTime(iso: string): string {
     return d.toLocaleString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric',
       hour: 'numeric', minute: '2-digit',
-      timeZoneName: 'short',
-      timeZone: 'America/New_York',
+      timeZoneName: 'short', timeZone: 'America/New_York',
     });
-  } catch {
-    return iso;
-  }
+  } catch { return iso; }
 }
 
-interface OverviewViewProps {
-  onNav: (view: string) => void;
-}
+interface Props { onNav: (view: string) => void; }
 
-const ACCENT_BORDERS: Record<string, string> = {
-  'exam-management': 'from-[#8b7ff5] to-[#6c62d4]',
-  faas: 'from-[#f5a623] to-[#d4881a]',
-  'course-eval': 'from-[#2ec4a0] to-[#1a9e82]',
-  'skills-checklist': 'from-[#78aaf5] to-[#4a82e0]',
-  'learning-contracts': 'from-[#e87ab5] to-[#c45090]'
+const STORY_BEATS = [
+  {
+    id: 'april17', urgency: 'critical' as const,
+    label: 'APRIL 17 — 20 DAYS',
+    headline: 'Three prototypes due. None started.',
+    subhead: 'Aarti confirmed: test-taker experience, faculty interface, and admin tools must be written + prototyped by April 17. This is the first real public checkpoint.',
+    action: 'Open Exam Management', nav: 'exam-management',
+    accentColor: '#dc2626', bgColor: 'rgba(220,38,38,0.05)',
+  },
+  {
+    id: 'ada', urgency: 'critical' as const,
+    label: 'APRIL 24 — ADA TITLE II HARD DEADLINE',
+    headline: 'Legal, not a roadmap item.',
+    subhead: 'ADA Title II goes into law April 24. Everything released must be accessible from day one. No ZoomText, no JAWS reliance — all affordances must be platform-embedded. Pearson/GRE/SAT is the benchmark.',
+    action: 'Exam accessibility signals', nav: 'exam-management',
+    accentColor: '#b45309', bgColor: 'rgba(180,83,9,0.05)',
+  },
+  {
+    id: 'pce', urgency: 'high' as const,
+    label: 'COURSE EVAL — DESIGN DUE END OF APRIL',
+    headline: 'All open questions answered. Design can begin.',
+    subhead: '18 open questions resolved. 3-layer architecture confirmed: template → distribution → AI analytics. Competitors (Explorance Blue, Watermark) only do math. Exxat differentiates with AI sentiment synthesis and accreditation mapping.',
+    action: 'Open Course Eval', nav: 'course-eval',
+    accentColor: '#2ec4a0', bgColor: 'rgba(46,196,160,0.05)',
+  },
+  {
+    id: 'nps', urgency: 'high' as const,
+    label: 'NPS 2025 — -47 PLATFORM-WIDE',
+    headline: 'Same 3 complaints across every product.',
+    subhead: '"No task list on login." "4 ways to get there — only 1 works." "Twice as many clicks as V3." These are not feature requests. They are navigation architecture failures that require a design response.',
+    action: 'Read NPS Intelligence', nav: 'nps',
+    accentColor: '#dc2626', bgColor: 'rgba(220,38,38,0.05)',
+  },
+];
+
+const PRODUCT_COLORS: Record<string, { accent: string; bg: string }> = {
+  'exam-management':    { accent: '#8b7ff5', bg: 'rgba(139,127,245,0.07)' },
+  faas:                 { accent: '#f5a623', bg: 'rgba(245,166,35,0.07)' },
+  'course-eval':        { accent: '#2ec4a0', bg: 'rgba(46,196,160,0.07)' },
+  'skills-checklist':   { accent: '#78aaf5', bg: 'rgba(120,170,245,0.07)' },
+  'learning-contracts': { accent: '#e87ab5', bg: 'rgba(232,122,181,0.07)' },
 };
+const URGENCY_LABEL: Record<string, string> = { fire: 'CRITICAL', warn: 'HIGH', ok: 'SCOPED' };
+const URGENCY_DOT:  Record<string, string> = { fire: '#dc2626', warn: '#b45309', ok: '#16a34a' };
 
-function ProductCard({ product, onNav }: {product: ProductMeta;onNav: (v: string) => void;}) {
-  const grad = ACCENT_BORDERS[product.id] ?? 'from-[#8b7ff5] to-[#6c62d4]';
-  return (
-    <button
-      onClick={() => onNav(product.id)}
-      className="relative text-left bg-[var(--bg2)] border border-[var(--border)] hover:border-[var(--border2)] rounded-xl p-4 overflow-hidden transition-all duration-150 hover:-translate-y-px group w-full">
-      
-      <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${grad}`} />
-      <div className="flex items-start justify-between mb-2">
-        <div className="text-[12px] font-semibold text-[var(--text)]">{product.name}</div>
-        <Badge variant={product.status}>{product.status}</Badge>
-      </div>
-      <div className="text-[10px] text-[var(--text3)] leading-[1.45] mb-3">{product.description}</div>
-      <div className="flex gap-3 text-[10px]">
-        <span className="font-mono font-medium text-[var(--text)]">{product.criticalGaps}</span>
-        <span className="text-[var(--text3)]">critical gaps</span>
-        <span className="font-mono font-medium text-[var(--text)] ml-2">{product.insightCount}</span>
-        <span className="text-[var(--text3)]">insights</span>
-        {product.nps !== undefined &&
-        <>
-            <span className="font-mono font-medium text-[#e8604a] ml-2">{product.nps}/5</span>
-            <span className="text-[var(--text3)]">NPS</span>
-          </>
-        }
-      </div>
-    </button>);
+const THIS_WEEK = [
+  { label: 'Exam QB design — smart views + tagging',  due: 'Sprint 1 · Apr 7',  color: '#8b7ff5' },
+  { label: 'Exam taker accessibility audit + WCAG map', due: 'Before Apr 24',   color: '#dc2626' },
+  { label: 'PCE template + distribution layer',        due: 'End of April',      color: '#2ec4a0' },
+  { label: 'FaaS self-service Phase 1 (internal)',     due: 'Q2 end',            color: '#f5a623' },
+];
 
-}
+const PLATFORM_SIGNALS = [
+  { signal: 'AI opportunity layer',        desc: 'All 5 products have confirmed AI use cases. ExamSoft is anti-AI — Exxat\'s strategic gap.',              strength: 8, color: '#6d5ed4' },
+  { signal: 'External spreadsheet dependency', desc: 'Students, faculty, and admins maintain parallel Excel systems because Exxat doesn\'t serve their real job.', strength: 7, color: '#dc2626' },
+  { signal: 'No task-based home screen',   desc: 'NPS 2025: "No visible list of tasks when I log in." Affects every product. Navigation failure.',           strength: 7, color: '#b45309' },
+  { signal: 'Monster Grid replacement',    desc: 'Touro: all assessment data in one view. Exxat can own this across all program types.',                    strength: 6, color: '#0d9488' },
+  { signal: 'Reporting deficit',           desc: 'Program Directors cannot self-serve accreditation reports in any product. Manual export everywhere.',      strength: 6, color: '#b45309' },
+  { signal: 'Mobile / SCCE gap',          desc: 'SCCEs use mobile in clinical settings. FaaS + Skills require desktop for key workflows.',                  strength: 5, color: '#f5a623' },
+];
 
-export function OverviewView({ onNav }: OverviewViewProps) {
-  const recentInsights = [...INSIGHTS].
-  sort((a, b) => b.createdAt.localeCompare(a.createdAt)).
-  slice(0, 5);
-
-  const totalCritical = PRODUCTS.reduce((s, p) => s + p.criticalGaps, 0);
-  const totalInsights = INSIGHTS.length;
-  const platformSignals = INSIGHTS.filter((i) => i.tags.includes('platform')).length;
+export function OverviewView({ onNav }: Props) {
+  const criticalCount = INSIGHTS.filter(i => i.severity === 'critical').length;
+  const platformCount = INSIGHTS.filter(i => i.tags.includes('platform')).length;
+  const aiCount = INSIGHTS.filter(i => i.tags.includes('opportunity')).length;
+  const recentNew = [...INSIGHTS].filter(i => i.tags.includes('new'))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6);
 
   return (
-    <div className="p-5 overflow-y-auto flex-1">
-      {/* Header */}
-      <div className="mb-5 flex items-start justify-between">
+    <div style={{ padding: '20px 24px', overflowY: 'auto', flex: 1 }}>
+
+      {/* HEADER */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Platform Overview</h1>
-          <p className="text-[11px] text-[var(--text3)]">
-            5 products · 4 personas · 43 sessions · {INSIGHTS.length} insights · SKILL.md v5.0
-          </p>
+          <h1 style={{ fontSize: 21, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 3, fontFamily: 'var(--rr-serif, Georgia, serif)' }}>Platform Overview</h1>
+          <p style={{ fontSize: 10, color: 'var(--text3)' }}>5 products · 40+ sessions · {INSIGHTS.length} insights · Week of Mar 28, 2026</p>
         </div>
-        {/* Live build timestamp — auto-updates on every GitHub push */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '4px 10px', borderRadius: 8,
-            background: 'var(--bg2)', border: '1px solid var(--border)',
-          }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#2ec4a0', flexShrink: 0 }} />
-            <span style={{ fontSize: 11, color: 'var(--text2)', fontWeight: 500 }}>
-              Updated {formatBuildTime(BUILD_TIME)}
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 7, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+            <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#2ec4a0' }} />
+            <span style={{ fontSize: 10, color: 'var(--text2)' }}>Updated {formatBuildTime(BUILD_TIME)}</span>
           </div>
-          <a
-            href={`https://github.com/soleyromit/rr-insights/commit/${COMMIT_SHA}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontSize: 10, fontFamily: 'JetBrains Mono, monospace',
-              color: 'var(--text3)', textDecoration: 'none',
-              padding: '2px 7px', borderRadius: 5,
-              background: 'var(--bg3)', border: '1px solid var(--border)',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text3)')}
-          >
+          <a href={`https://github.com/soleyromit/rr-insights/commit/${COMMIT_SHA}`} target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 9, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', padding: '2px 6px', borderRadius: 4, background: 'var(--bg3)', border: '1px solid var(--border)', textDecoration: 'none' }}>
             {COMMIT_SHA}
           </a>
         </div>
       </div>
 
-      {/* AI strip */}
-      <AIStrip>
-        <strong className="text-[var(--accent)] font-medium">Intelligence agency v5.0 — 108 insights, 43 sessions, 15 views.</strong>{" "}Platform-level signals: AI everywhere on admin side (all 5 products), external spreadsheet dependency (Skills/FaaS/Exam), submit-only validation anti-pattern (FaaS), Monster Grid replacement is the north star. April 17 milestone: student + faculty + admin entry points. ADA Title II: April 24 hard deadline.
-      </AIStrip>
-
-      {/* Metrics */}
-      <div className="grid grid-cols-4 gap-2.5 mb-5">
-        <MetricCard label="Insights tagged" value={totalInsights} delta="108 total · +16 this session" deltaVariant="up" />
-        <MetricCard label="Platform signals" value={platformSignals} delta="7 platform-level signals" deltaVariant="up" />
-        <MetricCard label="Critical gaps" value={totalCritical} delta="Across 5 products" />
-        <MetricCard label="Staff signal score" value="87" delta="+4 this month" deltaVariant="up" />
+      {/* KEY NUMBERS */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
+        {[
+          { n: INSIGHTS.length, label: 'Insights indexed', sub: '5 products · 40+ sessions', color: '#6d5ed4' },
+          { n: criticalCount,   label: 'Critical signals',  sub: 'Need design response now',   color: '#dc2626' },
+          { n: platformCount,   label: 'Platform signals',  sub: 'Cross-product patterns',     color: '#b45309' },
+          { n: aiCount,         label: 'AI opportunities',  sub: 'Sourced from sessions',       color: '#0d9488' },
+        ].map(item => (
+          <div key={item.label} style={{ background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 9, padding: '12px 14px' }}>
+            <div style={{ fontSize: 26, fontWeight: 700, color: item.color, fontFamily: 'Georgia, serif', lineHeight: 1 }}>{item.n}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text)', marginTop: 3 }}>{item.label}</div>
+            <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>{item.sub}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Product cards grid */}
-      <div className="grid grid-cols-3 gap-3 mb-5">
-        {PRODUCTS.map((p) => <ProductCard key={p.id} product={p} onNav={onNav} />)}
-        <div className="bg-[var(--bg3)] border border-dashed border-[var(--border)] rounded-xl flex items-center justify-center p-4 text-center">
+      {/* STORY BEATS — what to look at first */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 8 }}>What needs a response — in order</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {STORY_BEATS.map((beat, idx) => (
+            <button key={beat.id} onClick={() => onNav(beat.nav)}
+              style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderRadius: 9, border: '1px solid var(--border)', background: beat.bgColor, textAlign: 'left', cursor: 'pointer', width: '100%', transition: 'border-color 120ms' }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = beat.accentColor + '50')}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
+              {/* number */}
+              <div style={{ width: 22, height: 22, borderRadius: '50%', background: beat.accentColor + '18', border: `1px solid ${beat.accentColor}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: beat.accentColor }}>{idx + 1}</span>
+              </div>
+              {/* label + headline + sub */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.08em', color: beat.accentColor, textTransform: 'uppercase', marginBottom: 2 }}>{beat.label}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{beat.headline}</div>
+                <div style={{ fontSize: 10, color: 'var(--text2)', lineHeight: 1.5 }}>{beat.subhead}</div>
+              </div>
+              {/* cta */}
+              <div style={{ flexShrink: 0, fontSize: 9, fontWeight: 600, color: beat.accentColor, border: `1px solid ${beat.accentColor}35`, borderRadius: 5, padding: '3px 9px', whiteSpace: 'nowrap' }}>
+                {beat.action} →
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 2-COL: PRODUCTS + THIS WEEK */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 18, marginBottom: 20 }}>
+
+        {/* Products */}
+        <div>
+          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 8 }}>5 products — by urgency</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {PRODUCTS.map(p => {
+              const c = PRODUCT_COLORS[p.id] ?? { accent: '#6d5ed4', bg: 'rgba(109,94,212,0.07)' };
+              const pInsights = INSIGHTS.filter(i => i.productIds.includes(p.id as never));
+              const newCount = pInsights.filter(i => i.tags.includes('new')).length;
+              const urgLabel = URGENCY_LABEL[p.urgencyLevel ?? 'ok'] ?? 'SCOPED';
+              const urgDot = URGENCY_DOT[p.urgencyLevel ?? 'ok'] ?? '#16a34a';
+              return (
+                <button key={p.id} onClick={() => onNav(p.id)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 7, border: '1px solid var(--border)', background: 'var(--bg2)', textAlign: 'left', cursor: 'pointer', width: '100%', transition: 'all 120ms' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = c.accent + '50'; e.currentTarget.style.background = c.bg; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg2)'; }}>
+                  <div style={{ width: 3, height: 28, borderRadius: 2, background: c.accent, flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text)', marginBottom: 1 }}>{p.name}</div>
+                    <div style={{ fontSize: 9, color: 'var(--text3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 260 }}>{p.description}</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>{pInsights.length}</div>
+                      <div style={{ fontSize: 8, color: 'var(--text3)' }}>insights</div>
+                    </div>
+                    {newCount > 0 && <span style={{ fontSize: 8, fontWeight: 700, background: c.accent + '18', color: c.accent, borderRadius: 3, padding: '1px 5px' }}>+{newCount} new</span>}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                      <div style={{ width: 5, height: 5, borderRadius: '50%', background: urgDot }} />
+                      <span style={{ fontSize: 8, fontWeight: 600, color: urgDot, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{urgLabel}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {/* This week */}
           <div>
-            <div className="text-[22px] text-[var(--text3)] mb-1">+</div>
-            <div className="text-[11px] text-[var(--text3)]">PA Student Dashboard<br /><span className="text-[10px]">New surface from Touro session</span></div>
+            <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 8 }}>This week</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {THIS_WEEK.map(item => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 7, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                  <div style={{ width: 3, height: 18, borderRadius: 1, background: item.color, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--text)', lineHeight: 1.35 }}>{item.label}</div>
+                    <div style={{ fontSize: 8, color: 'var(--text3)', marginTop: 1 }}>{item.due}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Latest from Granola */}
+          <div>
+            <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 8 }}>Latest from Granola</div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {recentNew.map((insight, idx) => (
+                <div key={insight.id} style={{ padding: '7px 0', borderBottom: idx < recentNew.length - 1 ? '1px solid var(--border)' : 'none', display: 'flex', gap: 6 }}>
+                  <div style={{ width: 5, height: 5, borderRadius: '50%', marginTop: 4, flexShrink: 0, background: insight.severity === 'critical' ? '#dc2626' : insight.severity === 'high' ? '#b45309' : '#6d5ed4' }} />
+                  <div>
+                    <div style={{ fontSize: 10, color: 'var(--text)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{insight.text}</div>
+                    <div style={{ fontSize: 8, color: 'var(--text3)', marginTop: 1 }}>{insight.source}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom row */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Recent insights */}
-        <Card>
-          <CardTitle sub="Last 7 days">Recent Granola insights</CardTitle>
-          {recentInsights.map((i) => <InsightRow key={i.id} insight={i} />)}
-        </Card>
-
-        {/* Platform signals */}
-        <Card>
-          <CardTitle>Platform signal strength</CardTitle>
-          {PLATFORM_SIGNALS.map((s) =>
-          <div key={s.label} className="flex items-center gap-3 py-2 border-b border-[var(--border)] last:border-0">
-              <div className="flex-1 text-[11px] text-[var(--text2)] flex items-center gap-1.5">
-                {s.label}
-                {s.isNew && <span className="text-[10px] px-1 py-0.5 rounded bg-[rgba(46,196,160,0.12)] text-[#2ec4a0] font-mono">New</span>}
+      {/* 3-YEAR VISION STRIP */}
+      <div style={{ background: 'linear-gradient(135deg,rgba(109,94,212,0.07) 0%,rgba(13,148,136,0.07) 100%)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 18px', marginBottom: 20 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: '#6d5ed4', textTransform: 'uppercase', marginBottom: 10 }}>Arun's 3-year vision · Mar 24, 2026</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+          {[
+            { yr: '2026', lbl: 'Year 1', head: 'Beat LMS quizzes', desc: 'Canvas/D2L/Blackboard parity + better UX. Free for Prism users. Lockdown browser integration. One flagship AI feature on admin side.', color: '#6d5ed4' },
+            { yr: '2027', lbl: 'Year 2', head: 'Match ExamSoft', desc: 'Full feature parity + better UI. Several AI use cases. Begin charging. ExamSoft is publicly anti-AI — this is the gap.', color: '#0d9488' },
+            { yr: '2028', lbl: 'Year 3', head: 'Far beyond ExamSoft', desc: 'AI proctoring. Adaptive NCLEX/GRE-style CAT. Possibly own lockdown browser. Price equal to or less. No rational reason to stay on ExamSoft.', color: '#e87ab5' },
+          ].map(item => (
+            <div key={item.yr}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <span style={{ fontSize: 8, fontWeight: 700, color: item.color, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{item.lbl}</span>
+                <span style={{ fontSize: 8, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>{item.yr}</span>
               </div>
-              <div className="w-24 h-1.5 bg-[var(--bg4)] rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${s.count / 5 * 100}%`, background: s.color }} />
-              </div>
-              <div className="text-[11px] font-mono font-medium text-[var(--text)] min-w-[32px] text-right">{s.count}/5</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 3 }}>{item.head}</div>
+              <div style={{ fontSize: 9, color: 'var(--text2)', lineHeight: 1.5 }}>{item.desc}</div>
             </div>
-          )}
-        </Card>
+          ))}
+        </div>
       </div>
-    </div>);
 
+      {/* PLATFORM SIGNALS */}
+      <div>
+        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 8 }}>Platform-level signals — appear in 3+ products</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 7 }}>
+          {PLATFORM_SIGNALS.map(item => (
+            <div key={item.signal} style={{ padding: '10px 12px', borderRadius: 7, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text)' }}>{item.signal}</span>
+                <div style={{ display: 'flex', gap: 2 }}>
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} style={{ width: 3, height: 9, borderRadius: 1, background: i < item.strength ? item.color : 'var(--bg4)' }} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ fontSize: 9, color: 'var(--text3)', lineHeight: 1.5 }}>{item.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  );
 }
