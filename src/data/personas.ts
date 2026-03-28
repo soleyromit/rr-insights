@@ -152,6 +152,24 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v5.5',
+    date: '2026-03-28',
+    summary: 'Arun Performance Tracker v2 (offer letter grounded + raw Granola transcript 791334af): 7 criteria from official offer letter (Kunal Vaishnav Mar 15 2026) mapped to verbatim Arun quotes, evidence, gaps, and dated action plan. 10 direct Arun quotes in expandable panel — not paraphrased. Score rationale per criterion. Radar + ranked bar + velocity + NPS context charts. NPS Intelligence 2025 view: full 1,494-response analysis — student -47.5, faculty -49.1, admin -4.8, SCCE +8, Approve +87.5. Score distribution, bimodal pattern, domain breakdown (Nursing = 47% of volume), 10 detractor themes ranked by frequency, projected lift radar. Question Bank Architecture tab in ExamManagementView: flat pool + Smart Views model, 5 entry methods (including AI gen + ExamSoft import), 5-state status lifecycle, 4 roles × permissions, 7 tag categories, versioning model, competitor comparison (ExamSoft/Canvas/Blackboard/D2L), MP design implications with target dates. Fixed broken NPS_INSIGHTS array structure in insights.ts. Wired new nav items in Sidebar + App.tsx. GitHub deployment fixed: Pages source confirmed as GitHub Actions mode, OIDC workflow restored with correct permissions and concurrency group.',
+    insightCount: 195,
+    sessionsAdded: 5,
+    changedFiles: [
+      'src/views/ArunPerformanceView.tsx',
+      'src/views/NPSView.tsx',
+      'src/views/products/ExamManagementView.tsx',
+      'src/data/insights.ts',
+      'src/data/personas.ts',
+      'src/data/version.ts',
+      'src/App.tsx',
+      'src/components/layout/Sidebar.tsx',
+      '.github/workflows/deploy.yml',
+    ],
+  },
+  {
     version: 'v5.2',
     date: '2026-03-27',
     summary: 'Exxatly-NEW-DS complete: 263 CSS variables confirmed from localhost:3000 live DOM extraction across 5 routes (dashboard, data-list, compliance, team, settings). Typography 3 groups saved (Heading Inter 600, Body Inter 400, UI Labels Inter 500). Rules saved with all dark-theme tokens, status badge colors, and component dimensions. 16 new insights injected into main INSIGHTS array from 4 sessions: Romit<>Nipun Kickoff Mar 27 (DS gaps, QB scope, role permissions); Monil PCE Introduction Mar 26 (3-layer architecture, AI differentiation, April deadline); Prasanjit FaaS Patient Log Mar 25 (color coding loss, validation gaps, self-service disabled, CRNA hierarchical); Akshit Q2 Requirements Mar 25 (80-85% incremental pattern, phased rollout, AI import adoption). Exam Admin dark design published at project-rich-macaroni-332.magicpatterns.app.',
