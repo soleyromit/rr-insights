@@ -22,6 +22,8 @@ import { DomainExpertView } from './views/DomainExpertView';
 import { ExxatOneView } from './views/products/ExxatOneView';
 import { ExamAdminAuditView } from './views/products/ExamAdminAuditView';
 import { AnalyticsView } from './views/AnalyticsView';
+import { ArunPerformanceView } from './views/ArunPerformanceView';
+import { NPSView } from './views/NPSView';
 import type { ProductId } from './types';
 
 const PRODUCT_IDS = new Set<ProductId>(['exam-management','faas','course-eval','skills-checklist','learning-contracts']);
@@ -50,6 +52,8 @@ export function App() {
     if (activeView === 'domain-experts')   return <DomainExpertView />;
     if (activeView === 'exam-audit')        return <ExamAdminAuditView />;
     if (activeView === 'analytics')         return <AnalyticsView />;
+    if (activeView === 'arun-performance') return <ArunPerformanceView />;
+    if (activeView === 'nps')              return <NPSView />;
     // Product deep-dives — each now has its own dedicated view
     if (activeView === 'exam-management')  return <ExamManagementView />;
     if (activeView === 'faas')             return <FaaSView />;

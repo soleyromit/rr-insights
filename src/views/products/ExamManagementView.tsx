@@ -13,9 +13,10 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'exam-management';
-type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view' | 'arun-roadmap';
+type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view' | 'arun-roadmap' | 'question-bank';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
+  { id: 'question-bank', label: 'Question Bank' },
   { id: 'blueprint', label: 'Service Blueprint' },
   { id: 'userflows', label: 'User Flows' },
   { id: 'features', label: 'Feature Map' },
@@ -28,6 +29,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'pa-dashboard', label: 'PA Dashboard' },
   { id: 'scalable-viz', label: 'Scalable Analytics' },
   { id: 'story-view', label: 'Story View' },
+  { id: 'arun-roadmap', label: 'Arun 3-Year' },
 ];
 
 const scoreDistData = [
@@ -1219,6 +1221,237 @@ export function ExamManagementView() {
           </div>
         )}
 
+
+        {/* ─── QUESTION BANK ARCHITECTURE — source: Stakeholder Day1+2 Feb 2026, Exam Standup Mar 26, Nipun kickoff Mar 27 ─── */}
+        {activeTab === 'question-bank' && (() => {
+          const roles = [
+            { role: 'Institution Admin', scope: 'Institution', access: 'Read-only (all depts)', color: '#6d5ed4', useCase: 'Audit, compliance reporting, tag schema governance' },
+            { role: 'Dept Head', scope: 'Department', access: 'Full (own dept)', color: '#0d9488', useCase: 'Quality assurance, endorsing versions, approving cross-dept sharing' },
+            { role: 'Initiative Lead', scope: 'Initiative / Program', access: 'Read-only (initiative)', color: '#d97706', useCase: 'Cross-department competency gap analysis' },
+            { role: 'Faculty', scope: 'Course(s)', access: 'Scoped (own + dept-shared)', color: '#3b82f6', useCase: 'Create, edit own questions, build assessments' },
+          ];
+          const statuses = [
+            { status: 'Draft', desc: 'Authored, not yet reviewed. Only visible to creator and admins.', color: '#6b7280', next: 'In Review' },
+            { status: 'In Review', desc: 'Submitted for approval. Blocked on Dept Head config: some depts skip review.', color: '#d97706', next: 'Golden' },
+            { status: 'Golden', desc: 'Approved for live exams. Can be used in assessments.', color: '#16a34a', next: 'Archived' },
+            { status: 'Archived', desc: 'Deprecated. Retained for historical data. Excluded from active pool.', color: '#6b7280', next: null },
+            { status: 'Action Required', desc: 'Orange badge replaces status when colleague requests an edit or item performed poorly.', color: '#dc2626', next: 'Draft' },
+          ];
+          const tagCategories = [
+            { cat: 'Question type', examples: 'MCQ, MSQ, fill-blank, matching, hotspot, formula, audio, video, PDF', system: true },
+            { cat: "Bloom's level", examples: 'Remember, Understand, Apply, Analyze, Evaluate, Create', system: true },
+            { cat: 'Difficulty', examples: 'Easy, Medium, Hard, Very Hard', system: true },
+            { cat: 'Body system', examples: 'Cardio, Pulm, GI, Neuro, MSK, Derm, Psych (dept-configurable)', system: true },
+            { cat: 'Competency', examples: 'NCCPA blueprint cells, ARC-PA domains, CAPTE outcomes (programme-specific)', system: false },
+            { cat: 'Course', examples: 'Optional — no hard DB constraint. If assigned: auto-tagged.', system: false },
+            { cat: 'Free-form', examples: 'Any additional tag. ~20 tags per question when fully used.', system: false },
+          ];
+          const entryMethods = [
+            { method: 'Create new', who: 'Faculty', desc: 'Write directly in question editor. Starts as Draft.', ai: false },
+            { method: 'Import from file', who: 'Admin / Faculty', desc: 'Bulk upload Word/Excel/QTI. System parses and creates Drafts.', ai: false },
+            { method: 'Clone from existing', who: 'Faculty', desc: 'Save as variant — new question (new ID, new chain). Not a new version of original.', ai: false },
+            { method: 'AI generation', who: 'Faculty', desc: 'Upload course content → AI generates MCQs/MSQs with tags pre-filled. Faculty reviews before saving to bank.', ai: true },
+            { method: 'ExamSoft import', who: 'Admin', desc: 'AI-assisted migration from ExamSoft CSV export. Maps existing tags to Exxat tag schema.', ai: true },
+          ];
+          const smartViews = [
+            { view: 'My Questions', filter: 'Author = current user', private: true },
+            { view: '[Dept] Questions', filter: 'Department = user department', private: false },
+            { view: 'Recently Used', filter: 'Last used in assessment within 90 days', private: true },
+            { view: 'Flagged for Review', filter: 'Status = Action Required', private: false },
+            { view: 'High-Yield [Topic]', filter: 'Tag includes topic + Difficulty ≥ Hard', private: false },
+            { view: 'NCCPA Blueprint — [Cell]', filter: 'Competency tag = NCCPA cell ID', private: false },
+          ];
+          const competitors = [
+            { tool: 'ExamSoft', model: 'Folder-based (like a file system)', problem: 'Questions trapped in course silos. Updates in one bank not reflected in another. Two versions diverge with no link.', exxat: 'Flat pool + smart views solves this' },
+            { tool: 'Canvas LMS', model: 'Flat list + search/filter + tags', problem: 'Two separate question systems that do not talk to each other. Not built for medical-specific needs.', exxat: 'One pool, medical-specific tags, NCCPA blueprint cells' },
+            { tool: 'Blackboard Ultra', model: 'Flat list + search + AI gen', problem: 'Dropped folders entirely — may be too unstructured for power faculty. No medical taxonomy built in.', exxat: 'Smart views give structure without rigid folders. AI gen in scope.' },
+            { tool: 'D2L BrightSpace', model: 'Folder + shared LOR', problem: 'Bulk accommodation manually per student per quiz. No clinical education differentiation.', exxat: 'Program-level accommodation profiles — 1 action vs 70 per D2L' },
+          ];
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {/* Architecture summary */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Architecture decision — flat pool + scoped views · Source: Stakeholder Day 1+2 · Feb 2026 + Exam Standup Mar 26</div>
+                <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.65 }}>
+                  Every question lives in a single institution-wide flat pool. There are no separate course banks or department banks. Faculty see questions through <strong style={{ color: 'var(--text)' }}>Smart Views</strong> — saved filter queries that look like folders. Tags and permissions determine which "folder" shows which questions. This solves the ExamSoft silo problem without forcing rigid hierarchy.
+                </div>
+              </div>
+
+              {/* Pool model visual */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>What Prof. Sharma sees</div>
+                  {['My Questions (47)', 'Pharmacology Dept (312)', 'Cardiology Shared (28)', 'Recently Used (15)', 'Flagged for Review (6)'].map((v, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)', marginBottom: 4 }}>
+                      <span style={{ fontSize: 13 }}>📁</span>
+                      <span style={{ fontSize: 12, color: 'var(--text2)' }}>{v}</span>
+                      <span style={{ marginLeft: 'auto', fontSize: 9, color: '#6d5ed4', background: 'rgba(109,94,212,0.08)', padding: '2px 6px', borderRadius: 4 }}>Smart View</span>
+                    </div>
+                  ))}
+                  <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 8, fontStyle: 'italic' }}>Smart folders = saved search filters applied to the flat pool</div>
+                </div>
+                <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>What the system stores</div>
+                  <div style={{ padding: '20px', borderRadius: 10, background: 'rgba(109,94,212,0.06)', border: '2px dashed rgba(109,94,212,0.3)', textAlign: 'center', marginBottom: 10 }}>
+                    <div style={{ fontSize: 28, fontWeight: 700, color: '#6d5ed4' }}>1 pool</div>
+                    <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>All 2,847 questions</div>
+                    <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>Tags + permissions determine visibility</div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                    {['Question ID (dept-prefixed)', 'Original Author (never changes)', 'Version chain', 'Tags (7 category types)', 'Status lifecycle', 'Department ownership'].map((f, i) => (
+                      <div key={i} style={{ fontSize: 10, color: 'var(--text3)', padding: '4px 8px', borderRadius: 4, background: 'var(--bg)', border: '1px solid var(--border)' }}>{f}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Entry methods */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>How questions enter the bank</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {entryMethods.map((m, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 14px', borderRadius: 8, background: 'var(--bg)', border: '1px solid var(--border)', alignItems: 'flex-start' }}>
+                      <div style={{ width: 130, minWidth: 130 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{m.method}</div>
+                        <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>{m.who}</div>
+                      </div>
+                      <div style={{ flex: 1, fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{m.desc}</div>
+                      {m.ai && <span style={{ fontSize: 9, background: 'rgba(109,94,212,0.1)', color: '#6d5ed4', padding: '3px 8px', borderRadius: 4, fontWeight: 700, flexShrink: 0 }}>AI</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Question status lifecycle */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Question status lifecycle</div>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 14, flexWrap: 'wrap' }}>
+                  {statuses.filter(s => s.status !== 'Action Required').map((s, i, arr) => (
+                    <div key={s.status} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ padding: '4px 10px', borderRadius: 20, background: `${s.color}18`, border: `1px solid ${s.color}`, fontSize: 11, fontWeight: 600, color: s.color }}>{s.status}</div>
+                      {i < arr.length - 1 && <span style={{ color: 'var(--text3)', fontSize: 12 }}>→</span>}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {statuses.map((s, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 12, padding: '8px 12px', borderRadius: 6, background: 'var(--bg)', borderLeft: `3px solid ${s.color}` }}>
+                      <div style={{ width: 120, minWidth: 120, fontSize: 11, fontWeight: 600, color: s.color }}>{s.status}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5 }}>{s.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Roles */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Roles and question bank access</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
+                  {roles.map((r, i) => (
+                    <div key={i} style={{ padding: '12px 14px', borderRadius: 8, background: 'var(--bg)', border: '1px solid var(--border)', borderTop: `3px solid ${r.color}` }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: r.color }}>{r.role}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>Scope: {r.scope}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text2)', marginTop: 6 }}>{r.access}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4, lineHeight: 1.4 }}>{r.useCase}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 10, padding: '10px 14px', borderRadius: 8, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.15)' }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#6d5ed4', marginBottom: 4 }}>Review Access (composable permission)</div>
+                  <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5 }}>Not a role — a permission layer granted on top of Faculty. Allows approve/reject + review comments within assigned scope. Granted by Dept Head. Scoped to specific course(s) or program. Dept Head has Review Access by default.</div>
+                </div>
+              </div>
+
+              {/* Tag categories */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Tag schema — 7 category types, ~20 tags per question</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {tagCategories.map((t, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 12, padding: '8px 12px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)', alignItems: 'flex-start' }}>
+                      <div style={{ width: 120, minWidth: 120 }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text)' }}>{t.cat}</div>
+                        <span style={{ fontSize: 9, background: t.system ? 'rgba(22,163,74,0.1)' : 'rgba(109,94,212,0.1)', color: t.system ? '#16a34a' : '#6d5ed4', padding: '1px 6px', borderRadius: 4 }}>{t.system ? 'System-built' : 'Custom'}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--text3)', lineHeight: 1.5 }}>{t.examples}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Smart Views */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 4 }}>Smart Views — two modes</div>
+                <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 12 }}>Always-updated (live filter) vs Fixed snapshot (pinned at creation). Personal Views private by default. Dept views shared.</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 6 }}>
+                  {smartViews.map((v, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 12px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)', alignItems: 'flex-start' }}>
+                      <span style={{ fontSize: 13 }}>📁</span>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text)' }}>{v.view}</div>
+                        <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>{v.filter}</div>
+                        {v.private && <span style={{ fontSize: 9, color: '#6b7280', background: 'rgba(107,114,128,0.1)', padding: '1px 5px', borderRadius: 3, marginTop: 3, display: 'inline-block' }}>private</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Versioning model */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Versioning model — every edit creates an immutable version</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
+                  {[
+                    { scenario: 'Faculty creates question', orig: 'Prof. Gupta', editor: '—', v: 'V1' },
+                    { scenario: 'Same faculty edits', orig: 'Prof. Gupta', editor: 'Prof. Gupta', v: 'V2' },
+                    { scenario: 'Dept Head edits', orig: 'Prof. Gupta', editor: 'Dr. Khan', v: 'V3' },
+                    { scenario: 'Another faculty forks', orig: 'Prof. Sharma (new Q)', editor: '—', v: 'V1' },
+                  ].map((r, i) => (
+                    <div key={i} style={{ padding: '10px 12px', borderRadius: 8, background: 'var(--bg)', border: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 6, lineHeight: 1.4 }}>{r.scenario}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text2)' }}>Orig: <strong style={{ color: 'var(--text)' }}>{r.orig}</strong></div>
+                      <div style={{ fontSize: 11, color: 'var(--text2)' }}>Editor: {r.editor || '—'}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#6d5ed4', marginTop: 4 }}>{r.v}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text3)' }}>Original Author never changes. Forks create a new question with a <code style={{ fontSize: 10, background: 'var(--bg)', padding: '1px 4px', borderRadius: 3 }}>derived_from</code> link. Each version stores: editor, timestamp, diff from previous.</div>
+              </div>
+
+              {/* Competitive comparison */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Competitor question bank models vs Exxat flat pool</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {competitors.map((c, i) => (
+                    <div key={i} style={{ display: 'grid', gridTemplateColumns: '90px 1fr 1fr 1fr', gap: 12, padding: '10px 12px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{c.tool}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text3)' }}><span style={{ fontWeight: 600, color: 'var(--text2)' }}>Model:</span> {c.model}</div>
+                      <div style={{ fontSize: 11, color: '#dc2626' }}><span style={{ fontWeight: 600 }}>Gap:</span> {c.problem}</div>
+                      <div style={{ fontSize: 11, color: '#16a34a' }}><span style={{ fontWeight: 600 }}>Exxat:</span> {c.exxat}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Design implications */}
+              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(13,148,136,0.04)', border: '1px solid rgba(13,148,136,0.2)' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#0d9488', marginBottom: 10 }}>Design implications from architecture — Magic Patterns build priorities</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+                  {[
+                    { priority: 'Screen 1 — QB navigation', detail: 'Two entry points: global QB sidebar item + course-level QB with auto-tag. Smart view sidebar with personal + dept views. Draft counter badge.', deadline: 'Apr 3' },
+                    { priority: 'Screen 2 — QB table / filter', detail: 'Columns: ID, stem, type, status, Bloom\'s, difficulty, author. Filter bar: status, topic, Bloom\'s, course, type. Bulk action row for selection.', deadline: 'Apr 3' },
+                    { priority: 'Screen 3 — Question editor', detail: 'Role-gated: Faculty sees create/submit. Dept Head sees approve/reject. Version chain visualization. Edit-in-assessment vs master modal split.', deadline: 'Apr 7' },
+                  ].map((s, i) => (
+                    <div key={i} style={{ padding: '12px 14px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: '#0d9488', marginBottom: 6 }}>{s.priority}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 6 }}>{s.detail}</div>
+                      <div style={{ fontSize: 10, mono: true, color: '#dc2626' }}>Target: {s.deadline}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Arun 3-year plan — source: session 791334af Mar 24, 2026 */}
         {activeTab === 'arun-roadmap' && (
