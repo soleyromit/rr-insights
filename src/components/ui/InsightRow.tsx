@@ -43,6 +43,9 @@ export function InsightRow({ insight, showSoWhat = false }: InsightRowProps) {
         })}
         <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>
           {insight.source?.split('·')[0]?.trim()}
+          {insight.source?.includes('·') && (
+            <span style={{ marginLeft: 4, opacity: 0.7 }}>· {insight.source.split('·')[1]?.trim()}</span>
+          )}
         </span>
       </div>
 
