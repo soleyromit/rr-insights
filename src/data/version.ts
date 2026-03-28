@@ -1,9 +1,9 @@
 // Auto-updated by Claude — 2026-03-28
-export const VERSION = '5.6.0';
+export const VERSION = '5.6.1';
 export const LAST_UPDATED = '2026-03-28';
-export const LAST_PUSH = 'Claude automated push — 2026-03-28 (v5.6.0: full audit rebuild — new Overview storytelling screen, 21 new insights from all unsynced sessions, PCE open questions answered, 3-year vision indexed, tagging architecture, Touro signals)';
+export const LAST_PUSH = 'Claude automated push — 2026-03-28 (v5.6.1: DS Phase 2 complete — 11 components generated, audit doc updated)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
-export const SKILL_VERSION = '5.6.0';
+export const SKILL_VERSION = '5.6.1';
 export const SESSIONS_SYNCED = 56;
 export const INSIGHTS_TOTAL = 246;
 export const PRODUCTS_COVERED = 5;
@@ -14,5 +14,5 @@ export const EXXATLY_DS_URL = 'https://www.magicpatterns.com/design-system/ds-71
 export const VIEWS_COUNT = 17;
 export const SESSIONS_RAW_READ = 39;
 export const DS_TOKENS_CONFIRMED = 263;
-export const DS_COMPONENTS_BUILT = 20;
-export const DS_COMPONENTS_PHASE2 = 10;
+export const DS_COMPONENTS_BUILT = 31;
+export const DS_COMPONENTS_PHASE2 = 11;

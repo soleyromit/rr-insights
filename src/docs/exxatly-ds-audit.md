@@ -206,3 +206,38 @@ All 10 components built side-by-side in dark and light mode:
 | 10 | Checkbox | `#a1a4ac` border, `#5f53ae` checked | `#939599` border, `#5f53ae` checked |
 
 **fix applied:** Stripped all `var(--...)` refs from tailwind.config.js after AI generation.
+
+---
+
+## Phase 2 Components — Generated Mar 28, 2026
+
+### Standalone designs (not yet in DS sidebar — use these URLs to add)
+
+| # | Component | Editor URL | Preview | Status |
+|---|---|---|---|---|
+| 21 | Tooltip | https://www.magicpatterns.com/c/pvftwieqqyeipw1hulu9kc | https://project-tooltip-650.magicpatterns.app | ✅ Generated |
+| 22 | EmptyState | https://www.magicpatterns.com/c/cujhkb6ibhqweuekxpauvq | https://project-emptystate-886.magicpatterns.app | ✅ Generated |
+| 23 | AskLeoPanel | https://www.magicpatterns.com/c/gkwkr3z6xtsutnmcrzeleb | https://project-askleopanel-468.magicpatterns.app | ✅ Generated |
+| 24 | BarChartCard (Grouped) | https://www.magicpatterns.com/c/9q21x4qlayhi6uaegzfic6 | https://project-barchartcardgrouped-593.magicpatterns.app | ✅ Generated |
+| 25 | StackedBarChartCard | https://www.magicpatterns.com/c/wiixjpg3stp9s2xqp1p4mp | https://project-stackedbarchartcard-375.magicpatterns.app | 🔄 Generating |
+| 26 | CollapsedSidebar | https://www.magicpatterns.com/c/bykggp5kkpemlrjjpe71m7 | https://project-collapsedsidebar-895.magicpatterns.app | 🔄 Generating |
+
+### Phase 2 remaining (not yet started)
+| # | Component | Priority | Notes |
+|---|---|---|---|
+| 27 | OrgSwitcherDropdown | P1 | Click org name in sidebar → dropdown |
+| 28 | CoachMark/Spotlight | P1 | Settings page guided tour |
+| 29 | SearchModal | P2 | Full-screen overlay search |
+| 30 | RotationsSubmenu | P2 | Expandable sidebar submenu |
+| 31 | MoreMenuOverflow | P2 | Collapsed nav overflow panel |
+
+
+### Phase 2 Batch 2 — Generated Mar 28, 2026
+
+| # | Component | Editor URL | Preview | Status |
+|---|---|---|---|---|
+| 27 | OrgSwitcherDropdown | https://www.magicpatterns.com/c/u2redfk6c47c4cp8bvmman | https://project-orgswitcherdropdown-638.magicpatterns.app | 🔄 Generating |
+| 28 | CoachMarkSpotlight | https://www.magicpatterns.com/c/nbg3j9njhayp84diwjgmdg | https://project-coachmarkspotlight-117.magicpatterns.app | 🔄 Generating |
+| 29 | SearchModal | https://www.magicpatterns.com/c/kac1xtapdpvfasd1g8z6mh | https://project-searchmodal-960.magicpatterns.app | 🔄 Generating |
+| 30 | RotationsSubmenu | https://www.magicpatterns.com/c/8kx6cq78443vvyj4nfdbva | https://project-rotationssubmenu-626.magicpatterns.app | 🔄 Generating |
+| 31 | MoreMenuOverflow | https://www.magicpatterns.com/c/u6hbv1gueb8qq54fvftt9b | https://project-moremenuoverflow-327.magicpatterns.app | 🔄 Generating |
