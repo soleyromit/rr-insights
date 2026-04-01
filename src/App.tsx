@@ -54,6 +54,7 @@ export function App() {
     if (activeView === 'analytics')         return <AnalyticsView />;
     if (activeView === 'arun-performance') return <ArunPerformanceView />;
     if (activeView === 'nps')              return <NPSView />;
+    if (activeView === 'nav-ia')           return <ExamManagementView initialTab="nav-ia" />;
     // Product deep-dives — each now has its own dedicated view
     if (activeView === 'exam-management')  return <ExamManagementView />;
     if (activeView === 'faas')             return <FaaSView />;

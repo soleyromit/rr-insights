@@ -68,6 +68,7 @@ export function Sidebar({ activeView, onNav }: Props) {
         <NavItem id="knowledge-graph" label="Knowledge Graph" icon={NetworkIcon} active={activeView === 'knowledge-graph'} onNav={onNav} badge="New" badgeColor="#6d5ed4" />
         <NavItem id="domain-experts" label="Domain Experts" icon={BrainIcon} active={activeView === 'domain-experts'} onNav={onNav} badge="4 experts" badgeColor="#0d9488" />
         <NavItem id="exam-audit" label="Exam Admin Audit" icon={FlameIcon} active={activeView === 'exam-audit'} onNav={onNav} badge="New" badgeColor="#EF4444" />
+        <NavItem id="nav-ia" label="Nav IA · Apr 1" icon={LayersIcon} active={activeView === 'nav-ia'} onNav={onNav} badge="★" badgeColor="#534AB7" />
         <NavItem id="analytics" label="Intelligence Analytics" icon={BarChart3Icon} active={activeView === 'analytics'} onNav={onNav} badge="D3+Plot" badgeColor="#0d9488" />
         <NavItem id="nps" label="NPS Intelligence 2025" icon={TrendingUpIcon} active={activeView === 'nps'} onNav={onNav} badge="-47 NPS" badgeColor="#dc2626" />
         <NavItem id="arun-performance" label="Arun Performance" icon={SparklesIcon} active={activeView === 'arun-performance'} onNav={onNav} badge="New" badgeColor="#6d5ed4" />

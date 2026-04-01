@@ -152,6 +152,20 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v5.9',
+    date: '2026-04-01',
+    summary: 'Nav IA deep-dive: full admin-layer role hierarchy (7 roles across 3 tiers), nav merge analysis (14 items classified shared/admin-only/faculty-only/student-only), dual definition of "Sections" (roster cohorts vs exam content blocks) with rename recommendation to Vishaka. New NavIAView component with 4 tabs: Role hierarchy, Nav merge map, What is Sections, Access matrix. ExamManagementView: nav-ia tab added. Sidebar: Nav IA direct entry added. App.tsx: nav-ia route wired. All sourced from 40 Granola sessions + ExamSoft screenshot + system_hierarchy_blueprint.md.',
+    insightCount: 239,
+    sessionsAdded: 0,
+    changedFiles: [
+      'src/views/products/NavIAView.tsx',
+      'src/views/products/ExamManagementView.tsx',
+      'src/components/layout/Sidebar.tsx',
+      'src/App.tsx',
+      'src/data/personas.ts',
+    ],
+  },
+  {
     version: 'v5.8',
     date: '2026-04-01',
     summary: 'IA synthesis from 2 new Exam Management docs (System Hierarchy Blueprint + Navigation Architecture + Phases Walkthrough) + globals.css DS update. 12 new insights: dual-axis architecture, Initiative/Program node, question versioning model (3 save modes), AI shadow tag layer, 4-role navigation model, two-tier QB navigation, student preview modal, bulk action bar, globals.css chip tokens, scoring architecture (partial credit + multi-faculty grading), cross-competitor flat pool validation, sidebar UX requirements. Insights 227 → 239.',

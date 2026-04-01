@@ -6,6 +6,7 @@ import { EXAM_TIMELINE } from '../../data/personas';
 import { Card, CardTitle, MetricCard } from '../../components/ui/Card';
 import { InsightRow, AIStrip, TimelineItemRow, ProgressBar } from '../../components/ui/InsightRow';
 import { Badge } from '../../components/ui/Badge';
+import { NavIAView } from './NavIAView';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid,
@@ -13,7 +14,7 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'exam-management';
-type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view' | 'arun-roadmap' | 'question-bank';
+type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view' | 'arun-roadmap' | 'question-bank' | 'nav-ia';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'question-bank', label: 'Question Bank' },
@@ -30,6 +31,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'scalable-viz', label: 'Scalable Analytics' },
   { id: 'story-view', label: 'Story View' },
   { id: 'arun-roadmap', label: 'Arun 3-Year' },
+  { id: 'nav-ia', label: '★ Nav IA — Apr 1' },
 ];
 
 const scoreDistData = [
@@ -149,8 +151,8 @@ function CR({ feature, es, bb, cv, d2l, ex }: { feature: string; es: string; bb:
   );
 }
 
-export function ExamManagementView() {
-  const [activeTab, setActiveTab] = useState<TabId>('insights');
+export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) {
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab ?? 'insights');
   const product = getProduct(PRODUCT_ID);
   const insights = getInsightsByProduct(PRODUCT_ID);
   if (!product) return null;
@@ -1500,6 +1502,9 @@ export function ExamManagementView() {
             </div>
           </div>
         )}
+        {/* Nav IA — role hierarchy, merge map, sections definition — Apr 1 2026 */}
+        {activeTab === 'nav-ia' && <NavIAView />}
+
     </div>
   );
 }
