@@ -154,7 +154,7 @@ export const VERSION_HISTORY: VersionEntry[] = [
   {
     version: 'v5.9',
     date: '2026-04-01',
-    summary: 'Nav IA deep-dive: full admin-layer role hierarchy (7 roles across 3 tiers), nav merge analysis (14 items classified shared/admin-only/faculty-only/student-only), dual definition of "Sections" (roster cohorts vs exam content blocks) with rename recommendation to Vishaka. New NavIAView component with 4 tabs: Role hierarchy, Nav merge map, What is Sections, Access matrix. ExamManagementView: nav-ia tab added. Sidebar: Nav IA direct entry added. App.tsx: nav-ia route wired. All sourced from 40 Granola sessions + ExamSoft screenshot + system_hierarchy_blueprint.md.',
+    summary: 'Nav IA deep-dive: full admin-layer role hierarchy (7 roles across 3 tiers), nav merge analysis (14 items classified shared/admin-only/faculty-only/student-only), Sections definition corrected (assessment builder tab inside exam config — not a standalone sidebar nav item or roster tool). New NavIAView component with 4 tabs: Role hierarchy, Nav merge map, What is Sections, Access matrix. ExamManagementView: nav-ia tab added. Sidebar: Nav IA direct entry added. App.tsx: nav-ia route wired. Correction applied Apr 1: Sections is where admin divides an exam into content-area blocks (Pulmonology/Cardiology etc) with per-section time limits and nav rules — confirmed by Romit against Granola sessions f5d66e4c, a4625ac7.',
     insightCount: 239,
     sessionsAdded: 0,
     changedFiles: [
