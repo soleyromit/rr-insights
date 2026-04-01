@@ -538,17 +538,19 @@ export function CourseEvalView() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
             {/* Session banner */}
-            <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(14,148,163,0.06)', border: '1px solid rgba(14,148,163,0.25)', borderLeft: '4px solid #0d9488' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#0d9488', marginBottom: 4 }}>Monil — PCE Introduction · Mar 26, 2026</div>
+            <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(237,100,80,0.06)', border: '1px solid rgba(237,100,80,0.3)', borderLeft: '4px solid #e8604a' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#e8604a', marginBottom: 4 }}>⚠ NEXT MILESTONE — Apr 10 Leadership Presentation (Vishaka · David · Aarti)</div>
               <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>
-                PCE is the sales entry point for didactic programs not registered on Prism. End-to-April design target. Engineering handoff May 2026.
+                Deliverables: (1) Draft journey visualizations — not a prototype. (2) Setup template creation workflow. (3) Distribution workflow for course-specific surveys. Design mockups using Exxat DS where possible. Requirement freeze = end of April. Engineering handoff = May 2026.
               </div>
+              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 8 }}>Sources: Monil — PCE Introduction · Mar 26 + Romit&lt;&gt;Monil PCE PRD · Mar 30, 2026</div>
             </div>
 
             {/* Deadline strip */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               {[
-                { label: 'Design deadline', value: 'End of April', sub: 'Full 3-layer scope', color: '#e8604a' },
+                { label: '⚠ Leadership demo', value: 'Apr 10', sub: 'Journey visualizations', color: '#e8604a' },
+                { label: 'Req + design freeze', value: 'Apr 30', sub: 'Full 3-layer scope', color: '#f59e0b' },
                 { label: 'Engineering handoff', value: 'May 2026', sub: 'Spec → dev', color: '#6d5ed4' },
                 { label: 'Strategic value', value: 'Sales entry', sub: 'Non-Prism programs', color: '#0d9488' },
               ].map((m, i) => (

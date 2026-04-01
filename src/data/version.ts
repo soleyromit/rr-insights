@@ -1,11 +1,11 @@
-// Auto-updated by Claude — 2026-03-28
-export const VERSION = '5.6.2';
-export const LAST_UPDATED = '2026-03-28';
-export const LAST_PUSH = 'Claude automated push — 2026-03-28 (v5.6.2: all 31 DS components confirmed generated — Phase 1 in DS sidebar + Phase 2 standalone with preview URLs)';
+// Auto-updated by Claude — 2026-03-31
+export const VERSION = '5.7.0';
+export const LAST_UPDATED = '2026-03-31';
+export const LAST_PUSH = 'Claude automated push — 2026-03-31 (v5.7.0: full Granola sync — all 39 sessions read, 12 new insights from Mar 30 sessions: PCE PRD, DS Update, Justin user interview)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
-export const SKILL_VERSION = '5.6.2';
-export const SESSIONS_SYNCED = 56;
-export const INSIGHTS_TOTAL = 246;
+export const SKILL_VERSION = '5.7.0';
+export const SESSIONS_SYNCED = 39;
+export const INSIGHTS_TOTAL = 227;
 export const PRODUCTS_COVERED = 5;
 export const MAGIC_PATTERNS_PCE = 'https://project-truthful-apricot-326.magicpatterns.app';
 export const MAGIC_PATTERNS_EXAM_ADMIN = 'https://project-rich-macaroni-332.magicpatterns.app';
