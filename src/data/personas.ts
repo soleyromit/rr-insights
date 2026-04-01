@@ -152,6 +152,19 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v5.7',
+    date: '2026-03-31',
+    summary: 'Full Granola sync — all 39 sessions read end-to-end. 12 new insights from Mar 30 sessions: DS Update (rollout sequence locked, ADA Title II gap in Himanshu DS, Apr 1 senior engineer handoff), PCE PRD (FAST integration confirmed, automation-first position, Apr 10 leadership demo deliverables locked: 3 journey flows not a prototype, faculty-vs-faculty analytics first-in-class), Justin user interview (Better Canvas as UX benchmark, students are grade-optimizers, Google Classroom simplicity as design target). CourseEvalView updated with Apr 10 deadline warning banner. Insights 215 → 227.',
+    insightCount: 227,
+    sessionsAdded: 3,
+    changedFiles: [
+      'src/data/insights.ts',
+      'src/data/personas.ts',
+      'src/data/version.ts',
+      'src/views/products/CourseEvalView.tsx',
+    ],
+  },
+  {
     version: 'v5.5',
     date: '2026-03-28',
     summary: 'Arun Performance Tracker v2 (offer letter grounded + raw Granola transcript 791334af): 7 criteria from official offer letter (Kunal Vaishnav Mar 15 2026) mapped to verbatim Arun quotes, evidence, gaps, and dated action plan. 10 direct Arun quotes in expandable panel — not paraphrased. Score rationale per criterion. Radar + ranked bar + velocity + NPS context charts. NPS Intelligence 2025 view: full 1,494-response analysis — student -47.5, faculty -49.1, admin -4.8, SCCE +8, Approve +87.5. Score distribution, bimodal pattern, domain breakdown (Nursing = 47% of volume), 10 detractor themes ranked by frequency, projected lift radar. Question Bank Architecture tab in ExamManagementView: flat pool + Smart Views model, 5 entry methods (including AI gen + ExamSoft import), 5-state status lifecycle, 4 roles × permissions, 7 tag categories, versioning model, competitor comparison (ExamSoft/Canvas/Blackboard/D2L), MP design implications with target dates. Fixed broken NPS_INSIGHTS array structure in insights.ts. Wired new nav items in Sidebar + App.tsx. GitHub deployment fixed: Pages source confirmed as GitHub Actions mode, OIDC workflow restored with correct permissions and concurrency group.',

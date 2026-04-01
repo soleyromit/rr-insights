@@ -97,7 +97,7 @@ export function OverviewView({ onNav }: Props) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
           <h1 style={{ fontSize: 21, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 3, fontFamily: 'var(--rr-serif, Georgia, serif)' }}>Platform Overview</h1>
-          <p style={{ fontSize: 10, color: 'var(--text3)' }}>5 products · 40+ sessions · {INSIGHTS.length} insights · Week of Mar 28, 2026</p>
+          <p style={{ fontSize: 10, color: 'var(--text3)' }}>5 products · 39 sessions synced · {INSIGHTS.length} insights · Updated Mar 31, 2026</p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 7, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
@@ -114,7 +114,7 @@ export function OverviewView({ onNav }: Props) {
       {/* KEY NUMBERS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
         {[
-          { n: INSIGHTS.length, label: 'Insights indexed', sub: '5 products · 40+ sessions', color: '#6d5ed4' },
+          { n: INSIGHTS.length, label: 'Insights indexed', sub: '5 products · 39 sessions', color: '#6d5ed4' },
           { n: criticalCount,   label: 'Critical signals',  sub: 'Need design response now',   color: '#dc2626' },
           { n: platformCount,   label: 'Platform signals',  sub: 'Cross-product patterns',     color: '#b45309' },
           { n: aiCount,         label: 'AI opportunities',  sub: 'Sourced from sessions',       color: '#0d9488' },
