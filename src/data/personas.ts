@@ -152,6 +152,18 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v5.8',
+    date: '2026-04-01',
+    summary: 'IA synthesis from 2 new Exam Management docs (System Hierarchy Blueprint + Navigation Architecture + Phases Walkthrough) + globals.css DS update. 12 new insights: dual-axis architecture, Initiative/Program node, question versioning model (3 save modes), AI shadow tag layer, 4-role navigation model, two-tier QB navigation, student preview modal, bulk action bar, globals.css chip tokens, scoring architecture (partial credit + multi-faculty grading), cross-competitor flat pool validation, sidebar UX requirements. Insights 227 → 239.',
+    insightCount: 239,
+    sessionsAdded: 2,
+    changedFiles: [
+      'src/data/insights.ts',
+      'src/data/personas.ts',
+      'src/data/version.ts',
+    ],
+  },
+  {
     version: 'v5.7',
     date: '2026-03-31',
     summary: 'Full Granola sync — all 39 sessions read end-to-end. 12 new insights from Mar 30 sessions: DS Update (rollout sequence locked, ADA Title II gap in Himanshu DS, Apr 1 senior engineer handoff), PCE PRD (FAST integration confirmed, automation-first position, Apr 10 leadership demo deliverables locked: 3 journey flows not a prototype, faculty-vs-faculty analytics first-in-class), Justin user interview (Better Canvas as UX benchmark, students are grade-optimizers, Google Classroom simplicity as design target). CourseEvalView updated with Apr 10 deadline warning banner. Insights 215 → 227.',
