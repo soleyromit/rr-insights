@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 
 const PRODUCT_ID = 'exam-management';
-type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view' | 'arun-roadmap' | 'question-bank' | 'nav-ia';
+type TabId = 'insights' | 'blueprint' | 'userflows' | 'features' | 'analytics' | 'accessibility' | 'competitive' | 'decisions' | 'gaps' | 'stories' | 'pa-dashboard' | 'scalable-viz' | 'story-view' | 'arun-roadmap' | 'question-bank' | 'analogy';
 const TABS: { id: TabId; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'question-bank', label: 'Question Bank' },
@@ -31,7 +31,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'scalable-viz', label: 'Scalable Analytics' },
   { id: 'story-view', label: 'Story View' },
   { id: 'arun-roadmap', label: 'Arun 3-Year' },
-  { id: 'nav-ia', label: '★ Nav IA — Apr 1' },
+  { id: 'analogy', label: 'Feature Analogies' },
 ];
 
 const scoreDistData = [
@@ -1502,8 +1502,285 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
             </div>
           </div>
         )}
-        {/* Nav IA — role hierarchy, merge map, sections definition — Apr 1 2026 */}
-        {activeTab === 'nav-ia' && <NavIAView />}
+
+        {/* ─── FEATURE ANALOGY MAPPING — added Apr 3, 2026 ─────────────────────── */}
+        {/* Maps every major Exam Management feature to well-known enterprise products */}
+        {/* so the design team can study scalable UX patterns without reinventing them. */}
+        {activeTab === 'analogy' && (() => {
+          const features = [
+            {
+              id: 1,
+              name: 'Question Bank / Repository',
+              exxat: 'Shared vs individual question banks with department/course access controls, nested folders, tagging, versioning.',
+              color: '#6d5ed4',
+              analogies: [
+                { product: 'Google Drive / Dropbox', pattern: 'Nested folder + file management — the mental model most faculty already have', type: 'structure' },
+                { product: 'Notion databases', pattern: 'Tagging, filtering, multiple views of the same data — database thinking, not file thinking', type: 'data' },
+                { product: 'GitHub repos', pattern: 'Versioning, ownership/permissions, PR = approval workflow — the gold standard for collaborative authoring with history', type: 'collab' },
+                { product: 'Confluence', pattern: 'Collaborative knowledge base with spaces = departments — shared ownership at org level', type: 'collab' },
+                { product: 'Gmail smart labels / Spotify playlists / Jira saved filters', pattern: 'Smart Views — dynamic collections built from filter criteria, not manual curation', type: 'views' },
+              ],
+              takeaway: 'Treat the question bank as a database, not a file system. Every question is a row with properties, not a document in a folder. Smart views are saved filter queries — not folders you drag things into.',
+              scalability: 'Folder-only thinking breaks at 10,000+ questions. Tag-based filtering + saved views scale indefinitely. ExamSoft uses folders — that is why power users hit walls.',
+            },
+            {
+              id: 2,
+              name: 'Question as a Work Item',
+              exxat: 'Each question has metadata, tags, status, owner, version history, metrics (point biserial, difficulty %). Review/approval workflow.',
+              color: '#0d9488',
+              analogies: [
+                { product: 'Azure DevOps / VSTS work items', pattern: 'Status workflow, assignee, tags, comments, history, custom fields — the richest work-item model in enterprise software', type: 'workflow' },
+                { product: 'Jira issues / Linear issues', pattern: 'Status transitions (Draft → In Review → Golden = Backlog → In Progress → Done), labels, priority, history log', type: 'workflow' },
+                { product: 'Asana tasks', pattern: 'Assignee, due date, dependency — maps to question owner + review deadline + prerequisite competency', type: 'workflow' },
+                { product: 'GitHub PR review', pattern: 'Parallel reviewers, inline comments, approve/request changes — exact model for question peer review', type: 'collab' },
+                { product: 'SonarQube code quality / A/B test dashboards', pattern: 'Question metrics (p-value, point-biserial, distractor analysis) shown on the work-item detail pane', type: 'data' },
+              ],
+              takeaway: 'Questions are living entities with lifecycles, not static text blobs. Design the detail view like a work item — status pill, assignee avatar, version timeline, inline comments — not a blank form.',
+              scalability: 'Work-item pattern means you can add any metadata field later (e.g., USMLE category, AI confidence score) without redesigning the core entity. Every field is just another property.',
+            },
+            {
+              id: 3,
+              name: 'Tagging System',
+              exxat: 'Flat tagging with 5–7 predefined categories (question type, difficulty, Bloom\'s taxonomy, body parts), universal vs course-specific tags.',
+              color: '#d97706',
+              analogies: [
+                { product: 'Shopify product tags + collections', pattern: 'Tags for flexible search, collections for curated sets — same dual-layer model Exxat needs', type: 'structure' },
+                { product: 'WordPress taxonomies', pattern: 'Categories (hierarchical, controlled) vs tags (flat, freeform) — the distinction between school-defined mandatory tags and faculty personal tags', type: 'data' },
+                { product: 'Figma component properties', pattern: 'Structured select/multi-select on each component — exactly how question properties should work: choose from a list, not type freeform', type: 'data' },
+                { product: 'Stack Overflow tag system', pattern: 'Community-maintained, searchable, autocomplete, synonym groups — the right reference for tag governance at scale', type: 'governance' },
+                { product: 'Notion select/multi-select', pattern: 'Property pane with colored chips — the interaction model faculty will recognize immediately for tagging', type: 'views' },
+              ],
+              takeaway: 'Use structured properties (select/multi-select with a controlled vocabulary) not freeform tags. This makes filtering, reporting, and AI enhancement possible. Freeform tags are a data quality problem waiting to happen.',
+              scalability: 'Freeform tags create chaos at scale ("MCQ" vs "Multiple Choice" vs "mcq" all mean the same thing). Controlled vocabularies with an "Other + suggest" escape hatch plus an AI suggestion layer is the mature pattern.',
+            },
+            {
+              id: 4,
+              name: 'Exam / Assessment Builder',
+              exxat: 'Blueprint-based creation, importing from question bank, collaboration, randomization, sections, mark distribution.',
+              color: '#3b82f6',
+              analogies: [
+                { product: 'Notion page builder / block editors', pattern: 'Sections as blocks — add, reorder, collapse. The assembly metaphor, not the blank canvas metaphor.', type: 'structure' },
+                { product: 'Webflow section builder', pattern: 'Drag sections into a layout — visual assembly with structured components', type: 'structure' },
+                { product: 'Typeform flow builder', pattern: 'Flow-based question sequencing, branching logic — the interaction model for conditional question paths', type: 'workflow' },
+                { product: 'Monday.com / Asana project templates', pattern: 'Blueprint = project template. Start from a blueprint, not a blank exam.', type: 'workflow' },
+                { product: 'GitHub Actions pipeline config', pattern: 'Blueprint as declarative config — define the exam structure as a spec, not by manually placing questions', type: 'data' },
+              ],
+              takeaway: 'The builder is a structured assembly tool, not a blank canvas. Faculty configure a blueprint then let it assemble — they don\'t build from scratch every time. The UI should feel like "fill in the spec" not "build something."',
+              scalability: 'Template/blueprint approach means new exam types (OSCE, practical, adaptive) don\'t require new UIs — just new blueprint configurations. The architecture scales to any assessment type.',
+            },
+            {
+              id: 5,
+              name: 'Exam Delivery / Student Experience',
+              exxat: 'Lockdown browser, accessibility (zoom 100–400%, TTS, STT, keyboard nav), 32 question layout variations, 9 question types.',
+              color: '#ec4899',
+              analogies: [
+                { product: 'Respondus LockDown Browser', pattern: 'Direct competitor — the security baseline Exxat must match. Study what faculty expect from lockdown before designing around it.', type: 'competitor' },
+                { product: 'Duolingo assessment UX', pattern: 'Consumer-grade polish in an assessment context — single question focus, clear progress, celebration on completion', type: 'ux' },
+                { product: 'Coursera / edX quiz interface', pattern: 'Long-form question + options layout familiar to students in higher education — the mental model they arrive with', type: 'ux' },
+                { product: 'Microsoft Office accessibility checker / Apple VoiceOver', pattern: 'Accessibility as a built-in layer, not a third-party add-on — the Pearson model Exxat is targeting', type: 'a11y' },
+                { product: 'Wolfram Alpha embedded / Google Sheets formula bar', pattern: 'Scientific calculator as an embedded tool, not an external window — must work within lockdown browser constraints', type: 'tool' },
+              ],
+              takeaway: 'The exam environment IS the product for students. It must be as polished as a consumer app (Duolingo, not Canvas) while meeting WCAG 2.1 AA. Every interaction — flagging, crossing out, zooming — must feel intentional.',
+              scalability: 'Accommodation features designed as platform-level profiles (not per-exam config) scale to any assessment type. One profile, applied across every exam automatically.',
+            },
+            {
+              id: 6,
+              name: 'Grading & Review',
+              exxat: 'Manual correction, rubric-based grading, parallel grading, anonymous grading, curve grading, bonus marks, question elimination.',
+              color: '#16a34a',
+              analogies: [
+                { product: 'Turnitin', pattern: 'Inline annotation + score — the grader stays in context, does not switch between a submission view and a grade entry form', type: 'ux' },
+                { product: 'Canvas SpeedGrader', pattern: 'Sequential grading workflow — next student, previous student, grade in one panel. The efficiency benchmark for manual grading.', type: 'workflow' },
+                { product: 'Google Classroom rubrics', pattern: 'Rubric displayed alongside the submission — faculty clicks a cell, score is calculated automatically', type: 'workflow' },
+                { product: 'GitHub code review', pattern: 'Parallel reviewers = parallel graders. Each reviewer sees the submission independently until scores are reconciled. Exact model for anonymous parallel grading.', type: 'collab' },
+                { product: 'Greenhouse scorecard builder', pattern: 'Rubric as a reusable template applied across all candidates — maps to rubric templates applied across all students', type: 'governance' },
+              ],
+              takeaway: 'Grading is a review workflow, not a data entry screen. Study how code review tools handle parallel reviewers and conflict resolution. The faculty should not see a form — they should see the student\'s submission with grading overlaid.',
+              scalability: 'Rubric as a reusable template (not per-assessment config) enables institution-wide grading consistency. One rubric update propagates to all future exams that reference it.',
+            },
+            {
+              id: 7,
+              name: 'Reporting & Analytics',
+              exxat: 'Question-level, assessment-level, student-level, cohort-level reports, competency tracking.',
+              color: '#6d5ed4',
+              analogies: [
+                { product: 'Mixpanel / Amplitude', pattern: 'Event-based product analytics with drill-down — slice by dimension, funnel from cohort to individual, retention curves. The interaction model for assessment analytics.', type: 'data' },
+                { product: 'Tableau / Power BI', pattern: 'Interactive dashboard with filters, drill-down, cross-filter — not static tables or PDF exports', type: 'data' },
+                { product: 'Datadog performance monitoring', pattern: 'Item analysis as performance monitoring — p-value and point-biserial are the latency and error-rate of question quality', type: 'data' },
+                { product: 'Lattice / 15Five OKR tracking', pattern: 'Competency mapping = OKR alignment. Student competency → program goal → accreditation standard. Visualize the alignment across levels.', type: 'governance' },
+                { product: 'LinkedIn Learning skill matrix', pattern: 'Competency × student grid with completion status — the heat map format for program-wide competency reporting', type: 'views' },
+              ],
+              takeaway: 'Reports should be interactive dashboards with drill-down, not static PDF exports. The Program Director\'s question is always "which students, which competencies, by when" — the UI must let them ask that question themselves.',
+              scalability: 'Dimension-based analytics (slice by competency, cohort, time period, question tag) scale to any report request without building new report templates. The dimensions are the reports.',
+            },
+            {
+              id: 8,
+              name: 'AI Features',
+              exxat: 'AI question generation from syllabus, conversational UI with version history, auto-assessment creation, AI-enhanced tagging, context-aware generation.',
+              color: '#e8604a',
+              analogies: [
+                { product: 'GitHub Copilot', pattern: 'AI in context — suggests, faculty accepts or dismisses. The "suggest then confirm" model. AI never replaces, always proposes.', type: 'ai' },
+                { product: 'Notion AI (generate from context)', pattern: 'AI understands the page/document context before generating — maps to AI reading the syllabus before generating questions', type: 'ai' },
+                { product: 'Grammarly', pattern: 'AI enhancement layer on top of existing content — the model for AI-enhanced tagging and question improvement suggestions', type: 'ai' },
+                { product: 'ChatGPT / Claude conversational UI', pattern: 'Conversational generation with version history — the interaction model for iterative AI question generation with faculty feedback', type: 'ai' },
+                { product: 'Gmail auto-categorization / Google Photos auto-tagging', pattern: 'AI shadow tags that appear as suggestions, not mandatory fields — the pattern for AI-enhanced tagging that preserves faculty control', type: 'ai' },
+              ],
+              takeaway: 'AI as assistant, not replacement. Always show confidence levels and let faculty override. The Copilot "suggest then confirm" pattern is the gold standard. Never force an AI output — always propose it.',
+              scalability: 'AI features designed as a layer (not hardcoded per feature) can be extended to any product surface — question gen today, assessment scaffolding tomorrow, remediation path generation next.',
+            },
+            {
+              id: 9,
+              name: 'Import / Migration',
+              exxat: 'Importing questions from ExamSoft, bulk import from Word/Excel/QTI.',
+              color: '#0d9488',
+              analogies: [
+                { product: 'Notion import from Confluence/Evernote', pattern: 'Step-by-step wizard: select source → map fields → preview → import. The migration is a product moment, not a support ticket.', type: 'workflow' },
+                { product: 'Figma import from Sketch', pattern: 'Fidelity-first import — show exactly what did and did not translate. Faculty need to know what they\'re getting before committing.', type: 'workflow' },
+                { product: 'Salesforce data import wizard', pattern: 'Map source fields → Exxat fields — visual field mapping UI that non-technical users can operate without a spreadsheet', type: 'workflow' },
+                { product: 'GitHub repo migration', pattern: 'Full history preserved — version history, authorship, comments. A question imported from ExamSoft should carry its exam history with it.', type: 'data' },
+              ],
+              takeaway: 'Migration is a product feature, not an afterthought. The import wizard IS the onboarding experience for switching customers. It must be self-service and show a preview before any data is committed.',
+              scalability: 'A generic import framework (map source fields → Exxat fields) handles ExamSoft today, any future competitor migration tomorrow. Build the mapper, not the ExamSoft-specific importer.',
+            },
+            {
+              id: 10,
+              name: 'Collaboration & Permissions',
+              exxat: 'Owner approval for modifications, shared vs individual banks, department-level access controls.',
+              color: '#d97706',
+              analogies: [
+                { product: 'Google Workspace sharing', pattern: 'Viewer / Commenter / Editor / Owner — visible inline ("Shared with 3 people"). Sharing status should be apparent without opening settings.', type: 'structure' },
+                { product: 'Figma team permissions', pattern: 'Org → Team → Project → File — maps to Institution → Department → Course → Question. Permission inheritance at each level.', type: 'governance' },
+                { product: 'GitHub org / team / repo permissions', pattern: 'Org-level role + team membership + repo-level override — the most nuanced permission model to study for edge cases', type: 'governance' },
+                { product: 'Notion workspace permissions', pattern: 'Page-level sharing with visible member list — the UI pattern that makes permissions feel manageable, not bureaucratic', type: 'ux' },
+                { product: 'Jira workflow transitions / GitHub branch protection', pattern: 'Approval workflow — only Dept Head can approve. Enforced in the UI, not just in policy.', type: 'workflow' },
+              ],
+              takeaway: 'Permission model must be visible in the UI — who can see this? who can edit? Study how Google Drive shows sharing status inline on every item. Hidden permissions create confusion and support tickets.',
+              scalability: 'Role-based access designed at the platform level (not per-feature) prevents permission fragmentation. One permission model for questions, assessments, and grade reports — not three separate systems.',
+            },
+            {
+              id: 11,
+              name: 'LMS Integration',
+              exxat: 'Canvas / LMS integration via LTI, grade sync.',
+              color: '#3b82f6',
+              analogies: [
+                { product: 'Stripe API / Webhooks', pattern: 'API-first architecture — LTI is the auth handshake (like OAuth), webhooks push grade data back the moment an exam is submitted. No polling.', type: 'data' },
+                { product: 'Slack app integrations', pattern: 'Grade sync should feel like a notification arriving — faculty does nothing extra, data just appears in Canvas', type: 'ux' },
+                { product: 'Zapier / Make automation', pattern: 'Trigger → Action model for grade sync: exam submitted → grade appears in Canvas gradebook. Zero-touch for faculty after initial setup.', type: 'workflow' },
+                { product: 'Salesforce AppExchange', pattern: 'Certified integration marketplace — LTI integration as a first-class certified connector, not a configuration form buried in settings', type: 'governance' },
+                { product: 'Figma plugin ecosystem', pattern: 'Plugins that feel native — LTI launch should feel like Canvas is launching Exxat as a built-in tool, not opening a new window', type: 'ux' },
+              ],
+              takeaway: 'Integration should feel seamless — grades appear in the LMS without faculty doing anything extra after a one-time setup. The setup itself should be a certified, documented wizard, not a support ticket.',
+              scalability: 'API-first + webhook architecture means any new LMS (D2L, Blackboard, Moodle) can be added by implementing the same webhook target. No redesign of the integration layer.',
+            },
+            {
+              id: 12,
+              name: 'Curriculum Mapping',
+              exxat: 'Three-way matching: accreditation standards ↔ curriculum ↔ assessments. Blueprint cells linked to NCCPA, ARC-PA, CAPTE outcomes.',
+              color: '#6d5ed4',
+              analogies: [
+                { product: 'Jira epic → story → subtask hierarchy', pattern: 'Standard → Program Outcome → Assessment → Question — the same parent-child hierarchy. Drill down, roll up.', type: 'structure' },
+                { product: 'OKR alignment tools (Lattice, Gtmhub)', pattern: 'Company → Team → Individual OKR alignment — maps directly to Accreditation Standard → Program Goal → Student Assessment. Visualize coverage gaps.', type: 'governance' },
+                { product: 'Dependency graph / network diagrams in PM tools', pattern: 'Curriculum map as a graph — competencies are nodes, assessments are edges. Missing edges = coverage gaps. ExamSoft shows this as a table; Exxat should show it as a graph.', type: 'data' },
+                { product: 'Excel pivot tables (current state at every program)', pattern: 'The thing Exxat must replace — three-axis pivot of standard × course × question is the manual version of what Exxat automates', type: 'competitor' },
+              ],
+              takeaway: 'Curriculum mapping is a graph/relationship problem, not a table problem. Study how OKR tools visualize alignment across levels. The key insight: faculty need to see coverage gaps (unmapped standards) not just what is mapped.',
+              scalability: 'Graph-based data model handles any depth of curriculum hierarchy (CAPTE → program outcome → course objective → assessment question) and any accreditation standard without a schema change.',
+            },
+          ];
+
+          const typeColors: Record<string, string> = {
+            structure: '#6d5ed4', data: '#0d9488', collab: '#3b82f6', workflow: '#d97706',
+            views: '#ec4899', governance: '#16a34a', ux: '#e8604a', a11y: '#0d9488',
+            tool: '#6b7280', competitor: '#dc2626', ai: '#6d5ed4',
+          };
+          const typeLabels: Record<string, string> = {
+            structure: 'Structure', data: 'Data model', collab: 'Collaboration', workflow: 'Workflow',
+            views: 'Views', governance: 'Governance', ux: 'UX pattern', a11y: 'Accessibility',
+            tool: 'Tooling', competitor: 'Competitor', ai: 'AI pattern',
+          };
+
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 960, margin: '0 auto' }}>
+              {/* Header / framing */}
+              <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
+                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Feature Analogy Mapping — Exam Management · Apr 3, 2026</div>
+                <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.65, margin: 0 }}>
+                  Every major Exam Management feature maps to a well-known enterprise product that has already solved the UX at scale.
+                  Use these analogies to study proven patterns before designing from scratch.
+                  The design takeaway and scalability note for each feature are the actionable outputs — not the analogies themselves.
+                </p>
+              </div>
+
+              {/* Feature cards */}
+              {features.map(f => (
+                <div key={f.id} style={{ borderRadius: 14, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                  {/* Card header */}
+                  <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border)', borderTop: `3px solid ${f.color}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: f.color, background: `${f.color}15`, padding: '2px 7px', borderRadius: 6 }}>
+                          {String(f.id).padStart(2, '0')}
+                        </span>
+                        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', fontFamily: 'DM Serif Display, Georgia, serif' }}>{f.name}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.5 }}>{f.exxat}</div>
+                    </div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', flexShrink: 0 }}>{f.analogies.length} analogies</div>
+                  </div>
+
+                  {/* Analogies grid */}
+                  <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>Product analogies — study these UX patterns</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {f.analogies.map((a, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '8px 10px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                          <div style={{ flexShrink: 0, marginTop: 1 }}>
+                            <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 4, background: `${typeColors[a.type] ?? '#6b7280'}15`, color: typeColors[a.type] ?? '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                              {typeLabels[a.type] ?? a.type}
+                            </span>
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{a.product}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.5 }}>{a.pattern}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Design takeaway + scalability note */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+                    <div style={{ padding: '12px 20px', borderRight: '1px solid var(--border)', background: `${f.color}06` }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: f.color, marginBottom: 6 }}>Design takeaway</div>
+                      <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>{f.takeaway}</div>
+                    </div>
+                    <div style={{ padding: '12px 20px', background: 'rgba(109,94,212,0.03)' }}>
+                      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Scalability note</div>
+                      <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>{f.scalability}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Summary reference panel */}
+              <div style={{ padding: '16px 20px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Pattern type legend</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {Object.entries(typeLabels).map(([k, v]) => (
+                    <span key={k} style={{ fontSize: 10, fontWeight: 600, padding: '3px 9px', borderRadius: 20, background: `${typeColors[k]}15`, color: typeColors[k] }}>{v}</span>
+                  ))}
+                </div>
+                <div style={{ marginTop: 14, fontSize: 11, color: 'var(--text3)', lineHeight: 1.6 }}>
+                  <strong style={{ color: 'var(--text2)' }}>How to use this view:</strong>{' '}
+                  Before designing a new feature area, read the analogies for that feature and open 1–2 of the referenced products.
+                  Study how they handle the specific pattern (not the product as a whole).
+                  Then apply the design takeaway to the Exxat context.
+                  The scalability note flags the architectural decision that determines whether the feature survives 10× usage.
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
     </div>
   );
