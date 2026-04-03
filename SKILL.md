@@ -1,7 +1,7 @@
 ---
 name: rr-insights
-version: 5.0.0
-last_updated: 2026-03-26
+version: 5.5.0
+last_updated: 2026-03-28
 author: Romit Soley, Product Designer II, Exxat
 description: >
   The cohesive intelligence agency for clinical and didactic education product design.
@@ -10,7 +10,7 @@ description: >
   and staff designer mentor across all 5 Exxat products.
 ---
 
-# rr-insights SKILL.md v5.0
+# rr-insights SKILL.md v5.5
 ## The intelligence agency for a Staff Product Designer in healthcare education SaaS.
 
 ---
@@ -114,6 +114,7 @@ Post_course_evaluation_survey_tool.docx: PCE survey tool spec
 post_course_eval_primer_v2__1_.docx: PCE primer v2
 PXL_20260320_*.jpg: Whiteboard photos from Mar 20 accessibility session
 SKILL_v4_0_0.md: Previous skill version for reference
+weekly-report-2026-03-27.html: Executive NPS + session intelligence weekly report for Aarti (Mar 27, 2026)
 
 ---
 
@@ -127,6 +128,9 @@ AARTI (CEO):
 - Do not reduce accessibility scope. "Don't reduce scope from day one." (f29a990d)
 - Tagging = post-exam competency analytics. "After the test it tells you: strong in logic, weak in analytical." (f29a990d)
 - AI everywhere on admin side. Faculty time reduction is the primary metric. (791334af via Arun)
+- Vishaka is day-to-day PM lead for Exam Management. Romit's primary PM partner. (Arun, 791334af)
+- Offer letter performance criteria (Kunal Vaishnav, Mar 15 2026) tracked in ArunPerformanceView: requirements alignment, collaboration with PM, prototype delivery by Apr 17, accessibility implementation, design system velocity, stakeholder communication, cross-product thinking.
+- Prototypes by Apr 17 demo = highest-risk criterion. Vishaka sync + Thursday weekly are Apr 1 actions.
 - Signal type: Executive mandate. Non-negotiable.
 
 KUNAL (COO):
@@ -294,6 +298,10 @@ Confirmed design decisions (all from raw transcripts, do not override without ne
 23. Design system is NOT mandated by Arun. Speed of delivery > conformity. (791334af)
 24. Vishaka is daily authority. Nipun is junior PM. (Arun, 791334af)
 25. Marks and weightage system (marks_weightage_features.md full spec)
+26. React rebuild confirmed — new frontend architecture (Mar 23-27 sessions)
+27. 3-year roadmap locked (Mar 23-27 sessions)
+28. QB Architecture: flat pool + Smart Views, 4 roles (Author/Reviewer/Consumer/Admin), status lifecycle (Draft → Ready → Active → In Review → Approved → Update Available → Locked), 7 tag categories — all documented in QB Architecture tab
+29. Anticipatory AI pattern confirmed: system pre-generates next likely action before user requests it (Mar 23-27 sessions)
 
 Missing from current design (not yet built):
 - Marks and weightage UI (full spec in marks_weightage_features.md)
@@ -307,18 +315,23 @@ NPS baseline: 2/5. 95,000+ annual support tickets.
 Q2 strategy: Template-first entry. 80-85% of creation is template clone. (Akshit, 19c032d2)
 
 Critical signals not yet fully designed:
+- [CRITICAL] Simulator/preview before publish — 2-3 month error discovery lag is confirmed (Harsha, 9f1f5f4f). Highest-severity FaaS gap.
 - Headless architecture: FaaS components must inherit host module visual language (Harsha, 9f1f5f4f)
-- Simulator/preview before publish to eliminate 2-3 month error lag (Harsha, 9f1f5f4f)
 - Structured dropdown autocomplete for tag types replacing free-text (Harsha, 9f1f5f4f)
 - Inline validation on all fields with visible limits (Prasanjit, 13352a23)
 - Section color coding restored (Prasanjit, 13352a23)
 - 3-pane builder accessibility issue: use linear wizard instead (Aarti, f29a990d)
 
+Q2 Phase 1 scope: internal users only. Self-service rollout after Phase 1 validation. (Akshit, 19c032d2)
+
 ### Course & Faculty Evaluation (PCE)
-Status: New module. PCE lives inside surveys module as premium tile.
+Status: New workstream opened (Mar 2026). PCE lives inside surveys module as premium tile.
 Key decision: PCE = special kind of survey (Vishaka, bde86866)
 Entry points: (1) surveys module for admins, (2) inside each course for faculty
 Separate question sets for didactic vs clinical required (David/Marquette, bde86866)
+Architecture: 3-layer model (collection → analysis → reporting)
+AI differentiator: theme extraction from open-text responses (confirmed SWOT advantage over Blue/Qualtrics)
+Market sizing: $K/yr displacement opportunity per institution replacing external survey tools
 
 ### Skills Checklist
 Status: Q2-Q4 scope.
@@ -531,6 +544,19 @@ Supporting: Question reuse rate, first-pass publish rate (% that pass accessibil
 FaaS 2.0 north star: Support ticket volume. Current: 95,000/yr. Target: measurable reduction after governance model.
 Supporting: NPS 2/5 to 3/5, self-service adoption rate, configuration error rate.
 
+### NPS 2025 Intelligence (1,494 responses — full dataset)
+
+Student NPS: -47.5 (1,282 responses, 65% detractors)
+Faculty NPS: -49.1
+Admin NPS: -4.8 (Admin avg score 6.76 vs Student 4.86)
+Sites NPS: +8
+Approve NPS: +87.5
+
+Pattern: Bimodal hate-or-tolerate. Not neutral. Students either hate it or tolerate it — no enthusiasm.
+Top detractor themes tracked in NPSView (10 themes).
+Approve benchmark (+87.5) is the proof that clinical placement module can achieve promoter-majority NPS when the product fits the workflow.
+Source: NPS_2025_Textual_Responses_1.xlsx + weekly-report-2026-03-27.html
+
 Course Eval north star: Surveys migrated from external tools. Current: 7 external. Target: 3+ migrated.
 Supporting: Response rate, faculty satisfaction, PD time saved on reporting.
 
@@ -595,6 +621,8 @@ Every Granola session processed produces: evidence that work is research-grounde
 5. Add to insights.ts with unique IDs
 6. Check project attachments for any not yet referenced in current SKILL.md section 2
 7. Push to GitHub if any updates made
+
+Current state (as of Mar 28, 2026): 56 sessions synced, 195 insights, 17 views.
 
 ### Query processing protocol:
 
