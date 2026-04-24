@@ -24,6 +24,7 @@ import { ExamAdminAuditView } from './views/products/ExamAdminAuditView';
 import { AnalyticsView } from './views/AnalyticsView';
 import { ArunPerformanceView } from './views/ArunPerformanceView';
 import { NPSView } from './views/NPSView';
+import { NarrativeView } from './views/NarrativeView';
 import type { ProductId } from './types';
 
 const PRODUCT_IDS = new Set<ProductId>(['exam-management','faas','course-eval','skills-checklist','learning-contracts']);
@@ -54,6 +55,7 @@ export function App() {
     if (activeView === 'analytics')         return <AnalyticsView />;
     if (activeView === 'arun-performance') return <ArunPerformanceView />;
     if (activeView === 'nps')              return <NPSView />;
+    if (activeView === 'narrative')        return <NarrativeView onNav={handleNav} />;
     if (activeView === 'nav-ia')           return <ExamManagementView initialTab="nav-ia" />;
     // Product deep-dives — each now has its own dedicated view
     if (activeView === 'exam-management')  return <ExamManagementView />;

@@ -24,36 +24,36 @@ interface Props { onNav: (view: string) => void; }
 
 const STORY_BEATS = [
   {
-    id: 'april17', urgency: 'critical' as const,
-    label: 'APRIL 17 — 20 DAYS',
-    headline: 'Three prototypes due. None started.',
-    subhead: 'Aarti confirmed: test-taker experience, faculty interface, and admin tools must be written + prototyped by April 17. This is the first real public checkpoint.',
-    action: 'Open Exam Management', nav: 'exam-management',
-    accentColor: '#dc2626', bgColor: 'rgba(220,38,38,0.05)',
+    id: 'narrative', urgency: 'critical' as const,
+    label: 'START HERE — CONNECT THE DOTS',
+    headline: 'Five arguments about why the next design decisions matter more than they appear.',
+    subhead: '35 Granola sessions + 1,282 NPS responses + 3 user interviews read as one document. What the signals mean together — not separately.',
+    action: 'Read the full narrative →', nav: 'narrative',
+    accentColor: '#6d5ed4', bgColor: 'rgba(109,94,212,0.05)',
   },
   {
-    id: 'ada', urgency: 'critical' as const,
-    label: 'APRIL 24 — ADA TITLE II HARD DEADLINE',
-    headline: 'Legal, not a roadmap item.',
-    subhead: 'ADA Title II goes into law April 24. Everything released must be accessible from day one. No ZoomText, no JAWS reliance — all affordances must be platform-embedded. Pearson/GRE/SAT is the benchmark.',
-    action: 'Exam accessibility signals', nav: 'exam-management',
-    accentColor: '#b45309', bgColor: 'rgba(180,83,9,0.05)',
+    id: 'qb', urgency: 'critical' as const,
+    label: 'ACTIVE — QUESTION BANK DESIGN',
+    headline: 'Access model finalized. Arti review next week.',
+    subhead: '4-user access model confirmed. Archive not delete. Draft/saved versioning. 3-tier attributes system. Smart Views scoped to assessment creation, not the bank. Design must be Vishaka-approved before prototype.',
+    action: 'Open Exam Management', nav: 'exam-management',
+    accentColor: '#8b7ff5', bgColor: 'rgba(139,127,245,0.05)',
+  },
+  {
+    id: 'nps', urgency: 'critical' as const,
+    label: 'NPS 2025 — FACULTY -49.1 · STUDENT -47.5',
+    headline: 'Faculty NPS is worse than student NPS. Power users are the most dissatisfied.',
+    subhead: 'Navigation/findability: 218 complaints. Mobile UX: 167. Preceptor form length: 134. Compliance false positives: 98. These are not feature requests — they are architecture failures.',
+    action: 'Read NPS Intelligence', nav: 'nps',
+    accentColor: '#dc2626', bgColor: 'rgba(220,38,38,0.05)',
   },
   {
     id: 'pce', urgency: 'high' as const,
-    label: 'COURSE EVAL — DESIGN DUE END OF APRIL',
-    headline: 'All open questions answered. Design can begin.',
-    subhead: '18 open questions resolved. 3-layer architecture confirmed: template → distribution → AI analytics. Competitors (Explorance Blue, Watermark) only do math. Exxat differentiates with AI sentiment synthesis and accreditation mapping.',
+    label: 'COURSE EVAL — DESIGN BEGINS JUNE 1',
+    headline: 'Anthology fails to show all instructors. The bar is low. Exxat can clear it.',
+    subhead: 'Dr. Wu missing from initial grid. Role context unlabeled. Daily email reminders cause alert fatigue. Three-tier eval model confirmed. AI sentiment analysis is the differentiation — no explicit AI labeling.',
     action: 'Open Course Eval', nav: 'course-eval',
-    accentColor: '#2ec4a0', bgColor: 'rgba(46,196,160,0.05)',
-  },
-  {
-    id: 'nps', urgency: 'high' as const,
-    label: 'NPS 2025 — -47 PLATFORM-WIDE',
-    headline: 'Same 3 complaints across every product.',
-    subhead: '"No task list on login." "4 ways to get there — only 1 works." "Twice as many clicks as V3." These are not feature requests. They are navigation architecture failures that require a design response.',
-    action: 'Read NPS Intelligence', nav: 'nps',
-    accentColor: '#dc2626', bgColor: 'rgba(220,38,38,0.05)',
+    accentColor: '#0d9488', bgColor: 'rgba(13,148,136,0.05)',
   },
 ];
 
@@ -68,10 +68,10 @@ const URGENCY_LABEL: Record<string, string> = { fire: 'CRITICAL', warn: 'HIGH', 
 const URGENCY_DOT:  Record<string, string> = { fire: '#dc2626', warn: '#b45309', ok: '#16a34a' };
 
 const THIS_WEEK = [
-  { label: 'Exam QB design — smart views + tagging',  due: 'Sprint 1 · Apr 7',  color: '#8b7ff5' },
-  { label: 'Exam taker accessibility audit + WCAG map', due: 'Before Apr 24',   color: '#dc2626' },
-  { label: 'PCE template + distribution layer',        due: 'End of April',      color: '#2ec4a0' },
-  { label: 'FaaS self-service Phase 1 (internal)',     due: 'Q2 end',            color: '#f5a623' },
+  { label: 'QB access model + attributes — Arti review pending',  due: 'Next week',        color: '#8b7ff5' },
+  { label: 'Vishaka alignment before any new prototype work',      due: 'Process gate',     color: '#dc2626' },
+  { label: 'PCE: Spec freeze end of May, design June 1',          due: 'June 1',           color: '#0d9488' },
+  { label: 'Design system v1 sign-off with Himanshu → Arti',      due: 'Before dev build', color: '#f5a623' },
 ];
 
 const PLATFORM_SIGNALS = [
@@ -97,7 +97,7 @@ export function OverviewView({ onNav }: Props) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
           <h1 style={{ fontSize: 21, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 3, fontFamily: 'var(--rr-serif, Georgia, serif)' }}>Platform Overview</h1>
-          <p style={{ fontSize: 10, color: 'var(--text3)' }}>5 products · 39 sessions synced · {INSIGHTS.length} insights · Updated Mar 31, 2026</p>
+          <p style={{ fontSize: 10, color: 'var(--text3)' }}>5 products · 35 sessions synced (Apr 23) · {INSIGHTS.length} insights · v6.0</p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 7, background: 'var(--bg2)', border: '1px solid var(--border)' }}>

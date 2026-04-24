@@ -10,6 +10,7 @@ const LABELS: Record<string, string> = {
   'course-eval': 'Course & Faculty Eval', 'skills-checklist': 'Skills Checklist',
   'learning-contracts': 'Learning Contracts', personas: 'Persona map',
   themes: 'Theme clusters', roadmap: 'Roadmap', portfolio: 'Staff signal', stakeholder: 'Stakeholder deck',
+  narrative: 'Connect the Dots — 5 Arguments',
 };
 
 export function Topbar({ activeView }: Props) {
