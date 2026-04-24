@@ -152,6 +152,17 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v6.0',
+    date: '2026-04-23',
+    summary: 'Comprehensive sync: 35 Granola sessions (Mar 24 - Apr 23) + NPS 2025 full dataset (1,494 responses across Admin/Faculty/Student) + Fall 2025 student tracker + ExamSoft/Canvas competitive demos. 37 new insights: QB access model (4 roles), archive vs delete decision, 3-tier attribute system, Cohere Aug/Dec milestones, PCE 3-tier eval model, PCE distribution workflow, Anthology UX gaps (Dr. Wu missing from grid, role context failure), NPS scores (Admin -4.8, Faculty -49.1, Student -47.5), student verbatim theme clusters, Canvas analytics gap (no cross-semester item analysis), FaaS patient log regressions (lost color coding, validation timing), 3-year roadmap confirmed (Year 1 beat LMS free, Year 2 match ExamSoft paid, Year 3 AI proctoring). New design process: verbal alignment → Vishaka approval → prototype. Vishal (senior PM) joining. Insights 164 total.',
+    insightCount: 276,
+    sessionsAdded: 35,
+    changedFiles: [
+      'src/data/insights.ts',
+      'src/data/personas.ts',
+    ],
+  },
+  {
     version: 'v5.9',
     date: '2026-04-01',
     summary: 'Nav IA deep-dive: full admin-layer role hierarchy (7 roles across 3 tiers), nav merge analysis (14 items classified shared/admin-only/faculty-only/student-only), Sections definition corrected (assessment builder tab inside exam config — not a standalone sidebar nav item or roster tool). New NavIAView component with 4 tabs: Role hierarchy, Nav merge map, What is Sections, Access matrix. ExamManagementView: nav-ia tab added. Sidebar: Nav IA direct entry added. App.tsx: nav-ia route wired. Correction applied Apr 1: Sections is where admin divides an exam into content-area blocks (Pulmonology/Cardiology etc) with per-section time limits and nav rules — confirmed by Romit against Granola sessions f5d66e4c, a4625ac7.',
