@@ -152,6 +152,18 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v6.1',
+    date: '2026-05-04',
+    summary: 'Counter resync: version.ts INSIGHTS_TOTAL corrected from stale 239 to live 307. Session count standardized to 35 across all views (OverviewView line 117 was showing 39, now consistent). Version badge updated to v6.1. No new insights added — this is a metadata integrity fix.',
+    insightCount: 307,
+    sessionsAdded: 0,
+    changedFiles: [
+      'src/data/version.ts',
+      'src/data/personas.ts',
+      'src/views/OverviewView.tsx',
+    ],
+  },
+  {
     version: 'v6.0',
     date: '2026-04-23',
     summary: 'Comprehensive sync: 35 Granola sessions (Mar 24 - Apr 23) + NPS 2025 full dataset (1,494 responses across Admin/Faculty/Student) + Fall 2025 student tracker + ExamSoft/Canvas competitive demos. 37 new insights: QB access model (4 roles), archive vs delete decision, 3-tier attribute system, Cohere Aug/Dec milestones, PCE 3-tier eval model, PCE distribution workflow, Anthology UX gaps (Dr. Wu missing from grid, role context failure), NPS scores (Admin -4.8, Faculty -49.1, Student -47.5), student verbatim theme clusters, Canvas analytics gap (no cross-semester item analysis), FaaS patient log regressions (lost color coding, validation timing), 3-year roadmap confirmed (Year 1 beat LMS free, Year 2 match ExamSoft paid, Year 3 AI proctoring). New design process: verbal alignment → Vishaka approval → prototype. Vishal (senior PM) joining. Insights 164 total.',
