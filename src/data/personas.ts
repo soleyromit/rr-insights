@@ -152,6 +152,18 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v7.0',
+    date: '2026-05-09',
+    summary: '36 new insights from 18 Granola sessions Apr 9 - May 8 2026. Covers Canvas/ExamSoft/Anthology competitive signals, QB architecture final decisions, PCE full scope confirmation, AI question creation modes, curricular assessment loop model, live monitoring architecture, 3-role Phase 1 simplification, dev alignment crisis diagnosis, course eval cohort dashboard framework, base entity requirements.',
+    insightCount: 203,
+    sessionsAdded: 18,
+    changedFiles: [
+      'src/data/insights.ts',
+      'src/data/version.ts',
+      'src/data/personas.ts',
+    ],
+  },
+  {
     version: 'v6.1',
     date: '2026-05-04',
     summary: 'Counter resync: version.ts INSIGHTS_TOTAL corrected from stale 239 to live 307. Session count standardized to 35 across all views (OverviewView line 117 was showing 39, now consistent). Version badge updated to v6.1. No new insights added — this is a metadata integrity fix.',
