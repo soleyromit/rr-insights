@@ -37,4 +37,15 @@ Warm paper neutrals from `src/index.css`: `--bg #faf9f7`, surfaces `#fff`, borde
 
 ## Enforcement
 
-`node <impeccable>/cli/bin/cli.js detect <changed files>` must return 0 findings on new/rebuilt surfaces before push. Legacy pre-audit views are exempt until their P4 rebuild, at which point they adopt this world.
+Two design skills govern this repo; where they and the brief disagree, **the brief wins** (both skills' own rule).
+
+**Impeccable** (pbakaus/impeccable): `bash scripts/design-check.sh` runs its 60-rule deterministic detector and must return 0 findings on new/rebuilt surfaces before push. Legacy pre-audit views are exempt until their P4 rebuild, at which point they adopt this world.
+
+**taste-skill** (Leonxlnx/taste-skill): guidance layer, no CLI. Its configuration for this product:
+
+- **Dials: `DESIGN_VARIANCE 4 / MOTION_INTENSITY 3 / VISUAL_DENSITY 5`** — the trust-first data-tool preset. This is a research instrument for accreditation-adjacent work; calm layout, minimal motion, honest density.
+- **Shape lock (documented rule)**: containers and figures 10px radius; nested evidence cards 6px; chips and small pills full-radius. Nothing else.
+- **Color lock**: one accent (`#6d5ed4`) for action/selection across the whole app; severity and product hues are data encodings, not accents.
+- **Eyebrow ceiling**: max 1 small-caps label per 3 content sections; nav section labels in the sidebar are exempt (navigation, not section headers).
+- **Mandatory mechanics adopted**: `prefers-reduced-motion` guard (global), `:active` tactile press on interactive elements (`.press`), skeleton-over-spinner if async loading ever appears, label-above-input for any future forms, WCAG AA contrast on every control.
+- **Resolved conflicts, with rationale**: (1) taste-skill discourages serif display as a default reach; this world keeps DM Serif Display because the brief pins a genuinely editorial/publication identity — taste-skill's own stated exception — and its banned serifs (Fraunces, Instrument Serif) are not used. (2) Its warm-paper palette ban targets premium-consumer briefs reaching for cream+brass by habit; this palette is pinned by the rr-insights skill for an internal research journal and uses no brass/clay/oxblood accents. Neither exception licenses spreading these choices to other projects.

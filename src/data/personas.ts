@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v13.3',
+    date: '2026-07-28',
+    summary: 'taste-skill added as second design layer: dials 4/3/5 (trust-first data tool), global reduced-motion guard, tactile press feedback, shape + color consistency locks. scripts/design-check.sh is now the pre-push design gate (Impeccable detector, 0-findings rule). Brief-wins resolutions for serif display and warm-paper palette recorded in DESIGN.md.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/index.css', 'src/views/SignalsView.tsx', 'src/components/drilldown/EvidencePanel.tsx', 'DESIGN.md', 'scripts/design-check.sh'],
+  },
+  {
     version: 'v13.2',
     date: '2026-07-28',
     summary: 'Impeccable pass (pbakaus/impeccable, 60-rule detector): side-stripe borders removed, Schibsted Grotesk replaces Inter, eyebrow kicker removed, ghost-card elevation resolved, mono restricted to data, contrast raised. 0 findings on all v13 surfaces. PRODUCT.md + DESIGN.md added as durable design-context artifacts.',

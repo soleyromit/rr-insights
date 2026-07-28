@@ -91,15 +91,15 @@ function InsightCardV2({ insight, expanded, onToggle }: {
           {/* L3 — actions. No dead-end reading. */}
           <div className="flex gap-2 flex-wrap">
             <button onClick={() => { navigator.clipboard.writeText(briefFor(insight)); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-              className="flex items-center gap-1.5" style={actionStyle(copied)}>
+              className="press flex items-center gap-1.5" style={actionStyle(copied)}>
               {copied ? <CheckIcon size={12} /> : <CopyIcon size={12} />}{copied ? 'Brief copied' : 'Copy design brief'}
             </button>
             {mp && (
-              <a href={mp.url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5" style={actionStyle(false)}>
+              <a href={mp.url} target="_blank" rel="noreferrer" className="press flex items-center gap-1.5" style={actionStyle(false)}>
                 <ExternalLinkIcon size={12} />{mp.label}
               </a>
             )}
-            <button onClick={() => setFlagged(f => !f)} className="flex items-center gap-1.5" style={actionStyle(flagged)}>
+            <button onClick={() => setFlagged(f => !f)} className="press flex items-center gap-1.5" style={actionStyle(flagged)}>
               <FlagIcon size={12} />{flagged ? 'On research agenda' : 'Flag for research agenda'}
             </button>
           </div>
@@ -177,9 +177,9 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
 
         {/* Persona filter chips */}
         <div className="flex gap-1.5 flex-wrap" style={{ marginBottom: 15 }}>
-          <button onClick={() => onPersona(undefined)} style={chipStyle(!activePersona)}>All personas · {insights.length}</button>
+          <button onClick={() => onPersona(undefined)} className="press" style={chipStyle(!activePersona)}>All personas · {insights.length}</button>
           {groups.map(g => (
-            <button key={g.id} onClick={() => onPersona(g.id === activePersona ? undefined : g.id)} style={chipStyle(g.id === activePersona)}>
+            <button key={g.id} onClick={() => onPersona(g.id === activePersona ? undefined : g.id)} className="press" style={chipStyle(g.id === activePersona)}>
               {g.label} · {g.items.length}
             </button>
           ))}

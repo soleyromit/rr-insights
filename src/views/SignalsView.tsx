@@ -41,7 +41,7 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
 }) {
   const { def, insights, topSeverity, byProduct } = signal;
   return (
-    <button onClick={() => onOpen(def.id)} className="w-full text-left group" style={{
+    <button onClick={() => onOpen(def.id)} className="press w-full text-left group" style={{
       display: 'flex', alignItems: 'center', gap: 16, padding: compact ? '12px 14px' : '15px 18px',
       background: active ? 'var(--bg2)' : '#fff', cursor: 'pointer',
       borderBottom: '1px solid var(--bg3)', transition: 'background 140ms, border-color 140ms',

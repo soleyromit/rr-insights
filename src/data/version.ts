@@ -1,7 +1,7 @@
-// Auto-updated by Claude — 2026-07-28 (v13.2)
-export const VERSION = '13.2.0';
+// Auto-updated by Claude — 2026-07-28 (v13.3)
+export const VERSION = '13.3.0';
 export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v13.2: Impeccable pass on the Signals surface. Ran pbakaus/impeccable deterministic detector (60 rules): removed all side-stripe borders (the top AI tell), replaced Inter with Schibsted Grotesk body face, removed the masthead eyebrow kicker, resolved ghost cards to hairline-border-only elevation, de-costumed mono to data-only usage, raised caption and axis contrast. Detector now returns 0 findings on Signals + drilldown + charts + layout + index.css; 32 remaining findings are all in pre-audit legacy views scheduled for P4 rebuild. Added PRODUCT.md and DESIGN.md as durable Impeccable init artifacts documenting product truth and the editorial research-journal visual world.)';
+export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v13.3: taste-skill (Leonxlnx/taste-skill) added as second design layer. Dials locked at 4/3/5 (trust-first data tool), prefers-reduced-motion guard added globally, tactile :active press feedback on all drill-down controls and signal rows, shape lock (10px containers / 6px nested cards / pill chips) and single-accent color lock documented. scripts/design-check.sh created as the pre-push design gate running the Impeccable 60-rule detector. Serif display and warm-paper palette retained under both skills brief-wins rule with rationale recorded in DESIGN.md. Detector: 0 findings on all v13 surfaces.)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
 export const SESSIONS_SYNCED = 73;
