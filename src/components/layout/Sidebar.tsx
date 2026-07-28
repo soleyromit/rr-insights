@@ -1,4 +1,13 @@
-import { LayoutDashboardIcon, FileTextIcon, NetworkIcon, BrainIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon, UsersIcon, TagIcon, MapIcon, TrendingUpIcon, PresentationIcon, LayersIcon, GitBranchIcon, BookOpenIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon, SparklesIcon, BarChart3Icon } from 'lucide-react';
+// Sidebar — P1 IA restructure (UX Audit v1, Fig. 1).
+// Four layers: Story → Evidence → Products → Outputs. 23 flat items → 13 + archive.
+// Badge discipline: deadline countdowns and severity dots only. No "New"/construction badges.
+import { useState } from 'react';
+import {
+  LayoutDashboardIcon, SparklesIcon, RadioIcon, UsersIcon, GitBranchIcon, LayersIcon,
+  FileTextIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon,
+  PresentationIcon, TrendingUpIcon, BookOpenIcon, ArchiveIcon, ChevronRightIcon,
+  FlameIcon, AlertTriangleIcon, CheckCircleIcon,
+} from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
 import { VERSION_HISTORY } from '../../data/personas';
 import type { ProductId } from '../../types';
@@ -33,12 +42,32 @@ function NavItem({ id, label, icon: Icon, active, badge, badgeColor, onNav, urge
   );
 }
 
-function Section({ label }: { label: string }) {
-  return <div className="px-3 pt-5 pb-1.5 eyebrow">{label}</div>;
+function Section({ label, sub }: { label: string; sub?: string }) {
+  return (
+    <div className="px-3 pt-5 pb-1.5">
+      <div className="eyebrow">{label}</div>
+      {sub && <div style={{ fontSize: 9.5, color: 'var(--text3)', marginTop: 1 }}>{sub}</div>}
+    </div>
+  );
 }
+
+// Pre-audit views awaiting merge (P3: nps, knowledge-graph · P4: exam-audit, exactone · Outputs: arun-performance, nav-ia, analytics)
+const ARCHIVE_ITEMS: { id: string; label: string }[] = [
+  { id: 'roadmap', label: 'Roadmap (P3 rebuild pending)' },
+  { id: 'nps', label: 'NPS Intelligence 2025' },
+  { id: 'knowledge-graph', label: 'Knowledge Graph' },
+  { id: 'exam-audit', label: 'Exam Admin Audit' },
+  { id: 'exactone', label: 'ExxatOne' },
+  { id: 'arun-performance', label: 'Arun Performance' },
+  { id: 'nav-ia', label: 'Nav IA · Apr 1' },
+  { id: 'analytics', label: 'Intelligence Analytics' },
+];
 
 export function Sidebar({ activeView, onNav }: Props) {
   const v = VERSION_HISTORY[0];
+  const archiveActive = ARCHIVE_ITEMS.some(a => a.id === activeView);
+  const [archiveOpen, setArchiveOpen] = useState(archiveActive);
+
   return (
     <div className="w-[220px] min-w-[220px] flex flex-col overflow-y-auto border-r" style={{ background: '#fff', borderColor: 'var(--border)' }}>
       <div className="px-4 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
@@ -51,11 +80,19 @@ export function Sidebar({ activeView, onNav }: Props) {
         </div>
         <span className="version-badge"><span style={{ color: '#6d5ed4' }}>●</span>{v.version} · {v.date}</span>
       </div>
+
       <div className="px-2 py-1 flex-1">
-        <Section label="Workspace" />
-        <NavItem id="overview" label="Overview" icon={LayoutDashboardIcon} active={activeView === 'overview'} onNav={onNav} />
-        <NavItem id="whiteboard" label="Whiteboard artifacts" icon={LayersIcon} active={activeView === 'whiteboard'} onNav={onNav} badge="10" />
-        <Section label="Products — by priority" />
+        <Section label="The Story" sub="what now, and why" />
+        <NavItem id="overview" label="Command Center" icon={LayoutDashboardIcon} active={activeView === 'overview'} onNav={onNav} />
+        <NavItem id="narrative" label="Connect the Dots" icon={SparklesIcon} active={activeView === 'narrative'} onNav={onNav} />
+
+        <Section label="Evidence" sub="signals before pages" />
+        <NavItem id="signals" label="Signals" icon={RadioIcon} active={activeView === 'signals' || activeView === 'themes'} onNav={onNav} badge="7" badgeColor="#6d5ed4" />
+        <NavItem id="personas" label="Persona Atlas" icon={UsersIcon} active={activeView === 'personas'} onNav={onNav} />
+        <NavItem id="competitive" label="Competitive Parity" icon={GitBranchIcon} active={activeView === 'competitive'} onNav={onNav} />
+        <NavItem id="whiteboard" label="Source Library" icon={LayersIcon} active={activeView === 'whiteboard'} onNav={onNav} />
+
+        <Section label="Products" sub="by deadline pressure" />
         {PRODUCTS.map(p => {
           const Icon = PRODUCT_ICONS[p.id] ?? FileTextIcon;
           return (
@@ -64,33 +101,35 @@ export function Sidebar({ activeView, onNav }: Props) {
               badgeColor={p.accentColor} urgency={p.urgencyLevel} onNav={onNav} />
           );
         })}
-        <Section label="Intelligence" />
-        <NavItem id="narrative" label="Connect the Dots" icon={SparklesIcon} active={activeView === 'narrative'} onNav={onNav} badge="5 arguments" badgeColor="#6d5ed4" />
-        <NavItem id="knowledge-graph" label="Knowledge Graph" icon={NetworkIcon} active={activeView === 'knowledge-graph'} onNav={onNav} badge="New" badgeColor="#6d5ed4" />
-        <NavItem id="domain-experts" label="Domain Experts" icon={BrainIcon} active={activeView === 'domain-experts'} onNav={onNav} badge="4 experts" badgeColor="#0d9488" />
-        <NavItem id="exam-audit" label="Exam Admin Audit" icon={FlameIcon} active={activeView === 'exam-audit'} onNav={onNav} badge="New" badgeColor="#EF4444" />
-        <NavItem id="nav-ia" label="Nav IA · Apr 1" icon={LayersIcon} active={activeView === 'nav-ia'} onNav={onNav} badge="★" badgeColor="#534AB7" />
-        <NavItem id="analytics" label="Intelligence Analytics" icon={BarChart3Icon} active={activeView === 'analytics'} onNav={onNav} badge="D3+Plot" badgeColor="#0d9488" />
-        <NavItem id="nps" label="NPS Intelligence 2025" icon={TrendingUpIcon} active={activeView === 'nps'} onNav={onNav} badge="-47 NPS" badgeColor="#dc2626" />
-        <NavItem id="arun-performance" label="Arun Performance" icon={SparklesIcon} active={activeView === 'arun-performance'} onNav={onNav} badge="New" badgeColor="#6d5ed4" />
-        <NavItem id="exactone" label="ExxatOne" icon={LayoutDashboardIcon} active={activeView === 'exactone'} onNav={onNav} badge="New" badgeColor="#F59E0B" />
-        <NavItem id="personas" label="Persona map" icon={UsersIcon} active={activeView === 'personas'} onNav={onNav} />
-        <NavItem id="competitive" label="Competitive analysis" icon={GitBranchIcon} active={activeView === 'competitive'} onNav={onNav} />
-        <NavItem id="themes" label="Theme clusters" icon={TagIcon} active={activeView === 'themes'} onNav={onNav} />
-        <NavItem id="roadmap" label="Roadmap" icon={MapIcon} active={activeView === 'roadmap'} onNav={onNav} />
-        <Section label="Delivery" />
-        <NavItem id="portfolio" label="Staff signal" icon={TrendingUpIcon} active={activeView === 'portfolio'} onNav={onNav} />
-        <NavItem id="stakeholder" label="Stakeholder deck" icon={PresentationIcon} active={activeView === 'stakeholder'} onNav={onNav} />
-        <NavItem id="ask-claude" label="Ask Claude" icon={SparklesIcon} active={activeView === 'ask-claude'} onNav={onNav} badge="AI" badgeColor="#E31C79" />
-        <NavItem id="changelog" label="Changelog" icon={BookOpenIcon} active={activeView === 'changelog'} onNav={onNav} badge={v.version} badgeColor="#6d5ed4" />
+
+        <Section label="Outputs" sub="what leaves the repo" />
+        <NavItem id="stakeholder" label="Briefings" icon={PresentationIcon} active={activeView === 'stakeholder'} onNav={onNav} />
+        <NavItem id="portfolio" label="Portfolio + Deliverables" icon={TrendingUpIcon} active={activeView === 'portfolio'} onNav={onNav} />
+
+        {/* Pre-audit views, collapsed by default. Emptied as P3/P4 merges land, then removed. */}
+        <button onClick={() => setArchiveOpen(o => !o)} className="nav-item" style={{ marginTop: 18, opacity: 0.75 }}>
+          <ArchiveIcon size={13} className="flex-shrink-0" style={{ opacity: 0.65 }} />
+          <span className="flex-1 truncate">Archive · pre-audit</span>
+          <ChevronRightIcon size={12} style={{ transform: archiveOpen ? 'rotate(90deg)' : 'none', transition: 'transform 160ms', color: 'var(--text3)' }} />
+        </button>
+        {archiveOpen && ARCHIVE_ITEMS.map(a => (
+          <NavItem key={a.id} id={a.id} label={a.label} icon={BookOpenIcon} active={activeView === a.id} onNav={onNav} />
+        ))}
       </div>
+
       <div className="p-3 border-t" style={{ borderColor: 'var(--border)' }}>
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>RS</div>
-          <div>
-            <div className="text-[13px] font-medium" style={{ color: 'var(--text)' }}>Romit Soley</div>
-            <div className="text-[10px]" style={{ color: 'var(--text3)' }}>Designer II · Exxat</div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>RS</div>
+            <div>
+              <div className="text-[13px] font-medium" style={{ color: 'var(--text)' }}>Romit Soley</div>
+              <div className="text-[10px]" style={{ color: 'var(--text3)' }}>Designer II · Exxat</div>
+            </div>
           </div>
+          <button onClick={() => onNav('changelog')} className="mono" title="Changelog"
+            style={{ fontSize: 9.5, color: activeView === 'changelog' ? 'var(--accent)' : 'var(--text3)', cursor: 'pointer' }}>
+            {v.version}
+          </button>
         </div>
       </div>
     </div>

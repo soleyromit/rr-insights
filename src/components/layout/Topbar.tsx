@@ -5,12 +5,12 @@ type ViewId = string;
 interface Props { activeView: ViewId; onNav: (v: ViewId) => void; }
 
 const LABELS: Record<string, string> = {
-  overview: 'Overview', whiteboard: 'Whiteboard artifacts', competitive: 'Competitive analysis',
+  overview: 'Command Center', whiteboard: 'Source Library', competitive: 'Competitive Parity',
   changelog: 'Changelog', 'exam-management': 'Exam Management', faas: 'FaaS 2.0',
   'course-eval': 'Course & Faculty Eval', 'skills-checklist': 'Skills Checklist',
-  'learning-contracts': 'Learning Contracts', personas: 'Persona map',
-  themes: 'Theme clusters', roadmap: 'Roadmap', portfolio: 'Staff signal', stakeholder: 'Stakeholder deck',
-  narrative: 'Connect the Dots — 5 Arguments',
+  'learning-contracts': 'Learning Contracts', personas: 'Persona Atlas',
+  signals: 'Signals', themes: 'Signals', roadmap: 'Roadmap', portfolio: 'Portfolio + Deliverables',
+  stakeholder: 'Briefings', narrative: 'Connect the Dots — 5 Arguments',
 };
 
 export function Topbar({ activeView }: Props) {

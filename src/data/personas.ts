@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v13.0',
+    date: '2026-07-28',
+    summary: 'UX Audit P1+P2: four-layer IA (Story/Evidence/Products/Outputs, 23 nav items to 13 + archive), Ask Claude + Domain Experts retired, new Signals view with live-computed platform signals and the L0-L3 drill-down engine (SignalCard, EvidencePanel, evidence-class labels, action row, shareable URL-hash state, Esc walk-back).',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/App.tsx', 'src/components/layout/Sidebar.tsx', 'src/components/layout/Topbar.tsx', 'src/views/SignalsView.tsx', 'src/data/signals.ts', 'src/hooks/useDrilldown.ts', 'src/components/drilldown/SignalCard.tsx', 'src/components/drilldown/EvidencePanel.tsx'],
+  },
+  {
     version: 'v12.0',
     date: '2026-07-28',
     summary: 'CRITICAL FIX: 140 insights moved from NPS_INSIGHTS back to INSIGHTS array. Every insight batch added since v8.0 had landed inside NPS_INSIGHTS instead of INSIGHTS, making them invisible to getInsightsByProduct(). App was showing 198 insights. Now correctly shows 292 in INSIGHTS (267 granola/vault + 25 older double-quote items) + 6 real NPS = 298 ALL_INSIGHTS.',

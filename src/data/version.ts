@@ -1,7 +1,7 @@
-// Auto-updated by Claude — 2026-07-28 (v12.0)
-export const VERSION = '12.0.0';
+// Auto-updated by Claude — 2026-07-28 (v13.0)
+export const VERSION = '13.0.0';
 export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v12.0: CRITICAL FIX — 140 insights moved from NPS_INSIGHTS back to INSIGHTS array where getInsightsByProduct can find them. Root cause: every insight insertion since v8.0 was appended after the NPS_INSIGHTS array open bracket instead of before the INSIGHTS array close bracket. App was showing 198 insights; should be 292 in INSIGHTS (267 single-quote + 25 double-quote) + 6 real NPS = 298 ALL_INSIGHTS total)';
+export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v13.0: UX Audit P1+P2 shipped. P1 IA restructure: sidebar rebuilt into 4 layers (Story / Evidence / Products / Outputs), 23 flat items reduced to 13 + collapsed pre-audit archive; Ask Claude and Domain Experts retired; construction-recency badges removed. P2 drill-down engine: new Signals view computes 7 platform signals live from ALL_INSIGHTS, with SignalCard (L0), EvidencePanel (L1 grouped by persona), InsightCardV2 (L2 with DIRECT QUOTE / SYNTHESIS / HYPOTHESIS evidence-class labels), and L3 actions (copy design brief, open Magic Patterns, flag for agenda). Drill-down state URL-hash encoded and shareable; Esc walks back one level. Full audit in RR_INSIGHTS_UX_AUDIT_v1.html.)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
 export const SESSIONS_SYNCED = 73;
