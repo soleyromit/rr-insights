@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v13.1',
+    date: '2026-07-28',
+    summary: 'Signals visual upgrade: Observable Plot heatmap + evidence timeline, Highcharts severity composition, editorial serif masthead, signal index rows, restyled EvidencePanel with hanging quotes and figure captions stating the decision each chart supports.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/SignalsView.tsx', 'src/components/drilldown/EvidencePanel.tsx', 'src/components/charts/PlotFigure.tsx', 'src/components/charts/HighchartFigure.tsx', 'vite.config.ts'],
+  },
+  {
     version: 'v13.0',
     date: '2026-07-28',
     summary: 'UX Audit P1+P2: four-layer IA (Story/Evidence/Products/Outputs, 23 nav items to 13 + archive), Ask Claude + Domain Experts retired, new Signals view with live-computed platform signals and the L0-L3 drill-down engine (SignalCard, EvidencePanel, evidence-class labels, action row, shareable URL-hash state, Esc walk-back).',

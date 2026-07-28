@@ -1,18 +1,15 @@
-// components/drilldown/EvidencePanel.tsx — L1/L2/L3 of the drill-down (P2, UX Audit v1)
-// L1: evidence set grouped by persona, titles only. L2: one insight card, full artifact.
+// components/drilldown/EvidencePanel.tsx — L1/L2/L3 of the drill-down, editorial edition (P2.1)
+// L1: evidence set grouped by persona, titles only. L2: one insight card, full research artifact.
 // L3: every card ends in a verb — copy design brief, open Magic Patterns, flag for agenda.
 import { useMemo, useState } from 'react';
 import { XIcon, ChevronRightIcon, CopyIcon, ExternalLinkIcon, FlagIcon, CheckIcon } from 'lucide-react';
-import { PERSONAS } from '../../data/personas';
 import { getProduct } from '../../data/products';
 import { evidenceClass, EVIDENCE_COLORS } from '../../data/signals';
 import type { ComputedSignal } from '../../data/signals';
 import type { Insight } from '../../types';
 import { MAGIC_PATTERNS_PCE, MAGIC_PATTERNS_EXAM_ADMIN } from '../../data/version';
 
-const SEV_COLORS: Record<string, string> = {
-  critical: '#dc2626', high: '#d97706', medium: '#ca8a04', low: '#16a34a', na: '#8a8580',
-};
+const SEV_COLORS: Record<string, string> = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0', na: '#8a8580' };
 const PERSONA_ORDER = ['student', 'dce', 'scce', 'program-director', 'unassigned'];
 const PERSONA_LABELS: Record<string, string> = {
   student: 'Student', dce: 'DCE / Faculty', scce: 'SCCE', 'program-director': 'Program Director', unassigned: 'Cross-persona',
@@ -38,6 +35,16 @@ function briefFor(insight: Insight): string {
   ].filter(Boolean).join('\n');
 }
 
+function Chip({ children, color }: { children: React.ReactNode; color?: string }) {
+  return (
+    <span className="mono" style={{
+      fontSize: 9.5, fontWeight: color ? 600 : 400, padding: '2px 8px', borderRadius: 3,
+      background: color ? `${color}14` : 'var(--bg2)', color: color ?? 'var(--text2)',
+      border: color ? 'none' : '1px solid var(--bg3)',
+    }}>{children}</span>
+  );
+}
+
 function InsightCardV2({ insight, expanded, onToggle }: {
   insight: Insight; expanded: boolean; onToggle: () => void;
 }) {
@@ -48,38 +55,37 @@ function InsightCardV2({ insight, expanded, onToggle }: {
 
   return (
     <div style={{
-      border: `1px solid ${expanded ? 'var(--border2)' : 'var(--border)'}`,
-      borderRadius: 'var(--radius-sm)', background: '#fff', marginBottom: 6, overflow: 'hidden',
+      border: `1px solid ${expanded ? 'var(--border2)' : 'var(--bg3)'}`,
+      borderRadius: 'var(--radius-sm)', background: '#fff', marginBottom: 7, overflow: 'hidden',
+      boxShadow: expanded ? 'var(--shadow-sm)' : 'none', transition: 'box-shadow 160ms, border-color 160ms',
     }}>
-      <button onClick={onToggle} className="w-full text-left flex items-start gap-2" style={{ padding: '10px 12px', cursor: 'pointer' }}>
+      <button onClick={onToggle} className="w-full text-left flex items-start gap-2.5" style={{ padding: '11px 13px', cursor: 'pointer' }}>
         <span style={{ width: 7, height: 7, borderRadius: '50%', marginTop: 6, flexShrink: 0, background: SEV_COLORS[insight.severity ?? 'na'] }} />
-        <span className="flex-1" style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.45 }}>
+        <span className="flex-1" style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5 }}>
           {expanded ? insight.text : `${insight.text.slice(0, 110)}${insight.text.length > 110 ? '…' : ''}`}
         </span>
         <ChevronRightIcon size={14} style={{ color: 'var(--text3)', flexShrink: 0, marginTop: 3, transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform 160ms' }} />
       </button>
 
       {expanded && (
-        <div style={{ padding: '0 12px 12px 21px' }}>
+        <div style={{ padding: '0 13px 13px 22px' }}>
           {insight.pullQuote && (
-            <blockquote style={{
-              borderLeft: '2px solid var(--border2)', paddingLeft: 10, margin: '4px 0 10px',
-              fontSize: 13, fontStyle: 'italic', color: 'var(--text2)', lineHeight: 1.5,
-            }}>
-              “{insight.pullQuote}”
-              <div className="mono" style={{ fontSize: 10.5, fontStyle: 'normal', color: 'var(--text3)', marginTop: 3 }}>— {insight.pullQuoteSource ?? insight.source}</div>
+            <blockquote style={{ position: 'relative', margin: '6px 0 12px', padding: '2px 0 0 22px' }}>
+              <span className="rr-serif" style={{ position: 'absolute', left: 0, top: -6, fontSize: 30, color: 'var(--border2)', lineHeight: 1 }}>“</span>
+              <span className="serif" style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.55, display: 'block' }}>{insight.pullQuote}</span>
+              <span className="mono" style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, display: 'block' }}>— {insight.pullQuoteSource ?? insight.source}</span>
             </blockquote>
           )}
-          <div className="flex flex-wrap gap-1.5 items-center" style={{ marginBottom: 8 }}>
-            <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, padding: '1.5px 7px', borderRadius: 3, background: `${EVIDENCE_COLORS[ec]}14`, color: EVIDENCE_COLORS[ec] }}>{ec}</span>
-            {insight.confidence && <span className="mono" style={{ fontSize: 9.5, padding: '1.5px 7px', borderRadius: 3, background: 'var(--bg2)', color: 'var(--text2)' }}>confidence: {insight.confidence}</span>}
-            {insight.productIds.map(p => <span key={p} className="mono" style={{ fontSize: 9.5, padding: '1.5px 7px', borderRadius: 3, background: 'var(--bg2)', color: 'var(--text2)' }}>{getProduct(p)?.shortName ?? p}</span>)}
-            <span className="mono" style={{ fontSize: 9.5, color: 'var(--text3)' }}>{insight.source}</span>
+          <div className="flex flex-wrap gap-1.5 items-center" style={{ marginBottom: 10 }}>
+            <Chip color={EVIDENCE_COLORS[ec]}>{ec}</Chip>
+            {insight.confidence && <Chip>confidence: {insight.confidence}</Chip>}
+            {insight.productIds.map(p => <Chip key={p}>{getProduct(p)?.shortName ?? p}</Chip>)}
           </div>
+          <div className="mono" style={{ fontSize: 10, color: 'var(--text3)', marginBottom: insight.soWhat ? 10 : 12 }}>{insight.source} · {insight.createdAt}</div>
           {insight.soWhat && (
-            <div style={{ background: 'var(--accent-bg)', borderRadius: 'var(--radius-sm)', padding: '8px 10px', fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 10 }}>
-              <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, color: 'var(--accent)', display: 'block', marginBottom: 2 }}>SO WHAT</span>
-              {insight.soWhat}
+            <div style={{ borderLeft: '3px solid var(--accent)', padding: '7px 0 7px 12px', marginBottom: 12 }}>
+              <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--accent)', display: 'block', marginBottom: 3 }}>SO WHAT</span>
+              <span style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.55 }}>{insight.soWhat}</span>
             </div>
           )}
           {/* L3 — actions. No dead-end reading. */}
@@ -105,7 +111,7 @@ function InsightCardV2({ insight, expanded, onToggle }: {
 
 function actionStyle(active: boolean): React.CSSProperties {
   return {
-    fontSize: 11.5, fontWeight: 500, padding: '5px 10px', borderRadius: 'var(--radius-sm)',
+    fontSize: 11.5, fontWeight: 500, padding: '5px 11px', borderRadius: 'var(--radius-sm)',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--border2)'}`,
     background: active ? 'var(--accent-bg)' : '#fff',
     color: active ? 'var(--accent)' : 'var(--text2)', cursor: 'pointer', textDecoration: 'none',
@@ -129,38 +135,45 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
 
   return (
     <div style={{
-      width: 440, minWidth: 440, borderLeft: '1px solid var(--border)', background: 'var(--bg)',
+      width: 460, minWidth: 460, borderLeft: '1px solid var(--border)', background: 'var(--bg)',
       display: 'flex', flexDirection: 'column', overflow: 'hidden',
       animation: 'ddSlideIn 180ms ease-out',
     }}>
       <style>{'@keyframes ddSlideIn { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } }'}</style>
-      {/* Breadcrumb — the connection made visible */}
-      <div className="flex items-center gap-1 flex-wrap" style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', background: '#fff' }}>
-        <button onClick={() => { onPersona(undefined); onInsight(undefined); }} className="mono" style={crumbStyle(!activePersona && !activeInsight)}>
-          {def.title}
-        </button>
-        {activePersona && (<>
-          <ChevronRightIcon size={12} style={{ color: 'var(--text3)' }} />
-          <button onClick={() => onInsight(undefined)} className="mono" style={crumbStyle(!activeInsight)}>{PERSONA_LABELS[activePersona]}</button>
-        </>)}
-        {activeInsight && (<>
-          <ChevronRightIcon size={12} style={{ color: 'var(--text3)' }} />
-          <span className="mono" style={crumbStyle(true)}>{activeInsight}</span>
-        </>)}
-        <div className="flex-1" />
-        <span className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>Esc walks back</span>
-        <button onClick={onClose} style={{ color: 'var(--text3)', cursor: 'pointer', padding: 2 }}><XIcon size={15} /></button>
+
+      {/* Panel header — signal identity */}
+      <div style={{ padding: '16px 18px 13px', borderBottom: '1px solid var(--border)', background: '#fff', borderTop: `3px solid ${def.color}` }}>
+        <div className="flex items-start justify-between gap-3">
+          <div style={{ minWidth: 0 }}>
+            <div className="rr-serif" style={{ fontSize: 19, color: 'var(--text)', lineHeight: 1.2, marginBottom: 4 }}>{def.title}</div>
+            <div className="serif" style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.45 }}>{def.question}</div>
+          </div>
+          <button onClick={onClose} style={{ color: 'var(--text3)', cursor: 'pointer', padding: 2, flexShrink: 0 }}><XIcon size={16} /></button>
+        </div>
+        {/* Breadcrumb — the connection made visible */}
+        <div className="flex items-center gap-1 flex-wrap" style={{ marginTop: 10 }}>
+          <button onClick={() => { onPersona(undefined); onInsight(undefined); }} className="mono" style={crumbStyle(!activePersona && !activeInsight)}>All evidence</button>
+          {activePersona && (<>
+            <ChevronRightIcon size={11} style={{ color: 'var(--text3)' }} />
+            <button onClick={() => onInsight(undefined)} className="mono" style={crumbStyle(!activeInsight)}>{PERSONA_LABELS[activePersona]}</button>
+          </>)}
+          {activeInsight && (<>
+            <ChevronRightIcon size={11} style={{ color: 'var(--text3)' }} />
+            <span className="mono" style={crumbStyle(true)}>{activeInsight}</span>
+          </>)}
+          <div className="flex-1" />
+          <span className="mono" style={{ fontSize: 9.5, color: 'var(--text3)' }}>Esc walks back</span>
+        </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px' }}>
-        <div style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 6, fontStyle: 'italic' }}>{def.question}</div>
-        <div style={{ background: '#fff', border: `1px solid var(--border)`, borderLeft: `3px solid ${def.color}`, borderRadius: 'var(--radius-sm)', padding: '9px 11px', fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 16 }}>
-          <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, color: 'var(--text3)', display: 'block', marginBottom: 2 }}>DESIGN RESPONSE</span>
-          {def.designResponse}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '15px 18px' }}>
+        <div style={{ background: '#fff', border: '1px solid var(--border)', borderLeft: `3px solid ${def.color}`, borderRadius: 'var(--radius-sm)', padding: '10px 12px', marginBottom: 16 }}>
+          <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--text3)', display: 'block', marginBottom: 3 }}>DESIGN RESPONSE</span>
+          <span style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.55 }}>{def.designResponse}</span>
         </div>
 
         {/* Persona filter chips */}
-        <div className="flex gap-1.5 flex-wrap" style={{ marginBottom: 14 }}>
+        <div className="flex gap-1.5 flex-wrap" style={{ marginBottom: 15 }}>
           <button onClick={() => onPersona(undefined)} style={chipStyle(!activePersona)}>All personas · {insights.length}</button>
           {groups.map(g => (
             <button key={g.id} onClick={() => onPersona(g.id === activePersona ? undefined : g.id)} style={chipStyle(g.id === activePersona)}>
@@ -170,8 +183,14 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
         </div>
 
         {visibleGroups.map(g => (
-          <div key={g.id} style={{ marginBottom: 16 }}>
-            {!activePersona && <div className="eyebrow" style={{ marginBottom: 6 }}>{g.label} · {g.items.length}</div>}
+          <div key={g.id} style={{ marginBottom: 18 }}>
+            {!activePersona && (
+              <div className="flex items-baseline gap-2" style={{ marginBottom: 7 }}>
+                <span className="rr-serif" style={{ fontSize: 14.5, color: 'var(--text)' }}>{g.label}</span>
+                <span className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{g.items.length}</span>
+                <span style={{ flex: 1, borderBottom: '1px solid var(--bg4)', transform: 'translateY(-3px)' }} />
+              </div>
+            )}
             {g.items.map(i => (
               <InsightCardV2 key={`${g.id}-${i.id}`} insight={i} expanded={activeInsight === i.id}
                 onToggle={() => { onInsight(activeInsight === i.id ? undefined : i.id); if (!activePersona) onPersona(g.id); }} />
@@ -184,11 +203,11 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
 }
 
 function crumbStyle(active: boolean): React.CSSProperties {
-  return { fontSize: 10.5, fontWeight: active ? 600 : 400, color: active ? 'var(--text)' : 'var(--text3)', cursor: 'pointer', maxWidth: 170, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+  return { fontSize: 10, fontWeight: active ? 600 : 400, color: active ? 'var(--text)' : 'var(--text3)', cursor: 'pointer', maxWidth: 170, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
 }
 function chipStyle(active: boolean): React.CSSProperties {
   return {
-    fontSize: 11, fontWeight: 500, padding: '3.5px 10px', borderRadius: 12, cursor: 'pointer',
+    fontSize: 11, fontWeight: 500, padding: '3.5px 11px', borderRadius: 12, cursor: 'pointer',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
     background: active ? 'var(--accent-bg)' : '#fff', color: active ? 'var(--accent)' : 'var(--text2)',
   };

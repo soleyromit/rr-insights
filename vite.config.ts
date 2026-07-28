@@ -17,6 +17,9 @@ export default defineConfig({
           if (id.includes('node_modules/recharts') || id.includes('node_modules/victory-vendor')) {
             return 'recharts';
           }
+          if (id.includes('node_modules/highcharts')) {
+            return 'highcharts';
+          }
           if (id.includes('node_modules/d3') || id.includes('node_modules/@observablehq')) {
             return 'd3-vendor';
           }
