@@ -179,10 +179,10 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
           </div>
         </div>
         <div className="text-right flex-shrink-0">
-          <div className="font-mono text-[22px] font-medium text-[var(--text)]">Apr 17</div>
-          <div className="text-[13px] text-[var(--text3)]">Demo for Vishaka</div>
-          <div className="font-mono text-[18px] font-medium text-[var(--coral)] mt-2">Aug 2026</div>
-          <div className="text-[13px] text-[var(--text3)]">Cohere launch</div>
+          <div className="font-mono text-[22px] font-medium text-[var(--text)]">Jan 20</div>
+          <div className="text-[13px] text-[var(--text3)]">MVP Target</div>
+          <div className="font-mono text-[18px] font-medium text-[var(--coral)] mt-2">Sep 2026</div>
+          <div className="text-[13px] text-[var(--text3)]">Cohere conference</div>
         </div>
       </div>
 
@@ -201,14 +201,14 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
         {activeTab === 'insights' && (
           <div>
             <AIStrip>
-              <strong className="text-[var(--accent)] font-medium">{insights.length} insights synced from 45 Granola sessions.</strong>{' '}
-              Accommodation profile system ships first-to-market (Mar 25). Publish gate added. Apr 17 demo is the hard target.
+              <strong className="text-[var(--accent)] font-medium">{insights.length} insights synced from 73 Granola sessions.</strong>{' '}
+              Full Granola sync complete (Jul 28). Offline download mandate confirmed by Aarti. Jan 20 2027 MVP is the hard target.
             </AIStrip>
             <div className="grid grid-cols-4 gap-2.5 mb-5">
-              <MetricCard label="Insights" value={insights.length} delta="+5 from Mar 25" deltaVariant="up" />
+              <MetricCard label="Insights" value={insights.length} delta="+36 since May 9 sync" deltaVariant="up" />
               <MetricCard label="Critical gaps" value={product.criticalGaps} delta="Accessibility, multi-campus" deltaVariant="down" />
               <MetricCard label="AI opportunities" value="4" delta="Blueprint, PANCE, remediation, migration" deltaVariant="up" />
-              <MetricCard label="Days to Apr 17" value="23" delta="Demo deadline" deltaVariant="down" />
+              <MetricCard label="Days to Jan 20 MVP" value="176" delta="MVP deadline" deltaVariant="down" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Card>

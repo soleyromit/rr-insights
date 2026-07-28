@@ -179,7 +179,7 @@ export function RoadmapView() {
 
       {/* Milestone metrics */}
       <div className="grid grid-cols-4 gap-2.5 mb-5">
-        <MetricCard label="Next milestone" value="Apr 17" delta="3-persona Exam demo" />
+        <MetricCard label="Next milestone" value="Jan 20" delta="MVP launch target" />
         <MetricCard label="UNF pilot" value="Jul '26" delta="Accessibility V0 required" />
         <MetricCard label="Cohere conference" value="Aug '26" delta="AI features must be live" />
         <MetricCard label="Skills launch" value="Jan '27" delta="Standalone entity" />

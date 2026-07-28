@@ -27,7 +27,7 @@ const STORY_BEATS = [
     id: 'narrative', urgency: 'critical' as const,
     label: 'START HERE — CONNECT THE DOTS',
     headline: 'Five arguments about why the next design decisions matter more than they appear.',
-    subhead: '35 Granola sessions + 1,282 NPS responses + 3 user interviews read as one document. What the signals mean together — not separately.',
+    subhead: '73 Granola sessions + 1,282 NPS responses + 3 user interviews read as one document. What the signals mean together — not separately.',
     action: 'Read the full narrative →', nav: 'narrative',
     accentColor: '#6d5ed4', bgColor: 'rgba(109,94,212,0.05)',
   },
@@ -97,7 +97,7 @@ export function OverviewView({ onNav }: Props) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
           <h1 style={{ fontSize: 21, fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 3, fontFamily: 'var(--rr-serif, Georgia, serif)' }}>Platform Overview</h1>
-          <p style={{ fontSize: 10, color: 'var(--text3)' }}>5 products · 35 sessions synced (Apr 23) · {INSIGHTS.length} insights · v6.1</p>
+          <p style={{ fontSize: 10, color: 'var(--text3)' }}>5 products · 73 sessions synced (Jul 28) · {INSIGHTS.length} insights · v9.0</p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 7, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
@@ -114,7 +114,7 @@ export function OverviewView({ onNav }: Props) {
       {/* KEY NUMBERS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
         {[
-          { n: INSIGHTS.length, label: 'Insights indexed', sub: '5 products · 35 sessions', color: '#6d5ed4' },
+          { n: INSIGHTS.length, label: 'Insights indexed', sub: '5 products · 73 sessions', color: '#6d5ed4' },
           { n: criticalCount,   label: 'Critical signals',  sub: 'Need design response now',   color: '#dc2626' },
           { n: platformCount,   label: 'Platform signals',  sub: 'Cross-product patterns',     color: '#b45309' },
           { n: aiCount,         label: 'AI opportunities',  sub: 'Sourced from sessions',       color: '#0d9488' },

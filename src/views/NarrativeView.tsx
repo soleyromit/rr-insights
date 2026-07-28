@@ -160,7 +160,7 @@ export function NarrativeView({ onNav }: Props) {
         }}>
           <span>Research Intelligence</span>
           <span style={{ width: 24, height: 1, background: 'var(--border2)', display: 'inline-block' }} />
-          <span>35 Granola sessions · NPS 2025 · 3 user interviews</span>
+          <span>73 Granola sessions · NPS 2025 · 3 user interviews</span>
         </div>
         <h1 style={{
           fontFamily: 'DM Serif Display, Georgia, serif',
@@ -175,7 +175,7 @@ export function NarrativeView({ onNav }: Props) {
           Five arguments about why Exxat's next design decisions matter more than they appear.
         </h1>
         <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7, maxWidth: 640 }}>
-          This is not a summary of research sessions. It is a reading of what the sessions mean together — the pattern that becomes visible only when 35 Granola sessions, 1,282 NPS responses, and three user interviews are placed next to each other and read as a single document.
+          This is not a summary of research sessions. It is a reading of what the sessions mean together — the pattern that becomes visible only when 73 Granola sessions, 1,282 NPS responses, and three user interviews are placed next to each other and read as a single document.
         </p>
       </div>
 

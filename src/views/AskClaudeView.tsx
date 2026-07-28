@@ -67,7 +67,7 @@ FORMAT:
 - Keep responses scannable — design intelligence, not wall of text`;
 
   const scopeAddendum: Partial<Record<ScopeId, string>> = {
-    'exam-management': '\n\nFOCUS SCOPE: Exam Management only. Key context: Apr 17 UNF pilot, 87 students, Year 1 = beat LMS. PA program (Ed Razenbach) is primary external validator. Student side built at nt3rr3hj1s64irx5fydbvz, admin side at mnirdwczw9xbbzyuveee4g.',
+    'exam-management': '\n\nFOCUS SCOPE: Exam Management only. Key context: Jan 20 2027 MVP, Year 1 = beat LMS, Cohere Sep 2026. PA program (Ed Razenbach) is primary external validator. Student side built at nt3rr3hj1s64irx5fydbvz, admin side at mnirdwczw9xbbzyuveee4g.',
     'faas': '\n\nFOCUS SCOPE: FaaS 2.0 only. Key context: 17k forms, 95k tickets, NPS 2/5. Q2 Phase 1 = internal only. Template-first. 80-85% forms are incremental edits. 12 control types, 3 Critical.',
     'course-eval': '\n\nFOCUS SCOPE: Course & Faculty Evaluation + PCE. Key context: LMS platforms don\'t do post-course eval. 9 survey types. Paid feature. Entry point = survey module not course pages.',
     'skills-checklist': '\n\nFOCUS SCOPE: Skills Checklist. Key context: Jan 2027 launch. 5 domain models (PA/Nursing/RadTech/CVT/SocialWork). Student program-level entity. Same backend, domain-specific UIs.',

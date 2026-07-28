@@ -80,7 +80,7 @@ const CRITERIA = [
     ],
     gaps: [
       'No Magic Patterns prototype for any Exam Management screen — engineering joins Apr 1 needing design assets',
-      'Student exam experience: zero interactive prototype — critical for Apr 17 demo',
+      'Student exam experience: interactive prototype built. Jan 20 MVP is the next hard deadline.',
       'Faculty QB: no MP artifact for engineering handoff — Nipun confirmed current docs too high-level (Mar 27)',
       'Skills Checklist: Q2 scope only — no prototype started',
       'PCE analytics + distribution: no prototype scope started',
@@ -211,7 +211,7 @@ const CRITERIA = [
     ],
     actions: [
       { what: 'Request Pendo access from Arun — behavioral data completes attitudinal NPS picture', by: 'Apr 7' },
-      { what: 'Define usability test plan for Apr 17 demo (task completion rate, error rate, time-on-task)', by: 'Apr 15' },
+      { what: 'Run usability test on Question Bank with 5 faculty (8 weeks pre-MVP)', by: 'Nov 2026' },
       { what: 'Schedule 1 SCCE interview — Concentra or Confluent Health from NPS data', by: 'Apr 20' },
     ],
   },
@@ -408,7 +408,7 @@ export function ArunPerformanceView() {
               <span className="text-[20px] mb-1.5" style={{ color:'var(--text3)' }}>/100</span>
             </div>
             <div className="text-[12px] mt-1" style={{ color:'var(--text2)', maxWidth:280 }}>
-              Strong on research, requirements translation, and accessibility. Prototype delivery is the primary risk to Apr 17.
+              Strong on research, requirements translation, and accessibility. Jan 20 MVP delivery is the primary risk.
             </div>
           </div>
           <div className="flex gap-6">
@@ -573,7 +573,7 @@ export function ArunPerformanceView() {
 
       {/* 3-WEEK MANDATE */}
       <div className="p-5 rounded-2xl border" style={{ background:'rgba(109,94,212,0.04)', borderColor:'rgba(109,94,212,0.2)' }}>
-        <div className="text-[10px] uppercase tracking-widest mb-3" style={{ color:'#6d5ed4' }}>What closing the gap looks like — the 3-week mandate to Apr 17</div>
+        <div className="text-[10px] uppercase tracking-widest mb-3" style={{ color:'#6d5ed4' }}>What closing the gap looks like — Jan 20 MVP mandate</div>
         <div className="grid grid-cols-3 gap-4 text-[12px]" style={{ color:'var(--text2)' }}>
           <div>
             <div className="font-semibold mb-1" style={{ color:'var(--text)' }}>Apr 1–7: First prototypes</div>
