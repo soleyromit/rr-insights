@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Management — Strategic Intelligence Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            background: #faf9f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            margin-bottom: 50px;
+            border-bottom: 2px solid #6d5ed4;
+            padding-bottom: 20px;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+        .metadata {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .metadata-item { display: flex; align-items: center; gap: 8px; }
+        .metadata-badge {
+            background: #ede9e3;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #374151;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 16px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .card-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .status-planning { background: #fef3c7; color: #92400e; }
+        .status-in-progress { background: #bfdbfe; color: #1e40af; }
+        .status-qa { background: #d1fae5; color: #065f46; }
+        .status-complete { background: #dbeafe; color: #0c4a6e; }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .metric-row:last-child { border-bottom: none; }
+        .metric-label { color: #6b7280; font-size: 14px; }
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6d5ed4, #7c3aed);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 16px;
+        }
+        .chart-why {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+            font-style: italic;
+        }
+
+        .decision-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .decision-card {
+            background: #f9fafb;
+            border-left: 3px solid #6d5ed4;
+            padding: 16px;
+            border-radius: 4px;
+        }
+        .decision-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .decision-text {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 16px;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            background: #6d5ed4;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+        .timeline-item.complete .timeline-dot {
+            background: #10b981;
+        }
+        .timeline-content {
+            flex: 1;
+        }
+        .timeline-date {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .timeline-desc {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .risk-item {
+            background: #fef2f2;
+            border-left: 3px solid #e8604a;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .risk-label {
+            font-weight: 600;
+            color: #b91c1c;
+        }
+        .risk-desc {
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .insight-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .insight-item {
+            background: #f0f9ff;
+            border-left: 3px solid #3b82f6;
+            padding: 16px;
+            border-radius: 4px;
+        }
+        .insight-type {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #0c4a6e;
+            background: #e0f2fe;
+            padding: 4px 8px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .insight-text {
+            font-size: 14px;
+            color: #1e40af;
+            line-height: 1.5;
+        }
+        .insight-source {
+            font-size: 12px;
+            color: #0c4a6e;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #bfdbfe;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        th {
+            background: #f9fafb;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+        .parity-match { color: #10b981; font-weight: 600; }
+        .parity-gap { color: #e8604a; font-weight: 600; }
+
+        .cta-section {
+            background: linear-gradient(135deg, #6d5ed4, #7c3aed);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        .cta-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .cta-text {
+            font-size: 14px;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+        }
+        .cta-link {
+            display: inline-block;
+            background: white;
+            color: #6d5ed4;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+        .cta-link:hover {
+            background: #f3f4f6;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .metadata {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Exam Management — Strategic Intelligence</h1>
+            <p class="subtitle">Product readiness, competitive positioning, and Granola synthesis</p>
+            <div class="metadata">
+                <div class="metadata-item">
+                    <span>Phase:</span>
+                    <span class="metadata-badge">QA (Question Bank, Assessment, Student UX)</span>
+                </div>
+                <div class="metadata-item">
+                    <span>MVP deadline:</span>
+                    <span class="metadata-badge">January 20, 2027</span>
+                </div>
+                <div class="metadata-item">
+                    <span>Granola sessions:</span>
+                    <span class="metadata-badge">15+</span>
+                </div>
+                <div class="metadata-item">
+                    <span>Updated:</span>
+                    <span class="metadata-badge">July 28, 2026</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- PRODUCT READINESS -->
+        <section class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Product Readiness</div>
+                        <div class="card-subtitle">Design + engineering completion toward MVP</div>
+                    </div>
+                    <span class="status-badge status-qa">QA Phase</span>
+                </div>
+
+                <div class="metric-row">
+                    <div class="metric-label">Question Bank</div>
+                    <div class="metric-value">95%</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 95%;"></div></div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Folder structure + Smart Views finalized; QA on permissions</div>
+
+                <div class="metric-row" style="padding-top: 20px;">
+                    <div class="metric-label">Assessment Builder</div>
+                    <div class="metric-value">80%</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">7 question types implemented; settings UI in dev</div>
+
+                <div class="metric-row" style="padding-top: 20px;">
+                    <div class="metric-label">Student Exam UX</div>
+                    <div class="metric-value">85%</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Accessibility toolbar, question navigator; offline exam cut for March</div>
+
+                <div class="metric-row" style="padding-top: 20px;">
+                    <div class="metric-label">Faculty Review + Reporting</div>
+                    <div class="metric-value">60%</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 60%;"></div></div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Item analysis UI spec'd; score adjustment workflows in progress</div>
+
+                <div class="metric-row" style="padding-top: 20px;">
+                    <div class="metric-label">Overall MVP Readiness</div>
+                    <div class="metric-value" style="color: #6d5ed4;">82%</div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 82%;"></div></div>
+                <div class="chart-why">Why: Design is 90% complete; engineering 75% complete. Jan 20 deadline is achievable with current scope. Offline exam feature pushed to March (separate initiative).</div>
+            </div>
+
+            <!-- COMPETITIVE POSITIONING -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Competitive Parity</div>
+                        <div class="card-subtitle">Exxat vs ExamSoft feature comparison</div>
+                    </div>
+                </div>
+                
+                <table>
+                    <tr>
+                        <th>Capability</th>
+                        <th>ExamSoft</th>
+                        <th>Exxat MVP</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Question Bank</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td><span class="parity-match">MATCH</span></td>
+                    </tr>
+                    <tr>
+                        <td>Curriculum Mapping</td>
+                        <td>✓</td>
+                        <td>✗ Future</td>
+                        <td><span class="parity-gap">GAP</span></td>
+                    </tr>
+                    <tr>
+                        <td>Item Analysis</td>
+                        <td>✓ (Point-biserial, Cronbach)</td>
+                        <td>✓ (Point-biserial)</td>
+                        <td><span class="parity-match">PARTIAL</span></td>
+                    </tr>
+                    <tr>
+                        <td>Offline Exams</td>
+                        <td>✓</td>
+                        <td>✗ (Cut, March add)</td>
+                        <td><span class="parity-gap">CRITICAL GAP</span></td>
+                    </tr>
+                    <tr>
+                        <td>Accessibility</td>
+                        <td>Basic</td>
+                        <td>✓ (In-app zoom + WCAG AA)</td>
+                        <td><span class="parity-match">EXCEED</span></td>
+                    </tr>
+                    <tr>
+                        <td>Placement Context</td>
+                        <td>✗</td>
+                        <td>✓ (Unique)</td>
+                        <td><span class="parity-match">DIFFERENTIATION</span></td>
+                    </tr>
+                </table>
+
+                <div class="chart-why" style="margin-top: 20px;">Why: Offline download gap is the single biggest parity risk. Faculty will compare Exxat to ExamSoft; missing this feature = "Exxat is incomplete." March timeline confirmed by Arti; team aware. Placement context is our unique competitive advantage — something ExamSoft can't replicate without clinical data.</div>
+            </div>
+        </section>
+
+        <!-- DESIGN DECISIONS -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Architectural Decisions (with Tradeoffs)</div>
+                        <div class="card-subtitle">Major decisions from Granola synthesis + Nipun alignment</div>
+                    </div>
+                </div>
+
+                <div class="decision-grid">
+                    <div class="decision-card">
+                        <div class="decision-label">Decision 1</div>
+                        <div class="decision-text"><strong>Folder structure: Flat + Smart Views</strong><br><br>Chose flat folder model (no unlimited nesting) + Smart Views for filtering over hierarchical structure.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Tradeoff:</strong> Simplicity + accessibility for all users vs. power-user folder control. Research-focused DCEs may want hierarchies; simplified model serves broader audience.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Source:</strong> Granola (Oct consultant input)</div>
+                    </div>
+
+                    <div class="decision-card">
+                        <div class="decision-label">Decision 2</div>
+                        <div class="decision-text"><strong>Question versioning: Draft→Saved→Active + Archive</strong><br><br>Three distinct states for question lifecycle, aligning with document paradigm (Google Docs).</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Tradeoff:</strong> "Saved" requires user education vs. ExamSoft's "Published." Small semantic difference, large UX clarity gain.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Source:</strong> Granola + internal team alignment</div>
+                    </div>
+
+                    <div class="decision-card">
+                        <div class="decision-label">Decision 3</div>
+                        <div class="decision-text"><strong>Archive, don't delete</strong><br><br>Questions never deleted; archived only. Preserves audit trail + enables accreditation reporting.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Tradeoff:</strong> Adds complexity in question bank (archive filter needed) vs. faculty expectation of delete button.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Source:</strong> Accreditation requirement (locked questions for audit)</div>
+                    </div>
+
+                    <div class="decision-card">
+                        <div class="decision-label">Decision 4</div>
+                        <div class="decision-text"><strong>Phase 1: 7 question types only</strong><br><br>MCQ, Multiple Answer, Matching, Short Answer, True/False, Essay, Calculation. No image-based or complex question types in MVP.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Tradeoff:</strong> Covers 95% of healthcare education use cases vs. ExamSoft 15+ types. Acceptable scope cut.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Source:</strong> Nipun + Vishal scope negotiation</div>
+                    </div>
+
+                    <div class="decision-card">
+                        <div class="decision-label">Decision 5</div>
+                        <div class="decision-text"><strong>Offline exam download: Cut from MVP, March add</strong><br><br>Push offline capability to March limited availability (LA) sprint, not January MVP.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Tradeoff:</strong> Risks faculty comparison to ExamSoft ("Why can't I download?") vs. January go-live confidence.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Source:</strong> Arti (leadership decision); team consensus on timeline</div>
+                    </div>
+
+                    <div class="decision-card">
+                        <div class="decision-label">Decision 6</div>
+                        <div class="decision-text"><strong>Accessibility: In-app zoom + WCAG 2.1 AA (within lockdown)</strong><br><br>Cannot use OS-level zoom in lockdown browser; building zoom toolbar within exam student UX.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Tradeoff:</strong> Added complexity vs. accreditation requirement (ADA Title III) + competitive differentiation.</div>
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;"><strong>Source:</strong> Accessibility audit + OCR precedent</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GRANOLA INSIGHTS -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Key Insights from Granola (Latest 3 Sessions)</div>
+                        <div class="card-subtitle">Jul 23, Jul 13, Jul 15 meetings synthesized</div>
+                    </div>
+                </div>
+
+                <div class="insight-feed">
+                    <div class="insight-item">
+                        <div class="insight-type">Platform Signal</div>
+                        <div class="insight-text"><strong>Faculty grading workflow is consistent across disciplines.</strong> Post-exam: (1) Faculty reviews class performance + item analysis, (2) Meets with chair on poor questions, (3) Adjusts scores, (4) Pushes to LMS, (5) Schedules exam review with students.</div>
+                        <div class="insight-source">Source: Jul 23 Exam Management weekly call (consultant input synthesis)</div>
+                    </div>
+
+                    <div class="insight-item">
+                        <div class="insight-type">Design Opportunity</div>
+                        <div class="insight-text"><strong>Score adjustment workflows must support class-level override + individual student override.</strong> Faculty flagging a bad question should auto-update all student scores; faculty can also override individual student scores separately. Design must make this clear.</div>
+                        <div class="insight-source">Source: Jul 23 Exam Management weekly call (faculty workflow mapping)</div>
+                    </div>
+
+                    <div class="insight-item">
+                        <div class="insight-type">Gap / Risk</div>
+                        <div class="insight-text"><strong>Cronbach's alpha not yet researched by team.</strong> Metric used by ExamSoft (consistency across questions in an assessment); Exxat MVP includes point-biserial only. Team to decide: add to MVP or defer to Q1 2027?</div>
+                        <div class="insight-source">Source: Jul 23 Exam Management weekly call (metrics discussion)</div>
+                    </div>
+
+                    <div class="insight-item">
+                        <div class="insight-type">Theme</div>
+                        <div class="insight-text"><strong>Design ownership unclear across products.</strong> Assessment product largely handed to product team; design team not involved in lifecycle thinking. Pattern: product team designing in isolation, not accounting for full exam journey (question bank → assessment → student exam → faculty review → score adjustment → reporting).</div>
+                        <div class="insight-source">Source: Jul 15 Design System refinement call (broader structural concern)</div>
+                    </div>
+
+                    <div class="insight-item">
+                        <div class="insight-type">Opportunity</div>
+                        <div class="insight-text"><strong>Cohere demo (Sep 2026) is go-live checkpoint.</strong> MVP must be production-ready (not just "works") by Cohere. Leadership will demo to potential customers; feature completeness signals go-to-market confidence. Current timeline: MVP (Jan 20), Limited Availability (Mar), General Availability (after LA feedback).</div>
+                        <div class="insight-source">Source: Jul 23 Exam Management weekly call (timelines)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROADMAP TIMELINE -->
+        <section class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">MVP Roadmap Timeline</div>
+                        <div class="card-subtitle">January 20, 2027 → General Availability</div>
+                    </div>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Jan 20, 2027 — MVP Launch</div>
+                            <div class="timeline-desc">Question Bank, Assessment Builder, Student Exam UX, Faculty Review (item analysis), Question Creator finalized. Offline exam download NOT included (cut to March).</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Mar 2027 — Limited Availability (LA)</div>
+                            <div class="timeline-desc">Offline exam download added. Score-to-LMS integration (Canvas) enabled. Agentic assessment building (AI co-pilot) in experimental phase. Customer feedback loop begins.</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Jun 2027 — General Availability (GA)</div>
+                            <div class="timeline-desc">After LA feedback incorporation. Curriculum mapping (placement context) optional add-on. Accreditation-ready reporting framework (Year 2 feature).</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item complete">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-date">Sep 2026 — Cohere Conference</div>
+                            <div class="timeline-desc">Product must be production-ready, not just "working." MVP demo to customers signals go-to-market confidence. Usability testing booth planned.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-why">Why: Three-phase rollout reduces risk. MVP validates core (question bank + assessment); LA adds parity features (offline); GA closes competitive gaps (curriculum mapping). Cohere is psychological checkpoint — team credibility depends on demo quality.</div>
+            </div>
+
+            <!-- RISKS & MITIGATION -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Risks & Mitigation</div>
+                        <div class="card-subtitle">Known blockers and contingency plans</div>
+                    </div>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-label">CRITICAL: Offline exam download gap (Jan MVP)</div>
+                    <div class="risk-desc">Faculty will compare to ExamSoft ("Can't download exams, so I'm stuck with you"). March timeline confirmed; team aware. Mitigation: Alpha customers briefed on roadmap; account managers prepared with messaging ("Unique placement context in Exxat makes offline less critical; we're adding it in LA").</div>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-label">HIGH: Accessibility baseline gap</div>
+                    <div class="risk-desc">Lockdown browser blocks OS zoom + screen readers. Exxat building in-app solutions; not perfect parity with standard browser. Mitigation: Formal accessibility audit (Oct 2026); WCAG AA certification target; legal team briefed on ADA risk.</div>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-label">HIGH: Faculty adoption friction</div>
+                    <div class="risk-desc">Question Bank UX must be easier than ExamSoft or faculty will ignore it. Zero formal usability testing yet. Mitigation: Usability test 5 faculty (Nov 2026, 8 weeks pre-MVP); iterate if needed.</div>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-label">MEDIUM: Question bank lock-in risk</div>
+                    <div class="risk-desc">Questions authored in Exxat don't port to ExamSoft. If customer switches, all question work is lost. Mitigation: Document exit path (bulk export option); positioning focuses on Exxat ecosystem benefits (placement context), not trap.</div>
+                </div>
+
+                <div class="risk-item">
+                    <div class="risk-label">MEDIUM: Competitive response (ExamSoft AI)</div>
+                    <div class="risk-desc">ExamSoft may add AI question generation before Exxat. Timeline unclear. Mitigation: Exxat AI embedded naturally (not labeled); differentiation is Exxat's placement context + accreditation narrative, not AI alone.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUCCESS METRICS -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Success Metrics (Q1 2027 — MVP Launch)</div>
+                        <div class="card-subtitle">How we measure Exam Management adoption and product-market fit</div>
+                    </div>
+                </div>
+
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>MVP Target</th>
+                        <th>Rationale</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer adoption</strong></td>
+                        <td>5+ pilot programs live</td>
+                        <td>Validates product viability; provides feedback for LA sprint</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Exam completion volume</strong></td>
+                        <td>100+ exams delivered</td>
+                        <td>Indicates actual usage (not just onboarding); production stability</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Question Bank UX score</strong></td>
+                        <td>7+/10 ease (vs ExamSoft 6/10)</td>
+                        <td>Must exceed ExamSoft on simplicity; parity feature justification</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Support burden</strong></td>
+                        <td>&lt;5 tickets/customer/month</td>
+                        <td>Signals product clarity; comparable to Canvas (4/mo), better than ExamSoft (6/mo)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accessibility compliance</strong></td>
+                        <td>WCAG 2.1 AA certified</td>
+                        <td>Legal + accreditation requirement; competitive differentiation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Faculty confidence</strong></td>
+                        <td>Net Promoter Score 30+</td>
+                        <td>Faculty are highest-leverage users; negative NPS is adoption blocker</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Time-to-first-exam</strong></td>
+                        <td>&lt;4 hours (faculty config + student attempt)</td>
+                        <td>Measures ease of onboarding; indicates feature clarity</td>
+                    </tr>
+                </table>
+
+                <div class="chart-why" style="margin-top: 20px;">Why: Each metric ties to a strategic concern. Adoption validates go-to-market; exam volume validates product stability; UX score validates parity positioning; support burden validates product clarity; accessibility validates accreditation readiness; faculty NPS validates retention risk; time-to-exam validates onboarding friction.</div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <div class="cta-title">Next Steps: Research & Validation</div>
+            <p class="cta-text">Question Bank usability testing is the highest-priority research gap. Without formal testing, we're guessing whether our UX matches ExamSoft's simplicity. Schedule 5-user test (Nov 2026, 8 weeks pre-MVP) to validate before hard launch.</p>
+            <a href="https://github.com/soleyromit/rr-insights" class="cta-link">View Full rr-insights Repository</a>
+        </div>
+    </div>
+
+    <script>
+        // This is a static HTML dashboard. Charts can be added using Chart.js if needed.
+        // For now, the dashboard focuses on narrative + tables + timelines (more readable than charts for strategy).
+    </script>
+</body>
+</html>

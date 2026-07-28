@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCE Analytics Architecture — Multi-Dimension Model</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            background: #faf9f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #0d9488;
+            padding-bottom: 20px;
+        }
+        h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; color: #111827; }
+        .subtitle { font-size: 16px; color: #6b7280; margin-bottom: 12px; }
+        .metadata {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .metadata-badge {
+            background: #d1fae5;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #065f46;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card-header { margin-bottom: 20px; }
+        .card-title { font-size: 18px; font-weight: 600; color: #111827; }
+        .card-subtitle { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+        .diagram-container {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+
+        svg { max-width: 100%; height: auto; }
+
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .flow-stage {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .flow-stage:before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 25px;
+            width: 20px;
+            height: 2px;
+            background: #0d9488;
+        }
+
+        .flow-stage-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #0d9488;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .flow-stage-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .flow-stage-desc {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            background: #f3f4f6;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #6b7280;
+        }
+
+        .data-table tr:hover { background: #f9fafb; }
+
+        .chart-why {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+            font-style: italic;
+        }
+
+        .dimension-box {
+            background: #ecfdf5;
+            border-left: 3px solid #0d9488;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+        }
+
+        .dimension-title {
+            font-weight: 600;
+            color: #065f46;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .dimension-desc {
+            font-size: 13px;
+            color: #047857;
+            line-height: 1.5;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .kpi-card {
+            background: #f0fdf4;
+            border: 1px solid #d1fae5;
+            padding: 16px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .kpi-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: #059669;
+            margin-top: 4px;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 13px;
+        }
+
+        .comparison-table th {
+            background: #f3f4f6;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .win { background: #f0fdf4; color: #065f46; font-weight: 600; }
+        .gap { background: #fef2f2; color: #991b1b; font-weight: 600; }
+        .neutral { background: #f9fafb; color: #6b7280; }
+
+        .cta-section {
+            background: linear-gradient(135deg, #0d9488, #059669);
+            color: white;
+            padding: 32px;
+            border-radius: 8px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .cta-title { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
+        .cta-text { font-size: 14px; opacity: 0.95; max-width: 600px; margin: 0 auto 20px; line-height: 1.6; }
+        .cta-link {
+            display: inline-block;
+            background: white;
+            color: #0d9488;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+        .cta-link:hover { background: #f3f4f6; }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .diagram-container { padding: 20px; }
+            .kpi-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Post-Course Evaluation (PCE) Analytics Architecture</h1>
+            <p class="subtitle">Multi-dimension analytics model for survey distribution, results, and curriculum loop closure</p>
+            <div class="metadata">
+                <div>
+                    <span>Phase:</span>
+                    <span class="metadata-badge">Design 80% → Dev handoff Jun 1, 2026</span>
+                </div>
+                <div>
+                    <span>Granola sessions:</span>
+                    <span class="metadata-badge">18+</span>
+                </div>
+                <div>
+                    <span>Updated:</span>
+                    <span class="metadata-badge">July 28, 2026</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- OVERVIEW -->
+        <section class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">What is PCE?</div>
+                    <div class="card-subtitle">Post-Course Evaluation as curriculum intelligence layer</div>
+                </div>
+                <p style="font-size: 14px; color: #6b7280; line-height: 1.6;">
+                    Post-course evaluation is how healthcare programs measure quality + close the accreditation loop. Students rate didactic courses; faculty reflect on teaching. Data combines with exam performance + placement competency to answer the core accreditor question: <strong>"How do you know your curriculum is working?"</strong>
+                </p>
+                <p style="font-size: 14px; color: #6b7280; line-height: 1.6; margin-top: 16px;">
+                    Exxat's competitive advantage: Only Exxat connects course eval → exam performance → competency verification. This data integration is impossible in siloed systems (Anthology + ExamSoft + Canvas).
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">PCE Readiness</div>
+                    <div class="card-subtitle">Design phase metrics</div>
+                </div>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-value">80%</div>
+                        <div class="kpi-label">Design complete</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">18+</div>
+                        <div class="kpi-label">Granola sessions</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">3</div>
+                        <div class="kpi-label">Analytics dimensions</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-value">2</div>
+                        <div class="kpi-label">Instrument surveys</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TWO-INSTRUMENT ARCHITECTURE -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="card-title">Two-Instrument Architecture</div>
+                    <div class="card-subtitle">Why two separate surveys instead of one unified form?</div>
+                </div>
+
+                <div class="flow-diagram">
+                    <div class="flow-stage">
+                        <div class="flow-stage-label">Instrument 1</div>
+                        <div class="flow-stage-title">Student PCE (Course Evaluation)</div>
+                        <div class="flow-stage-desc">
+                            <strong>What:</strong> Students rate course content, teaching quality, learning outcomes<br>
+                            <strong>Routing:</strong> Responses go to Faculty, Program Director, Dean<br>
+                            <strong>Why separate:</strong> Student feedback is distinct from faculty reflection; separate surveys improve response clarity
+                        </div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="flow-stage-label">Instrument 2</div>
+                        <div class="flow-stage-title">Faculty Reflection (Self-Assessment)</div>
+                        <div class="flow-stage-desc">
+                            <strong>What:</strong> Faculty reflect on course effectiveness, student performance, teaching adjustments<br>
+                            <strong>Routing:</strong> Responses go to Program Director only (not to students or dean)<br>
+                            <strong>Why separate:</strong> Faculty self-assessment is developmental; sharing directly with students creates defensiveness
+                        </div>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Student PCE</th>
+                        <th>Faculty Reflection</th>
+                        <th>Rationale</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Questions</strong></td>
+                        <td>10-12 Likert + 2 open</td>
+                        <td>8-10 Likert + 2 open</td>
+                        <td>Different purposes → different questions</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Recipients</strong></td>
+                        <td>Faculty, Program Dir, Dean</td>
+                        <td>Program Dir only</td>
+                        <td>Student feedback shared broadly; faculty reflection confidential</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Response rate baseline</strong></td>
+                        <td>50-70% (incentivized)</td>
+                        <td>80-90% (mandatory)</td>
+                        <td>Faculty compliance high; student participation requires incentive</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Expected response time</strong></td>
+                        <td>5-8 min</td>
+                        <td>8-12 min</td>
+                        <td>Faculty reflection requires more thought</td>
+                    </tr>
+                </table>
+
+                <div class="chart-why">Why: One unified survey creates confusion about routing + purpose. Two instruments clarify intent: "You're giving feedback to improve teaching" (student PCE) vs "You're reflecting on your teaching" (faculty reflection). Separate instruments also allow different question sets optimized for each audience.</div>
+            </div>
+        </section>
+
+        <!-- ANALYTICS DIMENSIONS -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="card-title">Three Analytics Dimensions</div>
+                    <div class="card-subtitle">How Program Directors visualize PCE data</div>
+                </div>
+
+                <div class="dimension-box">
+                    <div class="dimension-title">Dimension 1: By Term (What's our trend?)</div>
+                    <div class="dimension-desc">
+                        Program Director views: Fall 2025, Spring 2026, Fall 2026 side-by-side<br>
+                        <strong>KPIs at top:</strong> Response rate, avg satisfaction score, faculty count<br>
+                        <strong>Charts:</strong> Response rate trend, average score trend (line chart with YoY comparison), course satisfaction heatmap<br>
+                        <strong>Action:</strong> "Pharmacology satisfaction dropped from 4.2 to 3.1. Why? Who teaches it?"
+                    </div>
+                </div>
+
+                <div class="dimension-box">
+                    <div class="dimension-title">Dimension 2: By Faculty (Who's performing?)</div>
+                    <div class="dimension-desc">
+                        Program Director views: Leaderboard of faculty by satisfaction score<br>
+                        <strong>Top view:</strong> Ranked list (Dr. Smith: 4.5, Dr. Jones: 3.9, Dr. Brown: 3.2)<br>
+                        <strong>Drill-down:</strong> Click faculty → see term-by-term breakdown + comments<br>
+                        <strong>Action:</strong> "Dr. Brown needs support. Is this a new course? Can we pair with Dr. Smith?" (mentorship trigger)
+                    </div>
+                </div>
+
+                <div class="dimension-box">
+                    <div class="dimension-title">Dimension 3: By Course (Which courses need revision?)</div>
+                    <div class="dimension-desc">
+                        Program Director views: Longitudinal course performance<br>
+                        <strong>Top view:</strong> All courses ranked by avg satisfaction over last 3 terms<br>
+                        <strong>Drill-down:</strong> Click course → see faculty rotation + trends + student comments<br>
+                        <strong>Action:</strong> "Anatomy consistently scores 3.2. Content revision needed or teaching issue? Let's investigate."
+                    </div>
+                </div>
+
+                <div class="chart-why">Why: Three dimensions serve different decisions. "By Term" answers "Are we trending up or down?" "By Faculty" answers "Who's struggling?" "By Course" answers "What content needs revision?" All three data exists; organizing it into user decision-making lenses makes it actionable.</div>
+            </div>
+        </section>
+
+        <!-- DISTRIBUTION WORKFLOW -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="card-title">Distribution Workflow (Highest Design Investment)</div>
+                    <div class="card-subtitle">How surveys get to students and faculty</div>
+                </div>
+
+                <div class="flow-diagram">
+                    <div class="flow-stage">
+                        <div class="flow-stage-label">Step 1</div>
+                        <div class="flow-stage-title">Academic calendar configured</div>
+                        <div class="flow-stage-desc">Program admin sets term dates, course schedule, faculty assignments in system</div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="flow-stage-label">Step 2</div>
+                        <div class="flow-stage-title">Survey templates auto-generate</div>
+                        <div class="flow-stage-desc">Based on calendar + course config, system auto-creates student PCE + faculty reflection for each course. Faculty can customize template or use default.</div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="flow-stage-label">Step 3</div>
+                        <div class="flow-stage-title">Distribution window opens (last week of course)</div>
+                        <div class="flow-stage-desc">System sends survey to students + faculty. Reminders: Day 1, Day 3, Day 5. Faculty response due before grades posted (hard stop).</div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="flow-stage-label">Step 4</div>
+                        <div class="flow-stage-title">Results dashboard live (within 24 hours)</div>
+                        <div class="flow-stage-desc">Student PCE results visible to faculty + Program Director. Faculty reflection visible to Program Director only. Narrative synthesis (AI themes) auto-generated.</div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="flow-stage-label">Step 5</div>
+                        <div class="flow-stage-title">Curriculum loop closes (accreditation document updated)</div>
+                        <div class="flow-stage-desc">Program Director exports PCE data + exam performance + competency data into accreditation self-study. One click, not manual Excel.</div>
+                    </div>
+                </div>
+
+                <div class="chart-why">Why: Distribution is the highest design investment because it's where students/faculty actually use the system. If survey delivery is complicated, response rates tank. Calendar integration + auto-template generation + smart reminders = high engagement.</div>
+            </div>
+        </section>
+
+        <!-- COMPETITIVE ADVANTAGE -->
+        <section class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Competitive Advantage</div>
+                    <div class="card-subtitle">Why Exxat PCE beats Anthology + SurveyMonkey + ExamSoft</div>
+                </div>
+
+                <table class="comparison-table">
+                    <tr>
+                        <th>Capability</th>
+                        <th>Anthology</th>
+                        <th>SurveyMonkey</th>
+                        <th>ExamSoft</th>
+                        <th>Exxat</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Template library</strong></td>
+                        <td class="neutral">50+ generic</td>
+                        <td class="neutral">1000+ generic</td>
+                        <td class="gap">None</td>
+                        <td class="win">12+ accreditor-aligned</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi-role routing</strong></td>
+                        <td class="neutral">Admin-built workflows</td>
+                        <td class="gap">Basic only</td>
+                        <td class="gap">Limited</td>
+                        <td class="win">3-tier (Student/Faculty/Director)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Longitudinal analytics</strong></td>
+                        <td class="win">Year-over-year</td>
+                        <td class="gap">Basic</td>
+                        <td class="gap">Limited</td>
+                        <td class="win">By Term / Faculty / Course</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Narrative synthesis</strong></td>
+                        <td class="gap">Manual only</td>
+                        <td class="gap">Manual only</td>
+                        <td class="gap">Manual only</td>
+                        <td class="win">AI-powered themes (Q3)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Curriculum loop closure</strong></td>
+                        <td class="gap">Siloed</td>
+                        <td class="gap">Siloed</td>
+                        <td class="gap">Siloed</td>
+                        <td class="win">Integrates exam + competency data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accreditation export</strong></td>
+                        <td class="neutral">PDF only</td>
+                        <td class="gap">No</td>
+                        <td class="gap">No</td>
+                        <td class="win">Accreditor-ready format (Year 2)</td>
+                    </tr>
+                </table>
+
+                <div class="chart-why">Why: Exxat's superpower is data integration + accreditation readiness. Competitors are point solutions. Exxat connects course eval → exam performance → competency verification → accreditation narrative. This is unique because only Exxat owns all three data streams.</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Program Director (End User) Value</div>
+                    <div class="card-subtitle">How PCE solves their #1 problem</div>
+                </div>
+
+                <p style="font-size: 14px; color: #6b7280; line-height: 1.6; margin-bottom: 16px;">
+                    <strong>Problem:</strong> Accreditation self-study requires 40+ hours of manual compilation. Data lives in 4+ systems. No self-serve reporting.
+                </p>
+
+                <p style="font-size: 14px; color: #6b7280; line-height: 1.6; margin-bottom: 16px;">
+                    <strong>Before Exxat:</strong><br>
+                    1. Export course eval from Anthology (PDF)<br>
+                    2. Export exam data from ExamSoft (Excel)<br>
+                    3. Export competency data from LMS (CSV)<br>
+                    4. Manual pivot tables in Excel<br>
+                    5. Write narrative summary (manual, bias-prone)<br>
+                    6. Submit to accreditor<br>
+                    <strong>Time: 40+ hours</strong>
+                </p>
+
+                <p style="font-size: 14px; color: #6b7280; line-height: 1.6;">
+                    <strong>With Exxat PCE:</strong><br>
+                    1. Click "Generate Accreditation Report" in Exxat<br>
+                    2. Select term + disciplines (checkboxes)<br>
+                    3. Report auto-generates: survey data + exam performance + competency trends + AI narrative<br>
+                    4. Program Director reviews 20 min, approves, exports<br>
+                    5. Submit to accreditor<br>
+                    <strong>Time: 2-3 hours</strong><br>
+                    <strong>Time saved: 37+ hours/year × 3+ programs = 111+ hours company-wide</strong>
+                </p>
+
+                <div class="chart-why">Why: Accreditation report generation is the unlocking value prop for Program Directors. If Exxat solves this, every program runs through Exxat instead of Anthology + ExamSoft + Canvas separately.</div>
+            </div>
+        </section>
+
+        <!-- RISK & MITIGATION -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="card-title">Risks & Unknowns</div>
+                    <div class="card-subtitle">What we need to validate before dev handoff</div>
+                </div>
+
+                <table class="data-table">
+                    <tr>
+                        <th>Risk</th>
+                        <th>Severity</th>
+                        <th>Mitigation</th>
+                        <th>Owner</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Analytics model doesn't match Program Director workflow</strong></td>
+                        <td>HIGH</td>
+                        <td>Schedule 6 Program Director interviews (Aug 2026) to validate "By Term / Faculty / Course" model</td>
+                        <td>Romit (UXR)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Distribution complexity overwhelms admins</strong></td>
+                        <td>MEDIUM</td>
+                        <td>Usability test distribution workflow with 3 program admins (Aug 2026)</td>
+                        <td>Romit (UXR)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Narrative synthesis (AI themes) creates confusion</strong></td>
+                        <td>MEDIUM</td>
+                        <td>Explain AI-generated themes clearly; show source quotes; provide override option</td>
+                        <td>Content Strategy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Response rate below 50% (vs Anthology 25%, goal 50%)</strong></td>
+                        <td>MEDIUM</td>
+                        <td>Incentive + reminder strategy validated; A/B test messaging (Sep 2026)</td>
+                        <td>Product (Monil)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accreditation export doesn't match accreditor requirements</strong></td>
+                        <td>HIGH</td>
+                        <td>Consult with 3+ accreditors (Oct 2026) before finalizing report schema</td>
+                        <td>Aarti (CEO, relationships)</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- NEXT STEPS -->
+        <section class="grid">
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="card-title">Design Phase → Dev Handoff (Timeline)</div>
+                    <div class="card-subtitle">Remaining design work before June 1, 2026 handoff</div>
+                </div>
+
+                <table class="data-table">
+                    <tr>
+                        <th>Task</th>
+                        <th>Deadline</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Finalize analytics model with Program Directors (6 interviews)</strong></td>
+                        <td>Aug 15, 2026</td>
+                        <td>Romit (UXR)</td>
+                        <td>Scheduled</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Complete distribution workflow design + usability test</strong></td>
+                        <td>Aug 22, 2026</td>
+                        <td>Romit (Design)</td>
+                        <td>In progress (80% design)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Draft accreditation report schema (with accreditors)</strong></td>
+                        <td>Sep 30, 2026</td>
+                        <td>Aarti + Monil (Product)</td>
+                        <td>Not started</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lock design specs; prepare dev handoff docs</strong></td>
+                        <td>May 15, 2026</td>
+                        <td>Romit (Design)</td>
+                        <td>In progress</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dev handoff (engineering kickoff)</strong></td>
+                        <td>Jun 1, 2026</td>
+                        <td>Vishal (Senior PM)</td>
+                        <td>Scheduled</td>
+                    </tr>
+                </table>
+
+                <div class="chart-why">Why: Design phase is nearly complete (80%). Remaining work is validation (Program Director interviews, usability testing) + accreditation alignment. By June 1 handoff, engineering has 100% clarity on requirements.</div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <div class="cta-title">Next Priority: Program Director Validation</div>
+            <p class="cta-text">Schedule 6 interviews (Aug 2026) with Program Directors to validate analytics model. Questions: Do "By Term / Faculty / Course" dimensions match your decision-making? What data is missing? This is the highest-risk assumption.</p>
+            <a href="https://github.com/soleyromit/rr-insights" class="cta-link">View Full rr-insights Repository</a>
+        </div>
+    </div>
+</body>
+</html>
