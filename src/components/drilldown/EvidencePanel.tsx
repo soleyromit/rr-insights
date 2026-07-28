@@ -57,7 +57,7 @@ function InsightCardV2({ insight, expanded, onToggle }: {
     <div style={{
       border: `1px solid ${expanded ? 'var(--border2)' : 'var(--bg3)'}`,
       borderRadius: 'var(--radius-sm)', background: '#fff', marginBottom: 7, overflow: 'hidden',
-      boxShadow: expanded ? 'var(--shadow-sm)' : 'none', transition: 'box-shadow 160ms, border-color 160ms',
+      transition: 'border-color 160ms',
     }}>
       <button onClick={onToggle} className="w-full text-left flex items-start gap-2.5" style={{ padding: '11px 13px', cursor: 'pointer' }}>
         <span style={{ width: 7, height: 7, borderRadius: '50%', marginTop: 6, flexShrink: 0, background: SEV_COLORS[insight.severity ?? 'na'] }} />
@@ -83,7 +83,7 @@ function InsightCardV2({ insight, expanded, onToggle }: {
           </div>
           <div className="mono" style={{ fontSize: 10, color: 'var(--text3)', marginBottom: insight.soWhat ? 10 : 12 }}>{insight.source} · {insight.createdAt}</div>
           {insight.soWhat && (
-            <div style={{ borderLeft: '3px solid var(--accent)', padding: '7px 0 7px 12px', marginBottom: 12 }}>
+            <div style={{ padding: '2px 0', marginBottom: 12 }}>
               <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--accent)', display: 'block', marginBottom: 3 }}>SO WHAT</span>
               <span style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.55 }}>{insight.soWhat}</span>
             </div>
@@ -142,10 +142,13 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
       <style>{'@keyframes ddSlideIn { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } }'}</style>
 
       {/* Panel header — signal identity */}
-      <div style={{ padding: '16px 18px 13px', borderBottom: '1px solid var(--border)', background: '#fff', borderTop: `3px solid ${def.color}` }}>
+      <div style={{ padding: '16px 18px 13px', borderBottom: '1px solid var(--border)', background: '#fff' }}>
         <div className="flex items-start justify-between gap-3">
           <div style={{ minWidth: 0 }}>
-            <div className="rr-serif" style={{ fontSize: 19, color: 'var(--text)', lineHeight: 1.2, marginBottom: 4 }}>{def.title}</div>
+            <div className="flex items-center gap-2" style={{ marginBottom: 4 }}>
+              <span style={{ width: 9, height: 9, borderRadius: '50%', background: def.color, flexShrink: 0 }} />
+              <span className="rr-serif" style={{ fontSize: 19, color: 'var(--text)', lineHeight: 1.2 }}>{def.title}</span>
+            </div>
             <div className="serif" style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.45 }}>{def.question}</div>
           </div>
           <button onClick={onClose} style={{ color: 'var(--text3)', cursor: 'pointer', padding: 2, flexShrink: 0 }}><XIcon size={16} /></button>
@@ -167,8 +170,8 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '15px 18px' }}>
-        <div style={{ background: '#fff', border: '1px solid var(--border)', borderLeft: `3px solid ${def.color}`, borderRadius: 'var(--radius-sm)', padding: '10px 12px', marginBottom: 16 }}>
-          <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--text3)', display: 'block', marginBottom: 3 }}>DESIGN RESPONSE</span>
+        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '10px 12px', marginBottom: 16 }}>
+          <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: def.color, display: 'block', marginBottom: 3 }}>DESIGN RESPONSE</span>
           <span style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.55 }}>{def.designResponse}</span>
         </div>
 

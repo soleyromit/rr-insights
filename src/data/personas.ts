@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v13.2',
+    date: '2026-07-28',
+    summary: 'Impeccable pass (pbakaus/impeccable, 60-rule detector): side-stripe borders removed, Schibsted Grotesk replaces Inter, eyebrow kicker removed, ghost-card elevation resolved, mono restricted to data, contrast raised. 0 findings on all v13 surfaces. PRODUCT.md + DESIGN.md added as durable design-context artifacts.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/index.css', 'src/views/SignalsView.tsx', 'src/components/drilldown/EvidencePanel.tsx', 'PRODUCT.md', 'DESIGN.md'],
+  },
+  {
     version: 'v13.1',
     date: '2026-07-28',
     summary: 'Signals visual upgrade: Observable Plot heatmap + evidence timeline, Highcharts severity composition, editorial serif masthead, signal index rows, restyled EvidencePanel with hanging quotes and figure captions stating the decision each chart supports.',

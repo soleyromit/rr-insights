@@ -28,10 +28,10 @@ const MONO = "'JetBrains Mono', monospace";
 
 function Figure({ title, caption, children }: { title: string; caption: string; children: React.ReactNode }) {
   return (
-    <figure style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px 18px 12px', margin: 0, boxShadow: 'var(--shadow-sm)' }}>
-      <div className="mono" style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 10 }}>{title}</div>
+    <figure style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px 18px 12px', margin: 0 }}>
+      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 10 }}>{title}</div>
       {children}
-      <figcaption style={{ fontSize: 11.5, color: 'var(--text3)', lineHeight: 1.45, marginTop: 8, borderTop: '1px solid var(--bg3)', paddingTop: 8 }}>{caption}</figcaption>
+      <figcaption style={{ fontSize: 11.5, color: 'var(--text2)', lineHeight: 1.45, marginTop: 8, borderTop: '1px solid var(--bg3)', paddingTop: 8 }}>{caption}</figcaption>
     </figure>
   );
 }
@@ -44,12 +44,11 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
     <button onClick={() => onOpen(def.id)} className="w-full text-left group" style={{
       display: 'flex', alignItems: 'center', gap: 16, padding: compact ? '12px 14px' : '15px 18px',
       background: active ? 'var(--bg2)' : '#fff', cursor: 'pointer',
-      borderLeft: `3px solid ${active ? def.color : 'transparent'}`,
       borderBottom: '1px solid var(--bg3)', transition: 'background 140ms, border-color 140ms',
     }}
       onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--bg)'; }}
       onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = '#fff'; }}>
-      <span className="mono" style={{ fontSize: 11, color: 'var(--text3)', width: 22, flexShrink: 0 }}>{String(index + 1).padStart(2, '0')}</span>
+      <span className="mono" style={{ fontSize: 11, fontWeight: active ? 700 : 400, color: active ? def.color : 'var(--text3)', width: 22, flexShrink: 0 }}>{String(index + 1).padStart(2, '0')}</span>
       <span style={{ width: 8, height: 8, borderRadius: '50%', background: def.color, flexShrink: 0 }} />
       <span style={{ flex: 1, minWidth: 0 }}>
         <span className="rr-serif" style={{ display: 'block', fontSize: compact ? 15 : 16.5, color: 'var(--text)', lineHeight: 1.25 }}>{def.title}</span>
@@ -113,7 +112,7 @@ export function SignalsView() {
     },
     yAxis: {
       title: { text: undefined }, gridLineColor: '#ede9e3', tickInterval: 10,
-      labels: { style: { fontSize: '9.5px', color: '#8a8580', fontFamily: MONO } },
+      labels: { style: { fontSize: '9.5px', color: '#6b6660', fontFamily: MONO } },
     },
     legend: { itemStyle: { fontSize: '10px', fontWeight: '400', color: '#4a4844', fontFamily: MONO }, symbolRadius: 2, symbolHeight: 9 },
     tooltip: {
@@ -133,7 +132,6 @@ export function SignalsView() {
 
         {/* ── Masthead ── */}
         <div style={{ borderBottom: '2px solid var(--text)', paddingBottom: 18, marginBottom: 22 }}>
-          <div className="eyebrow" style={{ marginBottom: 6 }}>Evidence · Layer 2 · computed live from {totalEvidence} insight-signal pairs</div>
           <h1 className="rr-serif" style={{ fontSize: panelOpen ? 26 : 34, color: 'var(--text)', lineHeight: 1.1, marginBottom: 8 }}>
             Seven platform signals
           </h1>
@@ -141,6 +139,7 @@ export function SignalsView() {
             Cross-product patterns with drill-down evidence: grouped by persona, sorted by severity,
             every card ending in an action. The URL follows your drill, so any state is a shareable link.
           </p>
+          <div className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', marginTop: 10 }}>Computed live from {totalEvidence} insight-signal pairs · insights.ts</div>
         </div>
 
         {/* ── Figures ── */}
@@ -193,9 +192,9 @@ export function SignalsView() {
         )}
 
         {/* ── Signal index ── */}
-        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
-          <div className="mono" style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text3)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-            Signal index — open for evidence
+        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
+            Signal index, ranked by severity — open a row for its evidence
           </div>
           {signals.map((s, i) => (
             <SignalIndexRow key={s.def.id} signal={s} index={i} compact={panelOpen}

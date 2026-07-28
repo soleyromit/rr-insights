@@ -1,7 +1,7 @@
-// Auto-updated by Claude — 2026-07-28 (v13.1)
-export const VERSION = '13.1.0';
+// Auto-updated by Claude — 2026-07-28 (v13.2)
+export const VERSION = '13.2.0';
 export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v13.1: Signals visual upgrade. Editorial masthead with DM Serif Display, signal index rows replace boxy cards. Three real chart figures: Observable Plot persona-x-signal severity-weighted heatmap (Fig 1), Highcharts stacked severity composition with dark tooltips (Fig 2), Observable Plot evidence-accumulation timeline with hover tips (Fig 3). Every figure carries its decision caption per SKILL chart discipline. EvidencePanel restyled: serif signal header, hanging pull quotes, accent-bar SO WHAT, refined chips. Highcharts split into its own vendor chunk.)';
+export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v13.2: Impeccable pass on the Signals surface. Ran pbakaus/impeccable deterministic detector (60 rules): removed all side-stripe borders (the top AI tell), replaced Inter with Schibsted Grotesk body face, removed the masthead eyebrow kicker, resolved ghost cards to hairline-border-only elevation, de-costumed mono to data-only usage, raised caption and axis contrast. Detector now returns 0 findings on Signals + drilldown + charts + layout + index.css; 32 remaining findings are all in pre-audit legacy views scheduled for P4 rebuild. Added PRODUCT.md and DESIGN.md as durable Impeccable init artifacts documenting product truth and the editorial research-journal visual world.)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
 export const SESSIONS_SYNCED = 73;
