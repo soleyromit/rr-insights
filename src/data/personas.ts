@@ -152,6 +152,21 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v8.0',
+    date: '2026-07-28',
+    summary: '12 new insights from July Granola sessions (Jul 13-23): faculty post-exam six-step workflow, three-level score override model, Cronbach alpha parity decision, MVP Jan 20 / LA March timeline lock with offline download gap, October consultant visit plan, Arun intelligent-survey-administrator vision for PCE, universal chart contracts (export + progressive disclosure), PCE single-vs-multi analytics architecture with Term/Faculty/Course drill dimensions, dashboard verbiage decisions (Setup Evaluations). Two strategic dashboards deployed to public/dashboards. SKILL.md v5.0 eight-perspective architecture added.',
+    insightCount: 215,
+    sessionsAdded: 4,
+    changedFiles: [
+      'src/data/insights.ts',
+      'src/data/version.ts',
+      'src/data/personas.ts',
+      'public/dashboards/exam_management.html',
+      'public/dashboards/pce_analytics_model.html',
+      'SKILL_v5_0_0.md',
+    ],
+  },
+  {
     version: 'v7.0',
     date: '2026-05-09',
     summary: '36 new insights from 18 Granola sessions Apr 9 - May 8 2026. Covers Canvas/ExamSoft/Anthology competitive signals, QB architecture final decisions, PCE full scope confirmation, AI question creation modes, curricular assessment loop model, live monitoring architecture, 3-role Phase 1 simplification, dev alignment crisis diagnosis, course eval cohort dashboard framework, base entity requirements.',
