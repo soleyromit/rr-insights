@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v10.0',
+    date: '2026-07-28',
+    summary: 'Obsidian vault connected: 22 unread project files read and 16 new insights extracted. QB architecture: flat pool dual-axis design (org hierarchy ≠ competency axis), 5-state question lifecycle, 4 roles + composable Review Access, Strict vs Flexible deletion mode, 3-layer data model, AI Shadow Tags, objective vs contextual tag behavior for cross-dept sharing, sidebar + column persistence requirements. Marks/weightage dual-level system. Clinical vignette grouping requirement. CEO pitch ExamSoft innovator dilemma competitive matrix. Real Spring 2025 PT program PCE instrument (35 Likert + 4 open text, CAPTE-aligned, merged instrument architecture). Healthcare vignette assessment quality standard for AI generation. PCE roadmap CSV: 4 analytics dimensions confirmed (Course/Faculty/Time/Question), course-thinking distribution model, new status states (Scheduled, Pending Review).',
+    insightCount: 267,
+    sessionsAdded: 0,
+    changedFiles: ['src/data/insights.ts', 'src/data/version.ts', 'src/data/personas.ts'],
+  },
+  {
     version: 'v9.0',
     date: '2026-07-28',
     summary: 'FULL GRANOLA SYNC: 25 new insights from 62 unsynced sessions (May 11 - Jul 28). Covers all 5 products. Exam Management: Jan MVP scope lock, four-stage academic cycle, QB folder model, assessment entry points, offline download mandate by Aarti, AI/manual tagging coexistence, three-tier role model, question versioning rules, accessibility Phase 1, student exam interface, design ownership crisis diagnosed. PCE: FAST integration path, Arvind faculty research (8/60 response rate), action plan differentiator, nav architecture, template builder decisions, distribution workflow, beta launch plan (103 target programs), course type taxonomy, duplicate detection model, modular pricing strategy. Design system: incremental alignment decision, nav structure locked, Himanshu session. Cross-product: Cohere booth strategy, ExamSoft incumbent trust analysis.',

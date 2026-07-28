@@ -1,11 +1,11 @@
-// Auto-updated by Claude — 2026-07-28 (v9.0)
-export const VERSION = '9.0.0';
+// Auto-updated by Claude — 2026-07-28 (v10.0)
+export const VERSION = '10.0.0';
 export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v9.0: FULL GRANOLA SYNC — 25 new insights from 62 unsynced sessions May 11 - Jul 28. Exam management: Jan MVP scope, four-stage academic cycle, QB folder model, assessment creation entry points, offline download mandate, AI/manual tagging coexistence, three-tier role model, question versioning, accessibility Phase 1 commitments, AI POC status, student exam interface, course landing page, design ownership crisis, AI four-stage adoption roadmap. PCE: FAST integration, Arvind faculty research, action plan differentiator, nav architecture, template builder, distribution workflow, beta launch plan, course type taxonomy, directory design, template role feedback, duplicate detection, modular pricing, communication centralization, combined step flow. Design system: incremental alignment, nav structure locked, Himanshu session. Cross-product: Cohere strategy, ExamSoft incumbent trust gap)';
+export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v10.0: Obsidian vault connected — 22 unread project files extracted into 16 new insights. Covers: QB flat pool architecture with dual-axis design, 5-state question lifecycle, 4 roles + composable Review Access, deletion policy (Strict vs Flexible mode), 3-layer data model + AI Shadow Tags, objective vs contextual tag behavior for cross-dept sharing, sidebar navigation + column persistence, marks/weightage dual-level system, clinical vignette question grouping, CEO pitch competitive matrix confirming ExamSoft innovator dilemma, real Spring 2025 PT program PCE instrument structure (35 Likert + 4 open text, CAPTE-aligned), anonymity and merged-vs-two-instrument architecture tension, real healthcare vignette assessment quality standard for AI generation, PCE roadmap CSV confirming 4 analytics dimensions + course-thinking distribution model)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
 export const SESSIONS_SYNCED = 73;
-export const INSIGHTS_TOTAL = 251;
+export const INSIGHTS_TOTAL = 267;
 export const PRODUCTS_COVERED = 5;
 export const MAGIC_PATTERNS_PCE = 'https://project-truthful-apricot-326.magicpatterns.app';
 export const MAGIC_PATTERNS_EXAM_ADMIN = 'https://project-rich-macaroni-332.magicpatterns.app';
