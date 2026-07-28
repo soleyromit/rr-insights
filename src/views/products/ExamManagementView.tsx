@@ -198,17 +198,24 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
       <div className="flex-1 overflow-y-auto p-5">
 
-        {activeTab === 'insights' && (
+        {activeTab === 'insights' && (() => {
+          const criticalInsights = insights.filter(i => i.severity === 'critical');
+          const aiInsights = insights.filter(i => i.tags?.includes('ai'));
+          const newInsights = insights.filter(i => i.tags?.includes('new'));
+          const today = new Date();
+          const mvp = new Date('2027-01-20');
+          const daysToMVP = Math.ceil((mvp.getTime() - today.getTime()) / (1000*60*60*24));
+          return (
           <div>
             <AIStrip>
-              <strong className="text-[var(--accent)] font-medium">{insights.length} insights synced from 73 Granola sessions.</strong>{' '}
-              Full Granola sync complete (Jul 28). Offline download mandate confirmed by Aarti. Jan 20 2027 MVP is the hard target.
+              <strong className="text-[var(--accent)] font-medium">{insights.length} insights · {criticalInsights.length} critical · {aiInsights.length} AI opportunities.</strong>{' '}
+              Full Granola sync Jul 28 + vault docs connected. Offline download decision unresolved (Aarti May 19 says mandatory; Jul 23 team says March). Jan 20 2027 MVP is the hard target.
             </AIStrip>
             <div className="grid grid-cols-4 gap-2.5 mb-5">
-              <MetricCard label="Insights" value={insights.length} delta="+36 since May 9 sync" deltaVariant="up" />
-              <MetricCard label="Critical gaps" value={product.criticalGaps} delta="Accessibility, multi-campus" deltaVariant="down" />
-              <MetricCard label="AI opportunities" value="4" delta="Blueprint, PANCE, remediation, migration" deltaVariant="up" />
-              <MetricCard label="Days to Jan 20 MVP" value="176" delta="MVP deadline" deltaVariant="down" />
+              <MetricCard label="Insights" value={insights.length} delta={`${newInsights.length} tagged new`} deltaVariant="up" />
+              <MetricCard label="Critical findings" value={criticalInsights.length} delta="Offline gap, accessibility, design ownership" deltaVariant="down" />
+              <MetricCard label="AI opportunities" value={aiInsights.length} delta="QB gap detection, assessment builder, grading" deltaVariant="up" />
+              <MetricCard label="Days to Jan 20 MVP" value={daysToMVP} delta="MVP deadline" deltaVariant="down" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Card>
@@ -217,20 +224,19 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
               </Card>
               <div className="flex flex-col gap-3">
                 <Card>
-                  <CardTitle>Persona design readiness</CardTitle>
-                  <ProgressBar label="Student (test-taker)" sublabel="V1.1 live at student URL" value={85} color="#2ec4a0" />
-                  <ProgressBar label="Faculty / question author" sublabel="University UI v1.1 live" value={72} color="#8b7ff5" />
-                  <ProgressBar label="Admin / accessibility config" sublabel="Accommodation profiles built" value={65} color="#f5a623" />
-                  <ProgressBar label="Program Director" sublabel="Dashboard scoped — PA" value={20} color="#e8604a" />
+                  <CardTitle sub="Source: Granola Jul 23 + Design review Jul 15">MVP readiness by module</CardTitle>
+                  <ProgressBar label="Question Bank (QA phase)" sublabel="Folder structure, Smart Views, permissions in QA" value={95} color="#2ec4a0" />
+                  <ProgressBar label="Assessment Builder" sublabel="7 question types built; settings UI in dev" value={80} color="#8b7ff5" />
+                  <ProgressBar label="Student Exam UX" sublabel="A11y toolbar + question navigator; offline cut to March" value={85} color="#f5a623" />
+                  <ProgressBar label="Faculty Review + Scoring" sublabel="Item analysis spec'd; score adjustment in progress" value={60} color="#e8604a" />
+                  <ProgressBar label="AI features" sublabel="POC complete (100% accuracy); paused for roadmap decision" value={15} color="#6d5ed4" />
                 </Card>
                 <Card>
-                  <CardTitle>Feature delivery status</CardTitle>
-                  <ProgressBar label="Student exam (9 types, a11y toolbar)" value={90} color="#2ec4a0" valueLabel="90%" />
-                  <ProgressBar label="Accommodation profiles system" value={100} color="#4caf7d" valueLabel="Done" />
-                  <ProgressBar label="Publish gate checklist" value={100} color="#4caf7d" valueLabel="Done" />
-                  <ProgressBar label="Question bank browser" value={80} color="#8b7ff5" valueLabel="80%" />
-                  <ProgressBar label="Question editor + a11y panel" value={70} color="#f5a623" valueLabel="70%" />
-                  <ProgressBar label="AI features (May target)" value={5} color="#5c5a57" />
+                  <CardTitle sub="Source: Granola Jul 23 · Jan 20 2027 deadline">Phase delivery confidence</CardTitle>
+                  <ProgressBar label="Jan 20 MVP overall" sublabel="82% design complete · 75% engineering" value={82} color="#2ec4a0" valueLabel="82%" />
+                  <ProgressBar label="Offline download (March LA)" sublabel="Aarti says mandatory; team says March — unresolved" value={0} color="#e8604a" valueLabel="Cut" />
+                  <ProgressBar label="Cohere Sep 2026 demo" sublabel="Production-ready, not just 'working'" value={65} color="#f5a623" valueLabel="65%" />
+                  <ProgressBar label="ExamSoft full parity" sublabel="Cronbach alpha, curriculum mapping, lockdown" value={40} color="#6d5ed4" valueLabel="Year 2" />
                 </Card>
                 <Card>
                   <CardTitle>Milestone timeline</CardTitle>
@@ -239,7 +245,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
               </div>
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {activeTab === 'blueprint' && (
           <div className="space-y-4">

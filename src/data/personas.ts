@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v11.0',
+    date: '2026-07-28',
+    summary: 'Views wired to live data. products.ts insightCounts updated to real computed values from insights.ts (exam 18→245, course-eval 4→113, faas 10→95, skills 4→41, learning 2→26). products.ts roadmap phases updated (Jan 20 MVP, Sep Cohere, Mar LA, Jun GA). ExamManagementView: criticalInsights, aiInsights, daysToMVP now computed dynamically. Progress bars updated to Granola-sourced Granola values. CourseEvalView: Insights tab added and wired to getInsightsByProduct — 113 course-eval insights now visible. PCE design readiness bars and launch timeline added.',
+    insightCount: 267,
+    sessionsAdded: 0,
+    changedFiles: ['src/data/products.ts', 'src/data/version.ts', 'src/data/personas.ts', 'src/views/products/ExamManagementView.tsx', 'src/views/products/CourseEvalView.tsx'],
+  },
+  {
     version: 'v10.0',
     date: '2026-07-28',
     summary: 'Obsidian vault connected: 22 unread project files read and 16 new insights extracted. QB architecture: flat pool dual-axis design (org hierarchy ≠ competency axis), 5-state question lifecycle, 4 roles + composable Review Access, Strict vs Flexible deletion mode, 3-layer data model, AI Shadow Tags, objective vs contextual tag behavior for cross-dept sharing, sidebar + column persistence requirements. Marks/weightage dual-level system. Clinical vignette grouping requirement. CEO pitch ExamSoft innovator dilemma competitive matrix. Real Spring 2025 PT program PCE instrument (35 Likert + 4 open text, CAPTE-aligned, merged instrument architecture). Healthcare vignette assessment quality standard for AI generation. PCE roadmap CSV: 4 analytics dimensions confirmed (Course/Faculty/Time/Question), course-thinking distribution model, new status states (Scheduled, Pending Review).',

@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { useState } from 'react';
 import { Card, CardTitle, MetricCard } from '../../components/ui/Card';
-import { AIStrip } from '../../components/ui/InsightRow';
+import { AIStrip, InsightRow } from '../../components/ui/InsightRow';
 import { Badge } from '../../components/ui/Badge';
+import { getInsightsByProduct } from '../../data/insights';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 
-type TabId = 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star' | 'pce-arch' | 'pce-build';
+type TabId = 'insights' | 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star' | 'pce-arch' | 'pce-build';
 const TABS: { id: TabId; label: string; alert?: boolean }[] = [
+  { id: 'insights',       label: 'Insights' },
   { id: 'overview',       label: 'Overview' },
   { id: 'instruments',    label: 'Instruments' },
   { id: 'stakeholders',   label: 'Stakeholder cascade' },
@@ -90,9 +92,16 @@ const PCE_TRANSCRIPT_GAPS = [
 ];
 
 export function CourseEvalView() {
-  const [tab, setTab] = useState<TabId>('overview');
+  const [tab, setTab] = useState<TabId>('insights');
+  const insights = getInsightsByProduct('course-eval');
+  const criticalInsights = insights.filter(i => i.severity === 'critical');
+  const aiInsights = insights.filter(i => i.tags?.includes('ai'));
+  const newInsights = insights.filter(i => i.tags?.includes('new'));
   const criticalGaps = DESIGN_GAPS.filter(g => g.severity === 'Critical').length;
   const p0Questions = OPEN_QUESTIONS.filter(q => q.priority === 'P0').length;
+  const today = new Date();
+  const beta = new Date('2026-09-15');
+  const daysToBeta = Math.max(0, Math.ceil((beta.getTime() - today.getTime()) / (1000*60*60*24)));
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -111,6 +120,67 @@ export function CourseEvalView() {
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+
+        {/* INSIGHTS — dynamic from insights.ts */}
+        {tab === 'insights' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <AIStrip text={`${insights.length} insights · ${criticalInsights.length} critical · ${aiInsights.length} AI opportunities. Sources: 18+ Granola sessions (May–Jul 2026), vault docs (PRD, open questions, PCE primer, Spring 2025 MOCES instrument, PCE roadmap CSV). Beta target Sep 15. 103 warm programs identified.`} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+              <MetricCard label="Total insights" value={insights.length} delta={`${newInsights.length} tagged new`} deltaVariant="up" />
+              <MetricCard label="Critical findings" value={criticalInsights.length} delta="FAST integration, design ownership, analytics freeze" deltaVariant="down" />
+              <MetricCard label="AI opportunities" value={aiInsights.length} delta="Narrative synthesis, auto-survey, dedup detection" deltaVariant="up" />
+              <MetricCard label="Days to Sep 15 beta" value={daysToBeta} delta="103 target programs" deltaVariant="down" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <Card>
+                <CardTitle sub={`${insights.length} sourced findings — filtered to course-eval`}>Insight feed</CardTitle>
+                {insights.map(i => <InsightRow key={i.id} insight={i} />)}
+              </Card>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <Card>
+                  <CardTitle sub="Source: Granola Jul 20 + Jul 28">PCE design readiness by module</CardTitle>
+                  {[
+                    { label: 'Template builder', sublabel: 'Role feedback incorporated; default toggle removed', value: 85 },
+                    { label: 'Distribution workflow (step 1+2 combined)', sublabel: 'Single table with soft warnings; confirmed Jul 20', value: 80 },
+                    { label: 'Single survey analytics (View Results)', sublabel: 'Due engineering end of Jul 28 week', value: 75 },
+                    { label: 'Multi-survey analytics (by Term/Faculty/Course)', sublabel: 'Paused — requirements not frozen (Jul 28)', value: 30 },
+                    { label: 'Communication settings', sublabel: 'Centralized (not per-survey) — confirmed Jul 28', value: 70 },
+                    { label: 'AI narrative synthesis', sublabel: 'Q3 post-beta; not in Sep 15 scope', value: 5 },
+                  ].map(b => (
+                    <div key={b.label} style={{ marginBottom: 12 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span style={{ fontSize: 13, color: 'var(--text)' }}>{b.label}</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#0d9488' }}>{b.value}%</span>
+                      </div>
+                      <div style={{ height: 6, background: 'var(--border)', borderRadius: 3, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${b.value}%`, background: b.value >= 75 ? '#0d9488' : b.value >= 50 ? '#f5a623' : '#e8604a', borderRadius: 3 }} />
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 3 }}>{b.sublabel}</div>
+                    </div>
+                  ))}
+                </Card>
+                <Card>
+                  <CardTitle sub="Source: PCE roadmap CSV + Granola Jun 30">Launch timeline</CardTitle>
+                  {[
+                    { date: 'Sep 15 2026', label: 'Beta build-ready', detail: '5-10 programs, template + distribution live', done: false },
+                    { date: 'Sep 2026', label: 'Cohere conference', detail: 'Analytics/leaderboard demo (not distribution)', done: false },
+                    { date: 'Nov/Dec 2026', label: 'First beta usage', detail: 'Fall semester evaluations begin', done: false },
+                    { date: 'Jan 2027', label: 'General Availability', detail: 'Self-checkout, monetized, all users see tile', done: false },
+                    { date: 'Q1 2027', label: '100 programs target', detail: 'Full engine, accreditation reporting', done: false },
+                  ].map((t, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 12 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: t.done ? '#0d9488' : '#6d5ed4', marginTop: 4, flexShrink: 0 }} />
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{t.date} — {t.label}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text3)' }}>{t.detail}</div>
+                      </div>
+                    </div>
+                  ))}
+                </Card>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* OVERVIEW */}
         {tab === 'overview' && (

@@ -1,7 +1,7 @@
-// Auto-updated by Claude — 2026-07-28 (v10.0)
-export const VERSION = '10.0.0';
+// Auto-updated by Claude — 2026-07-28 (v11.0)
+export const VERSION = '11.0.0';
 export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v10.0: Obsidian vault connected — 22 unread project files extracted into 16 new insights. Covers: QB flat pool architecture with dual-axis design, 5-state question lifecycle, 4 roles + composable Review Access, deletion policy (Strict vs Flexible mode), 3-layer data model + AI Shadow Tags, objective vs contextual tag behavior for cross-dept sharing, sidebar navigation + column persistence, marks/weightage dual-level system, clinical vignette question grouping, CEO pitch competitive matrix confirming ExamSoft innovator dilemma, real Spring 2025 PT program PCE instrument structure (35 Likert + 4 open text, CAPTE-aligned), anonymity and merged-vs-two-instrument architecture tension, real healthcare vignette assessment quality standard for AI generation, PCE roadmap CSV confirming 4 analytics dimensions + course-thinking distribution model)';
+export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v11.0: Views now wired to live data. products.ts insightCount updated to real computed values (exam 18→245, course-eval 4→113, faas 10→95, skills 4→41, learning 2→26). products.ts criticalGaps updated to real counts. products.ts roadmap phases updated to current timeline (Jan 20 MVP, Sep Cohere, Mar LA). ExamManagementView insights tab now computes criticalInsights.length/aiInsights.length/daysToMVP dynamically. Progress bars updated to Granola-sourced values (QB 95%, Assessment 80%, Student UX 85%, Faculty 60%). CourseEvalView now has Insights tab wired to getInsightsByProduct — 113 insights now visible. PCE design readiness bars added (template 85%, distribution 80%, analytics paused). PCE launch timeline added (Sep 15 beta, Cohere Sep, Nov/Dec first usage, Jan GA))';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
 export const SESSIONS_SYNCED = 73;
