@@ -152,6 +152,18 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v9.0',
+    date: '2026-07-28',
+    summary: 'FULL GRANOLA SYNC: 25 new insights from 62 unsynced sessions (May 11 - Jul 28). Covers all 5 products. Exam Management: Jan MVP scope lock, four-stage academic cycle, QB folder model, assessment entry points, offline download mandate by Aarti, AI/manual tagging coexistence, three-tier role model, question versioning rules, accessibility Phase 1, student exam interface, design ownership crisis diagnosed. PCE: FAST integration path, Arvind faculty research (8/60 response rate), action plan differentiator, nav architecture, template builder decisions, distribution workflow, beta launch plan (103 target programs), course type taxonomy, duplicate detection model, modular pricing strategy. Design system: incremental alignment decision, nav structure locked, Himanshu session. Cross-product: Cohere booth strategy, ExamSoft incumbent trust analysis.',
+    insightCount: 251,
+    sessionsAdded: 62,
+    changedFiles: [
+      'src/data/insights.ts',
+      'src/data/version.ts',
+      'src/data/personas.ts',
+    ],
+  },
+  {
     version: 'v8.0',
     date: '2026-07-28',
     summary: '12 new insights from July Granola sessions (Jul 13-23): faculty post-exam six-step workflow, three-level score override model, Cronbach alpha parity decision, MVP Jan 20 / LA March timeline lock with offline download gap, October consultant visit plan, Arun intelligent-survey-administrator vision for PCE, universal chart contracts (export + progressive disclosure), PCE single-vs-multi analytics architecture with Term/Faculty/Course drill dimensions, dashboard verbiage decisions (Setup Evaluations). Two strategic dashboards deployed to public/dashboards. SKILL.md v5.0 eight-perspective architecture added.',
