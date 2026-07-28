@@ -5,7 +5,7 @@ import { useState } from 'react';
 import {
   LayoutDashboardIcon, SparklesIcon, RadioIcon, UsersIcon, GitBranchIcon, LayersIcon,
   FileTextIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon,
-  PresentationIcon, TrendingUpIcon, BookOpenIcon, ArchiveIcon, ChevronRightIcon,
+  PresentationIcon, TrendingUpIcon, MapIcon, BookOpenIcon, ArchiveIcon, ChevronRightIcon,
   FlameIcon, AlertTriangleIcon, CheckCircleIcon,
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
@@ -53,7 +53,6 @@ function Section({ label, sub }: { label: string; sub?: string }) {
 
 // Pre-audit views awaiting merge (P3: nps, knowledge-graph · P4: exam-audit, exactone · Outputs: arun-performance, nav-ia, analytics)
 const ARCHIVE_ITEMS: { id: string; label: string }[] = [
-  { id: 'roadmap', label: 'Roadmap (P3 rebuild pending)' },
   { id: 'nps', label: 'NPS Intelligence 2025' },
   { id: 'knowledge-graph', label: 'Knowledge Graph' },
   { id: 'exam-audit', label: 'Exam Admin Audit' },
@@ -85,6 +84,7 @@ export function Sidebar({ activeView, onNav }: Props) {
         <Section label="The Story" sub="what now, and why" />
         <NavItem id="overview" label="Command Center" icon={LayoutDashboardIcon} active={activeView === 'overview'} onNav={onNav} />
         <NavItem id="narrative" label="Connect the Dots" icon={SparklesIcon} active={activeView === 'narrative'} onNav={onNav} />
+        <NavItem id="roadmap" label="Roadmap" icon={MapIcon} active={activeView === 'roadmap'} onNav={onNav} />
 
         <Section label="Evidence" sub="signals before pages" />
         <NavItem id="signals" label="Signals" icon={RadioIcon} active={activeView === 'signals' || activeView === 'themes'} onNav={onNav} badge="7" badgeColor="#6d5ed4" />

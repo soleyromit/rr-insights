@@ -1,122 +1,141 @@
 // @ts-nocheck
-// ─────────────────────────────────────────────
-//  views/PersonaMapView.tsx
-// ─────────────────────────────────────────────
+// views/PersonaMapView.tsx — Persona Atlas (P3 rebuild, UX Audit v1)
+// Viz-first: friction heat grid + research coverage lead; persona detail on selection, no wall of text.
+import { useMemo, useState } from 'react';
+import * as Plot from '@observablehq/plot';
 import { PRODUCTS } from '../data/products';
-import { INSIGHTS } from '../data/insights';
 import { PERSONAS } from '../data/personas';
-import { Card, CardTitle } from '../components/ui/Card';
-import { Badge } from '../components/ui/Badge';
-import type { PersonaId, ProductId } from '../types';
+import { getInsightsByPersona } from '../data/insights';
+import { PERSONA_PRODUCT_FRICTION } from '../data/personaFriction';
+import { Figure, Masthead } from '../components/ui/Figure';
+import { PlotFigure } from '../components/charts/PlotFigure';
 
-const PERSONA_PRODUCT_FRICTION: Record<PersonaId, Partial<Record<ProductId, {severity: 'critical' | 'high' | 'medium' | 'na';text: string;cross?: string;ai?: string;}>>> = {
-  student: {
-    'exam-management': { severity: 'critical', text: 'No annotation (highlight/cross-out). Accessibility blocked by lockdown browser. UNF pilot July deadline.', cross: 'Overload', ai: 'AI: rationale post-submit' },
-    faas: { severity: 'critical', text: 'No mid-save, opaque status. PDF split. Patient Log migration adds new surface.', cross: 'Overload' },
-    'course-eval': { severity: 'high', text: 'Blue/Canvas dependency. Response rate below 60% accreditation threshold. Questions renumber on update.' },
-    'skills-checklist': { severity: 'critical', text: 'Skills trapped in placements. "Have I done this skill across all rotations?" unanswerable. 80-90% build external docs.', cross: 'Overload', ai: 'AI: grad readiness' },
-    'learning-contracts': { severity: 'high', text: 'Static objectives, no mid-cycle nudge. Social work: multi-semester scope mismatch.' }
-  },
-  dce: {
-    'exam-management': { severity: 'critical', text: 'Multi-campus print→email→re-upload. Manual Bloom\'s tagging. No async review threads.', cross: 'Power user split', ai: 'AI: tag on import, blueprint gen' },
-    faas: { severity: 'critical', text: '17k forms, no governance. Global settings break program configs. Preceptor intake now in FaaS.', cross: 'Power user split' },
-    'course-eval': { severity: 'high', text: 'Dedicated module planned. Multi-instructor hybrid forms required.', ai: 'AI: theme extraction' },
-    'skills-checklist': { severity: 'high', text: 'No dashboard across students per site. Batch evaluation UI needed: rows=students, cols=skills.' },
-    'learning-contracts': { severity: 'high', text: 'Templates not linked to accreditor frameworks. No co-edit. Social work LC-eval integration gap.' }
-  },
-  scce: {
-    'exam-management': { severity: 'na', text: 'Not a primary user.' },
-    faas: { severity: 'critical', text: 'Infrequent login = relearning every time. CPI/FWPE mobile-only context. Preceptor intake adds burden.', cross: 'Mobile gap' },
-    'course-eval': { severity: 'medium', text: 'No prior eval context when completing new one. OSCE multi-station not supported.' },
-    'skills-checklist': { severity: 'critical', text: 'Competency verify on mobile, no tap-complete. Signature friction. Account recovery issues from infrequent login.', cross: 'Mobile gap', ai: 'AI: smart scheduling' },
-    'learning-contracts': { severity: 'high', text: 'Co-signs at start, never re-engaged mid-cycle. Preceptor change mid-placement (social work) = no workflow.' }
-  },
-  'program-director': {
-    'exam-management': { severity: 'high', text: 'No NCCPA blueprint alignment. PACRAT/PAEA/ExamSoft data in 3 systems. Monster Grid = triple-digit Excel.', cross: 'Reporting deficit', ai: 'AI: PANCE predictor' },
-    faas: { severity: 'critical', text: 'NPS 2/5. No self-serve accreditation reports. PDF split. 95k tickets = systemic failure.', cross: 'Reporting deficit' },
-    'course-eval': { severity: 'high', text: '7 survey types at Touro outside Exxat. 8-16% grad survey response rate. New module is strategic recovery.', cross: 'Reporting deficit', ai: 'AI: narrative synthesis' },
-    'skills-checklist': { severity: 'medium', text: 'Procedure minimums tracking (3x per type, ARC-PA). "Show me the reds" filter. Overflow/catch-up rotation.' },
-    'learning-contracts': { severity: 'medium', text: 'ARC-PA mandates competency evidence. Gaps only surface at self-study. 9 areas need demonstrable tracking.' }
-  }
-};
-
-const SEV_STYLE: Record<string, string> = {
-  critical: 'text-[#e8604a] bg-[rgba(232,96,74,0.12)]',
-  high: 'text-[#f5a623] bg-[rgba(245,166,35,0.12)]',
-  medium: 'text-[#4caf7d] bg-[rgba(76,175,125,0.10)]',
-  na: 'text-[#5c5a57] bg-[var(--bg3)]'
-};
+const MONO = "'JetBrains Mono', monospace";
+const SEV_NUM = { critical: 3, high: 2, medium: 1, na: 0 };
+const SEV_COLORS = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', na: '#ece9e3' };
+const PERSONA_ORDER = ['student', 'dce', 'scce', 'program-director'];
 
 export function PersonaMapView() {
+  const [selected, setSelected] = useState('scce'); // open on the most underserved persona
+  const persona = PERSONAS.find(p => p.id === selected);
+  const friction = PERSONA_PRODUCT_FRICTION[selected] ?? {};
+
+  const heatCells = useMemo(() => {
+    const cells = [];
+    for (const pid of PERSONA_ORDER) {
+      const row = PERSONA_PRODUCT_FRICTION[pid] ?? {};
+      for (const prod of PRODUCTS) {
+        const cell = row[prod.id];
+        cells.push({
+          persona: PERSONAS.find(p => p.id === pid)?.name ?? pid,
+          product: prod.shortName,
+          severity: cell?.severity ?? 'na',
+          cross: cell?.cross ?? '',
+        });
+      }
+    }
+    return cells;
+  }, []);
+
+  const coverage = useMemo(() =>
+    PERSONA_ORDER.map(pid => ({
+      persona: PERSONAS.find(p => p.id === pid)?.name ?? pid,
+      insights: getInsightsByPersona(pid).length,
+    })), []);
+  const maxCoverage = Math.max(...coverage.map(c => c.insights), 1);
+
+  const personaName = (pid) => PERSONAS.find(p => p.id === pid)?.name ?? pid;
+
   return (
-    <div className="p-5 overflow-y-auto flex-1">
-      <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Cross-Product Persona Challenge Map</h1>
-      <p className="text-[11px] text-[var(--text3)] mb-4">Updated with 39 Granola sessions · 6 platform-level signals · Click any cell for detail</p>
+    <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
+      <Masthead title="Persona Atlas"
+        lede="Four personas, five products: friction severity computed against every surface, research coverage counted honestly. Select a persona for their situation, day shape, and open frictions."
+        byline={`Friction matrix from research synthesis · coverage from ${coverage.reduce((n, c) => n + c.insights, 0)} tagged insights`} />
 
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {[
-        { label: 'Cognitive overload · 3 products', color: '#8b7ff5' },
-        { label: 'Reporting deficit · 3 products', color: '#e8604a' },
-        { label: 'Mobile gap · 2 products', color: '#78aaf5' },
-        { label: 'AI opportunity · 5 products', color: '#2ec4a0', isNew: true },
-        { label: 'Multi-campus fragmentation', color: '#f5a623', isNew: true },
-        { label: 'Standalone skills entity', color: '#e87ab5', isNew: true }].
-        map((s) =>
-        <div key={s.label} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] border border-[rgba(139,127,245,0.2)] bg-[rgba(139,127,245,0.06)] text-[var(--accent)]" style={s.isNew ? { borderColor: 'rgba(46,196,160,0.3)', background: 'rgba(46,196,160,0.06)', color: '#2ec4a0' } : {}}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ background: s.color }} />
-            {s.label}
-            {s.isNew && <span className="text-[10px] px-1 py-0.5 rounded bg-[rgba(46,196,160,0.15)] font-mono">New</span>}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.25fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
+        <Figure title="Fig. 1 · Friction heat grid" caption="Severity of each persona's experience per product. Decision: the darkest row is the persona whose next release matters most — SCCE and Student rows carry the critical mass.">
+          <PlotFigure minHeight={4 * 44 + 60} deps={[heatCells]} build={() => ({
+            height: 4 * 44 + 58,
+            marginLeft: 128, marginTop: 26, marginBottom: 4, marginRight: 8,
+            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            x: { axis: 'top', label: null, domain: PRODUCTS.map(p => p.shortName), tickSize: 0, padding: 0.08 },
+            y: { label: null, domain: PERSONA_ORDER.map(personaName), tickSize: 0, padding: 0.14 },
+            color: { domain: ['critical', 'high', 'medium', 'na'], range: [SEV_COLORS.critical, SEV_COLORS.high, SEV_COLORS.medium, SEV_COLORS.na], legend: true },
+            marks: [
+              Plot.cell(heatCells, { x: 'product', y: 'persona', fill: 'severity', rx: 4, inset: 2, tip: true, title: d => d.cross ? `${d.severity.toUpperCase()} · platform signal: ${d.cross}` : d.severity.toUpperCase() }),
+              Plot.text(heatCells.filter(d => d.cross), { x: 'product', y: 'persona', text: () => '◆', fill: '#fff', fontSize: 8, dy: 0 }),
+            ],
+          })} />
+        </Figure>
+        <Figure title="Fig. 2 · Research coverage" caption="Tagged insights per persona. Decision: where the evidence base is thin, the next research agenda goes — a short SCCE bar is a to-do, not a fact about SCCEs.">
+          <PlotFigure minHeight={4 * 44 + 40} deps={[coverage]} build={() => ({
+            height: 4 * 44 + 38,
+            marginLeft: 128, marginTop: 8, marginBottom: 26, marginRight: 40,
+            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            x: { label: 'insights', domain: [0, maxCoverage * 1.1], tickSize: 0 },
+            y: { label: null, domain: PERSONA_ORDER.map(personaName), tickSize: 0, padding: 0.35 },
+            marks: [
+              Plot.barX(coverage, { x: 'insights', y: 'persona', fill: '#8a8580', rx: 3 }),
+              Plot.text(coverage, { x: 'insights', y: 'persona', text: d => String(d.insights), dx: 14, fill: '#4a4844', fontSize: 10.5 }),
+            ],
+          })} />
+        </Figure>
+      </div>
+
+      {/* Persona selector — one control vocabulary with the drill-down chips */}
+      <div className="flex gap-1.5 flex-wrap" style={{ marginBottom: 14 }} role="tablist" aria-label="Select persona">
+        {PERSONA_ORDER.map(pid => {
+          const p = PERSONAS.find(x => x.id === pid);
+          const active = pid === selected;
+          return (
+            <button key={pid} role="tab" aria-selected={active} className="press" onClick={() => setSelected(pid)} style={{
+              fontSize: 12, fontWeight: 500, padding: '5px 14px', borderRadius: 14, cursor: 'pointer',
+              border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
+              background: active ? 'var(--accent-bg)' : '#fff', color: active ? 'var(--accent)' : 'var(--text2)',
+            }}>{p?.name}<span className="mono" style={{ marginLeft: 7, fontSize: 10, opacity: 0.75 }}>{p?.priority}</span></button>
+          );
+        })}
+      </div>
+
+      {persona && (
+        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px 22px' }}>
+          <div className="flex items-baseline gap-3 flex-wrap" style={{ marginBottom: 4 }}>
+            <span className="rr-serif" style={{ fontSize: 22, color: 'var(--text)' }}>{persona.name}</span>
+            <span style={{ fontSize: 13, color: 'var(--text2)' }}>{persona.role}</span>
           </div>
-        )}
-      </div>
+          <p className="serif" style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.55, maxWidth: 640, marginBottom: 16 }}>{persona.povStatement}</p>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-[11px]" style={{ minWidth: 800 }}>
-          <thead>
-            <tr className="bg-[var(--bg3)]">
-              <th className="px-3 py-2 text-left text-[11px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold w-[140px]">Persona</th>
-              {PRODUCTS.map((p) =>
-              <th key={p.id} className="px-3 py-2 text-left text-[11px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold border-l border-[var(--border)]">
-                  {p.shortName}
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {PERSONAS.map((persona) =>
-            <tr key={persona.id} className="border-t border-[var(--border)] hover:bg-[rgba(255,255,255,0.01)] transition-colors">
-                <td className="px-3 py-3 align-top border-r border-[var(--border)]">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold flex-shrink-0" style={{ background: persona.avatarColor }}>
-                      {persona.avatarInitials}
-                    </div>
-                    <div className="text-[11px] font-medium text-[var(--text)]">{persona.name}</div>
-                  </div>
-                  <div className="text-[11px] text-[var(--text3)] leading-[1.3]">{persona.role}</div>
-                </td>
-                {PRODUCTS.map((product) => {
-                const cell = PERSONA_PRODUCT_FRICTION[persona.id]?.[product.id];
-                if (!cell) return <td key={product.id} className="px-3 py-3 border-l border-[var(--border)] text-[var(--text3)] text-[10px]">—</td>;
-                return (
-                  <td key={product.id} className="px-3 py-3 border-l border-[var(--border)] align-top">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${SEV_STYLE[cell.severity]} inline-block mb-1.5`}>
-                        {cell.severity.charAt(0).toUpperCase() + cell.severity.slice(1)}
-                      </span>
-                      <p className="text-[10px] text-[var(--text2)] leading-[1.4] mb-1">{cell.text}</p>
-                      {cell.cross &&
-                    <div className="text-[11px] px-1.5 py-0.5 rounded bg-[rgba(139,127,245,0.1)] text-[var(--accent)] inline-block mr-1">⬦ {cell.cross}</div>
-                    }
-                      {cell.ai &&
-                    <div className="text-[11px] px-1.5 py-0.5 rounded bg-[rgba(76,175,125,0.1)] text-[#4caf7d] inline-block">✦ {cell.ai}</div>
-                    }
-                    </td>);
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
+            <div style={{ borderTop: `2px solid #2ec4a0`, paddingTop: 10 }}>
+              <div className="mono" style={{ fontSize: 10, fontWeight: 600, color: '#1d8a6e', marginBottom: 4 }}>A GREAT DAY</div>
+              <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.55 }}>{persona.greatDay}</p>
+            </div>
+            <div style={{ borderTop: `2px solid #e8604a`, paddingTop: 10 }}>
+              <div className="mono" style={{ fontSize: 10, fontWeight: 600, color: '#c24d3a', marginBottom: 4 }}>A POOR DAY</div>
+              <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.55 }}>{persona.poorDay}</p>
+            </div>
+          </div>
 
-              })}
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>);
-
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', marginBottom: 8 }}>Open frictions by product, ranked by severity</div>
+          <div>
+            {PRODUCTS
+              .map(prod => ({ prod, cell: friction[prod.id] }))
+              .filter(x => x.cell && x.cell.severity !== 'na')
+              .sort((a, b) => SEV_NUM[b.cell.severity] - SEV_NUM[a.cell.severity])
+              .map(({ prod, cell }) => (
+                <div key={prod.id} className="flex items-start gap-3" style={{ padding: '9px 0', borderBottom: '1px solid var(--bg3)' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: SEV_COLORS[cell.severity] }} aria-label={cell.severity} />
+                  <span className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', width: 86, flexShrink: 0, paddingTop: 1 }}>{prod.shortName}</span>
+                  <span style={{ flex: 1, fontSize: 13, color: 'var(--text)', lineHeight: 1.5 }}>{cell.text}</span>
+                  <span className="flex gap-1.5 flex-shrink-0">
+                    {cell.cross && <span className="mono" style={{ fontSize: 9.5, padding: '2px 8px', borderRadius: 3, background: 'var(--bg2)', color: 'var(--text2)' }}>◆ {cell.cross}</span>}
+                    {cell.ai && <span className="mono" style={{ fontSize: 9.5, padding: '2px 8px', borderRadius: 3, background: 'rgba(13,148,136,0.10)', color: '#0d7a6e' }}>{cell.ai}</span>}
+                  </span>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

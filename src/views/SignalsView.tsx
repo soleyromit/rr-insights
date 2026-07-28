@@ -9,6 +9,7 @@ import { EvidencePanel } from '../components/drilldown/EvidencePanel';
 import { PlotFigure } from '../components/charts/PlotFigure';
 import { HighchartFigure } from '../components/charts/HighchartFigure';
 import { useDrilldown } from '../hooks/useDrilldown';
+import { Figure, Masthead } from '../components/ui/Figure';
 import type { ComputedSignal } from '../data/signals';
 import type Highcharts from 'highcharts';
 
@@ -25,16 +26,6 @@ const PERSONA_LABELS: Record<string, string> = {
 };
 const PERSONA_ORDER = ['Student', 'DCE / Faculty', 'SCCE', 'Program Dir.', 'Cross-persona'];
 const MONO = "'JetBrains Mono', monospace";
-
-function Figure({ title, caption, children }: { title: string; caption: string; children: React.ReactNode }) {
-  return (
-    <figure style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px 18px 12px', margin: 0 }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 10 }}>{title}</div>
-      {children}
-      <figcaption style={{ fontSize: 11.5, color: 'var(--text2)', lineHeight: 1.45, marginTop: 8, borderTop: '1px solid var(--bg3)', paddingTop: 8 }}>{caption}</figcaption>
-    </figure>
-  );
-}
 
 function SignalIndexRow({ signal, index, active, compact, onOpen }: {
   signal: ComputedSignal; index: number; active: boolean; compact: boolean; onOpen: (id: string) => void;
@@ -130,17 +121,10 @@ export function SignalsView() {
     <div className="flex h-full" style={{ minHeight: 0 }}>
       <div className="flex-1 overflow-y-auto" style={{ padding: '30px 34px 48px' }}>
 
-        {/* ── Masthead ── */}
-        <div style={{ borderBottom: '2px solid var(--text)', paddingBottom: 18, marginBottom: 22 }}>
-          <h1 className="rr-serif" style={{ fontSize: panelOpen ? 26 : 34, color: 'var(--text)', lineHeight: 1.1, marginBottom: 8 }}>
-            Seven platform signals
-          </h1>
-          <p className="serif" style={{ fontSize: 14.5, color: 'var(--text2)', maxWidth: 620, lineHeight: 1.55 }}>
-            Cross-product patterns with drill-down evidence: grouped by persona, sorted by severity,
-            every card ending in an action. The URL follows your drill, so any state is a shareable link.
-          </p>
-          <div className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', marginTop: 10 }}>Computed live from {totalEvidence} insight-signal pairs · insights.ts</div>
-        </div>
+        <Masthead compact={panelOpen}
+          title="Seven platform signals"
+          lede="Cross-product patterns with drill-down evidence: grouped by persona, sorted by severity, every card ending in an action. The URL follows your drill, so any state is a shareable link."
+          byline={`Computed live from ${totalEvidence} insight-signal pairs · insights.ts`} />
 
         {/* ── Figures ── */}
         {!panelOpen && (

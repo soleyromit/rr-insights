@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v14.0',
+    date: '2026-07-28',
+    summary: 'P3: Command Center, Persona Atlas, Competitive Parity, and Roadmap rebuilt viz-first — friction heat grid, coverage bars, parity matrix + scores, retention-anchor trackers, milestone timeline with today rule, design-next queue. Shared Figure/Masthead system, a11y baseline (focus-visible, aria, reduced motion), Roadmap out of Archive. Design gate: 0 findings.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/OverviewView.tsx', 'src/views/PersonaMapView.tsx', 'src/views/CompetitiveView.tsx', 'src/views/RoadmapView.tsx', 'src/views/SignalsView.tsx', 'src/components/ui/Figure.tsx', 'src/data/personaFriction.ts', 'src/components/ui/InsightRow.tsx', 'src/components/layout/Sidebar.tsx', 'src/index.css'],
+  },
+  {
     version: 'v13.3',
     date: '2026-07-28',
     summary: 'taste-skill added as second design layer: dials 4/3/5 (trust-first data tool), global reduced-motion guard, tactile press feedback, shape + color consistency locks. scripts/design-check.sh is now the pre-push design gate (Impeccable detector, 0-findings rule). Brief-wins resolutions for serif display and warm-paper palette recorded in DESIGN.md.',

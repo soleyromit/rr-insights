@@ -106,7 +106,7 @@ export function ProgressBar({ label, sublabel, value, color = 'var(--accent)', v
         </span>
       </div>
       <div className="progress-track">
-        <div style={{ width: `${Math.min(value, 100)}%`, height: '100%', background: color, borderRadius: 3, transition: 'width 0.4s ease' }} />
+        <div style={{ width: '100%', height: '100%', background: color, borderRadius: 3, transform: `scaleX(${Math.min(value, 100) / 100})`, transformOrigin: 'left', transition: 'transform 0.4s ease' }} />
       </div>
     </div>
   );
