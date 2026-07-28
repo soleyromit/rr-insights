@@ -17,7 +17,7 @@ export function PortfolioView() {
         byline={`${DIMENSIONS.length} positioning dimensions · ${ANCHORS.length} narrative anchors · ${GAPS.length} case studies in pipeline`} />
 
       <div style={{ marginBottom: 16 }}>
-        <Figure title="Fig. 1 · Staff-readiness by dimension" caption="Self-assessed against Staff Product Designer JDs at comparable enterprise SaaS companies. Decision: measurable outcomes is the shortest bar, so the FaaS case study with before/after metrics is the highest-priority deliverable.">
+        <Figure title="Fig. 1 · Staff-readiness by dimension" caption="Self-assessed against Staff Product Designer JDs; the 70 bar is a self-set target, not an external benchmark. Decision: measurable outcomes is the shortest bar, so the FaaS case study with before/after metrics is the highest-priority deliverable.">
           <PlotFigure minHeight={DIMENSIONS.length * 32 + 50} deps={[sorted]} build={() => ({
             height: DIMENSIONS.length * 32 + 46,
             marginLeft: 190, marginTop: 8, marginBottom: 26, marginRight: 40,
@@ -26,7 +26,7 @@ export function PortfolioView() {
             y: { label: null, domain: sorted.map(d => d.label), tickSize: 0, padding: 0.3 },
             marks: [
               Plot.ruleX([70], { stroke: '#cdc8bf', strokeDasharray: '3 3' }),
-              Plot.text([70], { x: d => d, frameAnchor: 'bottom', text: () => 'staff bar', dy: 14, fill: '#6b6660', fontSize: 9.5 }),
+              Plot.text([70], { x: d => d, frameAnchor: 'bottom', text: () => 'self-set bar: 70', dy: 14, fill: '#6b6660', fontSize: 9.5 }),
               Plot.barX(sorted, { x: 'value', y: 'label', fill: d => d.value < 70 ? '#e8604a' : '#8a8580', rx: 3, tip: true, title: d => d.note }),
               Plot.text(sorted, { x: 'value', y: 'label', text: d => String(d.value), dx: 14, fill: '#4a4844', fontSize: 10.5 }),
             ],

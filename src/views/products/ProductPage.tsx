@@ -11,6 +11,7 @@ import { MILESTONES } from '../../data/personas';
 import { PERSONAS } from '../../data/personas';
 import { Figure, Masthead } from '../../components/ui/Figure';
 import { PlotFigure } from '../../components/charts/PlotFigure';
+import { computePhaseStates } from '../../lib/phaseDates';
 
 const MONO = "'JetBrains Mono', monospace";
 const SEV_COLORS = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0' };
@@ -61,7 +62,7 @@ export function ProductPage({ productId, onNav }) {
     p.ticketsPerYear && { stat: p.ticketsPerYear.toLocaleString(), label: 'support tickets / yr' },
     { stat: insights.length, label: 'tagged insights' },
     { stat: critical.length, label: 'critical findings' },
-    p.daysToDeadline && { stat: `${p.daysToDeadline}d`, label: 'to next hard deadline' },
+    p.daysToDeadline && { stat: `${p.daysToDeadline}d`, label: `to planned launch (${p.launchDate ?? 'per product plan'})` },
     { stat: p.granolaSessions, label: 'research sessions' },
   ].filter(Boolean);
 
@@ -227,19 +228,22 @@ export function ProductPage({ productId, onNav }) {
       <SectionHead id="scoreboard" refs={refs}>The scoreboard</SectionHead>
       <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '15px 18px', marginBottom: 14 }}>
         <div className="mono" style={{ fontSize: 10, fontWeight: 600, color: 'var(--text2)', marginBottom: 8 }}>ROADMAP PHASES</div>
-        <div className="flex gap-1" role="list" aria-label="Roadmap phases">
-          {p.roadmapPhases.map((ph, i) => {
-            const state = i === 0 ? 'done' : i === 1 ? 'active' : 'planned';
+        <div className="flex gap-1" role="list" aria-label="Roadmap phases (state derived from dates in phase names)">
+          {(() => { const states = computePhaseStates(p.roadmapPhases.map(ph => ph.phase)); return p.roadmapPhases.map((ph, i) => {
+            const st = states[i].state;
             return (
-              <div key={ph.phase} role="listitem" title={ph.items.join(' · ')} style={{
+              <div key={ph.phase} role="listitem" title={`${st === 'unscheduled' ? 'No parseable date in plan. ' : st === 'passed' ? 'Date has passed. ' : st === 'next' ? 'Next dated phase. ' : ''}${ph.items.join(' · ')}`} style={{
                 flex: 1, padding: '7px 11px', borderRadius: 4, fontSize: 11.5,
-                background: state === 'done' ? `${p.accentColor}22` : state === 'active' ? p.accentColor : 'var(--bg2)',
-                color: state === 'active' ? '#fff' : state === 'done' ? 'var(--text2)' : 'var(--text3)',
-                fontWeight: state === 'active' ? 600 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-              }}>{ph.phase}</div>
+                background: st === 'passed' ? 'var(--bg2)' : st === 'next' ? p.accentColor : 'var(--bg2)',
+                border: st === 'unscheduled' ? '1px dashed var(--border2)' : '1px solid transparent',
+                color: st === 'next' ? '#fff' : st === 'passed' ? 'var(--text3)' : 'var(--text2)',
+                fontWeight: st === 'next' ? 600 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                textDecoration: st === 'passed' ? 'line-through' : 'none',
+              }}>{ph.phase}{st === 'unscheduled' ? ' ·?' : ''}</div>
             );
-          })}
+          }); })()}
         </div>
+        <div className="mono" style={{ fontSize: 9.5, color: 'var(--text2)', marginTop: 6 }}>Phase state derived from dates in the plan itself. Dashed = no date recorded; struck = date passed.</div>
         {productMilestones.length > 0 && (
           <div style={{ marginTop: 12 }}>
             {productMilestones.map(m => (

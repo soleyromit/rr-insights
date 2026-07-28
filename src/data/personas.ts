@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v15.1',
+    date: '2026-07-28',
+    summary: 'Data-integrity pass: phase state now date-derived (was positional fabrication), invented anchor percentages removed, Cohere Aug/Sep source conflict surfaced with confirmation flag, signal matchers word-bounded, deadline labels name their target date. Data-integrity rules codified in PRODUCT.md.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/lib/phaseDates.ts', 'src/views/products/ProductPage.tsx', 'src/views/RoadmapView.tsx', 'src/views/CompetitiveView.tsx', 'src/views/OverviewView.tsx', 'src/views/PortfolioView.tsx', 'src/data/signals.ts', 'PRODUCT.md'],
+  },
+  {
     version: 'v15.0',
     date: '2026-07-28',
     summary: 'P4: all five product pages rebuilt on the four-act template — stakes ledger + day-in-life, evidence timeline + expandable findings + discipline gaps, happy-path strip + AI-problem-first response, roadmap scoreboard with dependencies. Pre-audit deep specs preserved on -spec routes. Every routable page now leads with contextual structure. Gate: 0 findings.',

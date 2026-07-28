@@ -38,7 +38,7 @@ export const SIGNAL_DEFS: SignalDef[] = [
     personaFocus: 'program-director',
     designResponse: 'One narrative synthesis and structured reporting layer at platform level. AI narrative generation from aggregate scores is the fastest path.',
     seedIds: ['ins-plat-003', 'ins-faas-001', 'ins-ce-001'],
-    keywords: ['accreditation-ready', 'self-serve report', 'monster grid', 'export', 'reporting', 'no dashboards', 'report'],
+    keywords: ['accreditation-ready', 'self-serve report', 'monster grid', 'export workflow', 'reporting', 'no dashboards', 'accreditation report'],
   },
   {
     id: 'ai-layer',
@@ -116,7 +116,12 @@ function matches(def: SignalDef, ins: Insight): boolean {
   if (def.special === 'ai-tag' && ins.tags.includes('ai')) return true;
   if (def.special === 'scce-persona' && (ins.personaIds ?? []).includes('scce')) return true;
   const text = ins.text.toLowerCase();
-  if (def.keywords.some(k => text.includes(k))) {
+  // Word-boundary matching: 'report' must not fire inside 'reported' contexts it does not own,
+  // and single-word keys match whole words only. Multi-word phrases match as phrases.
+  const hit = def.keywords.some(k => k.includes(' ') || k.includes('-')
+    ? text.includes(k)
+    : new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(text));
+  if (hit) {
     // keyword matches must also touch the signal's product set, to keep evidence honest
     return ins.productIds.some(p => def.products.includes(p));
   }

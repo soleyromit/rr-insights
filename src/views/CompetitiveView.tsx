@@ -3,7 +3,8 @@
 // Viz-first: parity matrix + scores lead; the ExamSoft retention anchors carry the narrative.
 import { useMemo } from 'react';
 import * as Plot from '@observablehq/plot';
-import { COMPETITOR_FEATURES } from '../data/personas';
+import { COMPETITOR_FEATURES, MILESTONES } from '../data/personas';
+import { getProduct } from '../data/products';
 import { Figure, Masthead } from '../components/ui/Figure';
 import { PlotFigure } from '../components/charts/PlotFigure';
 import { HighchartFigure } from '../components/charts/HighchartFigure';
@@ -21,9 +22,9 @@ const score = v => (v === true ? 1 : v === 'partial' ? 0.5 : 0);
 
 // The three reasons programs stay on ExamSoft (Dr. Vicky Mody session, Mar 20) and Exxat's answer to each.
 const ANCHORS = [
-  { title: 'Curriculum mapping', state: 'partial', progress: 0.5, response: 'Flat tagging architecture + bulk tag on import. One system, no Excel.', evidence: 'ins-em-008 · ins-em-011' },
-  { title: 'Faculty training over years', state: 'planned', progress: 0.25, response: 'Canvas-level UX so training is unnecessary; migration UX designed for the switching moment.', evidence: 'ins-em-018' },
-  { title: 'Strong item analytics', state: 'planned', progress: 0.35, response: 'Item heatmaps + p-values in Assessment analytics; AI layer (May sprint) surpasses rather than matches.', evidence: 'ins-em-015 · ins-em-016' },
+  { title: 'Curriculum mapping', state: 'partial', response: 'Flat tagging architecture + bulk tag on import. One system, no Excel.', evidence: 'ins-em-008 · ins-em-011' },
+  { title: 'Faculty training over years', state: 'planned', response: 'Canvas-level UX so training is unnecessary; migration UX designed for the switching moment.', evidence: 'ins-em-018' },
+  { title: 'Strong item analytics', state: 'planned', response: 'Item heatmaps + p-values in Assessment analytics; AI layer (May sprint) surpasses rather than matches.', evidence: 'ins-em-015 · ins-em-016' },
 ];
 
 export function CompetitiveView() {
@@ -45,8 +46,13 @@ export function CompetitiveView() {
   const differentiators = COMPETITOR_FEATURES.filter(f =>
     score(f.exxat) > 0 && score(f.examsoft) === 0 && score(f.blackboard) === 0 && score(f.d2l) === 0);
 
-  const cohere = new Date('2026-08-15');
-  const daysToCohere = Math.max(0, Math.round((cohere - new Date()) / 86400000));
+  // Cohere date is CONFLICTED across sources: milestones say Aug 2026, product plan says Sep 2026.
+  // Render the earlier (conservative) date and flag the conflict; do not silently pick.
+  const cohereMs = MILESTONES.find(m => /cohere/i.test(m.label));
+  const cohereDate = cohereMs ? new Date(cohereMs.date.replace(/^(\w+) (\d{4})$/, '$1 1, $2')) : null;
+  const coherePlan = getProduct('exam-management')?.pilotDate ?? '';
+  const cohereConflict = coherePlan && cohereDate && !coherePlan.toLowerCase().startsWith(cohereDate.toLocaleDateString('en-US', { month: 'short' }).toLowerCase());
+  const daysToCohere = cohereDate ? Math.max(0, Math.round((cohereDate - new Date()) / 86400000)) : null;
 
   const hcScores = useMemo(() => ({
     chart: { type: 'bar', backgroundColor: 'transparent', height: PLATFORMS.length * 40 + 70, spacing: [4, 4, 4, 0], style: { fontFamily: MONO } },
@@ -63,7 +69,7 @@ export function CompetitiveView() {
     <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
       <Masthead title="Competitive parity"
         lede="Twelve tracked features across four platforms, and the three reasons programs actually stay on ExamSoft. Displacement happens at the switching moment; these are the switching conditions."
-        byline={`Cohere conference in ${daysToCohere} days · feature evidence from Granola sessions Mar 2026`} />
+        byline={`Cohere in ${daysToCohere} days per milestones (Aug 2026)${cohereConflict ? ` · CONFLICT: product plan says ${coherePlan}, confirm with Arun` : ''} · feature evidence from Granola sessions Mar 2026`} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.4fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
         <Figure title="Fig. 1 · Feature parity matrix" caption="Full ✓, partial ◐, absent blank. Decision: blank Exxat cells in rows where any competitor is green are the build queue; rows where every column is blank are open territory.">
@@ -101,7 +107,7 @@ export function CompetitiveView() {
       <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px 22px' }}>
         <div className="rr-serif" style={{ fontSize: 19, color: 'var(--text)', marginBottom: 2 }}>The three retention anchors</div>
         <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5, maxWidth: 640, marginBottom: 16 }}>
-          Programs stay on ExamSoft for exactly three reasons (School of Pharmacy session, Mar 20). Match or beat all three and there is, in Arun's words, no rational reason to stay.
+          Programs stay on ExamSoft for exactly three reasons (School of Pharmacy session, Mar 20). Match or beat all three and there is, in Arun's words, no rational reason to stay. Readiness carries no percentage here on purpose: nothing is measured yet, so status is stated, not scored.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
           {ANCHORS.map((a, i) => (
@@ -109,10 +115,6 @@ export function CompetitiveView() {
               <div className="flex items-baseline justify-between" style={{ marginBottom: 6 }}>
                 <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{i + 1}. {a.title}</span>
                 <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, color: a.state === 'partial' ? '#b45309' : '#6d5ed4' }}>{a.state.toUpperCase()}</span>
-              </div>
-              <div role="progressbar" aria-valuenow={Math.round(a.progress * 100)} aria-valuemin={0} aria-valuemax={100}
-                aria-label={`${a.title} readiness`} style={{ height: 5, borderRadius: 3, background: 'var(--bg3)', marginBottom: 9 }}>
-                <div style={{ width: `${a.progress * 100}%`, height: '100%', borderRadius: 3, background: '#6d5ed4' }} />
               </div>
               <p style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>{a.response}</p>
               <span className="mono" style={{ fontSize: 9.5, color: 'var(--text3)' }}>{a.evidence}</span>

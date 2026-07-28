@@ -33,7 +33,16 @@ web (desktop-first; Vite + React SPA on GitHub Pages, base `/rr-insights/`). Dep
 
 Four layers: The Story (Command Center, Connect the Dots) → Evidence (Signals, Persona Atlas, Competitive Parity, Source Library) → Products (5) → Outputs (Briefings, Portfolio + Deliverables). Migration phases P3–P5 pending; pre-audit views live in a collapsed Archive until merged.
 
+## Data integrity rules (v15.1)
+
+- **State is derived, never positional**: phase/milestone state comes from parseable dates compared to today; undated items render as unscheduled and claim nothing.
+- **No invented numbers**: a percentage or progress value must trace to data or be removed; estimates are labeled as estimates in the UI.
+- **Conflicts are surfaced, not resolved silently**: when two sources disagree (see Cohere below), the UI shows both and names the confirmation owner.
+- **Single source of truth per fact**: dates, counts, and statuses live once in `src/data` and are computed everywhere else. Hand-copied constants caused the v15.0 misinterpretations.
+
 ## Open decisions
 
 - Highcharts licensing for commercial contexts (fine for this internal tool; confirm with Arun before the pattern spreads to Exxat product work; ECharts is the Apache-2.0 fallback).
 - ExxatOne: register as a sixth product or fold into platform signals.
+- **Cohere date conflict**: milestones data says Aug 2026 (hard deadline); product plan (pilotDate, roadmap phases, v11 notes) says Sep 2026. UI renders Aug conservatively and flags the conflict. Confirm with Arun and correct one source.
+- Product `daysToDeadline` (176d) tracks planned launch Jan 20, 2027, not the next hard deadline; labels now say so.

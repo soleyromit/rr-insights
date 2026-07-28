@@ -7,6 +7,7 @@ import { MILESTONES } from '../data/personas';
 import { PRODUCTS, getProduct } from '../data/products';
 import { Figure, Masthead } from '../components/ui/Figure';
 import { PlotFigure } from '../components/charts/PlotFigure';
+import { computePhaseStates } from '../lib/phaseDates';
 
 const MONO = "'JetBrains Mono', monospace";
 
@@ -82,24 +83,25 @@ export function RoadmapView() {
         </Figure>
       </div>
 
-      <Figure title="Fig. 2 · Phase tracks per product" caption="Where each product sits in its own roadmap phases. Decision: a product whose active phase overruns the next diamond above needs scope cut, not optimism.">
+      <Figure title="Fig. 2 · Phase tracks per product" caption="Phase state is derived from dates written in the plan itself: struck phases have passed, the filled phase is the next dated one, dashed phases carry no date and claim no state. Decision: a product whose next dated phase overruns the diamond above needs scope cut, not optimism.">
         <div style={{ display: 'grid', gap: 12 }}>
           {PRODUCTS.map(p => (
             <div key={p.id} className="flex items-center gap-3">
               <span className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', width: 86, flexShrink: 0 }}>{p.shortName}</span>
-              <div className="flex flex-1 gap-1" role="list" aria-label={`${p.name} phases`}>
-                {p.roadmapPhases.map((ph, i) => {
-                  const state = i === 0 ? 'done' : i === 1 ? 'active' : 'planned';
+              <div className="flex flex-1 gap-1" role="list" aria-label={`${p.name} phases (state derived from dates)`}>
+                {(() => { const states = computePhaseStates(p.roadmapPhases.map(ph => ph.phase)); return p.roadmapPhases.map((ph, i) => {
+                  const st = states[i].state;
                   return (
-                    <div key={ph.phase} role="listitem" title={`${ph.phase}: ${ph.items.slice(0, 3).join(' · ')}`} style={{
+                    <div key={ph.phase} role="listitem" title={`${st === 'unscheduled' ? 'No parseable date. ' : ''}${ph.phase}: ${ph.items.slice(0, 3).join(' · ')}`} style={{
                       flex: 1, padding: '6px 10px', borderRadius: 4, fontSize: 11,
-                      background: state === 'done' ? `${p.accentColor}22` : state === 'active' ? p.accentColor : 'var(--bg2)',
-                      color: state === 'active' ? '#fff' : state === 'done' ? 'var(--text2)' : 'var(--text3)',
-                      fontWeight: state === 'active' ? 600 : 400,
+                      background: st === 'next' ? p.accentColor : 'var(--bg2)',
+                      border: st === 'unscheduled' ? '1px dashed var(--border2)' : '1px solid transparent',
+                      color: st === 'next' ? '#fff' : st === 'passed' ? 'var(--text3)' : 'var(--text2)',
+                      fontWeight: st === 'next' ? 600 : 400, textDecoration: st === 'passed' ? 'line-through' : 'none',
                       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                    }}>{ph.phase}</div>
+                    }}>{ph.phase}{st === 'unscheduled' ? ' ·?' : ''}</div>
                   );
-                })}
+                }); })()}
               </div>
             </div>
           ))}

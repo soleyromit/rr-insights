@@ -52,7 +52,7 @@ export function OverviewView({ onNav }) {
     <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
       <Masthead title="Command Center"
         lede="The state of five products in one view: deadline pressure, evidence mass, and the queue of critical findings that already name their design response. Everything links into its evidence."
-        byline={`${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products · next hard deadline in ${daysLeft} days`} />
+        byline={`${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products · next hard deadline: ${nextHard?.label ?? 'none scheduled'} in ${daysLeft} days (${nextHard?.date ?? ''})`} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.2fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
         {/* Product state — each row is a door, not a card */}
@@ -77,7 +77,7 @@ export function OverviewView({ onNav }) {
                 <span className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', textAlign: 'right', lineHeight: 1.6, flexShrink: 0 }}>
                   {total} insights<br /><span style={{ color: critical ? '#c24d3a' : 'var(--text3)' }}>{critical} critical</span>
                 </span>
-                {p.daysToDeadline && <span className="mono" style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--text2)', width: 44, textAlign: 'right', flexShrink: 0 }}>{p.daysToDeadline}d</span>}
+                {p.daysToDeadline && <span className="mono" title={`days to planned launch: ${p.launchDate ?? 'per product plan'}`} style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--text2)', width: 44, textAlign: 'right', flexShrink: 0 }}>{p.daysToDeadline}d</span>}
                 <ChevronRightIcon size={15} style={{ color: 'var(--text3)', flexShrink: 0, opacity: 0.5 }} />
               </button>
             );
