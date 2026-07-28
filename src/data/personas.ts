@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v12.0',
+    date: '2026-07-28',
+    summary: 'CRITICAL FIX: 140 insights moved from NPS_INSIGHTS back to INSIGHTS array. Every insight batch added since v8.0 had landed inside NPS_INSIGHTS instead of INSIGHTS, making them invisible to getInsightsByProduct(). App was showing 198 insights. Now correctly shows 292 in INSIGHTS (267 granola/vault + 25 older double-quote items) + 6 real NPS = 298 ALL_INSIGHTS.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/data/insights.ts', 'src/data/version.ts', 'src/data/personas.ts'],
+  },
+  {
     version: 'v11.0',
     date: '2026-07-28',
     summary: 'Views wired to live data. products.ts insightCounts updated to real computed values from insights.ts (exam 18→245, course-eval 4→113, faas 10→95, skills 4→41, learning 2→26). products.ts roadmap phases updated (Jan 20 MVP, Sep Cohere, Mar LA, Jun GA). ExamManagementView: criticalInsights, aiInsights, daysToMVP now computed dynamically. Progress bars updated to Granola-sourced Granola values. CourseEvalView: Insights tab added and wired to getInsightsByProduct — 113 course-eval insights now visible. PCE design readiness bars and launch timeline added.',
