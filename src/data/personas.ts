@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v14.1',
+    date: '2026-07-28',
+    summary: 'P5: Connect the Dots (evidence ledger + structured arguments), Source Library (artifact gallery with became-links), Briefings (audience letters with sanitized copy), Portfolio (readiness chart + pipeline) rebuilt viz-first. Content extracted verbatim to arguments.ts, briefings.ts, portfolio.ts. Gate: 0 findings on 9 rebuilt pages. P4 product deep-dives remain.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/NarrativeView.tsx', 'src/views/WhiteboardView.tsx', 'src/views/StakeholderView.tsx', 'src/views/PortfolioView.tsx', 'src/data/arguments.ts', 'src/data/briefings.ts', 'src/data/portfolio.ts', 'src/App.tsx'],
+  },
+  {
     version: 'v14.0',
     date: '2026-07-28',
     summary: 'P3: Command Center, Persona Atlas, Competitive Parity, and Roadmap rebuilt viz-first — friction heat grid, coverage bars, parity matrix + scores, retention-anchor trackers, milestone timeline with today rule, design-next queue. Shared Figure/Masthead system, a11y baseline (focus-visible, aria, reduced motion), Roadmap out of Archive. Design gate: 0 findings.',

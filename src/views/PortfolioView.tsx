@@ -1,179 +1,67 @@
 // @ts-nocheck
-// ─────────────────────────────────────────────
-//  views/PortfolioView.tsx
-//  Staff designer readiness audit vs JD benchmarks
-// ─────────────────────────────────────────────
-import { PRODUCTS } from '../data/products';
-import { Card, CardTitle, MetricCard } from '../components/ui/Card';
-import { ProgressBar } from '../components/ui/InsightRow';
-import { InsightRow } from '../components/ui/InsightRow';
-import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from 'recharts';
+// views/PortfolioView.tsx — Portfolio + Deliverables (P5 rebuild, UX Audit v1)
+// Staff-readiness as a chart, anchors as claims, case-study pipeline ranked by priority.
+import * as Plot from '@observablehq/plot';
+import { DIMENSIONS, ANCHORS, GAPS } from '../data/portfolio';
+import { Figure, Masthead } from '../components/ui/Figure';
+import { PlotFigure } from '../components/charts/PlotFigure';
 
-const DIMENSIONS = [
-{ label: 'Systems thinking', value: 92, color: '#8b7ff5', note: 'Service blueprints, governance models, cross-product architecture' },
-{ label: 'Cross-product ownership', value: 97, color: '#2ec4a0', note: 'Sole designer across 5 enterprise SaaS products' },
-{ label: 'Accessibility leadership', value: 82, color: '#f5a623', note: 'WCAG 2.1 AA within lockdown constraints — senior design challenge' },
-{ label: 'Published research', value: 94, color: '#8b7ff5', note: 'ACM SIGDOC 2024 · IEEE · UXPA Journal' },
-{ label: 'Domain expertise', value: 96, color: '#2ec4a0', note: 'CAPTE, ACOTE, CCNE, ARC-PA, CSWE, CAAHEP — 12 years' },
-{ label: 'Measurable outcomes', value: 62, color: '#e8604a', note: '⚠ Gap — needs case studies with before/after metrics' },
-{ label: 'Stakeholder communication', value: 78, color: '#f5a623', note: 'Building evidence — Touro, PRISM, Marriott sessions documented' },
-{ label: 'AI-product thinking', value: 74, color: '#2ec4a0', note: 'Growing — 6 confirmed AI use cases from Granola sessions' }];
-
-
-const ANCHORS = [
-{
-  label: 'Anchor 1',
-  text: 'Sole designer with cross-product ownership across 5 enterprise SaaS products serving 170+ accredited healthcare programmes.'
-},
-{
-  label: 'Anchor 2',
-  text: 'Redesigned FaaS governance framework covering 17,000+ configured forms and 95,000+ annual support tickets (NPS 2/5 baseline).'
-},
-{
-  label: 'Anchor 3',
-  text: 'Published researcher in HCI: Vector Personas framework (ACM SIGDOC 2024) applied directly to enterprise design practice.'
-},
-{
-  label: 'Anchor 4',
-  text: 'Deep accreditation domain expertise: CAPTE, ACOTE, CCNE, ARC-PA, CSWE, CAAHEP. Designing for compliance, not just usability.'
-},
-{
-  label: 'Anchor 5',
-  text: 'Founder-level institutional knowledge: original Exxat designer from 2014, returning with graduate research lens. 12-year product context.'
-}];
-
-
-const GAPS = [
-{
-  priority: 'P1',
-  title: 'FaaS 2.0 governance case study',
-  desc: 'Problem scale (95k tickets, NPS 2/5) + design decisions (3-level governance) + measurable outcomes. Highest-priority case study.',
-  color: '#e8604a'
-},
-{
-  priority: 'P2',
-  title: 'Exam accessibility case study',
-  desc: 'Systems thinking under constraint: building WCAG 2.1 AA within lockdown browser. Staff-level challenge framing.',
-  color: '#f5a623'
-},
-{
-  priority: 'P3',
-  title: 'Skills Checklist architectural case study',
-  desc: 'Platform-level architecture decision: standalone entity, multi-domain (nursing, PA, social work, rad tech). January 2027 launch.',
-  color: '#78aaf5'
-}];
-
-
-const radarData = [
-{ dim: 'Systems', score: 92 },
-{ dim: 'Ownership', score: 97 },
-{ dim: 'A11y', score: 82 },
-{ dim: 'Research', score: 94 },
-{ dim: 'Domain', score: 96 },
-{ dim: 'Outcomes', score: 62 },
-{ dim: 'Stakeholder', score: 78 },
-{ dim: 'AI thinking', score: 74 }];
-
-
-const CHART_STYLE = { fontSize: 11, fill: '#5c5a57' };
+const MONO = "'JetBrains Mono', monospace";
 
 export function PortfolioView() {
-  const overallScore = Math.round(DIMENSIONS.reduce((s, d) => s + d.value, 0) / DIMENSIONS.length);
-
+  const sorted = [...DIMENSIONS].sort((a, b) => b.value - a.value);
   return (
-    <div className="p-5 overflow-y-auto flex-1">
-      <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Staff Designer Signal Audit</h1>
-      <p className="text-[11px] text-[var(--text3)] mb-4">
-        Market positioning vs Staff / Principal Product Designer JD benchmarks · March 2026
-      </p>
+    <div style={{ padding: '30px 34px 48px', maxWidth: 1080 }}>
+      <Masthead title="Portfolio + Deliverables"
+        lede="Staff-level positioning measured against JD benchmarks: where the evidence is strong, where it is thin, and the case studies that close the gap. The shortest bar is the writing assignment."
+        byline={`${DIMENSIONS.length} positioning dimensions · ${ANCHORS.length} narrative anchors · ${GAPS.length} case studies in pipeline`} />
 
-      <div className="grid grid-cols-4 gap-2.5 mb-5">
-        <MetricCard label="Overall signal" value={overallScore} delta="Strong for Staff level" deltaVariant="up" />
-        <MetricCard label="Products owned" value={PRODUCTS.length} delta="Sole designer, enterprise SaaS" />
-        <MetricCard label="Publications" value="3" delta="ACM · IEEE · UXPA" deltaVariant="up" />
-        <MetricCard label="Portfolio gaps" value="2" delta="Case studies needed" deltaVariant="down" />
+      <div style={{ marginBottom: 16 }}>
+        <Figure title="Fig. 1 · Staff-readiness by dimension" caption="Self-assessed against Staff Product Designer JDs at comparable enterprise SaaS companies. Decision: measurable outcomes is the shortest bar, so the FaaS case study with before/after metrics is the highest-priority deliverable.">
+          <PlotFigure minHeight={DIMENSIONS.length * 32 + 50} deps={[sorted]} build={() => ({
+            height: DIMENSIONS.length * 32 + 46,
+            marginLeft: 190, marginTop: 8, marginBottom: 26, marginRight: 40,
+            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            x: { label: 'readiness', domain: [0, 100], tickSize: 0 },
+            y: { label: null, domain: sorted.map(d => d.label), tickSize: 0, padding: 0.3 },
+            marks: [
+              Plot.ruleX([70], { stroke: '#cdc8bf', strokeDasharray: '3 3' }),
+              Plot.text([70], { x: d => d, frameAnchor: 'bottom', text: () => 'staff bar', dy: 14, fill: '#6b6660', fontSize: 9.5 }),
+              Plot.barX(sorted, { x: 'value', y: 'label', fill: d => d.value < 70 ? '#e8604a' : '#8a8580', rx: 3, tip: true, title: d => d.note }),
+              Plot.text(sorted, { x: 'value', y: 'label', text: d => String(d.value), dx: 14, fill: '#4a4844', fontSize: 10.5 }),
+            ],
+          })} />
+        </Figure>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-3">
-        {/* Dimensions */}
-        <Card>
-          <CardTitle>Positioning dimensions</CardTitle>
-          {DIMENSIONS.map((d) =>
-          <ProgressBar
-            key={d.label}
-            label={d.label}
-            sublabel={d.note}
-            value={d.value}
-            color={d.color} />
-
-          )}
-        </Card>
-
-        <div className="flex flex-col gap-3">
-          {/* Radar */}
-          <Card>
-            <CardTitle sub="Why: visualises which dimensions are portfolio-ready vs gaps">
-              Staff signal radar
-            </CardTitle>
-            <div style={{ height: 220 }}>
-              <ResponsiveContainer>
-                <RadarChart data={radarData}>
-                  <PolarGrid stroke="rgba(255,255,255,0.06)" />
-                  <PolarAngleAxis dataKey="dim" tick={CHART_STYLE} />
-                  <Radar
-                    name="Score"
-                    dataKey="score"
-                    stroke="#8b7ff5"
-                    fill="rgba(139,127,245,0.15)"
-                    strokeWidth={2} />
-                  
-                  <Tooltip
-                    contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 10 }} />
-                  
-                </RadarChart>
-              </ResponsiveContainer>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 16 }}>
+        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
+            Narrative anchors, at least two per output
+          </div>
+          {ANCHORS.map(a => (
+            <div key={a.label} className="flex items-start gap-2.5" style={{ padding: '11px 18px', borderBottom: '1px solid var(--bg3)' }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', marginTop: 6, flexShrink: 0, background: 'var(--accent)' }} />
+              <span style={{ fontSize: 12.5, color: 'var(--text)', lineHeight: 1.5 }}>{a.text}</span>
             </div>
-          </Card>
+          ))}
+        </div>
 
-          {/* Anchors */}
-          <Card>
-            <CardTitle>Staff-level narrative anchors</CardTitle>
-            {ANCHORS.map((a) =>
-            <div key={a.label} className="flex gap-2 py-2 border-b border-[var(--border)] last:border-0">
-                <span className="text-[11px] px-1.5 py-0.5 rounded bg-[rgba(139,127,245,0.12)] text-[var(--accent)] font-mono h-fit flex-shrink-0 mt-0.5">
-                  {a.label}
-                </span>
-                <p className="text-[11px] text-[var(--text2)] leading-[1.5]">{a.text}</p>
+        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', alignSelf: 'start' }}>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
+            Case-study pipeline, ranked by positioning impact
+          </div>
+          {GAPS.map(g => (
+            <div key={g.priority} style={{ padding: '13px 18px', borderBottom: '1px solid var(--bg3)' }}>
+              <div className="flex items-baseline gap-2.5" style={{ marginBottom: 3 }}>
+                <span className="mono" style={{ fontSize: 10, fontWeight: 700, color: g.color }}>{g.priority}</span>
+                <span className="rr-serif" style={{ fontSize: 15.5, color: 'var(--text)' }}>{g.title}</span>
               </div>
-            )}
-          </Card>
+              <p style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5 }}>{g.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Case study gaps */}
-      <Card>
-        <CardTitle>Priority case studies to close positioning gaps</CardTitle>
-        <div className="grid grid-cols-3 gap-3">
-          {GAPS.map((g) =>
-          <div
-            key={g.title}
-            className="p-3 rounded-lg border"
-            style={{ borderColor: `${g.color}30`, background: `${g.color}08` }}>
-            
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span
-                className="text-[11px] px-1.5 py-0.5 rounded font-mono font-semibold"
-                style={{ background: `${g.color}20`, color: g.color }}>
-                
-                  {g.priority}
-                </span>
-                <div className="text-[11px] font-medium" style={{ color: g.color }}>{g.title}</div>
-              </div>
-              <p className="text-[10px] text-[var(--text3)] leading-[1.45]">{g.desc}</p>
-            </div>
-          )}
-        </div>
-      </Card>
-    </div>);
-
+    </div>
+  );
 }

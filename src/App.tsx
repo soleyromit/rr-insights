@@ -37,7 +37,7 @@ export function App() {
   }
   function renderView() {
     if (activeView === 'overview')         return <OverviewView onNav={handleNav} />;
-    if (activeView === 'whiteboard')       return <WhiteboardView />;
+    if (activeView === 'whiteboard')       return <WhiteboardView onNav={handleNav} />;
     if (activeView === 'competitive')      return <CompetitiveView />;
     if (activeView === 'changelog')        return <ChangelogView />;
     if (activeView === 'personas')         return <PersonaMapView />;

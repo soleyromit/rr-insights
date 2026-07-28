@@ -8,5 +8,5 @@
 set -e
 IMP="${IMPECCABLE_DIR:-$HOME/impeccable}"
 [ -d "$IMP" ] || git clone --depth 1 https://github.com/pbakaus/impeccable.git "$IMP"
-TARGETS="${@:-src/views/SignalsView.tsx src/views/OverviewView.tsx src/views/PersonaMapView.tsx src/views/CompetitiveView.tsx src/views/RoadmapView.tsx src/components src/index.css}"
+TARGETS="${@:-src/views/SignalsView.tsx src/views/OverviewView.tsx src/views/PersonaMapView.tsx src/views/CompetitiveView.tsx src/views/RoadmapView.tsx src/views/NarrativeView.tsx src/views/WhiteboardView.tsx src/views/StakeholderView.tsx src/views/PortfolioView.tsx src/components src/index.css}"
 node "$IMP/cli/bin/cli.js" detect $TARGETS
