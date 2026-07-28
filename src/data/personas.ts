@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v15.0',
+    date: '2026-07-28',
+    summary: 'P4: all five product pages rebuilt on the four-act template — stakes ledger + day-in-life, evidence timeline + expandable findings + discipline gaps, happy-path strip + AI-problem-first response, roadmap scoreboard with dependencies. Pre-audit deep specs preserved on -spec routes. Every routable page now leads with contextual structure. Gate: 0 findings.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/products/ProductPage.tsx', 'src/App.tsx', 'src/components/layout/Topbar.tsx', 'scripts/design-check.sh'],
+  },
+  {
     version: 'v14.1',
     date: '2026-07-28',
     summary: 'P5: Connect the Dots (evidence ledger + structured arguments), Source Library (artifact gallery with became-links), Briefings (audience letters with sanitized copy), Portfolio (readiness chart + pipeline) rebuilt viz-first. Content extracted verbatim to arguments.ts, briefings.ts, portfolio.ts. Gate: 0 findings on 9 rebuilt pages. P4 product deep-dives remain.',

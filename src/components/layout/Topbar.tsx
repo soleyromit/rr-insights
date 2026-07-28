@@ -11,6 +11,9 @@ const LABELS: Record<string, string> = {
   'learning-contracts': 'Learning Contracts', personas: 'Persona Atlas',
   signals: 'Signals', themes: 'Signals', roadmap: 'Roadmap', portfolio: 'Portfolio + Deliverables',
   stakeholder: 'Briefings', narrative: 'Connect the Dots — 5 Arguments',
+  'exam-spec': 'Exam Management · spec archive', 'faas-spec': 'FaaS 2.0 · spec archive',
+  'course-eval-spec': 'Course Eval · spec archive', 'skills-spec': 'Skills Checklist · spec archive',
+  'lc-spec': 'Learning Contracts · spec archive',
 };
 
 export function Topbar({ activeView }: Props) {
