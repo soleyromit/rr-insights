@@ -23,10 +23,15 @@ const v = (loader: () => Promise<Record<string, any>>, name: string) =>
 export const ROUTES: RouteDef[] = [
   { path: '/', label: 'Overview', section: 'home', component: v(() => import('../views/OverviewView'), 'OverviewView'), needsOnNav: true },
 
-  { path: '/insights', label: 'Insight Index', section: 'explore', component: v(() => import('../views/InsightIndexView'), 'InsightIndexView'), needsOnNav: true },
-  { path: '/highlights', label: 'Highlights', section: 'explore', component: v(() => import('../views/HighlightsView'), 'HighlightsView'), needsOnNav: true },
-  { path: '/signals', label: 'Signals', section: 'explore', component: v(() => import('../views/SignalsView'), 'SignalsView'), needsOnNav: true },
-  { path: '/personas', label: 'Persona Atlas', section: 'explore', component: v(() => import('../views/PersonaMapView'), 'PersonaMapView'), needsOnNav: true },
+  { path: '/insights', label: 'Insight Index', section: 'explore', component: v(() => import('../views/InsightIndexView'), 'InsightIndexView') },
+  { path: '/insights/:insightId', label: 'Insight', component: v(() => import('../views/InsightDetailView'), 'InsightDetailView') },
+  { path: '/highlights', label: 'Highlights', section: 'explore', component: v(() => import('../views/HighlightsView'), 'HighlightsView') },
+  { path: '/signals', label: 'Signals', section: 'explore', component: v(() => import('../views/SignalsView'), 'SignalsView') },
+  { path: '/signals/:signalId', label: 'Signal', component: v(() => import('../views/SignalDetailView'), 'SignalDetailView') },
+  { path: '/personas', label: 'Persona Atlas', section: 'explore', component: v(() => import('../views/PersonasView'), 'PersonasView') },
+  { path: '/personas/:personaId', label: 'Persona', component: v(() => import('../views/PersonaDetailView'), 'PersonaDetailView') },
+  { path: '/participants', label: 'Participants', section: 'explore', component: v(() => import('../views/ParticipantsView'), 'ParticipantsView') },
+  { path: '/participants/:voiceId', label: 'Participant', component: v(() => import('../views/ParticipantDetailView'), 'ParticipantDetailView') },
   { path: '/graph', label: 'Knowledge Graph', section: 'explore', component: v(() => import('../views/KnowledgeGraphView'), 'KnowledgeGraphView') },
 
   { path: '/products/exam-management', label: 'Exam', section: 'products', productId: 'exam-management', component: v(() => import('../views/products/ProductPage'), 'ProductPage'), needsOnNav: true },

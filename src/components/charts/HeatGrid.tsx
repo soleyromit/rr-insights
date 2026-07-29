@@ -24,13 +24,18 @@ export interface HeatGridProps {
 
 export function HeatGrid({ rows, cols, cell, legend }: HeatGridProps) {
   const colors = useChartColors();
+  // The theme returns the ramp low→high for the active mode (in dark mode the
+  // high end is the brighter, higher-contrast step). Trust its order.
   const steps = colors.sequential.blue(5);
   let max = 1;
   for (let r = 0; r < rows.length; r++)
     for (let c = 0; c < cols.length; c++) max = Math.max(max, cell(r, c)?.value ?? 0);
 
   const bg = (v: number) => (v <= 0 ? 'transparent' : steps[Math.min(4, Math.floor((v / max) * 5))]);
-  const ink = (v: number) => (v / max > 0.55 ? '#ffffff' : undefined);
+  const ink = (v: number) => {
+    if (v <= 0) return undefined;
+    return luminance(bg(v)) < 0.45 ? '#ffffff' : '#171717';
+  };
 
   return (
     <VStack gap={2}>
@@ -85,11 +90,18 @@ export function HeatGrid({ rows, cols, cell, legend }: HeatGridProps) {
       </div>
       {legend && (
         <Text type="supporting">
-          {legend.low} → {legend.high} (darker = more)
+          {legend.low} → {legend.high} (more prominent = more)
         </Text>
       )}
     </VStack>
   );
+}
+
+function luminance(hex: string): number {
+  const m = hex.replace('#', '');
+  if (m.length < 6) return 0;
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(m.slice(i, i + 2), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
 function FragmentRow({ label, children }: { label: string; children: React.ReactNode }) {
