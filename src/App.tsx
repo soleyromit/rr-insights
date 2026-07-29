@@ -1,80 +1,70 @@
-// @ts-nocheck
-import { useState } from 'react';
+import { Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './components/layout/Sidebar';
 import { Topbar } from './components/layout/Topbar';
-import { OverviewView } from './views/OverviewView';
-import { WhiteboardView } from './views/WhiteboardView';
-import { CompetitiveView } from './views/CompetitiveView';
-import { ChangelogView } from './views/ChangelogView';
-import { ExamManagementView } from './views/products/ExamManagementView';
-import { FaaSView } from './views/products/FaaSView';
-import { CourseEvalView } from './views/products/CourseEvalView';
-import { SkillsChecklistView } from './views/products/SkillsChecklistView';
-import { LearningContractsView } from './views/products/LearningContractsView';
-import { PersonaMapView } from './views/PersonaMapView';
-import { SignalsView } from './views/SignalsView';
-import { RoadmapView } from './views/RoadmapView';
-import { PortfolioView } from './views/PortfolioView';
-import { StakeholderView } from './views/StakeholderView';
-import { KnowledgeGraphView } from './views/KnowledgeGraphView';
-import { ExxatOneView } from './views/products/ExxatOneView';
-import { ExamAdminAuditView } from './views/products/ExamAdminAuditView';
-import { AnalyticsView } from './views/AnalyticsView';
-import { ArunPerformanceView } from './views/ArunPerformanceView';
-import { NPSView } from './views/NPSView';
-import { NarrativeView } from './views/NarrativeView';
-import { ProductPage } from './views/products/ProductPage';
-import { NavIAView } from './views/products/NavIAView';
-import { InsightIndexView } from './views/InsightIndexView';
-import { HighlightsView } from './views/HighlightsView';
-import type { ProductId } from './types';
+import { ROUTES, VIEW_PATH } from './app/routes';
 
-const PRODUCT_IDS = new Set<ProductId>(['exam-management','faas','course-eval','skills-checklist','learning-contracts']);
-type ViewId = string;
+// Reverse of VIEW_PATH for nav highlighting; first (canonical) id wins.
+const PATH_VIEW: Record<string, string> = {};
+for (const [id, path] of Object.entries(VIEW_PATH)) {
+  if (!(path in PATH_VIEW)) PATH_VIEW[path] = id;
+}
+
+/** Old-style paths (`/exam-management`, `/themes`, …) redirect to their new home. */
+function LegacyRedirect() {
+  const { pathname } = useLocation();
+  const target = VIEW_PATH[pathname.replace(/^\//, '')];
+  if (target) return <Navigate to={target} replace />;
+  return (
+    <div style={{ color: 'var(--text3)', fontSize: 15, display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      View not found.
+    </div>
+  );
+}
 
 export function App() {
-  const [activeView, setActiveView] = useState<ViewId>('overview');
-  function handleNav(view: ViewId) {
-    setActiveView(view);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // Compat for legacy views that still call onNav(viewId).
+  const onNav = (viewId: string) => navigate(VIEW_PATH[viewId] ?? viewId);
+
+  useEffect(() => {
     const el = document.getElementById('main-content');
     if (el) el.scrollTop = 0;
-  }
-  function renderView() {
-    if (activeView === 'overview')         return <OverviewView onNav={handleNav} />;
-    if (activeView === 'whiteboard')       return <WhiteboardView onNav={handleNav} />;
-    if (activeView === 'competitive')      return <CompetitiveView />;
-    if (activeView === 'changelog')        return <ChangelogView />;
-    if (activeView === 'personas')         return <PersonaMapView onNav={handleNav} />;
-    if (activeView === 'signals')          return <SignalsView onNav={handleNav} />;
-    if (activeView === 'insights')         return <InsightIndexView onNav={handleNav} />;
-    if (activeView === 'highlights')       return <HighlightsView onNav={handleNav} />;
-    if (activeView === 'themes')           return <SignalsView onNav={handleNav} />; // legacy route → Signals
-    if (activeView === 'roadmap')          return <RoadmapView />;
-    if (activeView === 'portfolio')        return <PortfolioView />;
-    if (activeView === 'stakeholder')      return <StakeholderView />;
-    if (activeView === 'exactone')         return <ExxatOneView />;
-    if (activeView === 'knowledge-graph') return <KnowledgeGraphView />;
-    if (activeView === 'exam-audit')        return <ExamAdminAuditView />;
-    if (activeView === 'analytics')         return <AnalyticsView />;
-    if (activeView === 'arun-performance') return <ArunPerformanceView />;
-    if (activeView === 'nps')              return <NPSView />;
-    if (activeView === 'narrative')        return <NarrativeView onNav={handleNav} />;
-    if (activeView === 'nav-ia')           return <NavIAView />;
-    // Product pages — four-act contextual template (P4); pre-audit deep specs preserved on -spec routes
-    if (PRODUCT_IDS.has(activeView as ProductId)) return <ProductPage productId={activeView} onNav={handleNav} />;
-    if (activeView === 'exam-spec')        return <ExamManagementView />;
-    if (activeView === 'faas-spec')        return <FaaSView />;
-    if (activeView === 'course-eval-spec') return <CourseEvalView />;
-    if (activeView === 'skills-spec')      return <SkillsChecklistView />;
-    if (activeView === 'lc-spec')          return <LearningContractsView />;
-    return <div style={{color:'var(--text3)',fontSize: 15,display:'flex',flex:1,alignItems:'center',justifyContent:'center'}}>View not found.</div>;
-  }
+  }, [pathname]);
+
+  const activeView = PATH_VIEW[pathname] ?? pathname.replace(/^\//, '');
+
   return (
-    <div className="flex h-screen overflow-hidden" style={{background:'var(--bg)'}}>
-      <Sidebar activeView={activeView} onNav={handleNav} />
+    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg)' }}>
+      <Sidebar activeView={activeView} onNav={onNav} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Topbar activeView={activeView} onNav={handleNav} />
-        <div id="main-content" className="flex-1 overflow-y-auto">{renderView()}</div>
+        <Topbar activeView={activeView} onNav={onNav} />
+        <div id="main-content" className="flex-1 overflow-y-auto">
+          <Suspense fallback={null}>
+            <Routes>
+              {ROUTES.map((r) => {
+                const C = r.component;
+                return (
+                  <Route
+                    key={r.path}
+                    path={r.path}
+                    element={
+                      <C
+                        {...(r.productId && !r.path.includes('/spec') && !r.path.includes('/audit') && !r.path.includes('/ia')
+                          ? { productId: r.productId }
+                          : {})}
+                        {...(r.needsOnNav ? { onNav } : {})}
+                      />
+                    }
+                  />
+                );
+              })}
+              <Route path="*" element={<LegacyRedirect />} />
+            </Routes>
+          </Suspense>
+        </div>
       </div>
     </div>
   );
