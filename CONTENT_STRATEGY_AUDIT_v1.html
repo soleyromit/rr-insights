@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content &amp; Strategy Audit v1 · Obsidian vs rr-insights · leadership lenses · long-term plan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500;600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap');
+  :root{--ink:#1a1917;--ink2:#44423e;--ink3:#6b6660;--paper:#faf9f7;--card:#fff;--line:#e3ddd4;
+    --acc:#6d5ed4;--yes:#1d8a6e;--part:#b45309;--no:#c2362b;
+    --serif:'DM Serif Display',Georgia,serif;--mono:'JetBrains Mono',monospace;--sans:'Schibsted Grotesk',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16.5px;line-height:1.6}
+  .wrap{max-width:1140px;margin:0 auto;padding:56px 32px 120px}
+  header.doc{border-bottom:3px solid var(--ink);padding-bottom:26px;margin-bottom:40px}
+  h1{font-family:var(--serif);font-size:42px;line-height:1.1;font-weight:400;margin:0 0 14px}
+  h2{font-family:var(--serif);font-size:30px;font-weight:400;margin:58px 0 8px}
+  h3{font-size:18px;font-weight:700;margin:26px 0 8px}
+  .meta{display:flex;gap:26px;flex-wrap:wrap;font-family:var(--mono);font-size:13px;color:var(--ink2)}
+  .meta b{color:var(--ink)}
+  p{margin:0 0 15px;max-width:840px}
+  .sub{color:var(--ink2);margin-bottom:22px;max-width:820px}
+  table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14.5px;background:var(--card);border:1px solid var(--line)}
+  th{font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;text-align:left;color:var(--ink3);padding:10px 12px;border-bottom:2px solid var(--ink);background:var(--paper)}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .st{font-family:var(--mono);font-size:12px;font-weight:600;padding:2px 9px;border-radius:3px;white-space:nowrap}
+  .yes{background:#e2f2ec;color:var(--yes)} .part{background:#fbeedd;color:var(--part)} .no{background:#f9e6e3;color:var(--no)}
+  .num{font-family:var(--mono);font-size:13.5px}
+  .callout{border-left:4px solid var(--ink);background:var(--card);padding:18px 22px;margin:22px 0;max-width:860px;font-size:16px}
+  .callout .k{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:6px}
+  code{font-family:var(--mono);font-size:14px;background:#f1efe9;padding:1px 6px;border-radius:3px}
+  ul.tight,ol.tight{margin:0 0 16px 22px;max-width:840px}
+  ul.tight li,ol.tight li{margin-bottom:9px}
+  .band{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0}
+  .band>div{background:var(--card);padding:15px 17px}
+  .band .n{font-family:var(--serif);font-size:30px;line-height:1}
+  .band .l{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-top:5px}
+  .prod{background:var(--card);border:1px solid var(--line);margin:18px 0;padding:22px 24px}
+  .prod h3{font-family:var(--serif);font-size:24px;font-weight:400;margin:0 0 4px}
+  .prod .evrow{font-family:var(--mono);font-size:13px;color:var(--ink2);margin-bottom:14px}
+  .lens3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin:12px 0 14px}
+  .lens3 h4{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);border-top:2px solid var(--line);padding-top:9px;margin-bottom:7px}
+  .lens3 li{font-size:14px;line-height:1.5;margin-bottom:7px}
+  .lens3 ul{margin-left:18px}
+  .fix{border-top:1px solid var(--line);padding-top:12px;font-size:14.5px}
+  .fix b{font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;color:var(--acc)}
+  @media(max-width:900px){.lens3{grid-template-columns:1fr}.band{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="doc">
+  <h1>Content &amp; strategy audit:<br>Obsidian vs rr-insights, and what leadership actually asks</h1>
+  <div class="meta">
+    <span>Audit <b>v1.0</b></span><span>Date <b>Jul 29, 2026</b></span>
+    <span>Corpus measured <b>267 insights · 175 sources · 47 source documents · 73 sessions</b></span>
+    <span>Status <b>Execution-ready · precedes P6 design work</b></span>
+  </div>
+</header>
+
+<p style="font-size:18px;max-width:860px">This audit does four things before another pixel is designed: measures the structural gap between the Obsidian source corpus and rr-insights, defines per product what leadership cares about versus what the designer cares about and why the research exists at all, sets the long-term research strategy against the three-year product plan, and tracks every page with its content and design improvement side by side. Nothing here is aspiration; every number below was computed from the repo this morning.</p>
+
+<div class="band">
+  <div><div class="n" style="color:var(--no)">9.4×</div><div class="l">evidence imbalance: Exam 226 vs Learning Contracts 24</div></div>
+  <div><div class="n" style="color:var(--no)">17</div><div class="l">SCCE persona tags, vs DCE at 259</div></div>
+  <div><div class="n" style="color:var(--part)">19%</div><div class="l">insights carrying a direct quote (51 of 267)</div></div>
+  <div><div class="n" style="color:var(--part)">0</div><div class="l">insights graded "low" — severity inflation</div></div>
+  <div><div class="n" style="color:var(--yes)">175</div><div class="l">distinct sources — provenance breadth is real</div></div>
+</div>
+
+<!-- ============ 01 OBSIDIAN VS RR-INSIGHTS ============ -->
+<h2>01 · Obsidian corpus vs rr-insights: the structural gaps</h2>
+<p class="sub">The vault (47 source documents: PRDs, KT decks, Granola exports, NPS workbooks, whiteboard photos, site-visit notes) is the system of record. rr-insights is the system of persuasion. Six gaps separate them, ranked by damage.</p>
+
+<table>
+<thead><tr><th style="width:230px">Dimension</th><th style="width:230px">Obsidian corpus</th><th style="width:230px">rr-insights today</th><th>The gap and its cost</th></tr></thead>
+<tbody>
+<tr><td><b>1 · Source traceability</b></td><td>Every claim lives inside its full document; context is one scroll away</td><td>Insights carry a source <em>name</em> string; the document itself is unreachable from the UI</td><td><span class="st no">CRITICAL</span> A leadership challenge ("where does 80–90% come from?") ends at a filename. Fix: <code>sourceDoc</code> field linking each insight to its vault note / repo doc.</td></tr>
+<tr><td><b>2 · Freshness &amp; drift</b></td><td>One note per fact; edits propagate through links automatically</td><td>Facts hand-copied into parallel constants; sync is manual</td><td><span class="st no">CRITICAL</span> Proven cost: the Cohere Aug/Sep conflict and stale "upcoming" April milestones (caught v15.1). Fix: vault frontmatter → <code>src/data</code> export pipeline; dates exist once.</td></tr>
+<tr><td><b>3 · Evidence density</b></td><td>Full verbatim transcripts and quotes</td><td>51 of 267 insights carry a quote (19%); the rest are unquoted synthesis</td><td><span class="st part">HIGH</span> Synthesis without quotable evidence is opinion to a skeptical VP. Target: 40% quote coverage, prioritized on critical insights (112 of them, quote-first).</td></tr>
+<tr><td><b>4 · Media evidence</b></td><td>Whiteboard photos, screenshots, scanned PDFs in place</td><td>Zero images anywhere in the UI</td><td><span class="st part">HIGH</span> The Source Library describes whiteboards it cannot show. Fix: image assets for the 10 whiteboard artifacts + screenshots on competitive claims.</td></tr>
+<tr><td><b>5 · Arbitrary query</b></td><td>Dataview: any question over frontmatter, on demand</td><td>Fixed views; questions the views did not anticipate are unanswerable</td><td><span class="st part">MEDIUM</span> Covered by P8 global search + P7 scoring; note the vault answers "all critical Skills insights since May" today and rr-insights cannot.</td></tr>
+<tr><td><b>6 · Bidirectional links</b></td><td>Backlinks free on every note</td><td>Relations computed only through shared tags</td><td><span class="st part">MEDIUM</span> "This insight contradicts / supports that one" is unexpressible. Fix: optional <code>relatedIds</code> + <code>relation</code> (supports / contradicts / supersedes) — contradiction tracking is a research-practice marker almost no tool ships.</td></tr>
+</tbody>
+</table>
+
+<div class="callout"><span class="k">Division of labor, settled</span>
+Obsidian is the <b>working memory</b>: raw transcripts, PII, in-progress thinking, one note per fact. rr-insights is the <b>argument</b>: computed, visual, stakeholder-safe, quote-backed. The pipeline between them (P9) is what makes both honest; without it, every rr-insights number is a hand copy waiting to drift.</div>
+
+<!-- ============ 02 PER PRODUCT LENSES ============ -->
+<h2>02 · Per product: the leadership lens, the designer lens, and why the research exists</h2>
+<p class="sub">Leadership = Aarti (decision + outcome, 3 sentences), Kunal (business impact, risk, timeline), Arun (status, rationale, risk flags). Designer = what Romit must resolve to ship. "Why this research" is the sentence that justifies the repo when someone asks why a designer runs one. Evidence state is measured, and each product ends in its content fix.</p>
+
+<div class="prod">
+  <h3>Exam Management</h3>
+  <div class="evrow">Evidence: 226 insight links · strong quote base · voices: faculty (Dr. Mody), PD (Ed Razenbach), Touro · <span class="st yes">RICHEST CORPUS</span></div>
+  <div class="lens3">
+    <div><h4>Leadership cares about</h4><ul>
+      <li>Cohere demo readiness and the date itself (currently conflicted Aug/Sep — resolve first)</li>
+      <li>Parity score vs ExamSoft and the displacement economics: migration of 10,000+ questions is the purchase barrier, so switching cost is the pricing conversation</li>
+      <li>Jan 20 2027 MVP risk: what is cut if the date holds</li></ul></div>
+    <div><h4>Designer cares about</h4><ul>
+      <li>Accessibility inside LockDown constraints (zoom, TTS, navigator) as the equity differentiator no competitor ships</li>
+      <li>QB architecture: attributes, versioning, archive-not-delete, 4-role permissions</li>
+      <li>Progressive disclosure: power faculty want Bloom's cross-referencing, casual faculty want zero overhead</li></ul></div>
+    <div><h4>Why this research exists</h4><ul>
+      <li>ExamSoft is beatable only at the switching moment; only research locates that moment per program</li>
+      <li>Equitable assessment access is an accreditation requirement (CAAHEP/ARC-PA), not a nice-to-have — the a11y spec is compliance evidence</li></ul></div>
+  </div>
+  <div class="fix"><b>CONTENT FIX C1</b> · Resolve the Cohere date at the source; re-grade severities (a 226-insight corpus with zero "low" is not credible under audit); attach quotes to the top 30 critical insights first.</div>
+</div>
+
+<div class="prod">
+  <h3>FaaS 2.0</h3>
+  <div class="evrow">Evidence: 84 insight links · best quantified problem (95k tickets, NPS 2/5) · <span class="st no">NO NAMED DCE OR SCCE VOICE</span></div>
+  <div class="lens3">
+    <div><h4>Leadership cares about</h4><ul>
+      <li>95,000 tickets/yr as a P&amp;L line: support cost per program, and the governance model's projected reduction</li>
+      <li>Compliance exposure: global settings that can break program configurations touch HIPAA/FERPA/ADA — one incident outweighs a year of tickets</li>
+      <li>NPS 2/5 as churn leading-indicator</li></ul></div>
+    <div><h4>Designer cares about</h4><ul>
+      <li>3-level governance (CRITICAL / manager approval / warning-only) as the core interaction model</li>
+      <li>Reviewer UX for SCCEs: side-by-side comparison, mobile-first, zero relearning</li>
+      <li>Self-service form building at Google-Forms friction with SurveyMonkey capability</li></ul></div>
+    <div><h4>Why this research exists</h4><ul>
+      <li>17,000 configured forms mean any redesign gamble is multiplied 17,000 times; research is the only cheap way to be wrong</li>
+      <li>The 95k tickets are users voting; research converts the vote into the governance spec</li></ul></div>
+  </div>
+  <div class="fix"><b>CONTENT FIX C2</b> · Two named-voice sessions (one DCE, one SCCE) before any FaaS design sprint — the largest quantified problem in the portfolio currently argues entirely from ticket counts, with no human on record.</div>
+</div>
+
+<div class="prod">
+  <h3>Post Course Evaluation / Surveys</h3>
+  <div class="evrow">Evidence: 110 insight links · deep requirements docs (two-instrument model, routing, Jun 1 scope) · <span class="st part">STRONG DOCS, THIN STUDENT VOICE</span></div>
+  <div class="lens3">
+    <div><h4>Leadership cares about</h4><ul>
+      <li>June 1 dev handoff already passed — the status truth: what shipped, what slipped, in one line (Aarti's format)</li>
+      <li>Displacement of paid Qualtrics/SurveyMonkey seats: lowest-friction, highest-ROI competitive win in the portfolio</li>
+      <li>ARC-PA 65% response rate as target, correctly framed as target not requirement — misframing this to an accreditor-adjacent audience is a credibility risk</li></ul></div>
+    <div><h4>Designer cares about</h4><ul>
+      <li>Two-instrument routing (student PCE → faculty/PD/dean; self-reflection → PD only) as a diagram, since routing errors are trust errors</li>
+      <li>Distribution flow: the highest-design-investment moment; analytics as "the meat"</li>
+      <li>Per-section multi-faculty generation mechanics</li></ul></div>
+    <div><h4>Why this research exists</h4><ul>
+      <li>Evaluation cycles feed accreditation renewals; a routing mistake leaks a student's evaluation to the wrong reader — research de-risks an irreversible trust failure</li></ul></div>
+  </div>
+  <div class="fix"><b>CONTENT FIX C3</b> · Post-handoff retro insight set (what the Jun 1 scope became); one student-voice session on evaluation fatigue — response-rate design without respondent research is guesswork.</div>
+</div>
+
+<div class="prod">
+  <h3>Skills Checklist</h3>
+  <div class="evrow">Evidence: 37 insight links · one killer stat (80–90% external tracking) · <span class="st no">UNDERPOPULATED — the stat has no faces</span></div>
+  <div class="lens3">
+    <div><h4>Leadership cares about</h4><ul>
+      <li>80–90% of the core job done outside the product = paying customers not using the module = renewal exposure, quantifiable per program</li>
+      <li>Meditrek head-to-head: this is the module where a competitor wins deals on competency tracking alone</li></ul></div>
+    <div><h4>Designer cares about</h4><ul>
+      <li>Skills as a program-level entity owned by the student, not placement-scoped — the architectural decision everything else hangs on</li>
+      <li>Procedure minimum counter and deficiency "red filter" for faculty triage</li></ul></div>
+    <div><h4>Why this research exists</h4><ul>
+      <li>Competency verification is the accreditor's core question (CAPTE/ACOTE/CCNE); the product currently cannot answer "has this student done this skill across all rotations" — research defines the entity model before engineering commits it</li></ul></div>
+  </div>
+  <div class="fix"><b>CONTENT FIX C4</b> · Synthesis pass over existing project docs (+15–20 insights available without new sessions), then one student and one SCCE session to put faces on the 80–90%.</div>
+</div>
+
+<div class="prod">
+  <h3>Learning Contracts</h3>
+  <div class="evrow">Evidence: 24 insight links · no named user voice · <span class="st no">RESEARCH DEBT — and the page should say so</span></div>
+  <div class="lens3">
+    <div><h4>Leadership cares about</h4><ul>
+      <li>Honestly: nothing yet — and that is the report. The leadership line is "we do not know enough to invest here; here is the two-session plan to know."</li>
+      <li>Un-quantified renewal exposure: which disciplines require contracts for accreditation, and is the module losing those deals</li></ul></div>
+    <div><h4>Designer cares about</h4><ul>
+      <li>Multi-site contract timeline and preceptor-change workflow as the two probable core flows (hypothesis-graded until sessions exist)</li>
+      <li>Dependency on the Skills entity decision — designing LC before Skills settles is sequencing risk</li></ul></div>
+    <div><h4>Why this research exists</h4><ul>
+      <li>Learning objectives map to program competency outcomes across every accreditor; a discovery gap here is a compliance feature designed blind</li></ul></div>
+  </div>
+  <div class="fix"><b>CONTENT FIX C5</b> · Two discovery sessions (DCE + clinical supervisor). Until then the product page carries an explicit research-debt banner; every LC insight is graded HYPOTHESIS unless quoted.</div>
+</div>
+
+<!-- ============ 03 LONG TERM ============ -->
+<h2>03 · Long-term analysis: research strategy against the three-year plan</h2>
+<p class="sub">The product north star is fixed: Year 1 beat LMS free tools, Year 2 match ExamSoft paid, Year 3 AI proctoring and surpass. Each year asks a different research question, and the repo should show which year it is currently serving.</p>
+
+<table>
+<thead><tr><th style="width:150px">Horizon</th><th>The research question of the year</th><th>What the repo must produce</th><th style="width:110px">State</th></tr></thead>
+<tbody>
+<tr><td class="num"><b>Year 1</b> (now → mid-2027)<br>Beat LMS free</td><td>Where is the switching moment, program by program, and what does "better than free" mean per persona?</td><td>Switching-cost studies (migration barrier evidence), baseline metrics captured NOW (ticket volume, NPS, external-tracking rate) so Year 2 has before/after, Cohere and MVP readiness evidence</td><td><span class="st part">PARTIAL</span> baselines exist; switching studies are Exam-only</td></tr>
+<tr><td class="num"><b>Year 2</b> (2027–28)<br>Match ExamSoft paid</td><td>Is parity real in users' hands, not in the feature matrix?</td><td>Longitudinal NPS waves on the same instrument, parity validation sessions with switched programs, HOD/Outcome-Director research (deferred Phase-1 roles become Year-2 subjects)</td><td><span class="st no">NOT STARTED</span> by design; instrument continuity must be protected now</td></tr>
+<tr><td class="num"><b>Year 3</b> (2028+)<br>AI proctoring, surpass</td><td>Under what conditions do students and faculty trust AI proctoring at all?</td><td>Trust/ethics research program, false-positive tolerance studies, accessibility interaction with proctoring AI — the highest-stakes research in the plan, and it cannot be compressed</td><td><span class="st no">NOT STARTED</span> correctly; flag: begin literature base in Year 2</td></tr>
+</tbody>
+</table>
+
+<h3>Best-practice scorecard (atomic research / continuous discovery standards)</h3>
+<table>
+<thead><tr><th>Practice</th><th style="width:100px">State</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>Atomic insights with typed metadata</td><td><span class="st yes">HAVE</span></td><td>Ahead of most professional repos; keep.</td></tr>
+<tr><td>Evidence hierarchy (quote / synthesis / hypothesis)</td><td><span class="st yes">HAVE</span></td><td>Raise quote coverage 19% → 40%, critical insights first.</td></tr>
+<tr><td>Severity calibration</td><td><span class="st no">MISSING</span></td><td>Zero "low" of 267 is inflation. Write the four-level rubric into <code>taxonomy.ts</code>; re-grade during C1.</td></tr>
+<tr><td>Research question register</td><td><span class="st no">MISSING</span></td><td>Per product: the questions that must be answered before each hard date. Lives on each product page (Act 2), computed against session coverage — this is the "why is this research required" made permanent and non-static.</td></tr>
+<tr><td>Insight freshness / review dates</td><td><span class="st no">MISSING</span></td><td>Add <code>reviewBy</code>; insights older than two quarters render with an age mark. Stale research presented as current is the quiet credibility killer.</td></tr>
+<tr><td>Contradiction tracking</td><td><span class="st no">MISSING</span></td><td><code>relatedIds + relation</code> from Section 01; surfacing contradictions is what separates a repo from a scrapbook.</td></tr>
+<tr><td>Voice coverage discipline</td><td><span class="st part">PARTIAL</span></td><td>SCCE at 17 tags is a measured silence; C2/C4 sessions close it. Coverage bars already render it honestly.</td></tr>
+<tr><td>Impact traceability (insight → design → outcome)</td><td><span class="st no">MISSING</span></td><td>P9 outcome field with Magic Patterns artifact links. This is the slide that answers "what did the research change?"</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 04 PAGE TRACKER ============ -->
+<h2>04 · Every page, tracked: content state → content fix → design fix</h2>
+<p class="sub">One row per routable surface. Design fixes reference the benchmark directives (D1 ranked bars, D2 volume areas, D3 insight-as-document, D4 highlight spans, D5 digest lines, D6 opportunity scoring) and phases P6–P9. Content fixes reference C1–C5 above.</p>
+
+<table>
+<thead><tr><th style="width:150px">Page</th><th>Content state (measured)</th><th>Content fix</th><th>Design / viz / interaction fix</th></tr></thead>
+<tbody>
+<tr><td><b>Command Center</b></td><td>Computed but recency-ranked; digest absent</td><td>Queue re-ranked by opportunity score, not date</td><td>P6 D5 digest line; P7 D6 scored queue with inspectable formula</td></tr>
+<tr><td><b>Connect the Dots</b></td><td>5 arguments strong; stats hand-copied (drift risk)</td><td>Wire ledger stats to data modules; add contradiction notes where NPS waves disagree</td><td>P6 D3 document rhythm; D4 highlight-span quotes</td></tr>
+<tr><td><b>Roadmap</b></td><td>Honest post-v15.1; Cohere conflict open</td><td>C1 date resolution at source; milestone staleness sweep</td><td>P6 D2 volume context strip; deep-link state (P8)</td></tr>
+<tr><td><b>Signals</b></td><td>Engine sound; membership needs curation pass after word-boundary fix</td><td>Manual review of each signal's evidence set; pin curated members via seedIds</td><td>P6 D1 ranked bars replace Highcharts stack; D2 area replaces dot field; P7 scores on cards</td></tr>
+<tr><td><b>Persona Atlas</b></td><td>SCCE row argues from 17 data points</td><td>C2/C4 SCCE + student sessions; NPS drivers merged in (retires archive NPS page)</td><td>P6 D5 digest; per-persona quote wall (D4)</td></tr>
+<tr><td><b>Competitive Parity</b></td><td>12-feature set is Exam-heavy; FaaS/PCE indirect competitors (SurveyMonkey, Qualtrics, Meditrek) absent from matrix</td><td>Extend matrix per product using the competitor framework already in SKILL §3</td><td>P7 D6 anchor scoring once parity tracking is measured; screenshot evidence (P9 media)</td></tr>
+<tr><td><b>Source Library</b></td><td>Describes artifacts it cannot show</td><td>Digitize 10 whiteboard photos into assets</td><td>P9 image evidence tiles; lightbox interaction</td></tr>
+<tr><td><b>Briefings</b></td><td>Letters static since v12 data</td><td>Regenerate from live signals + scores each render (kills last static prose)</td><td>P7 computed letters; per-audience digest lines</td></tr>
+<tr><td><b>Portfolio</b></td><td>Dimensions self-scored, honest since v15.1</td><td>Tie each case study to its evidence mass and outcome trail</td><td>P9 impact trail viz</td></tr>
+<tr><td><b>5 × Product pages</b></td><td>Template sound; evidence sections inherit the per-product gaps above</td><td>C1–C5 per product; research-question register renders in Act 2</td><td>P6 D1/D2/D5 chart conversion; P7 D3 insight documents; scored enhancement requests</td></tr>
+<tr><td><b>Spec archives (5)</b></td><td>Frozen pre-audit content, preserved</td><td>None — archival by design; label with freeze date</td><td>None; exempt from gate until/unless promoted</td></tr>
+<tr><td><b>Archive: NPS, Knowledge Graph, ExxatOne, Exam Audit, Arun Perf, Nav IA, Analytics</b></td><td>Merge targets, unchanged</td><td>NPS → Persona Atlas (C2 window); ExxatOne registration decision to Arun; Exam Audit content → Exam Act 4 panel</td><td>Retire pages as merges land; Knowledge Graph superseded by P8 search + relation links</td></tr>
+</tbody>
+</table>
+
+<!-- ============ 05 EXECUTION ============ -->
+<h2>05 · Execution order, content and design interleaved</h2>
+<table>
+<thead><tr><th style="width:110px">Sprint</th><th>Content track</th><th>Design track</th><th style="width:200px">Exit test</th></tr></thead>
+<tbody>
+<tr><td class="num"><b>S1</b> (now)</td><td>C1 Exam: Cohere date resolved at source, severity rubric + re-grade, quotes on top 30 criticals. Signal membership curation.</td><td>P6 chart conversion (D1, D2, D5) across Signals, Command Center, product pages.</td><td>No stacked-bar/legend charts remain; every masthead has a computed digest; a "low" severity exists.</td></tr>
+<tr><td class="num"><b>S2</b></td><td>C4 Skills synthesis pass (+15–20 insights from existing docs); C3 PCE post-handoff retro set.</td><td>P7 opportunity scoring engine; insight-as-document (D3/D4); Briefings regenerated live.</td><td>Design-next ranked by inspectable score; zero static prose in Briefings.</td></tr>
+<tr><td class="num"><b>S3</b></td><td>C2 FaaS + C4/C5 sessions scheduled (2 SCCE, 1 student, 1 DCE, 1 supervisor) — the only track requiring calendar time, so it starts week 1 and lands here.</td><td>P8 Cmd+K search, universal deep links, copy-as-markdown.</td><td>Any insight reachable in ≤3 keystrokes; SCCE tag count &gt; 40.</td></tr>
+<tr><td class="num"><b>S4</b></td><td>Research question register live per product; freshness dates on all insights; NPS merge into Persona Atlas.</td><td>P9 ingest pipeline (Obsidian frontmatter → src/data), media evidence, outcome trail.</td><td>One canonical source per fact; whiteboards visible; an insight→prototype trail renders end to end.</td></tr>
+</tbody>
+</table>
+
+<div class="callout"><span class="k">The one-slide version for leadership</span>
+The repo already knows more than most enterprise research teams capture — 267 typed insights across 175 sources. Its three honest weaknesses are measured, not felt: evidence concentrates 9:1 on one product, the site-supervisor voice is nearly silent at 17 mentions, and one in five claims carries a quote. The four-sprint plan above fixes content and interface together, and every fix has an exit test.</div>
+
+<footer style="margin-top:70px;border-top:1px solid var(--line);padding-top:16px;font-family:var(--mono);font-size:12.5px;color:var(--ink3)">
+Content &amp; Strategy Audit v1.0 · Jul 29, 2026 · Numbers computed from src/data/insights.ts at v15.2 · Companion to RESEARCH_REPO_BENCHMARK_v1.html · Precedes P6 design execution
+</footer>
+</div></body></html>
