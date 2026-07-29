@@ -4,7 +4,7 @@ export const PRODUCTS: ProductMeta[] = [
   {
     id: 'exam-management', name: 'Exam Management', shortName: 'Exam',
     description: 'Clinical knowledge assessment platform. ExamSoft competitor with Canvas-level UX. Jan 20 2027 MVP.',
-    status: 'active', accentColor: '#6d5ed4', insightCount: 245, criticalGaps: 73,
+    status: 'active', accentColor: '#6d5ed4',
     pilotDate: 'Sep 2026 (Cohere)', launchDate: 'Jan 20 2027 (MVP)', userCount: '170+ programs',
     primaryPersonas: ['student', 'dce', 'program-director'],
     priorityScore: 98, daysToDeadline: 176, urgencyLevel: 'fire', sentimentScore: 52, granolaSessions: 73,
@@ -59,7 +59,7 @@ export const PRODUCTS: ProductMeta[] = [
     id: 'faas', name: 'FaaS 2.0', shortName: 'FaaS',
     description: 'Forms as a Service — 17k configured forms, 95k annual support tickets, NPS 2/5.',
     status: 'wip', accentColor: '#dc2626', nps: 2, ticketsPerYear: 95000,
-    insightCount: 95, criticalGaps: 29, userCount: '17,000 forms',
+    userCount: '17,000 forms',
     primaryPersonas: ['dce', 'scce', 'program-director'],
     priorityScore: 91, daysToDeadline: 176, urgencyLevel: 'fire', sentimentScore: 35, granolaSessions: 73,
     keyQuote: 'We type the tags by hand. One spelling mistake and the entire form logic breaks. We find out in October when students start submitting.',
@@ -111,7 +111,7 @@ export const PRODUCTS: ProductMeta[] = [
   {
     id: 'course-eval', name: 'Course & Faculty Eval', shortName: 'Course Eval',
     description: 'Post-course survey and evaluation. Sep 15 beta target. 103 warm programs identified. Jun 1 dev handoff complete.',
-    status: 'active', accentColor: '#0d9488', insightCount: 113, criticalGaps: 29,
+    status: 'active', accentColor: '#0d9488',
     primaryPersonas: ['dce', 'program-director'],
     priorityScore: 85, daysToDeadline: 176, urgencyLevel: 'fire', sentimentScore: 58, granolaSessions: 73,
     keyQuote: 'I paste all the open-ended responses into ChatGPT and ask it to extract themes. It saves hours and hours every cycle.',
@@ -158,7 +158,7 @@ export const PRODUCTS: ProductMeta[] = [
   {
     id: 'skills-checklist', name: 'Skills Checklist', shortName: 'Skills',
     description: 'Clinical competency tracking — 80–90% of students build external tracking docs today.',
-    status: 'scoped', accentColor: '#b45309', insightCount: 41, criticalGaps: 13,
+    status: 'scoped', accentColor: '#b45309',
     launchDate: 'Jan 1, 2027', primaryPersonas: ['student', 'scce'],
     priorityScore: 68, daysToDeadline: 176, urgencyLevel: 'ok', sentimentScore: 45, granolaSessions: 73,
     keyQuote: 'Have I done this skill across all rotations? That question is completely unanswerable in the current system.',
@@ -207,7 +207,7 @@ export const PRODUCTS: ProductMeta[] = [
   {
     id: 'learning-contracts', name: 'Learning Contracts', shortName: 'LC',
     description: 'Placement learning objectives — multi-site social work placements unsupported.',
-    status: 'scoped', accentColor: '#db2777', insightCount: 26, criticalGaps: 9,
+    status: 'scoped', accentColor: '#db2777',
     primaryPersonas: ['student', 'scce'],
     priorityScore: 52, daysToDeadline: null, urgencyLevel: 'ok', sentimentScore: 40, granolaSessions: 3,
     keyQuote: 'We tried to merge learning contracts with evaluations before. It failed. They need to be separate but connected.',

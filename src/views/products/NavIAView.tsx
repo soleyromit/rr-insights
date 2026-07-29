@@ -1,21 +1,32 @@
-// views/products/NavIAView.tsx — Exam Management Navigation IA (v18 Astryx).
-// Role hierarchy as a TreeList, the nav merge map and access matrix as
-// Tables, and the dual meaning of "Sections" as cards.
+// views/products/NavIAView.tsx — Exam Management Navigation IA (v19).
+// The lede is a claim, not provenance; the access matrix is an ordinal
+// HeatGrid (full=4 … none=0) with honestly UNLINKED cells — no per-cell
+// query exists in the corpus, so none is faked. Merge stats are computed.
 import { VStack } from '@astryxdesign/core/VStack';
-import { HStack } from '@astryxdesign/core/HStack';
-import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
+import { Grid } from '@astryxdesign/core/Grid';
 import { TreeList } from '@astryxdesign/core/TreeList';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
-import { PageHeader } from '../../components/ui/PageHeader';
+import { Fig } from '../../components/charts/Fig';
+import { HeatGrid } from '../../components/charts/HeatGrid';
+import { StatTile, StatTileRow } from '../../components/story/StatTile';
+import { ConflictNote } from '../../components/story/ConflictNote';
+import { SpecPageHeader } from './spec/SpecPageHeader';
 import { SpecSection } from './spec/SpecSection';
+import { SectionTabs, useSection } from './spec/SectionTabs';
 import { SpecFooter } from './spec/SpecFooter';
 import { hrefProductSpec } from '../../lib/links';
 
 const PRODUCT_ID = 'exam-management';
+
+const SECTIONS = [
+  { id: 'roles', label: 'Role hierarchy' },
+  { id: 'merge', label: 'Nav merge map' },
+  { id: 'sections', label: '"Sections" naming' },
+];
 
 const ROLE_TREE = [
   {
@@ -99,33 +110,24 @@ const MERGE: MergeRow[] = [
   { id: 'm14', label: 'Student exam shell', status: 'student-only', note: 'No sidebar. Progress bar, 3-state navigator, accessibility controls — a completely separate surface.' },
 ];
 
-interface MatrixRow extends Record<string, unknown> {
-  id: string;
-  feature: string;
-  cells: string[];
-}
 const MATRIX_HEADERS = ['Inst. admin', 'Prog. director', 'HOD', 'Outcome dir.', 'Contributor', 'Reviewer', 'DCE'];
-const MATRIX: MatrixRow[] = [
-  { id: 'x1', feature: 'All exams / dashboard', cells: ['full', 'read', 'full', 'read', 'read', '—', 'read'] },
-  { id: 'x2', feature: 'Question bank', cells: ['full', 'read', 'full', '—', 'add', 'read', 'scoped'] },
-  { id: 'x3', feature: 'Assessments', cells: ['full', 'read', 'full', '—', '—', '—', 'read'] },
-  { id: 'x4', feature: 'Review queue', cells: ['full', '—', 'full', '—', '—', 'scoped', '—'] },
-  { id: 'x5', feature: 'Sections (in Assessment Builder)', cells: ['full', 'read', 'full', '—', '—', '—', 'read'] },
-  { id: 'x6', feature: 'Distribution', cells: ['full', '—', 'full', '—', '—', '—', '—'] },
-  { id: 'x7', feature: 'Analytics', cells: ['full', 'full', 'full', 'full', '—', '—', '—'] },
-  { id: 'x8', feature: 'Outcome & accreditation', cells: ['full', 'full', 'read', 'full', '—', '—', '—'] },
-  { id: 'x9', feature: 'Audit trail', cells: ['full', '—', '—', '—', '—', '—', '—'] },
-  { id: 'x10', feature: 'Settings / user mgmt', cells: ['full', '—', '—', '—', '—', '—', '—'] },
-  { id: 'x11', feature: 'LMS / integration', cells: ['full', '—', '—', '—', '—', '—', '—'] },
-  { id: 'x12', feature: 'My courses (faculty)', cells: ['—', '—', '—', '—', 'full', 'read', '—'] },
+const MATRIX: { feature: string; cells: string[] }[] = [
+  { feature: 'All exams / dashboard', cells: ['full', 'read', 'full', 'read', 'read', '—', 'read'] },
+  { feature: 'Question bank', cells: ['full', 'read', 'full', '—', 'add', 'read', 'scoped'] },
+  { feature: 'Assessments', cells: ['full', 'read', 'full', '—', '—', '—', 'read'] },
+  { feature: 'Review queue', cells: ['full', '—', 'full', '—', '—', 'scoped', '—'] },
+  { feature: 'Sections (in Assessment Builder)', cells: ['full', 'read', 'full', '—', '—', '—', 'read'] },
+  { feature: 'Distribution', cells: ['full', '—', 'full', '—', '—', '—', '—'] },
+  { feature: 'Analytics', cells: ['full', 'full', 'full', 'full', '—', '—', '—'] },
+  { feature: 'Outcome & accreditation', cells: ['full', 'full', 'read', 'full', '—', '—', '—'] },
+  { feature: 'Audit trail', cells: ['full', '—', '—', '—', '—', '—', '—'] },
+  { feature: 'Settings / user mgmt', cells: ['full', '—', '—', '—', '—', '—', '—'] },
+  { feature: 'LMS / integration', cells: ['full', '—', '—', '—', '—', '—', '—'] },
+  { feature: 'My courses (faculty)', cells: ['—', '—', '—', '—', 'full', 'read', '—'] },
 ];
 
-const ACCESS_VARIANT: Record<string, 'success' | 'info' | 'warning' | 'neutral'> = {
-  full: 'success',
-  read: 'info',
-  add: 'warning',
-  scoped: 'neutral',
-};
+// Ordinal mapping for the access grid: more access = more ink.
+const ACCESS_ORDINAL: Record<string, number> = { full: 4, scoped: 3, add: 2, read: 1, '—': 0 };
 
 const MERGE_VARIANT: Record<string, 'info' | 'error' | 'success' | 'neutral'> = {
   shared: 'info',
@@ -134,110 +136,127 @@ const MERGE_VARIANT: Record<string, 'info' | 'error' | 'success' | 'neutral'> = 
   'student-only': 'neutral',
 };
 
+const mergeCount = (status: string) => MERGE.filter((m) => m.status === status).length;
+
 export function NavIAView() {
+  const [section, setSection] = useSection(SECTIONS, 'roles');
   return (
     <VStack gap={5} padding={6} maxWidth={1160}>
-      <PageHeader
+      <SpecPageHeader
         title="Exam Management — Navigation IA"
-        lede="Synthesized Apr 1 2026 from 40 Granola sessions, ExamSoft screenshot analysis, and the system hierarchy blueprint."
-        meta="Merge principle: unified interface, role controls data scope — not layout. Shared screens confirmed: Question Bank, Assessments, Rubrics (+ Analytics at different scopes)."
+        productId={PRODUCT_ID}
+        claim="One interface, seven roles — access scopes the data, never the layout. Shared screens confirmed: Question Bank, Assessments, Rubrics (+ Analytics at different scopes)."
+        meta="Synthesized Apr 1 2026 from 40 Granola sessions, ExamSoft screenshot analysis, and the system hierarchy blueprint."
+        orienting={
+          <Fig
+            title="Access matrix — 12 nav items × 7 roles"
+            n={MATRIX.length}
+            caption="Ordinal ink: full > scoped > add > read; dashed cells = no access. Only the Institution Admin touches everything; Contributor and Reviewer are deliberately narrow — the scoping IS the design."
+            note="Cells are unlinked: the corpus has no per-cell access query, so none is faked."
+          >
+            <HeatGrid
+              rows={MATRIX.map((m) => m.feature)}
+              cols={MATRIX_HEADERS}
+              cell={(r, c) => {
+                const word = MATRIX[r].cells[c];
+                const v = ACCESS_ORDINAL[word] ?? 0;
+                return v > 0
+                  ? { value: v, label: word, title: `${MATRIX_HEADERS[c]} × ${MATRIX[r].feature}: ${word}` }
+                  : { value: 0 };
+              }}
+              legend={{ low: 'read', high: 'full control' }}
+              emptyHint="no access"
+            />
+          </Fig>
+        }
       />
 
-      <SpecSection title="Role hierarchy" sub="Three tiers; expand a role for its nav items. Open question flagged Apr 1: is Outcome Director standalone or a Dept Head responsibility? Confirm with Vishaka before building that nav state.">
-        <Card padding={4}>
-          <TreeList items={ROLE_TREE} density="compact" />
-        </Card>
-      </SpecSection>
+      <StatTileRow>
+        <StatTile value={MERGE.length} label="nav items mapped" />
+        <StatTile value={mergeCount('shared')} label="shared surfaces" hint="one layout, role-scoped data" />
+        <StatTile value={mergeCount('admin-only')} label="admin-only" />
+        <StatTile value={mergeCount('faculty-only') + mergeCount('student-only')} label="single-audience" hint="My courses + student exam shell" />
+      </StatTileRow>
 
-      <SpecSection title="Nav merge map" sub="Which surfaces are shared across roles vs owned by one audience.">
-        <Table<MergeRow>
-          data={MERGE}
-          idKey="id"
-          density="compact"
-          columns={[
-            { key: 'status', header: 'Ownership', width: pixel(120), renderCell: (r) => <Badge variant={MERGE_VARIANT[r.status]} label={r.status.replace('-', ' ')} /> },
-            { key: 'label', header: 'Nav item', width: pixel(220), renderCell: (r) => <Text type="body">{r.label}</Text> },
-            { key: 'note', header: 'Behavior', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.note}</Text> },
-          ]}
-        />
-      </SpecSection>
+      <SectionTabs sections={SECTIONS} value={section} onChange={setSection} />
 
-      <SpecSection title='What "Sections" means' sub='The word carries two meanings at different product layers — a P0 naming decision before April 17.'>
-        <Grid columns={{ minWidth: 320, max: 3 }} gap={3}>
-          <Card variant="muted" padding={3}>
-            <VStack gap={1}>
-              <Text type="body" weight="semibold">
-                Builder construct
-              </Text>
-              <Text type="supporting" as="p" textWrap="pretty">
-                A tab inside Assessment Builder where an admin divides an exam into named content-area blocks — each with its
-                own question pool, time limit, point weighting and navigation rules (e.g. Section 1 = Pulmonology, 20
-                questions, 30 min). Confirmed: sequential vs flexible navigation per section, blueprint-based assignment per
-                content area (sessions f5d66e4c, a4625ac7).
-              </Text>
-            </VStack>
+      {section === 'roles' && (
+        <SpecSection title="Role hierarchy" sub="Three tiers; expand a role for its nav items. Open question flagged Apr 1: is Outcome Director standalone or a Dept Head responsibility? Confirm with Vishaka before building that nav state.">
+          <Card padding={4}>
+            <TreeList items={ROLE_TREE} density="compact" />
           </Card>
-          <Card variant="muted" padding={3}>
-            <VStack gap={1}>
-              <Text type="body" weight="semibold">
-                Student experience
-              </Text>
-              <Text type="supporting" as="p" textWrap="pretty">
-                A Section Entry Screen precedes each block: title, question count, time limit. Navigation is configurable —
-                sequential (submit Section 1 before Section 2, no return) or flexible within total time. Handled by
-                SectionEntryScreen.tsx; sequential lock-out confirmed for standardized exam types (f29a990d).
-              </Text>
-            </VStack>
-          </Card>
-          <Card variant="muted" padding={3}>
-            <VStack gap={1}>
-              <HStack gap={2} vAlign="center">
+        </SpecSection>
+      )}
+
+      {section === 'merge' && (
+        <SpecSection title="Nav merge map" sub={`Which surfaces are shared across roles vs owned by one audience — ${mergeCount('shared')} of ${MERGE.length} are shared, proving the one-interface claim.`}>
+          <Table<MergeRow>
+            data={MERGE}
+            idKey="id"
+            density="compact"
+            columns={[
+              { key: 'status', header: 'Ownership', width: pixel(120), renderCell: (r) => <Badge variant={MERGE_VARIANT[r.status]} label={r.status.replace('-', ' ')} /> },
+              { key: 'label', header: 'Nav item', width: pixel(220), renderCell: (r) => <Text type="body">{r.label}</Text> },
+              { key: 'note', header: 'Behavior', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.note}</Text> },
+            ]}
+          />
+        </SpecSection>
+      )}
+
+      {section === 'sections' && (
+        <SpecSection title='What "Sections" means' sub='The word carries two meanings at different product layers — a P0 naming decision before April 17.'>
+          <Grid columns={{ minWidth: 320, max: 2 }} gap={3}>
+            <Card variant="muted" padding={3}>
+              <VStack gap={1}>
                 <Text type="body" weight="semibold">
-                  Correction note
+                  Builder construct
                 </Text>
-                <Badge variant="warning" label="corrected Apr 1" />
-              </HStack>
-              <Text type="supporting" as="p" textWrap="pretty">
-                Earlier analysis wrongly classified Sections as a top-level admin nav item for roster/cohort management. It is
-                not a standalone destination. Action: propose renaming any admin-nav "Sections" to "Cohorts" before the April
-                17 demo — ExamSoft's naming confusion is a documented pain point.
-              </Text>
-            </VStack>
-          </Card>
-        </Grid>
-      </SpecSection>
-
-      <SpecSection title="Access matrix" sub="full = create/edit/delete · read = view only · add = create only · scoped = within assigned scope.">
-        <Table<MatrixRow>
-          data={MATRIX}
-          idKey="id"
-          density="compact"
-          columns={[
-            { key: 'feature', header: 'Nav item', width: pixel(220), renderCell: (r) => <Text type="body">{r.feature}</Text> },
-            ...MATRIX_HEADERS.map((h, i) => ({
-              key: `c${i}`,
-              header: h,
-              width: proportional(1),
-              renderCell: (r: MatrixRow) =>
-                r.cells[i] === '—' ? (
-                  <Text type="supporting">—</Text>
-                ) : (
-                  <Badge variant={ACCESS_VARIANT[r.cells[i]] ?? 'neutral'} label={r.cells[i]} />
-                ),
-            })),
-          ]}
-        />
-      </SpecSection>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  A tab inside Assessment Builder where an admin divides an exam into named content-area blocks — each with its
+                  own question pool, time limit, point weighting and navigation rules (e.g. Section 1 = Pulmonology, 20
+                  questions, 30 min). Confirmed: sequential vs flexible navigation per section, blueprint-based assignment per
+                  content area (sessions f5d66e4c, a4625ac7).
+                </Text>
+              </VStack>
+            </Card>
+            <Card variant="muted" padding={3}>
+              <VStack gap={1}>
+                <Text type="body" weight="semibold">
+                  Student experience
+                </Text>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  A Section Entry Screen precedes each block: title, question count, time limit. Navigation is configurable —
+                  sequential (submit Section 1 before Section 2, no return) or flexible within total time. Handled by
+                  SectionEntryScreen.tsx; sequential lock-out confirmed for standardized exam types (f29a990d).
+                </Text>
+              </VStack>
+            </Card>
+          </Grid>
+          <ConflictNote
+            label='"Sections" as an admin nav item'
+            conflict={{
+              claims: [
+                { date: 'pre-Apr 1', source: 'Earlier analysis — classified Sections as a top-level admin nav item for roster/cohort management' },
+                { date: 'Apr 1 2026', source: 'Correction — Sections is a tab inside Assessment Builder, not a standalone destination' },
+              ],
+              rendered: 'a Builder tab (renaming any admin-nav "Sections" to "Cohorts" proposed)',
+              status: 'corrected Apr 1',
+              owner: 'the Apr 17 demo review',
+              note: "ExamSoft's naming confusion around the same word is a documented pain point — the rename must land before the demo.",
+            }}
+          />
+        </SpecSection>
+      )}
 
       <SpecFooter
         productId={PRODUCT_ID}
         extra={
           <>
             <Link href={`${hrefProductSpec(PRODUCT_ID)}?section=architecture`} isStandalone>
-              Spec: QB architecture →
+              Spec: QB architecture — 8 sections →
             </Link>
             <Link href={`${hrefProductSpec(PRODUCT_ID)}?section=builder`} isStandalone>
-              Spec: builder + stories →
+              Spec: builder — 16 stories →
             </Link>
           </>
         }

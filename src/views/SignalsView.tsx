@@ -1,21 +1,24 @@
-// views/SignalsView.tsx — the signal board (v18 Astryx rebuild). Seven
-// cross-product signals ranked by opportunity mass; every card is a door into
-// its case file, every heat cell a filtered query. The old inline drilldown
-// moved to /signals/:signalId.
+// views/SignalsView.tsx — the signal board (v19 redesign). Seven cross-product
+// signals ranked by opportunity mass; the hero heat grid keeps every cell a
+// filtered query, and the case files are edge-to-edge rows carrying the recency
+// the board never had: newest member, 30d trend, and a mini volume sparkline.
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
-import { ClickableCard } from '@astryxdesign/core/ClickableCard';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
 import { Text } from '@astryxdesign/core/Text';
-import { Badge } from '@astryxdesign/core/Badge';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { RankedList } from '../components/charts/RankedList';
 import { HeatGrid } from '../components/charts/HeatGrid';
-import { SevBadge } from '../components/ui/sev';
-import { allSignals } from '../lib/selectors';
+import { Sparkline } from '../components/charts/Sparkline';
+import { TrendDelta } from '../components/charts/TrendDelta';
+import { FeedTime } from '../components/story/EvidenceRow';
+import { allSignals, CORPUS_ANCHOR } from '../lib/selectors';
+import { monthlyVolume, recentCounts } from '../lib/series';
 import { sumScores } from '../lib/score';
 import { PRODUCTS } from '../data/products';
 import { hrefInsights, hrefSignal } from '../lib/links';
@@ -38,17 +41,27 @@ export function SignalsView() {
   const ranked = useMemo(
     () =>
       [...signals]
-        .map((s) => ({ sig: s, mass: sumScores(s.insights) }))
+        .map((s) => ({
+          sig: s,
+          mass: sumScores(s.insights),
+          recent: recentCounts(s.insights, 30, CORPUS_ANCHOR),
+          newest: s.insights.reduce<string | undefined>(
+            (m, i) => (m === undefined || i.createdAt > m ? i.createdAt : m),
+            undefined
+          ),
+          spark: monthlyVolume(s.insights).map((p) => ({ label: p.label, value: p.total })),
+        }))
         .sort((a, b) => b.mass - a.mass),
     [signals]
   );
 
-  const rows = ranked.map(({ sig, mass }) => ({
+  const rows = ranked.map(({ sig, mass, recent }) => ({
     key: sig.def.id,
     label: sig.def.title,
     value: mass,
     hint: `${sig.insights.length} insights · ${sig.bySeverity['critical'] ?? 0} critical`,
     href: hrefSignal(sig.def.id),
+    delta: { current: recent.current, prior: recent.prior, windowLabel: 'vs prior 30d' },
   }));
 
   return (
@@ -62,7 +75,7 @@ export function SignalsView() {
       <Grid columns={{ minWidth: 380, max: 2 }} gap={4}>
         <Fig
           title="Opportunity mass, ranked"
-          caption="Summed opportunity scores (severity × evidence × persona priority). The top bar is the next design cycle."
+          caption="Summed opportunity scores (severity × evidence × persona priority). The top bar is the next design cycle; the delta is the 30-day evidence trend."
         >
           <RankedList rows={rows} format={(r) => String(r.value)} />
         </Fig>
@@ -89,35 +102,50 @@ export function SignalsView() {
         </Fig>
       </Grid>
 
-      <Grid columns={{ minWidth: 320, max: 2 }} gap={4}>
-        {ranked.map(({ sig, mass }, i) => (
-          <ClickableCard key={sig.def.id} label={`Open signal: ${sig.def.title}`} onClick={() => navigate(hrefSignal(sig.def.id))} padding={4}>
-            <VStack gap={2}>
-              <HStack gap={2} vAlign="center" hAlign="between">
-                <HStack gap={2} vAlign="center">
-                  <Text type="supporting" hasTabularNumbers>
-                    {String(i + 1).padStart(2, '0')}
-                  </Text>
-                  <Text type="body" weight="semibold">
-                    {sig.def.title}
-                  </Text>
-                </HStack>
-                <SevBadge severity={sig.topSeverity} />
-              </HStack>
-              <Text type="supporting" as="p" textWrap="pretty">
-                {sig.def.question}
+      <List
+        density="spacious"
+        hasDividers
+        header={
+          <Text type="label" color="secondary">
+            Case files — every row opens the signal's canonical page
+          </Text>
+        }
+      >
+        {ranked.map(({ sig, recent, newest, spark }, i) => (
+          <Item
+            key={sig.def.id}
+            as="li"
+            href={hrefSignal(sig.def.id)}
+            marker={
+              <Text type="supporting" hasTabularNumbers>
+                {String(i + 1).padStart(2, '0')}
               </Text>
-              <HStack gap={2} vAlign="center">
-                <Badge label={`${sig.insights.length} insights`} />
-                <Badge variant={(sig.bySeverity['critical'] ?? 0) > 0 ? 'error' : 'neutral'} label={`${sig.bySeverity['critical'] ?? 0} critical`} />
-                <Text type="supporting" hasTabularNumbers>
-                  mass {mass}
-                </Text>
+            }
+            label={sig.def.title}
+            description={sig.def.question}
+            descriptionLines={2}
+            align="center"
+            endContent={
+              <HStack gap={4} vAlign="center">
+                <VStack gap={0.5} hAlign="end">
+                  <HStack gap={1} vAlign="center">
+                    <Text type="supporting" hasTabularNumbers>
+                      {sig.insights.length} insights · newest
+                    </Text>
+                    {newest && <FeedTime iso={newest} />}
+                  </HStack>
+                  <TrendDelta current={recent.current} prior={recent.prior} windowLabel="vs prior 30d" />
+                </VStack>
+                {spark.length > 1 && (
+                  <VStack width={120}>
+                    <Sparkline data={spark} />
+                  </VStack>
+                )}
               </HStack>
-            </VStack>
-          </ClickableCard>
+            }
+          />
         ))}
-      </Grid>
+      </List>
     </VStack>
   );
 }

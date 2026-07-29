@@ -4,7 +4,8 @@
 // Arun evidence-grounded, Kunal business-outcome, Aarti decision-only.
 import type { Insight } from '../types';
 import { PRODUCTS } from './products';
-import { ALL_INSIGHTS as RAW_INSIGHTS, getInsightsByProduct } from './insights';
+import { ALL_INSIGHTS as RAW_INSIGHTS } from './insights';
+import { insightsWhere } from '../lib/selectors';
 const ALL_INSIGHTS = RAW_INSIGHTS as Insight[];
 import { MILESTONES } from './personas';
 import { computeAllSignals } from './signals';
@@ -20,7 +21,7 @@ const rankedSignals = computeAllSignals()
   .sort((a, b) => b.score - a.score);
 
 const productStats = PRODUCTS.map(p => {
-  const ins = getInsightsByProduct(p.id);
+  const ins = insightsWhere({ product: p.id });
   return { p, total: ins.length, critical: ins.filter(i => i.severity === 'critical').length };
 }).sort((a, b) => b.critical - a.critical);
 

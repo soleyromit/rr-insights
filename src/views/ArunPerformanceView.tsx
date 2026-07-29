@@ -6,18 +6,22 @@
 // (v18 cut: evidence/gap/action sublists, velocity chart, milestone board.)
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
-import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Link } from '@astryxdesign/core/Link';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Blockquote } from '@astryxdesign/core/Blockquote';
+import { Citation } from '@astryxdesign/core/Citation';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { RankedList } from '../components/charts/RankedList';
+import { QueryLink } from '../components/story/QueryLink';
+import { insightsWhere } from '../lib/selectors';
 import { hrefPortfolio, hrefBriefings, hrefInsights } from '../lib/links';
+import type { InsightFilter } from '../lib/links';
 
 const TARGET = 85;
 
@@ -45,7 +49,8 @@ interface Criterion {
   status: Status;
   offerText: string;
   rationale: string;
-  cite: { label: string; href: string };
+  /** When the cite is an insight query, `filter` lets the UI show a live count. */
+  cite: { label: string; href: string; filter?: InsightFilter };
 }
 
 // ── 7 criteria from the offer letter, scored with rationale; the cite column
@@ -79,19 +84,19 @@ const CRITERIA: Criterion[] = [
     id: 'design-reviews', label: 'Reviews + Specs', weight: 10, score: 60, status: 'at-risk',
     offerText: 'Participating in design reviews and supporting implementation by providing design specifications and clarifying design intent during development.',
     rationale: 'Score 60. Arun said he will only run one phase-end review, which reduces review pressure — but the offer letter requires design specifications and intent documentation, and zero specs exist. That is a real gap.',
-    cite: { label: 'Design-system evidence', href: hrefInsights({ q: 'design system' }) },
+    cite: { label: 'Design-system evidence', href: hrefInsights({ q: 'design system' }), filter: { q: 'design system' } },
   },
   {
     id: 'usability', label: 'Usability + Feedback', weight: 8, score: 88, status: 'strong',
     offerText: 'Evaluating product usability through feedback from users and internal stakeholders to improve overall user experience.',
     rationale: 'Score 88. The NPS analysis and multi-persona research are genuinely strong — 1,494 responses analysed, 8+ personas interviewed, domain breakdown with NPS leverage calculated. The gap is Pendo behavioral data and SCCE under-representation.',
-    cite: { label: 'NPS-sourced insights', href: hrefInsights({ source: 'NPS' }) },
+    cite: { label: 'NPS-sourced insights', href: hrefInsights({ source: 'NPS' }), filter: { source: 'NPS' } },
   },
   {
     id: 'accessibility', label: 'Accessibility + Compliance', weight: 6, score: 91, status: 'strong',
     offerText: 'Incorporating accessibility and compliance considerations, including applicable healthcare education regulations such as HIPAA, FERPA, and ADA, when designing product interfaces and workflows.',
     rationale: 'Highest-scoring criterion at 91. Program-level accommodation profiles are a first-to-market architecture decision; the WCAG 2.1 AA feature map is complete and the publish gate is designed. The only gap is formal delivery to Himanshu as a written spec.',
-    cite: { label: 'Accessibility evidence', href: hrefInsights({ tag: 'accessibility' }) },
+    cite: { label: 'Accessibility evidence', href: hrefInsights({ tag: 'accessibility' }), filter: { tag: 'accessibility' } },
   },
 ];
 
@@ -132,7 +137,8 @@ export function ArunPerformanceView() {
 
       <Fig
         title={`Criterion scores against the ${TARGET} target`}
-        caption={`Red bars sit under 70 — prototypes and specs are the two at-risk criteria, and both are unblocked by the same deliverable: built Magic Patterns artifacts. Each bar links to the evidence surface its rationale cites. Weighted overall: ${OVERALL}/100.`}
+        caption={`Self-scored, editorial — not an external measurement. Red bars sit under 70 — prototypes and specs are the two at-risk criteria, and both are unblocked by the same deliverable: built Magic Patterns artifacts. Each bar links to the evidence surface its rationale cites. Weighted overall: ${OVERALL}/100.`}
+        note={`Thresholds: red marks scores below 70; ${TARGET} is the stated target — bars between 70 and ${TARGET} are not yet at target even though they render in the default color.`}
       >
         <RankedList rows={heroRows} errorBelow={70} format={(r) => `${r.value}/100`} />
       </Fig>
@@ -180,8 +186,18 @@ export function ArunPerformanceView() {
             {
               key: 'cite',
               header: 'Cites',
-              width: pixel(170),
-              renderCell: (r: Row) => <Link href={r.c.cite.href}>{r.c.cite.label} →</Link>,
+              width: pixel(190),
+              renderCell: (r: Row) =>
+                r.c.cite.filter ? (
+                  <QueryLink
+                    href={r.c.cite.href}
+                    count={insightsWhere(r.c.cite.filter).length}
+                    label={r.c.cite.label.toLowerCase()}
+                    isStandalone={false}
+                  />
+                ) : (
+                  <Link href={r.c.cite.href}>{r.c.cite.label} →</Link>
+                ),
             },
           ]}
         />
@@ -192,13 +208,20 @@ export function ArunPerformanceView() {
           trigger={<Text type="label" color="secondary">{`Arun verbatim — ${ARUN_VERBATIM.length} direct quotes (raw transcript 791334af · Mar 24, 2026)`}</Text>}
           defaultIsOpen={false}
         >
-          <Grid columns={{ minWidth: 340, max: 2 }} gap={4}>
+          <List density="spacious" hasDividers>
             {ARUN_VERBATIM.map((q, i) => (
-              <Card key={i} variant="muted" padding={3}>
-                <Blockquote cite={`${q.context} · ${q.source}`}>{q.quote}</Blockquote>
-              </Card>
+              <Item
+                key={i}
+                as="li"
+                align="start"
+                label={`“${q.quote}”`}
+                labelLines={4}
+                description={q.context}
+                descriptionLines={2}
+                endContent={<Citation source={{ title: q.source }} number={i + 1} variant="label" />}
+              />
             ))}
-          </Grid>
+          </List>
         </Collapsible>
       </Card>
     </VStack>

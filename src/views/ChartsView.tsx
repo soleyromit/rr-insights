@@ -1,7 +1,10 @@
-// views/ChartsView.tsx — charts-by-dimension (v18, new; Dovetail's "charts"
-// pattern). One configurable view over the corpus: pick a dimension, pick a
-// form, and every bar or cell is a click into the insight list that produces
-// it — the chart is a query builder, not a picture.
+// views/ChartsView.tsx — charts-by-dimension (v19 redesign; Dovetail's
+// "charts" pattern). One configurable view over the corpus: pick a dimension,
+// pick a form, and every bar or cell is a click into the insight list that
+// produces it — the chart is a query builder, not a picture. The volume form
+// renders aligned small multiples per dimension value instead of a prose
+// pointer elsewhere; the tag dimension excludes the no-signal 'new' tag and
+// says so.
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { VStack } from '@astryxdesign/core/VStack';
@@ -10,12 +13,12 @@ import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/Segme
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { RankedList } from '../components/charts/RankedList';
-import { VolumeChart } from '../components/charts/VolumeChart';
 import { SeverityStackChart } from '../components/charts/SeverityStackChart';
+import { SmallMultiples } from '../components/charts/SmallMultiples';
 import { ALL_INSIGHTS } from '../data/insights';
 import { getProduct } from '../data/products';
 import { PERSONAS } from '../data/personas';
-import { dimensionCounts, monthlyVolume, severityMix } from '../lib/series';
+import { dimensionCounts, monthlyVolume, severityMix, fillMonths, monthDomain } from '../lib/series';
 import { hrefInsights } from '../lib/links';
 import type { Insight } from '../types';
 import type { InsightFilter } from '../lib/links';
@@ -60,7 +63,17 @@ export function ChartsView() {
     );
   };
 
-  const counts = useMemo(() => dimensionCounts(ALL_INSIGHTS, DIM_ACCESSOR[dim]).slice(0, 12), [dim]);
+  // 'new' rides on nearly the whole corpus — no signal along the tag dimension.
+  const newTagShare = useMemo(
+    () => Math.round((ALL_INSIGHTS.filter((i) => (i.tags as string[]).includes('new')).length / ALL_INSIGHTS.length) * 100),
+    []
+  );
+  const tagNote = dim === 'tag' ? `'new' excluded — appears on ${newTagShare}% of the corpus.` : undefined;
+
+  const counts = useMemo(() => {
+    const all = dimensionCounts(ALL_INSIGHTS, DIM_ACCESSOR[dim]);
+    return (dim === 'tag' ? all.filter((c) => c.key !== 'new') : all).slice(0, 12);
+  }, [dim]);
 
   const rankedRows = counts.map((c) => ({
     key: c.key,
@@ -81,6 +94,23 @@ export function ChartsView() {
       }),
     [counts, dim]
   );
+
+  const volumeGroups = useMemo(() => {
+    const domain = monthDomain(ALL_INSIGHTS);
+    return counts.slice(0, 5).map((c) => {
+      const members = ALL_INSIGHTS.filter((i) => {
+        const raw = DIM_ACCESSOR[dim](i);
+        return raw !== undefined && (Array.isArray(raw) ? raw.includes(c.key) : raw === c.key);
+      });
+      return {
+        key: c.key,
+        label: labelFor(dim, c.key),
+        href: hrefInsights(DIM_FILTER[dim](c.key)),
+        n: c.count,
+        points: fillMonths(monthlyVolume(members), domain),
+      };
+    });
+  }, [counts, dim]);
 
   return (
     <VStack gap={5} padding={6}>
@@ -107,7 +137,10 @@ export function ChartsView() {
       {viz === 'ranked' && (
         <Fig
           title={`Insights by ${dim}`}
+          n={ALL_INSIGHTS.length}
           caption="Counts along the chosen dimension; the trailing hint is the critical share. Every row opens its query."
+          note={tagNote}
+          link={{ href: hrefInsights(), count: ALL_INSIGHTS.length, label: 'insights, full corpus query' }}
         >
           <RankedList rows={rankedRows} format={(r) => String(r.value)} />
         </Fig>
@@ -116,7 +149,9 @@ export function ChartsView() {
       {viz === 'severity' && (
         <Fig
           title={`Severity mix by ${dim}`}
+          n={ALL_INSIGHTS.length}
           caption="Stacked severity per category — status colors are the taxonomy's, reserved for severity only."
+          note={tagNote}
         >
           <SeverityStackChart data={sevData} height={300} />
         </Fig>
@@ -124,10 +159,12 @@ export function ChartsView() {
 
       {viz === 'volume' && (
         <Fig
-          title="Corpus volume by month"
-          caption="All insights over time with the critical-only line. Use the dimension filters on the Insight Index for per-slice volume."
+          title={`Volume over time by ${dim}`}
+          n={ALL_INSIGHTS.length}
+          caption="Aligned small multiples for the top values of the chosen dimension — shared axes, zero-filled months, so shapes compare honestly. Each cell opens its query."
+          note={tagNote}
         >
-          <VolumeChart data={monthlyVolume(ALL_INSIGHTS)} height={280} />
+          <SmallMultiples groups={volumeGroups} />
         </Fig>
       )}
     </VStack>

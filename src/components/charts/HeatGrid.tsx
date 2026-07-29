@@ -20,9 +20,13 @@ export interface HeatGridProps {
   /** cell(rowIndex, colIndex) */
   cell: (r: number, c: number) => HeatCell | undefined;
   legend?: { low: string; high: string };
+  /** Make row labels doors too. */
+  rowHref?: (r: number) => string | undefined;
+  /** Annotation for zero cells, e.g. "no evidence — coverage gap". */
+  emptyHint?: string;
 }
 
-export function HeatGrid({ rows, cols, cell, legend }: HeatGridProps) {
+export function HeatGrid({ rows, cols, cell, legend, rowHref, emptyHint }: HeatGridProps) {
   const colors = useChartColors();
   // The theme returns the ramp low→high for the active mode (in dark mode the
   // high end is the brighter, higher-contrast step). Trust its order.
@@ -54,13 +58,13 @@ export function HeatGrid({ rows, cols, cell, legend }: HeatGridProps) {
           </Text>
         ))}
         {rows.map((rLabel, r) => (
-          <FragmentRow key={rLabel} label={rLabel}>
+          <FragmentRow key={rLabel} label={rLabel} href={rowHref?.(r)}>
             {cols.map((cLabel, c) => {
               const d = cell(r, c);
               const v = d?.value ?? 0;
               const body = (
                 <span
-                  title={d?.title ?? `${rLabel} × ${cLabel}: ${v}`}
+                  title={d?.title ?? (v <= 0 && emptyHint ? `${rLabel} × ${cLabel}: ${emptyHint}` : `${rLabel} × ${cLabel}: ${v}`)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -104,12 +108,20 @@ function luminance(hex: string): number {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-function FragmentRow({ label, children }: { label: string; children: React.ReactNode }) {
+function FragmentRow({ label, href, children }: { label: string; href?: string; children: React.ReactNode }) {
   return (
     <>
-      <Text type="supporting" maxLines={1} hasTruncateTooltip>
-        {label}
-      </Text>
+      {href ? (
+        <Link to={href} style={{ textDecoration: 'none' }}>
+          <Text type="supporting" maxLines={1} hasTruncateTooltip color="inherit">
+            {label}
+          </Text>
+        </Link>
+      ) : (
+        <Text type="supporting" maxLines={1} hasTruncateTooltip>
+          {label}
+        </Text>
+      )}
       {children}
     </>
   );

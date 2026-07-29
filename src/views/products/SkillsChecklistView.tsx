@@ -1,16 +1,18 @@
-// views/products/SkillsChecklistView.tsx — Skills Checklist spec archive (v18
-// Astryx). The invented coverage radar and the fabricated student matrix are
-// gone; the confirmed UX decisions they illustrated ("just the reds", the
-// culminating slot) survive as text with their sources.
+// views/products/SkillsChecklistView.tsx — Skills Checklist spec archive
+// (v19). SpecPageHeader states the dormancy honestly; the orienting visual is
+// a method-coverage HeatGrid DERIVED from the METHODS registry; the five
+// prose domain cards are now ONE comparative table (sticky label column).
 import { VStack } from '@astryxdesign/core/VStack';
-import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
+import { HStack } from '@astryxdesign/core/HStack';
 import { Blockquote } from '@astryxdesign/core/Blockquote';
-import { Table, pixel, proportional } from '@astryxdesign/core/Table';
-import { PageHeader } from '../../components/ui/PageHeader';
+import { Table, pixel, proportional, useTableStickyColumns } from '@astryxdesign/core/Table';
+import { Fig } from '../../components/charts/Fig';
+import { HeatGrid } from '../../components/charts/HeatGrid';
+import { SpecPageHeader } from './spec/SpecPageHeader';
 import { SpecSection } from './spec/SpecSection';
 import { DecisionCard } from './spec/DecisionCard';
 import { StoryTable } from './spec/StoryTable';
@@ -81,22 +83,44 @@ const TRIGGERS: TriggerRow[] = [
   { id: 't5', trigger: 'Emergency reassessment', desc: 'Incident report triggers immediate competency re-evaluation.', programs: 'All clinical disciplines' },
 ];
 
-interface DomainRow extends Record<string, unknown> {
-  id: string;
-  name: string;
-  skills: string;
-  structure: string;
-  trigger: string;
-  graduation: string;
-  evaluator: string;
-  gap: string;
-}
-const DOMAINS: DomainRow[] = [
+// The five documented domain models — one backend, five diverging UX surfaces.
+const DOMAINS = [
   { id: 'pa', name: 'PA Programs', skills: '15 core technical skills across all rotations', structure: 'Organized by rotation type (EM, family med, surgery); required vs optional marked per rotation.', trigger: 'Student logs patient → system prompts a skill evaluation request to the preceptor.', graduation: 'Clinical passport completion required for graduation clearance.', evaluator: 'Site preceptor, same day as the procedure', gap: 'Patient-logging trigger not yet integrated; USC passport model needs a digitization path.' },
   { id: 'nursing', name: 'Nursing (FNP/PNP/CRNA)', skills: '50+ skills organized by body systems and procedure types', structure: 'Rows = students, columns = skills; batch evaluation preferred; skills lab before clinical.', trigger: 'Scheduled milestones (week 5, end of rotation, end of program).', graduation: 'All required skills signed off; GPA threshold + skills together.', evaluator: 'Faculty (lab) + clinical preceptor (field)', gap: 'Batch evaluation UI not built; skills lab integration separate from clinical.' },
   { id: 'radtech', name: 'Radiation Technology', skills: '50+ X-ray procedures in a body-part → system → procedure hierarchy', structure: '"Does not meet / Meets / Exceeds / N/A" per procedure.', trigger: 'Student selects preceptor → form routes for evaluation.', graduation: '"Does the student demonstrate competence in this exam?" — final determination required.', evaluator: 'Preceptor at scan time', gap: 'The 4-level hierarchy is the hardest UX problem — a dropdown with 100+ items is unusable.' },
   { id: 'cvt', name: 'CVT (Cardiovascular Tech)', skills: 'Each competency includes detailed instructions and daily guidelines', structure: '20–30 questions per competency: patient interaction, communication, equipment, scrubbing, hemodynamic analysis.', trigger: 'Student performs procedure → selects preceptor → form routed.', graduation: 'Custom 0 / 5 / 7.5 / 9 / 10 scoring across all criteria; average determines pass.', evaluator: 'Preceptor, real-time', gap: 'Non-1-to-5 scoring requires configurable scale support — the highest-complexity domain.' },
   { id: 'sw', name: 'Social Work', skills: '9 EPAS competencies × 5 sub-areas (knowledge, values, skills, cognitive, affective)', structure: 'Skills evaluation maps to professional competencies; learning contract integration mandatory.', trigger: 'Pre-planned: contract commits → evaluation at midterm + final.', graduation: 'All 9 competency areas achieved + learning contract closed.', evaluator: 'Site supervisor (comments) + faculty coordinator (official ratings)', gap: 'Contract and evaluation must sit side-by-side; the current system separates them.' },
+];
+
+// Comparative table: rows = the six fields, columns = the five disciplines.
+interface FieldRow extends Record<string, unknown> {
+  id: string;
+  field: string;
+  isGap?: boolean;
+  pa: string;
+  nursing: string;
+  radtech: string;
+  cvt: string;
+  sw: string;
+}
+const byId = Object.fromEntries(DOMAINS.map((d) => [d.id, d]));
+const fieldRow = (id: string, field: string, pick: (d: (typeof DOMAINS)[number]) => string, isGap = false): FieldRow => ({
+  id,
+  field,
+  isGap,
+  pa: pick(byId.pa),
+  nursing: pick(byId.nursing),
+  radtech: pick(byId.radtech),
+  cvt: pick(byId.cvt),
+  sw: pick(byId.sw),
+});
+const FIELD_ROWS: FieldRow[] = [
+  fieldRow('skills', 'Skills scope', (d) => d.skills),
+  fieldRow('structure', 'Structure', (d) => d.structure),
+  fieldRow('trigger', 'Trigger', (d) => d.trigger),
+  fieldRow('graduation', 'Graduation link', (d) => d.graduation),
+  fieldRow('evaluator', 'Primary evaluator', (d) => d.evaluator),
+  fieldRow('gap', 'Design gap', (d) => d.gap, true),
 ];
 
 interface MethodRow extends Record<string, unknown> {
@@ -113,6 +137,21 @@ const METHODS: MethodRow[] = [
   { id: 'm5', method: 'Self-assessment + validation', programs: 'PT, PA, Nursing', note: 'Student rates first; preceptor confirms or overrides.' },
   { id: 'm6', method: 'Physical signature (passport)', programs: 'PA (USC model)', note: 'Paper passport digitized: 15 core technical skills across all rotations.' },
 ];
+
+// Derived method × discipline coverage: a method covers a discipline iff the
+// registry's `programs` string names it. No hand-tuned cells.
+const HEAT_DISCIPLINES = [
+  { key: 'PA', label: 'PA' },
+  { key: 'Nursing', label: 'Nursing' },
+  { key: 'Rad Tech', label: 'Rad Tech' },
+  { key: 'CVT', label: 'CVT' },
+  { key: 'Social Work', label: 'Social Work' },
+];
+const methodCovers = (m: MethodRow, discipline: string) =>
+  m.programs.split(',').some((t) => {
+    const tok = t.trim();
+    return tok === discipline || tok.startsWith(`${discipline} `);
+  });
 
 const WORKFLOWS = [
   { title: 'Clinical passport (PA — USC model)', steps: ['Student performs procedure at the clinical site', 'Student logs the patient encounter', 'System detects an eligible procedure and prompts a skill evaluation request', 'Student selects the preceptor who supervised', 'Preceptor gets a mobile notification — verifies and signs', 'Skill logs against the passport; progress bar updates', 'DCE views the graduation clearance dashboard — red flags for students under minimums'] },
@@ -148,14 +187,76 @@ const STORIES: StoryRow[] = [
   { id: 'SC-08', who: 'Admin', what: 'import an existing PDF checklist and get the skill hierarchy auto-generated', why: 'rebuilding from scratch is the primary adoption blocker', source: 'Day 4 Marriott · Mar 5' },
 ];
 
+function DomainComparisonTable() {
+  const sticky = useTableStickyColumns<FieldRow>({ startKeys: ['field'] });
+  return (
+    <Table<FieldRow>
+      data={FIELD_ROWS}
+      idKey="id"
+      density="compact"
+      verticalAlign="top"
+      dividers="grid"
+      plugins={{ sticky }}
+      textOverflow="wrap"
+      columns={[
+        {
+          key: 'field',
+          header: '',
+          width: pixel(150),
+          renderCell: (r) => (
+            <VStack gap={1}>
+              <Text type="body" weight="semibold">
+                {r.field}
+              </Text>
+              {r.isGap && <Badge variant="error" label="gap row" />}
+            </VStack>
+          ),
+        },
+        ...DOMAINS.map((d) => ({
+          key: d.id,
+          header: d.name,
+          width: proportional(1),
+          renderCell: (r: FieldRow) => (
+            <Text type="supporting" as="p" textWrap="pretty">
+              {String(r[d.id])}
+            </Text>
+          ),
+        })),
+      ]}
+    />
+  );
+}
+
 export function SkillsChecklistView() {
   const [section, setSection] = useSection(SECTIONS, 'overview');
   return (
     <VStack gap={5} padding={6} maxWidth={1160}>
-      <PageHeader
+      <SpecPageHeader
         title="Skills Checklist — spec archive"
-        lede="Clinical competency tracking across 6+ disciplines — the richest requirements document in the corpus (Day 4 Marriott: 80+ requirements)."
-        meta="Q2 2026 requirements + prototyping · Q3–Q4 development · Jan 1 2027 launch · competitors: Typhon, CompetencyAI, eValue, CORE, Excel"
+        productId={PRODUCT_ID}
+        claim="One backend, five disciplines that disagree on structure, trigger, scale and evaluator — the UI must diverge per domain while the data model stays single. The evidence stream is dormant; the requirements are not."
+        meta="Richest requirements document in the corpus (Day 4 Marriott: 80+ requirements) · Q2 2026 requirements + prototyping · Q3–Q4 development · Jan 1 2027 launch · competitors: Typhon, CompetencyAI, eValue, CORE, Excel"
+        orienting={
+          <Fig
+            title="Evaluation method coverage by discipline"
+            n={METHODS.length}
+            caption="Derived from the method registry: which of the six evaluation methods each discipline's programs use. No single method covers everyone — the case for configurable scales."
+            note="Rad Tech's Does-not-meet/Meets/Exceeds scale is described in its domain model but not named in the method registry — a registry gap, not zero methods."
+          >
+            <HeatGrid
+              rows={METHODS.map((m) => m.method)}
+              cols={HEAT_DISCIPLINES.map((d) => d.label)}
+              cell={(r, c) => {
+                const m = METHODS[r];
+                const d = HEAT_DISCIPLINES[c];
+                return methodCovers(m, d.key)
+                  ? { value: 1, label: '●', title: `${m.method} — used by ${m.programs}` }
+                  : { value: 0 };
+              }}
+              emptyHint="not named in the registry"
+            />
+          </Fig>
+        }
       />
       <SectionTabs sections={SECTIONS} value={section} onChange={setSection} />
 
@@ -239,44 +340,13 @@ export function SkillsChecklistView() {
 
       {section === 'domains' && (
         <VStack gap={6}>
-          <SpecSection title="Five domain models, one backend" sub="The hardest design challenge: one architecture, five completely different UX surfaces. Day 4 Marriott · Mar 5.">
-            <VStack gap={3}>
-              {DOMAINS.map((d) => (
-                <Card key={d.id} padding={4}>
-                  <VStack gap={2}>
-                    <Text type="body" weight="semibold">
-                      {d.name}
-                    </Text>
-                    <Grid columns={{ minWidth: 260, max: 2 }} gap={2}>
-                      {[
-                        ['Skills scope', d.skills],
-                        ['Structure', d.structure],
-                        ['Trigger', d.trigger],
-                        ['Graduation link', d.graduation],
-                        ['Primary evaluator', d.evaluator],
-                      ].map(([label, val]) => (
-                        <VStack key={label} gap={0.5}>
-                          <Text type="label" color="secondary">
-                            {label}
-                          </Text>
-                          <Text type="supporting" as="p" textWrap="pretty">
-                            {val}
-                          </Text>
-                        </VStack>
-                      ))}
-                    </Grid>
-                    <HStack gap={2} vAlign="center">
-                      <Badge variant="error" label="design gap" />
-                      <Text type="supporting" as="p" textWrap="pretty">
-                        {d.gap}
-                      </Text>
-                    </HStack>
-                  </VStack>
-                </Card>
-              ))}
-            </VStack>
+          <SpecSection
+            title="Five domain models, one backend"
+            sub="The hardest design challenge, now one comparative surface: read a column for a discipline's whole model, a row for how a single concern diverges across all five. The gap row is where design work is owed. Day 4 Marriott · Mar 5."
+          >
+            <DomainComparisonTable />
           </SpecSection>
-          <SpecSection title="Evaluation method registry" sub="All six approaches must be configurable per program.">
+          <SpecSection title="Evaluation method registry" sub="All six approaches must be configurable per program. The coverage grid in the header derives from this table.">
             <Table<MethodRow>
               data={METHODS}
               idKey="id"

@@ -1,14 +1,18 @@
 // views/products/exam/Accessibility.tsx — the admin→student accessibility
-// contract, interaction spec, and competitive parity matrix.
+// contract, interaction spec, and competitive parity matrix (v19). The
+// orienting stacked bar is DERIVED from the real 12-feature parity matrix —
+// no fabricated numbers — and the badge wall is now the StatusCell pattern.
 import { VStack } from '@astryxdesign/core/VStack';
-import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Link } from '@astryxdesign/core/Link';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { Chart, ChartAxis, ChartGrid, bar, useChartColors } from '@astryxdesign/charts';
+import { Fig } from '../../../components/charts/Fig';
 import { SpecSection } from '../spec/SpecSection';
+import { StatusCell } from '../spec/StatusCell';
+import { insightsWhere } from '../../../lib/selectors';
 import { hrefInsights } from '../../../lib/links';
 
 interface A11yRow extends Record<string, unknown> {
@@ -71,14 +75,82 @@ const PARITY: ParityRow[] = [
   { id: 'p12', feature: 'WCAG 2.1 AA (ACR)', es: 'Partial — no ACR', bb: 'Yes', cv: 'Yes', d2l: 'Yes', ex: 'Required for UNF pilot' },
 ];
 
-const wins = (v: string) =>
-  /^(Yes|Built|Bulk|Per-Q|Required|3 mode)/.test(v) ? 'success' : /^(No|Blocked|None|Partial)/.test(v) ? 'error' : 'warning';
+/** Classify a raw parity-matrix value: has / partial / gap. */
+const parityState = (v: string): 'yes' | 'partial' | 'no' =>
+  /^(Yes|Built|Bulk|Per-Q|Required|3 mode)/.test(v) ? 'yes' : /^(No|Blocked|None|Partial)/.test(v) ? 'no' : 'partial';
 
-const parityCell = (v: string) => <Badge variant={wins(v) as 'success' | 'error' | 'warning'} label={v} />;
+const PLATFORMS: { key: keyof ParityRow & string; label: string }[] = [
+  { key: 'es', label: 'ExamSoft' },
+  { key: 'bb', label: 'Blackboard' },
+  { key: 'cv', label: 'Canvas' },
+  { key: 'd2l', label: 'D2L' },
+  { key: 'ex', label: 'Exxat target' },
+];
+
+// Derived, not asserted: win/partial/gap counts per platform from the matrix.
+const PARITY_STACK = PLATFORMS.map((p) => {
+  const values = PARITY.map((r) => String(r[p.key]));
+  return {
+    platform: p.label,
+    has: values.filter((v) => parityState(v) === 'yes').length,
+    partial: values.filter((v) => parityState(v) === 'partial').length,
+    gap: values.filter((v) => parityState(v) === 'no').length,
+  };
+});
+
+const EXXAT_HAS = PARITY_STACK.find((d) => d.platform === 'Exxat target');
+
+function ParityStackChart() {
+  const colors = useChartColors();
+  return (
+    <Chart
+      data={PARITY_STACK as unknown as Record<string, unknown>[]}
+      xKey="platform"
+      height={220}
+      yDomain={[0, PARITY.length]}
+      series={[
+        bar('has', { stack: 'parity', color: colors.semantic.positive, label: 'Has / wins' }),
+        bar('partial', { stack: 'parity', color: colors.semantic.warning, label: 'Partial' }),
+        bar('gap', { stack: 'parity', color: colors.semantic.negative, label: 'Gap' }),
+      ]}
+      grid={<ChartGrid horizontal tickCount={4} />}
+      axes={
+        <>
+          <ChartAxis position="bottom" />
+          <ChartAxis position="left" tickCount={4} />
+        </>
+      }
+      legend
+      tooltip
+    />
+  );
+}
+
+const WINS = [
+  { id: 'w1', kind: 'Structural advantage', point: 'Flat pool + Scoped Views: no folder silos, cross-dept sharing without duplication.' },
+  { id: 'w2', kind: 'Structural advantage', point: 'Prism integration: student/course/faculty data already exists — no rebuild.' },
+  { id: 'w3', kind: 'Structural advantage', point: 'Accommodation profile system closes the D2L 70-operation gap.' },
+  { id: 'w4', kind: 'Structural advantage', point: 'AI-first architecture: retrofitting AI into a 20-year ExamSoft codebase is impossible.' },
+  { id: 'w5', kind: 'UX pattern to follow', point: 'Progressive disclosure: hide accommodation complexity from faculty who do not need it.' },
+  { id: 'w6', kind: 'UX pattern to follow', point: 'Publish gate checklist (Blackboard Ultra pattern): blocks publish until WCAG is met.' },
+  { id: 'w7', kind: 'UX pattern to follow', point: 'Preview-as-accommodation: admin sees exactly what a student with that profile experiences.' },
+  { id: 'w8', kind: 'UX pattern to follow', point: 'Live monitoring with accommodation badges: extend time in real time without leaving the screen.' },
+];
 
 export function Accessibility() {
+  const a11yEvidence = insightsWhere({ product: 'exam-management', q: 'accessibility' });
   return (
     <VStack gap={6}>
+      <Fig
+        title="Feature parity mix per platform"
+        n={PARITY.length}
+        caption={`Derived from the 12-feature parity matrix below (wins/partial/gap per platform). The Exxat target column carries ${EXXAT_HAS?.has ?? 0} wins and ${EXXAT_HAS?.gap ?? 0} gap (formula questions — Phase 2); every competitor relies on OS assistive tools that lockdown browsers block.`}
+        note="Exxat column is the design target, not a shipped product."
+        link={{ href: hrefInsights({ product: 'exam-management', q: 'accessibility' }), count: a11yEvidence.length, label: 'accessibility findings in the corpus' }}
+      >
+        <ParityStackChart />
+      </Fig>
+
       <SpecSection
         title="First-to-market position"
         sub="Program-level accommodation profiles: no competitor has bulk profile assignment. D2L needs 70 manual operations (7 students × 10 quizzes); Exxat needs 1. The publish gate blocks deploy until WCAG requirements are met. 15 features mapped admin→student; 8 of 12 WCAG AA criteria met; 0 competitors ship built-in tools (all rely on OS features, which lockdown browsers block)."
@@ -91,9 +163,6 @@ export function Accessibility() {
             time); Phase 2 = comprehensive revamp with the student portal overhaul. ADA Title II deadline: April 24.
           </Text>
         </Card>
-        <Link href={hrefInsights({ product: 'exam-management', q: 'accessibility' })} isStandalone>
-          All accessibility evidence in the corpus →
-        </Link>
       </SpecSection>
 
       <SpecSection title="Accessibility feature map" sub="Every admin control maps to a student experience — accessibility session Mar 16. NEW = first-to-market surface.">
@@ -123,59 +192,36 @@ export function Accessibility() {
         </VStack>
       </SpecSection>
 
-      <SpecSection title="Feature parity — 12 features across 5 platforms" sub="Green = Exxat wins or matches, amber = partial, red = gap. ExamSoft retention anchors (Dr. Vicky Mody, Mar 20): established curriculum mapping, years of faculty training, strong item analytics — the three things Exxat must match or exceed.">
+      <SpecSection
+        title="Feature parity — 12 features across 5 platforms"
+        sub="Dot = state (shipped / partial / missing); the cell text keeps each platform's actual behavior. ExamSoft retention anchors (Dr. Vicky Mody, Mar 20): established curriculum mapping, years of faculty training, strong item analytics — the three things Exxat must match or exceed."
+      >
         <Table<ParityRow>
           data={PARITY}
           idKey="id"
           density="compact"
           columns={[
             { key: 'feature', header: 'Feature', width: pixel(190), renderCell: (r) => <Text type="body">{r.feature}</Text> },
-            { key: 'es', header: 'ExamSoft', width: proportional(1), renderCell: (r) => parityCell(r.es) },
-            { key: 'bb', header: 'Blackboard', width: proportional(1), renderCell: (r) => parityCell(r.bb) },
-            { key: 'cv', header: 'Canvas', width: proportional(1), renderCell: (r) => parityCell(r.cv) },
-            { key: 'd2l', header: 'D2L', width: proportional(1), renderCell: (r) => parityCell(r.d2l) },
-            { key: 'ex', header: 'Exxat target', width: proportional(1), renderCell: (r) => parityCell(r.ex) },
+            ...PLATFORMS.map((p) => ({
+              key: p.key,
+              header: p.label,
+              width: proportional(1),
+              renderCell: (r: ParityRow) => <StatusCell state={parityState(String(r[p.key]))} label={String(r[p.key])} />,
+            })),
           ]}
         />
       </SpecSection>
 
       <SpecSection title="Where Exxat already wins / patterns to follow" sub="From the D2L demo (Mar 4), PRISM strategy (Mar 2–4) and the Mar 25 build.">
-        <Grid columns={{ minWidth: 280, max: 2 }} gap={3}>
-          <Card variant="muted" padding={3}>
-            <VStack gap={1.5}>
-              <Text type="label" color="secondary">
-                Structural advantages
-              </Text>
-              {[
-                'Flat pool + Scoped Views: no folder silos, cross-dept sharing without duplication.',
-                'Prism integration: student/course/faculty data already exists — no rebuild.',
-                'Accommodation profile system closes the D2L 70-operation gap.',
-                'AI-first architecture: retrofitting AI into a 20-year ExamSoft codebase is impossible.',
-              ].map((t, i) => (
-                <Text key={i} type="supporting" as="p" textWrap="pretty">
-                  {t}
-                </Text>
-              ))}
-            </VStack>
-          </Card>
-          <Card variant="muted" padding={3}>
-            <VStack gap={1.5}>
-              <Text type="label" color="secondary">
-                UX patterns to follow
-              </Text>
-              {[
-                'Progressive disclosure: hide accommodation complexity from faculty who do not need it.',
-                'Publish gate checklist (Blackboard Ultra pattern): blocks publish until WCAG is met.',
-                'Preview-as-accommodation: admin sees exactly what a student with that profile experiences.',
-                'Live monitoring with accommodation badges: extend time in real time without leaving the screen.',
-              ].map((t, i) => (
-                <Text key={i} type="supporting" as="p" textWrap="pretty">
-                  {t}
-                </Text>
-              ))}
-            </VStack>
-          </Card>
-        </Grid>
+        <Table<Record<string, unknown> & (typeof WINS)[number]>
+          data={WINS}
+          idKey="id"
+          density="compact"
+          columns={[
+            { key: 'kind', header: 'Kind', width: pixel(190), renderCell: (r) => <Badge variant={r.kind === 'Structural advantage' ? 'success' : 'info'} label={r.kind} /> },
+            { key: 'point', header: 'What it is', width: proportional(4), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.point}</Text> },
+          ]}
+        />
       </SpecSection>
     </VStack>
   );

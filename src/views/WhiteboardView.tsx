@@ -1,23 +1,26 @@
-// views/WhiteboardView.tsx — Source Library (v18 Astryx rebuild).
-// Primary sources shown as primary sources: whiteboard artifacts as a
-// filterable gallery (?category=), each linked forward to the page that
-// operationalized it. ?session= highlights the artifacts an insight cites.
-import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+// views/WhiteboardView.tsx — Source Library (v19 redesign).
+// Primary sources shown as primary sources: a StatTile hero computed from the
+// data, the shared TokenFilterRow over ?category=, and the artifact gallery as
+// an edge-to-edge table with row expansion for the captured bullets. Every
+// artifact carries a per-artifact "now lives in" QueryLink with a live count —
+// the category-level BECAME map is extended to the artifact level.
+import { useMemo, useState } from 'react';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
-import { Link } from '@astryxdesign/core/Link';
 import { Token } from '@astryxdesign/core/Token';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { WHITEBOARD_ARTIFACTS } from '../data/personas';
+import { Table, pixel, proportional, useTableRowExpansion, useTableRowExpansionState } from '@astryxdesign/core/Table';
+import { WHITEBOARD_ARTIFACTS, PERSONAS, COMPETITOR_FEATURES, MILESTONES } from '../data/personas';
 import { PageHeader } from '../components/ui/PageHeader';
-import { Fig } from '../components/charts/Fig';
-import { RankedList } from '../components/charts/RankedList';
-import { hrefPersonas, hrefCompetitive, hrefSignals, hrefRoadmap, hrefProduct, hrefSources } from '../lib/links';
+import { QueryLink } from '../components/story/QueryLink';
+import { StatTile, StatTileRow } from '../components/story/StatTile';
+import { TokenFilterRow } from '../components/ui/TokenFilterRow';
+import { useParamState } from '../lib/useParamState';
+import { allSignals, corpusFacts, productFacts } from '../lib/selectors';
+import { parsePhaseDate } from '../lib/phaseDates';
+import { hrefPersonas, hrefCompetitive, hrefSignals, hrefRoadmap, hrefProduct } from '../lib/links';
+import type { WhiteboardArtifact } from '../types';
 
 const CATEGORY_LABELS: Record<string, string> = {
   'product-context': 'Product context',
@@ -28,33 +31,68 @@ const CATEGORY_LABELS: Record<string, string> = {
   'exam-intel': 'Exam intel',
 };
 
-// Where each whiteboard's thinking now lives in the app.
-const BECAME: Record<string, { href: string; label: string }> = {
-  'product-context': { href: '/', label: 'Command Center' },
-  persona: { href: hrefPersonas(), label: 'Persona Atlas' },
-  competitor: { href: hrefCompetitive(), label: 'Competitive Parity' },
-  strategic: { href: hrefSignals(), label: 'Signals' },
-  feature: { href: hrefRoadmap(), label: 'Roadmap' },
-  'exam-intel': { href: hrefProduct('exam-management'), label: 'Exam Management' },
-};
+interface Destination {
+  href: string;
+  count: number;
+  label: string;
+}
 
-const ITEM_PREVIEW = 5;
+/** Where each whiteboard's thinking now lives — artifact-level where the
+ * mapping is obvious, category-level otherwise. Counts are computed live so
+ * the link states what is behind it. */
+function destinationOf(a: WhiteboardArtifact): Destination | undefined {
+  const personas: Destination = { href: hrefPersonas(), count: PERSONAS.length, label: 'personas — Persona Atlas' };
+  const signals: Destination = { href: hrefSignals(), count: allSignals().length, label: 'signals — Signal Board' };
+  const commandCenter: Destination = { href: '/', count: corpusFacts().n, label: 'insights — Command Center' };
+  const competitive: Destination = { href: hrefCompetitive(), count: COMPETITOR_FEATURES.length, label: 'tracked features — Competitive Parity' };
+  const roadmap: Destination = {
+    href: hrefRoadmap(),
+    count: MILESTONES.filter((m) => parsePhaseDate(m.date)).length,
+    label: 'dated milestones — Roadmap',
+  };
+  const examHub: Destination = {
+    href: hrefProduct('exam-management'),
+    count: productFacts('exam-management').n,
+    label: 'insights — Exam Management hub',
+  };
+
+  // Artifact-level overrides where the artifact obviously maps.
+  const byArtifact: Record<string, Destination> = {
+    'wb-users': personas,
+    'wb-persona-methods': personas,
+    'wb-competitor': competitive,
+    'wb-strategic': signals,
+    'wb-maturity': signals,
+    'wb-gaps': commandCenter,
+    'wb-product-context': commandCenter,
+    'wb-product-experience': commandCenter,
+    'wb-product-1': roadmap,
+    'wb-new-features': roadmap,
+  };
+  if (byArtifact[a.id]) return byArtifact[a.id];
+
+  // Category-level fallback (the original BECAME map, with live counts).
+  const byCategory: Record<string, Destination> = {
+    'product-context': commandCenter,
+    persona: personas,
+    competitor: competitive,
+    strategic: signals,
+    feature: roadmap,
+    'exam-intel': examHub,
+  };
+  return byCategory[a.category];
+}
+
+interface WbRow extends Record<string, unknown> {
+  id: string;
+  kind: 'artifact' | 'item';
+  artifact: WhiteboardArtifact;
+  text?: string;
+}
 
 export function WhiteboardView() {
-  const [params, setParams] = useSearchParams();
-  const category = params.get('category') ?? undefined;
-  const session = params.get('session') ?? undefined;
-
-  const set = (key: string, value?: string) =>
-    setParams(
-      (prev) => {
-        const p = new URLSearchParams(prev);
-        if (value) p.set(key, value);
-        else p.delete(key);
-        return p;
-      },
-      { replace: true }
-    );
+  const [category, setCategory] = useParamState('category');
+  const [session, setSession] = useParamState('session');
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
@@ -72,98 +110,134 @@ export function WhiteboardView() {
     return list;
   }, [category, session]);
 
-  const heroRows = categories
-    .map(([cat, count]) => ({
-      key: cat,
-      label: CATEGORY_LABELS[cat] ?? cat,
-      value: WHITEBOARD_ARTIFACTS.filter((a) => a.category === cat).reduce((n, a) => n + a.items.length, 0),
-      hint: `${count} artifact${count === 1 ? '' : 's'}`,
-      href: hrefSources() + `?category=${cat}`,
-    }))
-    .sort((a, b) => b.value - a.value);
+  const totalItems = WHITEBOARD_ARTIFACTS.reduce((n, a) => n + a.items.length, 0);
+
+  const baseRows: WbRow[] = useMemo(
+    () => shown.map((a) => ({ id: a.id, kind: 'artifact' as const, artifact: a })),
+    [shown]
+  );
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+  const { data, expansionConfig } = useTableRowExpansionState<WbRow>({
+    baseData: baseRows,
+    getChildren: (r) =>
+      r.kind === 'artifact'
+        ? r.artifact.items.map((text, i) => ({
+            id: `${r.artifact.id}-item-${i}`,
+            kind: 'item' as const,
+            artifact: r.artifact,
+            text,
+          }))
+        : [],
+    getRowKey: (r) => r.id,
+    expandedKeys,
+    setExpandedKeys,
+  });
+  const expansion = useTableRowExpansion<WbRow>({ ...expansionConfig, hasRowClickExpansion: true });
 
   return (
     <VStack gap={5} padding={6} maxWidth={1120}>
       <PageHeader
         title="Source Library"
-        lede="The whiteboards that started everything, kept as artifacts rather than retyped as prose — each one links forward to the page where its thinking now lives."
-        meta={`${WHITEBOARD_ARTIFACTS.length} whiteboard artifacts · Mar 20, 2026 sessions · ${WHITEBOARD_ARTIFACTS.reduce((n, a) => n + a.items.length, 0)} captured items`}
+        lede="The whiteboards that started everything, kept as artifacts rather than retyped as prose — expand any row for the captured items, and follow each artifact to the page where its thinking now lives."
+        meta="Captured in the Mar 20, 2026 whiteboard sessions"
       />
 
-      <Fig
-        title="Captured items by category"
-        caption="Where the whiteboard thinking concentrated. The heaviest category names the research phase's center of gravity — each bar filters the gallery below."
-      >
-        <RankedList rows={heroRows} format={(r) => `${r.value} items`} />
-      </Fig>
+      <StatTileRow>
+        <StatTile value={WHITEBOARD_ARTIFACTS.length} label="whiteboard artifacts" />
+        <StatTile value={totalItems} label="captured items" />
+        <StatTile value={categories.length} label="categories" />
+        <StatTile value="Mar 20, 2026" label="captured" />
+      </StatTileRow>
 
-      <HStack gap={1.5} wrap="wrap" vAlign="center">
-        <Token label={`All · ${WHITEBOARD_ARTIFACTS.length}`} color={!category ? 'blue' : 'default'} onClick={() => set('category', undefined)} />
-        {categories.map(([cat, count]) => (
-          <Token
-            key={cat}
-            label={`${CATEGORY_LABELS[cat] ?? cat} · ${count}`}
-            color={category === cat ? 'blue' : 'default'}
-            onClick={() => set('category', category === cat ? undefined : cat)}
-          />
-        ))}
-        {session && <Token label={`session: ${session}`} color="orange" onRemove={() => set('session', undefined)} />}
+      <HStack gap={3} vAlign="center" wrap="wrap">
+        <TokenFilterRow
+          options={categories.map(([cat, count]) => ({
+            key: cat,
+            label: CATEGORY_LABELS[cat] ?? cat,
+            count,
+          }))}
+          value={category}
+          onChange={setCategory}
+          allLabel={`All · ${WHITEBOARD_ARTIFACTS.length}`}
+        />
+        {session && <Token label={`session: ${session}`} color="orange" onRemove={() => setSession(undefined)} />}
       </HStack>
 
       {shown.length === 0 ? (
         <EmptyState
           title="No matching artifacts"
-          description={session ? `No whiteboard artifact matches "${session}". Clear the session filter to see the full library.` : 'No artifacts in this category.'}
+          description={
+            session
+              ? `No whiteboard artifact matches "${session}". Clear the session filter to see the full library.`
+              : 'No artifacts in this category.'
+          }
         />
       ) : (
-        <Grid columns={{ minWidth: 340, max: 3 }} gap={4}>
-          {shown.map((a) => {
-            const became = BECAME[a.category];
-            return (
-              <Card key={a.id} padding={4}>
-                <VStack gap={2}>
-                  <VStack gap={0.5}>
-                    <Text type="body" weight="semibold" textWrap="balance">
-                      {a.title}
-                    </Text>
-                    <Text type="supporting">
-                      {a.source} · {CATEGORY_LABELS[a.category] ?? a.category}
-                    </Text>
-                  </VStack>
-                  <VStack gap={1}>
-                    {a.items.slice(0, ITEM_PREVIEW).map((it, i) => (
-                      <HStack key={i} gap={2}>
-                        <Text type="supporting">·</Text>
-                        <Text type="supporting" as="p" textWrap="pretty">
-                          {it}
-                        </Text>
-                      </HStack>
-                    ))}
-                  </VStack>
-                  {a.items.length > ITEM_PREVIEW && (
-                    <Collapsible trigger={<Text type="supporting">{`+${a.items.length - ITEM_PREVIEW} more items`}</Text>} defaultIsOpen={false}>
-                      <VStack gap={1}>
-                        {a.items.slice(ITEM_PREVIEW).map((it, i) => (
-                          <HStack key={i} gap={2}>
-                            <Text type="supporting">·</Text>
-                            <Text type="supporting" as="p" textWrap="pretty">
-                              {it}
-                            </Text>
-                          </HStack>
-                        ))}
-                      </VStack>
-                    </Collapsible>
-                  )}
-                  {became && (
-                    <Link href={became.href} isStandalone>
-                      became {became.label} →
-                    </Link>
-                  )}
-                </VStack>
-              </Card>
-            );
-          })}
-        </Grid>
+        <Table<WbRow>
+          data={data}
+          idKey="id"
+          density="balanced"
+          hasHover
+          verticalAlign="top"
+          plugins={{ expansion }}
+          columns={[
+            {
+              key: 'title',
+              header: 'Artifact',
+              width: proportional(3),
+              renderCell: (r: WbRow) =>
+                r.kind === 'item' ? (
+                  <Text type="supporting" as="p" textWrap="pretty">
+                    · {r.text}
+                  </Text>
+                ) : (
+                  <Text type="body" weight="semibold" textWrap="balance">
+                    {r.artifact.title}
+                  </Text>
+                ),
+            },
+            {
+              key: 'category',
+              header: 'Category',
+              width: pixel(140),
+              renderCell: (r: WbRow) =>
+                r.kind === 'item' ? null : (
+                  <Token label={CATEGORY_LABELS[r.artifact.category] ?? r.artifact.category} size="sm" />
+                ),
+            },
+            {
+              key: 'source',
+              header: 'Source',
+              width: proportional(2),
+              renderCell: (r: WbRow) =>
+                r.kind === 'item' ? null : <Text type="supporting">{r.artifact.source}</Text>,
+            },
+            {
+              key: 'items',
+              header: 'Items',
+              width: pixel(80),
+              align: 'end',
+              renderCell: (r: WbRow) =>
+                r.kind === 'item' ? null : (
+                  <Text type="supporting" hasTabularNumbers>
+                    {r.artifact.items.length}
+                  </Text>
+                ),
+            },
+            {
+              key: 'destination',
+              header: 'Now lives in',
+              width: proportional(2),
+              renderCell: (r: WbRow) => {
+                if (r.kind === 'item') return null;
+                const dest = destinationOf(r.artifact);
+                return dest ? (
+                  <QueryLink href={dest.href} count={dest.count} label={dest.label} isStandalone={false} />
+                ) : null;
+              },
+            },
+          ]}
+        />
       )}
     </VStack>
   );

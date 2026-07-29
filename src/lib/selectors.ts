@@ -57,6 +57,8 @@ export function insightsWhere(f: InsightFilter): Insight[] {
     const s = f.source.toLowerCase();
     list = list.filter((i) => i.source.toLowerCase().includes(s));
   }
+  if (f.since) list = list.filter((i) => i.createdAt >= f.since!);
+  if (f.until) list = list.filter((i) => i.createdAt <= f.until!);
   if (f.q) {
     const q = f.q.toLowerCase();
     list = list.filter(
@@ -107,6 +109,68 @@ export function insightsForVoice(v: RealVoice): Insight[] {
     const hay = `${i.pullQuoteSource ?? ''} ${i.source}`.toLowerCase();
     return hay.includes(name) || hay.includes(inst) || (label && hay.includes(label));
   }).sort((a, b) => scoreOf(b) - scoreOf(a));
+}
+
+// ---------------------------------------------------------------------------
+// Derived facts — THE single source for every count/recency stat in the UI.
+// Declared counts were removed from ProductMeta (v19): derivation can't drift.
+
+/** Anchor for recency math: today, fixed at module load so a session is self-consistent. */
+export const CORPUS_ANCHOR: string = new Date().toISOString().slice(0, 10);
+
+const dayMs = 86400000;
+const daysBetween = (aISO: string, bISO: string) =>
+  Math.round((new Date(bISO).getTime() - new Date(aISO).getTime()) / dayMs);
+const isoDaysAgo = (anchorISO: string, days: number) =>
+  new Date(new Date(anchorISO).getTime() - days * dayMs).toISOString().slice(0, 10);
+
+export interface ProductFacts {
+  n: number;
+  critical: number;
+  newest?: Insight;
+  newestDate?: string;
+  last7d: number;
+  last30d: number;
+  prior30d: number;
+  staleDays: number;
+  pullQuoteShare: number;
+  soWhatShare: number;
+}
+
+function factsOf(list: Insight[], anchor: string): ProductFacts {
+  const newest = [...list].sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))[0];
+  const d7 = isoDaysAgo(anchor, 7);
+  const d30 = isoDaysAgo(anchor, 30);
+  const d60 = isoDaysAgo(anchor, 60);
+  return {
+    n: list.length,
+    critical: list.filter((i) => i.severity === 'critical').length,
+    newest,
+    newestDate: newest?.createdAt,
+    last7d: list.filter((i) => i.createdAt >= d7).length,
+    last30d: list.filter((i) => i.createdAt >= d30).length,
+    prior30d: list.filter((i) => i.createdAt >= d60 && i.createdAt < d30).length,
+    staleDays: newest ? daysBetween(newest.createdAt, anchor) : Infinity,
+    pullQuoteShare: list.length ? list.filter((i) => i.pullQuote).length / list.length : 0,
+    soWhatShare: list.length ? list.filter((i) => i.soWhat).length / list.length : 0,
+  };
+}
+
+const productFactsCache = new Map<string, ProductFacts>();
+export function productFacts(productId: string, anchor: string = CORPUS_ANCHOR): ProductFacts {
+  const key = `${productId}|${anchor}`;
+  let f = productFactsCache.get(key);
+  if (!f) {
+    f = factsOf(insightsWhere({ product: productId }), anchor);
+    productFactsCache.set(key, f);
+  }
+  return f;
+}
+
+let corpusFactsCache: ProductFacts | null = null;
+export function corpusFacts(): ProductFacts {
+  if (!corpusFactsCache) corpusFactsCache = factsOf(ALL_INSIGHTS, CORPUS_ANCHOR);
+  return corpusFactsCache;
 }
 
 export { evidenceClass };

@@ -153,6 +153,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v19.0',
+    date: '2026-07-29',
+    summary: 'Visualization-first redesign of all 24+ views. Latest findings per product: hubs open with a "What\'s new" feed (newest evidence, sparkline momentum, 30d trend delta, staleness meter); Command Center leads with a cross-product freshness strip. Count integrity: declared products.ts counts removed — every number derives live from the corpus (briefings and hubs now agree at 245/43); milestone state derives from dates. Link contract gains since/until date params: month marks and freshness links open the Insight Index with a removable date token. Chart kit v2 (Sparkline, TrendDelta, SmallMultiples, true diverging NPS bars, tooltips/legends, n= badges everywhere) + story kit (evidence feed rows replacing card soup, Citation quote rows replacing the Highlights masonry, ConflictNote for the contested Cohere date, stat tile rows). One spec architecture across 12 spec surfaces: claim lede + live corpus chips + one orienting visual each — NavIA access HeatGrid, Skills method-coverage grid, LC per-persona chart that tests (and corrects) the SCCE-highest-risk claim, exam parity/gap stacked bars. Roadmap rebuilt as a real date-axis milestone chart with product lanes and a today line; LC honestly shows zero dated milestones. Platform orphan route joined the sidebar. tsc 0 errors; build green.',
+    insightCount: 420,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/* (24 views)', 'src/components/charts/*', 'src/components/story/* (new)', 'src/views/products/pce/* (new)', 'src/lib/selectors.ts', 'src/lib/links.ts', 'src/lib/series.ts', 'src/data/products.ts', 'src/data/insights.ts', 'src/data/version.ts'],
+  },
+  {
     version: 'v17.2',
     date: '2026-07-29',
     summary: 'Freshness sync: three unsynced Granola sessions (Jul 24 survey workflow, Jul 28 survey cadence, Jul 28 Course Eval sync) synthesized into 10 new course-eval insights: push wizard four-step split, instance-grain duplicate definition, soft-warning-over-hard-block, evaluatee role model, nursing multi-component consolidation vs Watermark, template builder role-play findings, course vs course-director split ambiguity. One live source conflict surfaced, not resolved: vault Jul 27 says communication rules are per-survey with visibility; Jul 28 sync summary says centralized settings. Cohere note enriched with vault reading (Aug = readiness gate, Sep = conference demo, unconfirmed). Corpus 420 insights, 76 sessions.',

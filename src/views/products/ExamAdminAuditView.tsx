@@ -1,6 +1,7 @@
 // views/products/ExamAdminAuditView.tsx — Exam Management admin design audit
-// (v18 Astryx). Hero: severity-ranked finding groups. 6 role journeys, 27
-// stories, 12 UX gaps, 10 standards checks, 5 AI stories — audit date Mar 26.
+// (v19). SpecPageHeader with live corpus chips; orienting = computed StatTile
+// row + the severity-ranked finding groups (rows link severity queries); the
+// AI story cards are now a filtered stories table. Audit date Mar 26.
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
@@ -11,9 +12,10 @@ import { Link } from '@astryxdesign/core/Link';
 import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { useState } from 'react';
-import { PageHeader } from '../../components/ui/PageHeader';
 import { Fig } from '../../components/charts/Fig';
 import { RankedList } from '../../components/charts/RankedList';
+import { StatTile, StatTileRow } from '../../components/story/StatTile';
+import { SpecPageHeader } from './spec/SpecPageHeader';
 import { SpecSection } from './spec/SpecSection';
 import { SectionTabs, useSection } from './spec/SectionTabs';
 import { SpecFooter } from './spec/SpecFooter';
@@ -222,28 +224,41 @@ export function ExamAdminAuditView() {
   const [roleId, setRoleId] = useState(ROLES[0].id);
   const role = ROLES.find((r) => r.id === roleId) ?? ROLES[0];
   const built = STORIES.filter((s) => s.built).length;
+  const aiStories = STORIES.filter((s) => s.type === 'AI');
 
   const sevRows = SEV_ORDER.map((sev) => ({
     key: sev,
     label: `${sev} findings`,
     value: UX_GAPS.filter((g) => g.severity === sev).length,
     hint: UX_GAPS.filter((g) => g.severity === sev).map((g) => g.area).slice(0, 3).join(' · '),
+    href: hrefInsights({ product: PRODUCT_ID, severity: sev }),
   }));
 
   return (
     <VStack gap={5} padding={6} maxWidth={1160}>
-      <PageHeader
+      <SpecPageHeader
         title="Exam Management — admin design audit"
-        lede="Full audit of the admin design: 6 roles, 27 stories, 12 UX gaps, 5 AI stories. Audit date Mar 26, 2026."
-        meta={`Sources: 20+ Granola sessions, ExamSoft + D2L demos, Arun 3-year vision, Nipun UNF pilot, Ed Razenbach · ${built}/${STORIES.length} stories built (${Math.round((built / STORIES.length) * 100)}% design completeness)`}
+        productId={PRODUCT_ID}
+        claim={`Three critical absences — no home screen, a side-panel question bank, no review workflow — block every role's daily loop, and only ${built} of ${STORIES.length} audited stories is built.`}
+        meta={`Audit date Mar 26, 2026 · sources: 20+ Granola sessions, ExamSoft + D2L demos, Arun 3-year vision, Nipun UNF pilot, Ed Razenbach`}
+        orienting={
+          <VStack gap={4}>
+            <StatTileRow>
+              <StatTile value={`${built}/${STORIES.length}`} label="stories built" hint={`${Math.round((built / STORIES.length) * 100)}% design completeness`} />
+              <StatTile value={UX_GAPS.length} label="UX gaps" hint={`${UX_GAPS.filter((g) => g.severity === 'critical').length} critical`} />
+              <StatTile value={ROLES.length} label="role journeys" />
+              <StatTile value={STANDARDS.length} label="standards checks" hint={`${STANDARDS.filter((s) => s.status === 'Missing').length} missing`} />
+            </StatTileRow>
+            <Fig
+              title="Audit findings by severity"
+              n={UX_GAPS.length}
+              caption="The three critical findings — no home screen, question bank as a side panel, no review workflow — are the P0 build queue. Everything else waits behind them. Row labels open the matching corpus severity query."
+            >
+              <RankedList rows={sevRows} />
+            </Fig>
+          </VStack>
+        }
       />
-
-      <Fig
-        title="Findings by severity"
-        caption="The three critical findings — no home screen, question bank as a side panel, no review workflow — are the P0 build queue. Everything else waits behind them."
-      >
-        <RankedList rows={sevRows} />
-      </Fig>
 
       <SectionTabs sections={SECTIONS} value={section} onChange={setSection} />
 
@@ -398,27 +413,20 @@ export function ExamAdminAuditView() {
       {section === 'ai' && (
         <SpecSection
           title="AI stories"
-          sub='Non-negotiable constraint (Arun): "Everywhere it helps, never in the way." Users must always be able to do everything manually; the AI success metric is faculty time saved.'
+          sub={`Non-negotiable constraint (Arun): "Everywhere it helps, never in the way." Users must always be able to do everything manually; the AI success metric is faculty time saved. ${aiStories.length} of ${STORIES.length} stories are AI stories; none are built.`}
         >
-          <Grid columns={{ minWidth: 340, max: 2 }} gap={3}>
-            {STORIES.filter((s) => s.type === 'AI').map((s) => (
-              <Card key={s.id} padding={3}>
-                <VStack gap={1}>
-                  <HStack gap={2} vAlign="center">
-                    <Text type="code">{s.id}</Text>
-                    <Badge variant={s.priority === 'P1' ? 'warning' : 'info'} label={s.priority} />
-                    <Text type="supporting">{s.role}</Text>
-                  </HStack>
-                  <Text type="supporting" as="p" textWrap="pretty">
-                    {s.story}
-                  </Text>
-                  <Text type="supporting" as="p">
-                    {s.src}
-                  </Text>
-                </VStack>
-              </Card>
-            ))}
-          </Grid>
+          <Table<StoryRec>
+            data={aiStories}
+            idKey="id"
+            density="balanced"
+            columns={[
+              { key: 'id', header: 'ID', width: pixel(80), renderCell: (r) => <Text type="code">{r.id}</Text> },
+              { key: 'priority', header: 'Pri', width: pixel(60), renderCell: (r) => <Badge variant={r.priority === 'P1' ? 'warning' : 'info'} label={r.priority} /> },
+              { key: 'role', header: 'Role', width: pixel(130), renderCell: (r) => <Text type="supporting">{r.role}</Text> },
+              { key: 'story', header: 'Story', width: proportional(4), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.story}</Text> },
+              { key: 'src', header: 'Source', width: proportional(2), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.src}</Text> },
+            ]}
+          />
           <Card variant="muted" padding={3}>
             <VStack gap={1.5}>
               <Text type="label" color="secondary">
@@ -443,8 +451,8 @@ export function ExamAdminAuditView() {
       <SpecFooter
         productId={PRODUCT_ID}
         extra={
-          <Link href={hrefInsights({ product: PRODUCT_ID, severity: 'critical' })} isStandalone>
-            Critical exam findings →
+          <Link href="/products/exam-management/spec" isStandalone>
+            Full spec archive — 5 sections →
           </Link>
         }
       />

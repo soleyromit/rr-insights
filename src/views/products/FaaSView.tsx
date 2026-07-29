@@ -1,23 +1,27 @@
-// views/products/FaaSView.tsx — FaaS 2.0 spec archive (v18 Astryx).
-// URL-synced sections replace the hidden tab bar; the invented monthly ticket
-// trend is gone (only the sourced 95k/yr figure survives).
+// views/products/FaaSView.tsx — FaaS 2.0 spec archive (v19). SpecPageHeader
+// with live corpus chips; the orienting control-health stacked bar is DERIVED
+// from the 12-row CONTROLS registry; "the numbers behind the fire" are a
+// computed StatTile row; transcript-gap cards are edge-to-edge table rows.
 import { VStack } from '@astryxdesign/core/VStack';
-import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Blockquote } from '@astryxdesign/core/Blockquote';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
-import { PageHeader } from '../../components/ui/PageHeader';
+import { Chart, ChartAxis, ChartGrid, bar, useChartColors } from '@astryxdesign/charts';
 import { Fig } from '../../components/charts/Fig';
 import { RankedList } from '../../components/charts/RankedList';
+import { StatTile, StatTileRow } from '../../components/story/StatTile';
+import { SpecPageHeader } from './spec/SpecPageHeader';
 import { SpecSection } from './spec/SpecSection';
 import { DecisionCard } from './spec/DecisionCard';
 import { StoryTable } from './spec/StoryTable';
 import type { StoryRow } from './spec/StoryTable';
 import { SectionTabs, useSection } from './spec/SectionTabs';
 import { SpecFooter } from './spec/SpecFooter';
+import { insightsWhere } from '../../lib/selectors';
+import { hrefInsights } from '../../lib/links';
 
 const PRODUCT_ID = 'faas';
 
@@ -59,6 +63,47 @@ const CONTROLS: ControlRow[] = [
   { id: 'c12', type: 'Code dropdown (ICD/CPT)', category: 'Specialized', status: 'Critical', issues: 'Long text strings, poor chip display, broken delete UX' },
 ];
 
+// Derived, not asserted: control health by category from the registry above.
+const CONTROL_CATEGORIES = ['Basic', 'Advanced', 'Specialized'];
+const CONTROL_STACK = CONTROL_CATEGORIES.map((cat) => ({
+  category: cat,
+  critical: CONTROLS.filter((c) => c.category === cat && c.status === 'Critical').length,
+  bug: CONTROLS.filter((c) => c.category === cat && c.status === 'Bug').length,
+  stable: CONTROLS.filter((c) => c.category === cat && c.status === 'Stable').length,
+}));
+const STATUS_COUNTS = {
+  Critical: CONTROLS.filter((c) => c.status === 'Critical').length,
+  Bug: CONTROLS.filter((c) => c.status === 'Bug').length,
+  Stable: CONTROLS.filter((c) => c.status === 'Stable').length,
+};
+
+function ControlHealthChart() {
+  const colors = useChartColors();
+  const yMax = Math.max(...CONTROL_STACK.map((d) => d.critical + d.bug + d.stable), 1);
+  return (
+    <Chart
+      data={CONTROL_STACK as unknown as Record<string, unknown>[]}
+      xKey="category"
+      height={220}
+      yDomain={[0, yMax]}
+      series={[
+        bar('critical', { stack: 'health', color: colors.semantic.negative, label: 'Critical' }),
+        bar('bug', { stack: 'health', color: colors.semantic.warning, label: 'Bug' }),
+        bar('stable', { stack: 'health', color: colors.semantic.positive, label: 'Stable' }),
+      ]}
+      grid={<ChartGrid horizontal tickCount={4} />}
+      axes={
+        <>
+          <ChartAxis position="bottom" />
+          <ChartAxis position="left" tickCount={4} />
+        </>
+      }
+      legend
+      tooltip
+    />
+  );
+}
+
 interface GapRow extends Record<string, unknown> {
   id: string;
   area: string;
@@ -77,12 +122,18 @@ const UX_GAPS: GapRow[] = [
   { id: 'g8', area: 'No field-level feedback', severity: 'medium', who: 'Prasanjit (Mar 25)', detail: 'Only general form-level comments exist; supervisors need granular annotations (e.g. on a specific ICD code).' },
 ];
 
-const TRANSCRIPT_GAPS = [
-  { src: 'Harsha (9f1f5f4f Mar 20)', sev: 'critical', gap: 'FaaS looks like an outlier inside host modules. Must be headless-first: form components inherit the host module visual language. A technical architecture requirement, not a style preference.' },
-  { src: 'Harsha (9f1f5f4f Mar 20)', sev: 'critical', gap: 'No simulator/preview mode. Errors surface when students submit 2–3 months after setup. Need live preview with sample data and a test mode before publishing.' },
-  { src: 'Aarti (f29a990d Mar 20)', sev: 'critical', gap: 'The 3-pane form builder is inaccessible. "To find out later it is not accessible — reworking is very hard." Title II deadline April 24 applies to FaaS too.' },
-  { src: 'Harsha (9f1f5f4f Mar 20)', sev: 'high', gap: 'Manual free-text tag entry for CAS-FAST mapping silently corrupts data — a misspelled tag breaks business logic with no visible error until student submission. Need structured dropdown autocomplete.' },
-  { src: 'Prasanjit (13352a23 Mar 25)', sev: 'high', gap: 'Section scroll sync is broken — "I have moved to diagnosis but it has not moved." Section identity is completely lost.' },
+interface TranscriptGapRow extends Record<string, unknown> {
+  id: string;
+  src: string;
+  sev: string;
+  gap: string;
+}
+const TRANSCRIPT_GAPS: TranscriptGapRow[] = [
+  { id: 't1', src: 'Harsha (9f1f5f4f Mar 20)', sev: 'critical', gap: 'FaaS looks like an outlier inside host modules. Must be headless-first: form components inherit the host module visual language. A technical architecture requirement, not a style preference.' },
+  { id: 't2', src: 'Harsha (9f1f5f4f Mar 20)', sev: 'critical', gap: 'No simulator/preview mode. Errors surface when students submit 2–3 months after setup. Need live preview with sample data and a test mode before publishing.' },
+  { id: 't3', src: 'Aarti (f29a990d Mar 20)', sev: 'critical', gap: 'The 3-pane form builder is inaccessible. "To find out later it is not accessible — reworking is very hard." Title II deadline April 24 applies to FaaS too.' },
+  { id: 't4', src: 'Harsha (9f1f5f4f Mar 20)', sev: 'high', gap: 'Manual free-text tag entry for CAS-FAST mapping silently corrupts data — a misspelled tag breaks business logic with no visible error until student submission. Need structured dropdown autocomplete.' },
+  { id: 't5', src: 'Prasanjit (13352a23 Mar 25)', sev: 'high', gap: 'Section scroll sync is broken — "I have moved to diagnosis but it has not moved." Section identity is completely lost.' },
 ];
 
 interface Q2Row extends Record<string, unknown> {
@@ -157,47 +208,45 @@ function Overview() {
     <VStack gap={6}>
       <SpecSection
         title="The numbers behind the fire"
-        sub="17,000+ configured forms across 11 types · 95,000 annual support tickets · NPS 2/5 · 37 admin NPS detractors (navigation and click-depth) · 629 student detractors (preceptor eval length + mobile gaps) · 80–85% of form changes are incremental edits."
+        sub="37 admin NPS detractors cite navigation and click-depth; 629 student detractors cite preceptor eval length + mobile gaps."
       >
+        <StatTileRow>
+          <StatTile value="17,000+" label="configured forms" hint="across 11 form types" />
+          <StatTile value="95,000" label="support tickets / yr" hint="the fire this spec answers" />
+          <StatTile value="2/5" label="NPS" hint="lowest in the portfolio" />
+          <StatTile value="80–85%" label="of changes are incremental" hint="template-first is the correct default" />
+        </StatTileRow>
         <Fig
           title="Usage by clinical discipline"
+          n={USAGE.length}
           caption="Share of Patient Log usage with complexity per discipline (Prasanjit, Mar 25). CRNA is the smallest share but the highest complexity — its 4-level hierarchies break the current controls."
         >
           <RankedList rows={USAGE} format={(r) => `${r.value}%`} />
         </Fig>
       </SpecSection>
       <SpecSection title="Transcript-grounded gaps" sub="From raw session analysis Mar 26 — each gap traces to a named speaker and session.">
-        <VStack gap={2}>
-          {TRANSCRIPT_GAPS.map((g, i) => (
-            <Card key={i} padding={3}>
-              <VStack gap={1}>
-                <HStack gap={2} vAlign="center" wrap="wrap">
-                  <Badge variant={g.sev === 'critical' ? 'error' : 'warning'} label={g.sev} />
-                  <Text type="supporting">{g.src}</Text>
-                </HStack>
-                <Text type="body" as="p" textWrap="pretty">
-                  {g.gap}
-                </Text>
-              </VStack>
-            </Card>
-          ))}
-        </VStack>
+        <Table<TranscriptGapRow>
+          data={TRANSCRIPT_GAPS}
+          idKey="id"
+          density="balanced"
+          verticalAlign="top"
+          columns={[
+            { key: 'sev', header: 'Sev', width: pixel(90), renderCell: (r) => <Badge variant={r.sev === 'critical' ? 'error' : 'warning'} label={r.sev} /> },
+            { key: 'gap', header: 'Gap', width: proportional(4), renderCell: (r) => <Text type="body" as="p" textWrap="pretty">{r.gap}</Text> },
+            { key: 'src', header: 'Source', width: pixel(190), renderCell: (r) => <Text type="supporting">{r.src}</Text> },
+          ]}
+        />
       </SpecSection>
     </VStack>
   );
 }
 
 function Controls() {
-  const counts = {
-    Critical: CONTROLS.filter((c) => c.status === 'Critical').length,
-    Bug: CONTROLS.filter((c) => c.status === 'Bug').length,
-    Stable: CONTROLS.filter((c) => c.status === 'Stable').length,
-  };
   return (
     <VStack gap={6}>
       <SpecSection
         title="Control type registry"
-        sub={`All 12 deployed control types: ${counts.Critical} critical, ${counts.Bug} with bugs, ${counts.Stable} stable. Critical = blocks publish-quality work. Sources: Prasanjit (Mar 25), Harsha (Mar 20).`}
+        sub={`All 12 deployed control types: ${STATUS_COUNTS.Critical} critical, ${STATUS_COUNTS.Bug} with bugs, ${STATUS_COUNTS.Stable} stable. Critical = blocks publish-quality work. Sources: Prasanjit (Mar 25), Harsha (Mar 20).`}
       >
         <Table<ControlRow>
           data={CONTROLS}
@@ -290,27 +339,20 @@ function ArchitectureSection() {
         title="Site assessment: the one-PDF problem"
         sub='Pratiksha (Mar 18, session 1a0cd25e): "They need to present the site assessment to accreditation bodies. For that they need one PDF. But step 1 and step 3 are outside FaaS."'
       >
-        <Grid columns={{ minWidth: 220, max: 3 }} gap={3}>
-          {[
-            { step: 'Step 1 · Site details', inFaas: false, desc: 'Site name, address, accreditation type, capacity. Hardcoded in the Site module.' },
-            { step: 'Step 2 · Assessment form', inFaas: true, desc: 'Custom questions per school, up to 5 variations — the only step FaaS controls.' },
-            { step: 'Step 3 · Form metadata', inFaas: false, desc: 'Completion date, reviewer, submission status. Hardcoded in the Site module.' },
-          ].map((s) => (
-            <Card key={s.step} variant="muted" padding={3}>
-              <VStack gap={1}>
-                <HStack gap={2} vAlign="center">
-                  <Badge variant={s.inFaas ? 'success' : 'error'} label={s.inFaas ? 'in FaaS' : 'outside FaaS'} />
-                  <Text type="body" weight="semibold">
-                    {s.step}
-                  </Text>
-                </HStack>
-                <Text type="supporting" as="p" textWrap="pretty">
-                  {s.desc}
-                </Text>
-              </VStack>
-            </Card>
-          ))}
-        </Grid>
+        <Table<Record<string, unknown> & { id: string; step: string; inFaas: boolean; desc: string }>
+          data={[
+            { id: 's1', step: 'Step 1 · Site details', inFaas: false, desc: 'Site name, address, accreditation type, capacity. Hardcoded in the Site module.' },
+            { id: 's2', step: 'Step 2 · Assessment form', inFaas: true, desc: 'Custom questions per school, up to 5 variations — the only step FaaS controls.' },
+            { id: 's3', step: 'Step 3 · Form metadata', inFaas: false, desc: 'Completion date, reviewer, submission status. Hardcoded in the Site module.' },
+          ]}
+          idKey="id"
+          density="balanced"
+          columns={[
+            { key: 'step', header: 'Step', width: pixel(190), renderCell: (r) => <Text type="body" weight="semibold">{r.step}</Text> },
+            { key: 'inFaas', header: 'Ownership', width: pixel(120), renderCell: (r) => <Badge variant={r.inFaas ? 'success' : 'error'} label={r.inFaas ? 'in FaaS' : 'outside FaaS'} /> },
+            { key: 'desc', header: 'Content', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.desc}</Text> },
+          ]}
+        />
         <Card variant="muted" padding={3}>
           <VStack gap={1.5}>
             <Text type="supporting" as="p" textWrap="pretty">
@@ -333,12 +375,24 @@ function ArchitectureSection() {
 
 export function FaaSView() {
   const [section, setSection] = useSection(SECTIONS, 'overview');
+  const validation = insightsWhere({ product: PRODUCT_ID, q: 'validation' });
   return (
     <VStack gap={5} padding={6} maxWidth={1160}>
-      <PageHeader
+      <SpecPageHeader
         title="FaaS 2.0 — spec archive"
-        lede="Forms as a Service: the embedded form engine behind Patient Log, Evaluations, Surveys, Site Assessment and Compliance — never a standalone product."
-        meta="17k forms · 95k tickets/yr · NPS 2/5 · Q2 2026 internal self-service, Q3 limited rollout"
+        productId={PRODUCT_ID}
+        claim="One misspelled hand-typed tag can break a form and no one finds out until October — a quarter of the 12 deployed control types are critical-broken while self-service stays deliberately disabled."
+        meta="Forms as a Service: the embedded form engine behind Patient Log, Evaluations, Surveys, Site Assessment and Compliance — never a standalone product. Q2 2026 internal self-service, Q3 limited rollout."
+        orienting={
+          <Fig
+            title="Control health by category"
+            n={CONTROLS.length}
+            caption={`Derived from the 12-row control registry: ${STATUS_COUNTS.Critical} critical, ${STATUS_COUNTS.Bug} with bugs, ${STATUS_COUNTS.Stable} stable. The Basic tier carries the highest-traffic failure (ICD/CPT lookup); every Advanced control has an open defect.`}
+            link={{ href: hrefInsights({ product: PRODUCT_ID, q: 'validation' }), count: validation.length, label: 'validation findings in the corpus' }}
+          >
+            <ControlHealthChart />
+          </Fig>
+        }
       />
       <Blockquote cite="Harsha · FaaS compliance interview · Mar 20">
         We type the tags by hand. One spelling mistake and the entire form logic breaks. We find out in October when students

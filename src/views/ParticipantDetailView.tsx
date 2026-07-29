@@ -1,11 +1,12 @@
-// views/ParticipantDetailView.tsx — one participant's profile (v18, new).
-// The human source: context, frictions, workarounds, wish list, and the
-// insights they contributed.
+// views/ParticipantDetailView.tsx — one participant's profile (v19 redesign).
+// Opens with an honest mini-profile band (severity mix of their traced
+// contributions, annotated as text-matched, beside their sentiment tile);
+// contributions render as a newest-first FindingsFeed with no silent cutoff;
+// a forward-journey footer links persona, product hubs, and the session query.
 import { useParams } from 'react-router-dom';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
-import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -14,11 +15,17 @@ import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Blockquote } from '@astryxdesign/core/Blockquote';
 import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { PageHeader } from '../components/ui/PageHeader';
-import { SevDot } from '../components/ui/sev';
+import { Fig } from '../components/charts/Fig';
+import { SeverityStackChart } from '../components/charts/SeverityStackChart';
+import { StatTile, StatTileRow } from '../components/story/StatTile';
+import { FindingsFeed } from '../components/story/FindingsFeed';
+import { QueryLink } from '../components/story/QueryLink';
 import { REAL_VOICES } from '../data/voices';
 import { getProduct } from '../data/products';
-import { insightsForVoice } from '../lib/selectors';
-import { hrefInsight, hrefParticipants } from '../lib/links';
+import { PERSONAS } from '../data/personas';
+import { insightsForVoice, insightsWhere } from '../lib/selectors';
+import { severityMix } from '../lib/series';
+import { hrefInsights, hrefParticipants, hrefPersona, hrefProduct } from '../lib/links';
 
 export function ParticipantDetailView() {
   const { voiceId } = useParams();
@@ -28,6 +35,10 @@ export function ParticipantDetailView() {
   }
 
   const contributed = insightsForVoice(voice);
+  const persona = PERSONAS.find((p) => p.id === voice.personaRole);
+  const personaCount = persona ? insightsWhere({ persona: persona.id }).length : 0;
+  const sessionLabel = voice.granolaMeetingLabel;
+  const sessionCount = sessionLabel ? insightsWhere({ source: sessionLabel }).length : 0;
 
   return (
     <VStack gap={5} padding={6}>
@@ -40,10 +51,28 @@ export function ParticipantDetailView() {
           <PageHeader
             title={voice.name}
             lede={`${voice.title}, ${voice.institution}`}
-            meta={`${voice.granolaMeetingLabel} · sentiment: ${voice.sentiment} (${voice.sentimentScore}/100)`}
+            meta={voice.granolaMeetingLabel}
           />
         </HStack>
       </VStack>
+
+      <Fig
+        title="Contribution profile"
+        n={contributed.length}
+        note="Contributions are matched by source-text, not IDs — treat these counts as a careful approximation."
+      >
+        <HStack gap={5} vAlign="center" wrap="wrap">
+          <StatTileRow>
+            <StatTile value={`${voice.sentimentScore}/100`} label={`sentiment · ${voice.sentiment}`} />
+            <StatTile value={contributed.length} label="insights traced" />
+          </StatTileRow>
+          {contributed.length > 0 && (
+            <VStack width={360}>
+              <SeverityStackChart data={[{ category: voice.name, ...severityMix(contributed) }]} height={120} />
+            </VStack>
+          )}
+        </HStack>
+      </Fig>
 
       <Blockquote cite={voice.context}>{voice.quote}</Blockquote>
 
@@ -88,31 +117,49 @@ export function ParticipantDetailView() {
         </VStack>
 
         <VStack gap={3}>
-          <Text type="label" color="secondary">
-            Insights traced to this participant ({contributed.length})
-          </Text>
-          {contributed.length === 0 && (
-            <Text type="supporting" as="p">
-              No corpus insights are text-matched to this participant yet; their evidence lives in the session notes above.
-            </Text>
-          )}
-          {contributed.slice(0, 8).map((i) => (
-            <Card key={i.id} padding={3}>
-              <VStack gap={1}>
-                <HStack gap={2} vAlign="center">
-                  <SevDot severity={i.severity} />
-                  <Text type="supporting">{i.createdAt}</Text>
-                </HStack>
-                <Link href={hrefInsight(i.id, `participants/${voice.id}`)}>
-                  <Text type="body" maxLines={3} hasTruncateTooltip={false}>
-                    {i.text}
-                  </Text>
-                </Link>
-              </VStack>
-            </Card>
-          ))}
+          <FindingsFeed
+            insights={contributed}
+            from={`participants/${voice.id}`}
+            limit={contributed.length}
+            header={
+              <Text type="label" color="secondary">
+                Insights traced to this participant ({contributed.length}), newest first
+              </Text>
+            }
+            emptyLabel="No corpus insights are text-matched to this participant yet; their evidence lives in the session notes."
+          />
         </VStack>
       </Grid>
+
+      <VStack gap={2}>
+        <Text type="label" color="secondary">
+          Where this voice leads
+        </Text>
+        <HStack gap={4} vAlign="center" wrap="wrap">
+          {persona && (
+            <QueryLink
+              href={hrefPersona(persona.id)}
+              count={personaCount}
+              label={`insights · ${persona.name} persona`}
+            />
+          )}
+          {voice.productIds.map((p) => (
+            <QueryLink
+              key={p}
+              href={hrefProduct(p)}
+              count={contributed.filter((i) => (i.productIds as string[]).includes(p)).length}
+              label={`contributed · ${getProduct(p)?.shortName ?? p} hub`}
+            />
+          ))}
+          {sessionLabel && (
+            <QueryLink
+              href={hrefInsights({ source: sessionLabel })}
+              count={sessionCount}
+              label="insights from this session"
+            />
+          )}
+        </HStack>
+      </VStack>
     </VStack>
   );
 }

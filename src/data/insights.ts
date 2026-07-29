@@ -445,15 +445,9 @@ export const INSIGHTS: Insight[] = [
 { id:'ins-ce-jul28-07', text:'DCE evaluation stays in general or annual surveys scope, independent of post-course evaluation: today it is a once-a-year survey, not course- or placement-specific. David noted a common program ask for placement-based evaluation at the end of each clinical course.', tags:['decision','opportunity','new'], source:'Survey cadence meeting · Jul 28 (f2964952)', severity:'medium', productIds:['course-eval','faas'], personaIds:['dce','scce'], createdAt:'2026-07-28', confidence:'high', soWhat:'Placement-based DCE evaluation is a scoped-out but named demand signal; park it in the general-surveys backlog rather than letting it creep into the post-course template model.' },
 ];
 
-export const getInsightsByProduct = (productId: string) =>
-  INSIGHTS.filter(i => i.productIds.includes(productId as never));
-export const getInsightsByPersona = (personaId: string) =>
-  INSIGHTS.filter(i => i.personaIds?.includes(personaId as never));
-export const getPlatformSignals = () => INSIGHTS.filter(i => i.tags.includes('platform'));
-export const getCriticalInsights = () => INSIGHTS.filter(i => i.severity === 'critical');
-export const getAIOpportunities = () => INSIGHTS.filter(i => i.tags.includes('ai'));
-export const getInsightsWithPullQuotes = () => INSIGHTS.filter(i => i.pullQuote);
-export const getCrossProductInsights = () => INSIGHTS.filter(i => i.productIds.length >= 3);
+// v19: the get* helper family was deleted — it filtered INSIGHTS (348) instead of
+// ALL_INSIGHTS (420), so briefings and hubs showed different numbers for the same
+// fact. All corpus queries go through lib/selectors.insightsWhere.
 // NPS 2025 + Project doc insights (v4.9)
 export const NPS_INSIGHTS: Insight[] = [
   { id:"ins-nps-admin-01", text:"NPS 2025 Admin (NPS 1): No visible list of tasks on login. Notifications do not take me to the task. Task-based home screen is absent across all Exxat products.", pullQuote:"No visible list of tasks when I log in. Notifications do not take me directly to the task.", pullQuoteSource:"Admin NPS respondent, NPS 1 · Oct 2025", tags:["gap","new"] as const, source:"NPS 2025 Textual Responses · Exxat Prism Admin", severity:"critical" as const, productIds:["faas","exam-management","skills-checklist","course-eval","learning-contracts"], personaIds:["dce","program-director"], createdAt:"2026-03-26", confidence:"high" as const, soWhat:"Every product home screen must answer in 3 seconds: what do I need to do right now? If not, the screen fails." },

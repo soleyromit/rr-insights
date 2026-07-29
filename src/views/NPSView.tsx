@@ -1,8 +1,10 @@
-// views/NPSView.tsx — NPS Intelligence 2025 (v18 Astryx rebuild).
+// views/NPSView.tsx — NPS Intelligence 2025 (v19 redesign).
 // The attitudinal baseline for all design work: 1,494 responses. Distribution
-// and segment mix render as stacked bars on the semantic palette (radar and
-// pie retired); persona and discipline NPS render as ranked meters on a
-// −100..+100 scale; every theme links to the NPS-sourced evidence.
+// and segment mix render as stacked bars on the semantic palette; persona and
+// discipline NPS render as TRUE diverging bars around a zero baseline on the
+// real −100..+100 scale (the +100-shift meter hack is retired). Persona bars
+// carry no fake hrefs — only the three personas that hand-map to a PersonaId
+// get query links, rendered under the figure. Themes are an edge-to-edge table.
 import { Chart, ChartAxis, ChartGrid, bar, useChartColors } from '@astryxdesign/charts';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
@@ -10,11 +12,16 @@ import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Link } from '@astryxdesign/core/Link';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { RankedList } from '../components/charts/RankedList';
+import { DivergingBarChart } from '../components/charts/DivergingBarChart';
+import { QueryLink } from '../components/story/QueryLink';
 import { SevBadge } from '../components/ui/sev';
+import { insightsWhere } from '../lib/selectors';
 import { hrefInsights } from '../lib/links';
 import type { SeverityLevel } from '../types';
 
@@ -39,6 +46,14 @@ const PERSONA_NPS = [
   { persona: 'Sites (SCCE)', nps: 8.0, n: 8 },
   { persona: 'Approve', nps: 87.5, n: 8 },
 ];
+
+// The ONLY report-label → PersonaId mappings that exist. Sites/Approve do not
+// map to a corpus persona, so their bars carry no query link — no fake mapping.
+const PERSONA_ID: Record<string, string> = {
+  Student: 'student',
+  Faculty: 'dce',
+  Admin: 'program-director',
+};
 
 const DOMAIN_NPS = [
   { domain: 'Physical Therapy', avg: 4.46, n: 150, nps: -52 },
@@ -70,13 +85,19 @@ const APPROVE_ATTRS = [
   { attr: 'Quality of review', value: 3 },
 ];
 
-// Model-based projection (not measured) — kept as data, rendered as a table.
+// Model-based projection (not measured) — kept as data, rendered as a table, never charted.
 const DESIGN_LEVERAGE = [
   { subject: 'Navigation', before: 20, after: 55 },
   { subject: 'Mobile UX', before: 25, after: 60 },
   { subject: 'Form length', before: 35, after: 65 },
   { subject: 'Compliance', before: 30, after: 60 },
   { subject: 'Login', before: 40, after: 70 },
+];
+
+const TAKEAWAYS = [
+  { title: 'Fix navigation first', body: '218 mentions. Cannot find hour tracking; features in unexpected locations. Every product home screen must answer: what do I do right now?' },
+  { title: 'Mobile is not optional', body: '167 mentions from clinical students. Check-in must be one tap; more than 2 steps means abandonment. Mobile-first is the mandate for Skills and LC.' },
+  { title: 'Nursing-first has highest leverage', body: '47% of total volume. Fix Nursing pains (compliance false positives, mobile time entry, preceptor form length) and overall NPS moves most.' },
 ];
 
 /* ─── Charts (semantic palette: negative / neutral / positive) ─────────── */
@@ -151,26 +172,44 @@ interface LeverageRow extends Record<string, unknown> {
   after: number;
 }
 
+interface ThemeRow extends Record<string, unknown> {
+  id: string;
+  rank: number;
+  theme: string;
+  q: string;
+  corpus: number;
+  count: number;
+  severity: SeverityLevel;
+  product: string;
+  quote: string;
+}
+
 const signed = (v: number) => `${v > 0 ? '+' : ''}${v}`;
 
 export function NPSView() {
-  const personaRows = PERSONA_NPS.map((p) => ({
-    key: p.persona,
-    label: p.persona,
-    value: p.nps + 100, // shifted −100..+100 → 0..200 so the meter stays monotonic
-    hint: `n=${p.n.toLocaleString('en-US')}`,
-    href: hrefInsights({ source: 'NPS' }),
-  })).sort((a, b) => b.value - a.value);
-
-  const domainRows = DOMAIN_NPS.map((d) => ({
-    key: d.domain,
-    label: d.domain,
-    value: Math.round(d.nps + 100),
-    hint: `n=${d.n} · avg ${d.avg}`,
-    href: undefined,
-  })).sort((a, b) => b.value - a.value);
-
   const leverageRows: LeverageRow[] = DESIGN_LEVERAGE.map((d) => ({ id: d.subject, ...d }));
+
+  const themeRows: ThemeRow[] = THEMES.map((t, i) => {
+    const q = t.theme.split(' / ')[0];
+    return {
+      id: t.theme,
+      rank: i + 1,
+      theme: t.theme,
+      q,
+      corpus: insightsWhere({ source: 'NPS', q }).length,
+      count: t.count,
+      severity: t.severity,
+      product: t.product,
+      quote: t.quote,
+    };
+  });
+
+  const mappedPersonaLinks = PERSONA_NPS.filter((p) => PERSONA_ID[p.persona])
+    .map((p) => {
+      const personaId = PERSONA_ID[p.persona];
+      return { ...p, personaId, corpus: insightsWhere({ source: 'NPS', persona: personaId }).length };
+    })
+    .filter((p) => p.corpus > 0);
 
   return (
     <VStack gap={5} padding={6} maxWidth={1100}>
@@ -198,56 +237,123 @@ export function NPSView() {
       <Grid columns={{ minWidth: 380, max: 2 }} gap={4}>
         <Fig
           title="NPS by persona — the design priority signal"
-          caption="Bars sit on a −100..+100 scale (red = negative NPS). Student and faculty are near-equivalent in dissatisfaction: those two personas are the design priority for 2026–2027. Each row opens the NPS-sourced evidence."
+          caption="True diverging bars around the zero baseline on the real −100..+100 NPS scale. Student and faculty are near-equivalent in dissatisfaction: those two personas are the design priority for 2026–2027. Exact signed values in the tooltip and below."
         >
-          <RankedList rows={personaRows} errorBelow={100} format={(r) => signed(Math.round((r.value - 100) * 10) / 10)} />
+          <VStack gap={2}>
+            <DivergingBarChart
+              data={PERSONA_NPS.map((p) => ({ label: p.persona, value: p.nps }))}
+              poles={{ positive: 'Positive NPS', negative: 'Negative NPS' }}
+              midpoint={0}
+            />
+            <Text type="supporting" hasTabularNumbers as="p">
+              {PERSONA_NPS.map((p) => `${p.persona} ${signed(p.nps)} (n=${p.n.toLocaleString('en-US')})`).join(' · ')}
+            </Text>
+            {mappedPersonaLinks.length > 0 && (
+              <HStack gap={4} vAlign="center" wrap="wrap">
+                {mappedPersonaLinks.map((p) => (
+                  <QueryLink
+                    key={p.persona}
+                    href={hrefInsights({ source: 'NPS', persona: p.personaId })}
+                    count={p.corpus}
+                    label={`NPS-sourced ${p.persona.toLowerCase()} insights`}
+                  />
+                ))}
+              </HStack>
+            )}
+            <Text type="supporting" as="p">
+              Sites (SCCE) and Approve have no corpus persona mapping, so their bars link nowhere on purpose.
+            </Text>
+          </VStack>
         </Fig>
         <Fig
           title="Student NPS by discipline"
-          caption="Bars on the same −100..+100 scale. Nursing is 608 responses (47% of volume) — Nursing improvements move the overall metric most."
+          caption="Same −100..+100 diverging scale, zero baseline drawn. Every discipline is negative; Nursing is 608 responses (47% of volume) — Nursing improvements move the overall metric most. Exact values in the tooltip and below."
         >
-          <RankedList rows={domainRows} errorBelow={100} format={(r) => signed(r.value - 100)} />
+          <VStack gap={2}>
+            <DivergingBarChart
+              data={DOMAIN_NPS.map((d) => ({ label: d.domain, value: d.nps }))}
+              poles={{ positive: 'Positive NPS', negative: 'Negative NPS' }}
+              midpoint={0}
+            />
+            <Text type="supporting" hasTabularNumbers as="p">
+              {DOMAIN_NPS.map((d) => `${d.domain} ${signed(d.nps)} (n=${d.n})`).join(' · ')}
+            </Text>
+          </VStack>
         </Fig>
       </Grid>
 
-      <Card padding={4}>
-        <VStack gap={3}>
-          <HStack hAlign="between" vAlign="center">
-            <Text type="label" color="secondary">
-              Detractor themes — ranked by frequency (835 negative responses analyzed)
-            </Text>
-            <Link href={hrefInsights({ source: 'NPS' })}>All NPS-sourced insights →</Link>
-          </HStack>
-          <VStack gap={3}>
-            {THEMES.map((t, i) => (
-              <HStack key={t.theme} gap={3} hAlign="between">
-                <HStack gap={2}>
-                  <Text type="supporting" hasTabularNumbers>
-                    {String(i + 1).padStart(2, '0')}
-                  </Text>
-                  <VStack gap={0.5}>
-                    <HStack gap={2} vAlign="center" wrap="wrap">
-                      <Link href={hrefInsights({ source: 'NPS', q: t.theme.split(' / ')[0] })}>
-                        <Text type="body" weight="semibold">
-                          {t.theme}
-                        </Text>
-                      </Link>
-                      <SevBadge severity={t.severity} />
-                      <Text type="supporting">{t.product}</Text>
-                    </HStack>
-                    <Text type="supporting" as="p" textWrap="pretty">
-                      "{t.quote}"
-                    </Text>
-                  </VStack>
-                </HStack>
-                <Text type="body" hasTabularNumbers textWrap="nowrap">
-                  {t.count} mentions
+      <Fig
+        title="Detractor themes — ranked by frequency"
+        caption="835 negative responses analyzed; mention counts are from the NPS 2025 report. Where the corpus holds matching NPS-sourced insights, the mentions cell opens that query; themes without corpus matches stay plain text rather than linking to an empty page."
+        actions={<Link href={hrefInsights({ source: 'NPS' })}>All NPS-sourced insights →</Link>}
+      >
+        <Table<ThemeRow>
+          data={themeRows}
+          idKey="id"
+          density="balanced"
+          hasHover
+          columns={[
+            {
+              key: 'rank',
+              header: '#',
+              width: pixel(50),
+              renderCell: (r: ThemeRow) => (
+                <Text type="supporting" hasTabularNumbers>
+                  {String(r.rank).padStart(2, '0')}
                 </Text>
-              </HStack>
-            ))}
-          </VStack>
-        </VStack>
-      </Card>
+              ),
+            },
+            {
+              key: 'theme',
+              header: 'Theme',
+              width: proportional(2),
+              renderCell: (r: ThemeRow) => (
+                <HStack gap={2} vAlign="center" wrap="wrap">
+                  <Text type="body" weight="semibold">
+                    {r.theme}
+                  </Text>
+                  <SevBadge severity={r.severity} />
+                </HStack>
+              ),
+            },
+            {
+              key: 'product',
+              header: 'Product',
+              width: pixel(110),
+              renderCell: (r: ThemeRow) => <Text type="supporting">{r.product}</Text>,
+            },
+            {
+              key: 'quote',
+              header: 'Verbatim',
+              width: proportional(3),
+              renderCell: (r: ThemeRow) => (
+                <Text type="supporting" as="p" textWrap="pretty">
+                  “{r.quote}”
+                </Text>
+              ),
+            },
+            {
+              key: 'count',
+              header: 'Mentions',
+              width: pixel(150),
+              align: 'end',
+              renderCell: (r: ThemeRow) =>
+                r.corpus > 0 ? (
+                  <QueryLink
+                    href={hrefInsights({ source: 'NPS', q: r.q })}
+                    count={r.count}
+                    label="mentions"
+                    isStandalone={false}
+                  />
+                ) : (
+                  <Text type="body" hasTabularNumbers>
+                    {r.count} mentions
+                  </Text>
+                ),
+            },
+          ]}
+        />
+      </Fig>
 
       <Grid columns={{ minWidth: 380, max: 2 }} gap={4}>
         <Fig
@@ -259,7 +365,7 @@ export function NPSView() {
 
         <Fig
           title="Projected satisfaction lift per theme"
-          caption="Estimated satisfaction score (0–10) before and after design fix. Model-based, not measured — treat as a prioritization sketch, not a forecast."
+          caption="Model-based projection (not measured). Estimated satisfaction score (0–10) before and after design fix — a prioritization sketch, not a forecast, which is why it renders as a table and never as a chart."
         >
           <Table<LeverageRow>
             data={leverageRows}
@@ -275,38 +381,21 @@ export function NPSView() {
         </Fig>
       </Grid>
 
-      <Grid columns={{ minWidth: 280, max: 3 }} gap={4}>
-        <Card variant="muted" padding={4}>
-          <VStack gap={1}>
+      <Card padding={4}>
+        <List
+          density="spacious"
+          hasDividers
+          header={
             <Text type="label" color="secondary">
-              Fix navigation first
+              Three takeaways
             </Text>
-            <Text type="body" as="p" textWrap="pretty">
-              218 mentions. Cannot find hour tracking; features in unexpected locations. Every product home screen must answer: what do I do right now?
-            </Text>
-          </VStack>
-        </Card>
-        <Card variant="muted" padding={4}>
-          <VStack gap={1}>
-            <Text type="label" color="secondary">
-              Mobile is not optional
-            </Text>
-            <Text type="body" as="p" textWrap="pretty">
-              167 mentions from clinical students. Check-in must be one tap; more than 2 steps means abandonment. Mobile-first is the mandate for Skills and LC.
-            </Text>
-          </VStack>
-        </Card>
-        <Card variant="muted" padding={4}>
-          <VStack gap={1}>
-            <Text type="label" color="secondary">
-              Nursing-first has highest leverage
-            </Text>
-            <Text type="body" as="p" textWrap="pretty">
-              47% of total volume. Fix Nursing pains (compliance false positives, mobile time entry, preceptor form length) and overall NPS moves most.
-            </Text>
-          </VStack>
-        </Card>
-      </Grid>
+          }
+        >
+          {TAKEAWAYS.map((t) => (
+            <Item key={t.title} as="li" label={t.title} description={t.body} descriptionLines={3} align="start" />
+          ))}
+        </List>
+      </Card>
 
       <Text type="supporting">
         {SEGMENT_DATA.map((s) => `${s.name}: ${s.value} (${s.pct}%)`).join(' · ')} · Exxat Prism + One Sites + Approve · Mar 28, 2026

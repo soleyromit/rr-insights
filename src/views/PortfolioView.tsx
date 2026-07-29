@@ -1,17 +1,22 @@
-// views/PortfolioView.tsx — Portfolio + Deliverables (v18 Astryx rebuild).
-// Hero: staff-readiness ranked meters against the self-set 70 bar. Case-study
-// pipeline rows link forward to the products they document (dead-end rule).
+// views/PortfolioView.tsx — Portfolio + Deliverables (v19 redesign).
+// Hero: staff-readiness ranked meters against the self-set 70 bar. Anchors are
+// a table, not prose. Pipeline rows carry live evidence counts and a staleness
+// chip so the case study with fresh material announces itself.
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Link } from '@astryxdesign/core/Link';
+import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { DIMENSIONS, ANCHORS, GAPS } from '../data/portfolio';
+import { getProduct } from '../data/products';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { RankedList } from '../components/charts/RankedList';
+import { QueryLink } from '../components/story/QueryLink';
+import { StalenessMeter } from '../components/story/StalenessMeter';
+import { productFacts } from '../lib/selectors';
 import { hrefProduct } from '../lib/links';
 
 const TARGET = 70;
@@ -22,10 +27,18 @@ const CASE_STUDY_PRODUCT: Record<string, string> = {
   P3: 'skills-checklist',
 };
 
+interface AnchorRow extends Record<string, unknown> {
+  id: string;
+  label: string;
+  text: string;
+}
+
 export function PortfolioView() {
   const rows = [...DIMENSIONS]
     .sort((a, b) => b.value - a.value)
     .map((d) => ({ key: d.label, label: d.label, value: d.value, hint: undefined, href: undefined }));
+
+  const anchorRows: AnchorRow[] = ANCHORS.map((a) => ({ id: a.label, label: a.label, text: a.text }));
 
   return (
     <VStack gap={5} padding={6} maxWidth={1080}>
@@ -48,13 +61,33 @@ export function PortfolioView() {
             <Text type="label" color="secondary">
               Narrative anchors — at least two per output
             </Text>
-            <VStack gap={3}>
-              {ANCHORS.map((a) => (
-                <Text key={a.label} type="body" as="p" textWrap="pretty">
-                  {a.text}
-                </Text>
-              ))}
-            </VStack>
+            <Table<AnchorRow>
+              data={anchorRows}
+              idKey="id"
+              density="compact"
+              columns={[
+                {
+                  key: 'label',
+                  header: 'Anchor',
+                  width: pixel(90),
+                  renderCell: (r: AnchorRow) => (
+                    <Text type="supporting" hasTabularNumbers>
+                      {r.label}
+                    </Text>
+                  ),
+                },
+                {
+                  key: 'text',
+                  header: 'Claim',
+                  width: proportional(4),
+                  renderCell: (r: AnchorRow) => (
+                    <Text type="body" as="p" textWrap="pretty">
+                      {r.text}
+                    </Text>
+                  ),
+                },
+              ]}
+            />
           </VStack>
         </Card>
 
@@ -64,27 +97,37 @@ export function PortfolioView() {
               Case-study pipeline — ranked by positioning impact
             </Text>
             <VStack gap={4}>
-              {GAPS.map((g) => (
-                <VStack key={g.priority} gap={1}>
-                  <HStack gap={2} vAlign="center">
-                    <Badge
-                      variant={g.priority === 'P1' ? 'error' : g.priority === 'P2' ? 'warning' : 'info'}
-                      label={g.priority}
-                    />
-                    <Text type="body" weight="semibold">
-                      {g.title}
+              {GAPS.map((g) => {
+                const productId = CASE_STUDY_PRODUCT[g.priority];
+                const facts = productId ? productFacts(productId) : undefined;
+                const product = productId ? getProduct(productId) : undefined;
+                return (
+                  <VStack key={g.priority} gap={1}>
+                    <HStack gap={2} vAlign="center">
+                      <Badge
+                        variant={g.priority === 'P1' ? 'error' : g.priority === 'P2' ? 'warning' : 'info'}
+                        label={g.priority}
+                      />
+                      <Text type="body" weight="semibold">
+                        {g.title}
+                      </Text>
+                    </HStack>
+                    <Text type="supporting" as="p" textWrap="pretty">
+                      {g.desc}
                     </Text>
-                  </HStack>
-                  <Text type="supporting" as="p" textWrap="pretty">
-                    {g.desc}
-                  </Text>
-                  {CASE_STUDY_PRODUCT[g.priority] && (
-                    <Link href={hrefProduct(CASE_STUDY_PRODUCT[g.priority])} isStandalone>
-                      Product evidence →
-                    </Link>
-                  )}
-                </VStack>
-              ))}
+                    {productId && facts && product && (
+                      <HStack gap={3} vAlign="center" wrap="wrap">
+                        <QueryLink
+                          href={hrefProduct(productId)}
+                          count={facts.n}
+                          label={`insights · ${product.shortName} evidence`}
+                        />
+                        <StalenessMeter newestDate={facts.newestDate} staleDays={facts.staleDays} />
+                      </HStack>
+                    )}
+                  </VStack>
+                );
+              })}
             </VStack>
           </VStack>
         </Card>

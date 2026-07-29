@@ -18,6 +18,7 @@ import { evidenceClass, relatedInsights, signalsOf, voiceForInsight } from '../.
 import { getProduct } from '../../data/products';
 import { PERSONAS } from '../../data/personas';
 import { hrefInsight, hrefParticipant, hrefPersona, hrefProduct, hrefSignal, hrefSources } from '../../lib/links';
+import { formatSource, formatDay } from '../../lib/format';
 import type { Insight } from '../../types';
 
 export function InsightDoc({ insight }: { insight: Insight }) {
@@ -45,7 +46,7 @@ export function InsightDoc({ insight }: { insight: Insight }) {
         </VStack>
 
         {insight.pullQuote && (
-          <Blockquote cite={insight.pullQuoteSource}>
+          <Blockquote cite={insight.pullQuoteSource && formatSource(insight.pullQuoteSource)}>
             {insight.pullQuote}
           </Blockquote>
         )}
@@ -65,9 +66,9 @@ export function InsightDoc({ insight }: { insight: Insight }) {
 
         <MetadataList columns="multi" title="Provenance">
           <MetadataListItem label="Source">
-            <Link href={hrefSources(insight.source)}>{insight.source}</Link>
+            <Link href={hrefSources(insight.source)}>{formatSource(insight.source)}</Link>
           </MetadataListItem>
-          <MetadataListItem label="Captured">{insight.createdAt}</MetadataListItem>
+          <MetadataListItem label="Captured">{formatDay(insight.createdAt)}</MetadataListItem>
           <MetadataListItem label="Evidence class">{evidenceClass(insight)}</MetadataListItem>
           <MetadataListItem label="Confidence">{insight.confidence ?? 'unstated'}</MetadataListItem>
         </MetadataList>

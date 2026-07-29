@@ -12,6 +12,14 @@ export function parsePhaseDate(label: string): Date | null {
 
 export type PhaseState = 'passed' | 'next' | 'later' | 'unscheduled';
 
+/** Milestone state derived from its date label. Milestone.status in the data is
+ * 'upcoming' on every entry and must never be read — dates are the truth. */
+export function milestoneState(dateLabel: string, today = new Date()): PhaseState {
+  const d = parsePhaseDate(dateLabel) ?? (Number.isNaN(new Date(dateLabel).getTime()) ? null : new Date(dateLabel));
+  if (!d) return 'unscheduled';
+  return d < today ? 'passed' : 'later';
+}
+
 export function computePhaseStates(labels: string[], today = new Date()): { date: Date | null; state: PhaseState }[] {
   const parsed = labels.map(l => parsePhaseDate(l));
   const futureDates = parsed.filter((d): d is Date => !!d && d >= today);

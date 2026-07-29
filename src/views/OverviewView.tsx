@@ -1,30 +1,31 @@
-// views/OverviewView.tsx — Command Center (v18 Astryx rebuild).
-// One question: what should be designed next, and why. KPI tiles whose numbers
-// are queries, a products table where every row is a door, and the design-next
-// queue whose rows carry the clicked insight's identity (no more signals dump).
+// views/OverviewView.tsx — Command Center (v19 visualization-first redesign).
+// Story: where evidence is landing this week, and what should be designed next.
+// A cross-product freshness strip leads; every number below it is a query.
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { VStack } from '@astryxdesign/core/VStack';
-import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
-import { ClickableCard } from '@astryxdesign/core/ClickableCard';
 import { Text } from '@astryxdesign/core/Text';
-import { Heading } from '@astryxdesign/core/Heading';
 import { Link } from '@astryxdesign/core/Link';
 import { StatusDot } from '@astryxdesign/core/StatusDot';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { VolumeChart } from '../components/charts/VolumeChart';
-import { SevDot } from '../components/ui/sev';
+import { Sparkline } from '../components/charts/Sparkline';
+import { TrendDelta } from '../components/charts/TrendDelta';
+import { EvidenceList } from '../components/story/EvidenceRow';
+import { StatTile, StatTileRow } from '../components/story/StatTile';
+import { QueryLink } from '../components/story/QueryLink';
+import { StalenessMeter } from '../components/story/StalenessMeter';
 import { ALL_INSIGHTS } from '../data/insights';
 import { PRODUCTS, getProductsByUrgency } from '../data/products';
 import { MILESTONES } from '../data/personas';
-import { insightsWhere } from '../lib/selectors';
-import { monthlyVolume } from '../lib/series';
-import { scoreInsight, sumScores } from '../lib/score';
-import { hrefInsight, hrefInsights, hrefProduct, hrefRoadmap, hrefSignals } from '../lib/links';
+import { insightsWhere, productFacts, corpusFacts, CORPUS_ANCHOR } from '../lib/selectors';
+import { monthlyVolume, perProductMonthly } from '../lib/series';
+import { sumScores } from '../lib/score';
+import { hrefInsights, hrefProduct, hrefRoadmap, hrefSignals } from '../lib/links';
+import { formatDay } from '../lib/format';
 import type { ProductMeta } from '../types';
 
 interface ProductRow extends Record<string, unknown> {
@@ -40,13 +41,29 @@ const URGENCY_DOT: Record<string, 'error' | 'warning' | 'success'> = {
   ok: 'success',
 };
 
+/** ISO day `days` before the corpus anchor — for "last 30d" query links. */
+const isoDaysAgo = (days: number) =>
+  new Date(new Date(CORPUS_ANCHOR).getTime() - days * 86400000).toISOString().slice(0, 10);
+
 export function OverviewView() {
-  const navigate = useNavigate();
   const critical = useMemo(() => insightsWhere({ severity: 'critical' }), []);
   const volume = useMemo(() => monthlyVolume(ALL_INSIGHTS), []);
   const mass = useMemo(() => sumScores(ALL_INSIGHTS), []);
-  const queue = critical.slice(0, 5);
+  const corpus = corpusFacts();
   const products: ProductRow[] = getProductsByUrgency().map((p) => ({ id: p.id, product: p }));
+
+  // Freshness strip: hottest workstream first (most evidence in the last 30d).
+  const freshness = useMemo(() => {
+    const sparks = new Map(
+      perProductMonthly(ALL_INSIGHTS, PRODUCTS.map((p) => p.id)).map((s) => [
+        s.key,
+        s.points.slice(-6).map((pt) => ({ label: pt.label, value: pt.total })),
+      ])
+    );
+    return [...PRODUCTS]
+      .map((p) => ({ product: p, facts: productFacts(p.id), spark: sparks.get(p.id) ?? [] }))
+      .sort((a, b) => b.facts.last30d - a.facts.last30d || a.facts.staleDays - b.facts.staleDays);
+  }, []);
 
   const nextDeadline = useMemo(() => {
     const parse = (d: string) => new Date(d).getTime();
@@ -61,60 +78,48 @@ export function OverviewView() {
       <PageHeader
         title="Command Center"
         lede="What should be designed next, and why — every number below is a query you can open."
-        meta={`${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products`}
+        meta={`${corpus.n} insights · ${corpus.last7d} added this week`}
       />
 
-      <Grid columns={{ minWidth: 220, max: 4 }} gap={4}>
-        <ClickableCard label="Open the insight index" onClick={() => navigate(hrefInsights({}))} padding={4}>
-          <VStack gap={1}>
-            <Text type="label" color="secondary">
-              Corpus
-            </Text>
-            <Heading level={3} type="display-3">
-              {ALL_INSIGHTS.length}
-            </Heading>
-            <Text type="supporting">insights · open the index →</Text>
-          </VStack>
-        </ClickableCard>
-        <ClickableCard label="Open critical insights ranked by score" onClick={() => navigate(hrefInsights({ severity: 'critical', sort: 'score' }))} padding={4}>
-          <VStack gap={1}>
-            <HStack gap={2} vAlign="center">
-              <StatusDot variant="error" label="critical" />
-              <Text type="label" color="secondary">
-                Critical open
-              </Text>
-            </HStack>
-            <Heading level={3} type="display-3">
-              {critical.length}
-            </Heading>
-            <Text type="supporting">score-ranked list →</Text>
-          </VStack>
-        </ClickableCard>
-        <ClickableCard label="Open the roadmap" onClick={() => navigate(hrefRoadmap())} padding={4}>
-          <VStack gap={1}>
-            <Text type="label" color="secondary">
-              Next hard deadline
-            </Text>
-            <Heading level={3} type="display-3">
-              {daysTo !== null ? `${daysTo}d` : '—'}
-            </Heading>
-            <Text type="supporting" maxLines={1}>
-              {nextDeadline ? `${nextDeadline.label} · ${nextDeadline.date}` : 'nothing dated ahead'}
-            </Text>
-          </VStack>
-        </ClickableCard>
-        <ClickableCard label="Open the signal board" onClick={() => navigate(hrefSignals())} padding={4}>
-          <VStack gap={1}>
-            <Text type="label" color="secondary">
-              Opportunity mass
-            </Text>
-            <Heading level={3} type="display-3">
-              {Math.round(mass)}
-            </Heading>
-            <Text type="supporting">summed scores · signal board →</Text>
-          </VStack>
-        </ClickableCard>
+      {/* ── Cross-product freshness strip: where evidence is landing right now ── */}
+      <Grid columns={{ minWidth: 200, max: 5 }} gap={3}>
+        {freshness.map(({ product, facts, spark }) => (
+          <Card key={product.id} padding={3}>
+            <VStack gap={2}>
+              <Link href={hrefProduct(product.id)}>
+                <Text type="label" color="inherit">
+                  {product.shortName}
+                </Text>
+              </Link>
+              {spark.length > 1 && <Sparkline data={spark} height={40} />}
+              <TrendDelta current={facts.last30d} prior={facts.prior30d} windowLabel="vs prior 30d" />
+              <StalenessMeter newestDate={facts.newestDate} staleDays={facts.staleDays} />
+              <QueryLink
+                href={hrefInsights({ product: product.id, since: isoDaysAgo(30), sort: 'newest' })}
+                count={facts.last30d}
+                label="in 30d, newest first"
+              />
+            </VStack>
+          </Card>
+        ))}
       </Grid>
+
+      {/* ── KPI row: computed counts, same doors as before ── */}
+      <StatTileRow>
+        <StatTile value={corpus.n} label="insights · open the index" href={hrefInsights({})} />
+        <StatTile
+          value={corpus.critical}
+          label="critical open · score-ranked"
+          href={hrefInsights({ severity: 'critical', sort: 'score' })}
+        />
+        <StatTile
+          value={daysTo !== null ? `${daysTo}d` : '—'}
+          label="to next hard deadline · roadmap"
+          href={hrefRoadmap()}
+          hint={nextDeadline ? `${nextDeadline.label} · ${nextDeadline.date}` : 'nothing dated ahead'}
+        />
+        <StatTile value={Math.round(mass)} label="opportunity mass · signal board" href={hrefSignals()} />
+      </StatTileRow>
 
       <Grid columns={{ minWidth: 420, max: 2 }} gap={4}>
         <Fig
@@ -152,21 +157,36 @@ export function OverviewView() {
               {
                 key: 'insights',
                 header: 'Evidence',
-                width: pixel(130),
-                renderCell: (r: ProductRow) => (
-                  <Link href={hrefInsights({ product: r.product.id })}>
-                    {r.product.insightCount} insights
-                  </Link>
-                ),
+                width: pixel(150),
+                renderCell: (r: ProductRow) => {
+                  const f = productFacts(r.product.id);
+                  return (
+                    <VStack gap={0}>
+                      <Link href={hrefInsights({ product: r.product.id })}>{f.n} insights</Link>
+                      <Text type="supporting" maxLines={1}>
+                        {f.newestDate ? `newest ${formatDay(f.newestDate)}` : 'none yet'}
+                      </Text>
+                    </VStack>
+                  );
+                },
+              },
+              {
+                key: 'last30d',
+                header: 'Last 30d',
+                width: pixel(120),
+                renderCell: (r: ProductRow) => {
+                  const f = productFacts(r.product.id);
+                  return <TrendDelta current={f.last30d} prior={f.prior30d} windowLabel="vs prior" />;
+                },
               },
               {
                 key: 'critical',
                 header: 'Critical',
-                width: pixel(110),
+                width: pixel(90),
                 renderCell: (r: ProductRow) => (
                   <Link href={hrefInsights({ product: r.product.id, severity: 'critical' })}>
                     <Text type="body" color="inherit" hasTabularNumbers>
-                      {r.product.criticalGaps}
+                      {productFacts(r.product.id).critical}
                     </Text>
                   </Link>
                 ),
@@ -189,41 +209,29 @@ export function OverviewView() {
         <Fig
           title="Evidence volume"
           caption="Corpus growth by month; the red line is critical-only. A rising red line into a deadline is the escalation argument."
+          n={corpus.n}
+          note="May–Sep '25 tail is 3 insights total — plotted for honesty, not comparable to 2026 months."
+          link={{ href: hrefInsights({ sort: 'newest' }), count: corpus.n, label: 'insights, newest first' }}
         >
           <VolumeChart data={volume} height={240} />
         </Fig>
       </Grid>
 
-      <Card padding={4}>
-        <VStack gap={3}>
-          <HStack hAlign="between" vAlign="center">
-            <VStack gap={0}>
-              <Text type="label" color="secondary">
-                Design next — critical findings ranked by opportunity score
-              </Text>
-              <Text type="supporting">score = severity × evidence × persona priority</Text>
-            </VStack>
-            <Link href={hrefInsights({ severity: 'critical', sort: 'score' })}>full queue →</Link>
-          </HStack>
-          <VStack gap={3}>
-            {queue.map((i) => (
-              <HStack key={i.id} gap={3} vAlign="center" hAlign="between">
-                <HStack gap={2} vAlign="center">
-                  <SevDot severity={i.severity} />
-                  <Link href={hrefInsight(i.id, 'overview')}>
-                    <Text type="body" maxLines={2} hasTruncateTooltip={false}>
-                      {i.text}
-                    </Text>
-                  </Link>
-                </HStack>
-                <Text type="supporting" hasTabularNumbers textWrap="nowrap">
-                  {scoreInsight(i).label}
-                </Text>
-              </HStack>
-            ))}
-          </VStack>
+      {/* ── Design-next queue: edge-to-edge evidence rows, not cards ── */}
+      <VStack gap={2}>
+        <VStack gap={0}>
+          <Text type="label" color="secondary">
+            Design next — critical findings ranked by opportunity score
+          </Text>
+          <Text type="supporting">score = severity × evidence × persona priority</Text>
         </VStack>
-      </Card>
+        <EvidenceList insights={critical} limit={5} order="score" from="overview" />
+        <QueryLink
+          href={hrefInsights({ severity: 'critical', sort: 'score' })}
+          count={corpus.critical}
+          label="critical, score-ranked"
+        />
+      </VStack>
     </VStack>
   );
 }

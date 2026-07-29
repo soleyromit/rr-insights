@@ -1,6 +1,9 @@
-// views/PersonaDetailView.tsx — one persona's canonical page (v18, new route).
-// POV, day split, collapsed empathy map (the biggest content cut of the
-// redesign), friction row across products, and a score-ranked evidence rail.
+// views/PersonaDetailView.tsx — one persona's canonical page (v19 redesign).
+// The degenerate 1-row heat grid became a per-product severity-mix chart; the
+// named voices are Citation rows whose profile links carry traced-insight
+// counts; the evidence rail is the shared EvidenceList with a newest/score
+// toggle.
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
@@ -11,20 +14,21 @@ import { Avatar } from '@astryxdesign/core/Avatar';
 import { Link } from '@astryxdesign/core/Link';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { Blockquote } from '@astryxdesign/core/Blockquote';
+import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
 import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
-import { HeatGrid } from '../components/charts/HeatGrid';
-import { SevDot } from '../components/ui/sev';
+import { SeverityStackChart } from '../components/charts/SeverityStackChart';
+import { QuoteRow } from '../components/story/QuoteRow';
+import { QueryLink } from '../components/story/QueryLink';
+import { EvidenceList } from '../components/story/EvidenceRow';
 import { PERSONAS } from '../data/personas';
 import { PRODUCTS } from '../data/products';
-import { PERSONA_PRODUCT_FRICTION } from '../data/personaFriction';
 import { REAL_VOICES } from '../data/voices';
-import { insightsWhere } from '../lib/selectors';
-import { hrefInsight, hrefInsights, hrefParticipant, hrefPersonas } from '../lib/links';
+import { insightsWhere, insightsForVoice } from '../lib/selectors';
+import { severityMix } from '../lib/series';
+import { hrefInsights, hrefParticipant, hrefPersonas } from '../lib/links';
 
-const SEV_VALUE = { critical: 3, high: 2, medium: 1, na: 0 } as const;
 const VOICE_ROLE: Record<string, string> = {
   student: 'student',
   dce: 'dce',
@@ -34,14 +38,19 @@ const VOICE_ROLE: Record<string, string> = {
 
 export function PersonaDetailView() {
   const { personaId } = useParams();
+  const [order, setOrder] = useState<'score' | 'newest'>('score');
   const persona = PERSONAS.find((p) => p.id === personaId);
   if (!persona) {
     return <EmptyState title="Persona not found" description={`No persona "${personaId}".`} />;
   }
 
   const evidence = insightsWhere({ persona: persona.id });
-  const top = evidence.slice(0, 6);
   const voices = REAL_VOICES.filter((v) => v.personaRole === VOICE_ROLE[persona.id]);
+
+  const sevByProduct = PRODUCTS.map((p) => ({
+    category: p.shortName,
+    ...severityMix(insightsWhere({ persona: persona.id, product: p.id })),
+  }));
 
   return (
     <VStack gap={5} padding={6}>
@@ -56,23 +65,16 @@ export function PersonaDetailView() {
       </VStack>
 
       <Fig
-        title="Friction across products"
-        caption="This persona's row from the atlas — the most prominent cell is the most severe. Click a cell for the evidence."
+        title="Severity mix across products"
+        n={evidence.length}
+        caption="This persona's evidence per product, computed from the corpus and stacked by severity — the tallest critical segment is the sharpest friction."
+        link={{
+          href: hrefInsights({ persona: persona.id }),
+          count: evidence.length,
+          label: 'insights for this persona, full query',
+        }}
       >
-        <HeatGrid
-          rows={[persona.name]}
-          cols={PRODUCTS.map((p) => p.shortName)}
-          cell={(_r, c) => {
-            const f = PERSONA_PRODUCT_FRICTION[persona.id]?.[PRODUCTS[c].id];
-            const v = f ? SEV_VALUE[f.severity] : 0;
-            return {
-              value: v,
-              label: f && f.severity !== 'na' ? f.severity : '',
-              href: v > 0 ? hrefInsights({ persona: persona.id, product: PRODUCTS[c].id }) : undefined,
-              title: f?.text,
-            };
-          }}
-        />
+        <SeverityStackChart data={sevByProduct} height={220} />
       </Fig>
 
       <Grid columns={{ minWidth: 340, max: 2 }} gap={4}>
@@ -110,44 +112,43 @@ export function PersonaDetailView() {
           </Collapsible>
 
           {voices.length > 0 && (
-            <VStack gap={3}>
+            <VStack gap={4}>
               <Text type="label" color="secondary">
                 Named voices
               </Text>
-              {voices.map((v) => (
-                <Card key={v.id} padding={3}>
-                  <VStack gap={2}>
-                    <Blockquote cite={`${v.name} · ${v.institution}`}>{v.quote}</Blockquote>
-                    <Link href={hrefParticipant(v.id)}>Participant profile →</Link>
-                  </VStack>
-                </Card>
+              {voices.map((v, i) => (
+                <QuoteRow
+                  key={v.id}
+                  quote={v.quote}
+                  speaker={`${v.name} · ${v.institution}`}
+                  number={i + 1}
+                  footer={
+                    <QueryLink
+                      href={hrefParticipant(v.id)}
+                      count={insightsForVoice(v).length}
+                      label={`insights traced · ${v.name}'s profile`}
+                    />
+                  }
+                />
               ))}
             </VStack>
           )}
         </VStack>
 
         <VStack gap={3}>
-          <HStack hAlign="between" vAlign="center">
+          <HStack hAlign="between" vAlign="center" wrap="wrap" gap={3}>
             <Text type="label" color="secondary">
-              Top evidence, score-ranked
+              Evidence rail
             </Text>
-            <Link href={hrefInsights({ persona: persona.id })}>All {evidence.length} →</Link>
+            <HStack gap={3} vAlign="center">
+              <SegmentedControl label="Order evidence" value={order} onChange={(v) => setOrder(v as 'score' | 'newest')} size="sm">
+                <SegmentedControlItem value="score" label="by score" />
+                <SegmentedControlItem value="newest" label="newest" />
+              </SegmentedControl>
+              <QueryLink href={hrefInsights({ persona: persona.id })} count={evidence.length} label="in the index" />
+            </HStack>
           </HStack>
-          {top.map((i) => (
-            <Card key={i.id} padding={3}>
-              <VStack gap={1}>
-                <HStack gap={2} vAlign="center">
-                  <SevDot severity={i.severity} />
-                  <Text type="supporting">{i.createdAt}</Text>
-                </HStack>
-                <Link href={hrefInsight(i.id, `personas/${persona.id}`)}>
-                  <Text type="body" maxLines={3} hasTruncateTooltip={false}>
-                    {i.text}
-                  </Text>
-                </Link>
-              </VStack>
-            </Card>
-          ))}
+          <EvidenceList insights={evidence} from={`personas/${persona.id}`} limit={6} order={order} />
         </VStack>
       </Grid>
     </VStack>

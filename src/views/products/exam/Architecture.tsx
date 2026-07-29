@@ -1,24 +1,35 @@
 // views/products/exam/Architecture.tsx — Exam Management architecture spec
-// (v18). Question-bank model, lifecycle, roles, versioning, service blueprint
-// and the Arun 3-year strategy. Sources are named per block.
+// (v19). Question-bank model, lifecycle, roles, versioning, service blueprint
+// and the Arun 3-year strategy. Sources are named per block. The two delivery
+// Figs moved up to the spec-shell header as its orienting visuals.
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
-import { Grid } from '@astryxdesign/core/Grid';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
 import { Blockquote } from '@astryxdesign/core/Blockquote';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
-import { Fig } from '../../../components/charts/Fig';
-import { RankedList } from '../../../components/charts/RankedList';
 import { SpecSection } from '../spec/SpecSection';
+import { SpecOutline } from '../spec/SpecOutline';
 import { hrefInsight } from '../../../lib/links';
 
 interface Row extends Record<string, unknown> {
   id: string;
 }
+
+const OUTLINE = [
+  { id: 'arch-pool', label: 'Flat pool + Scoped Views' },
+  { id: 'arch-entry', label: 'How questions enter the bank' },
+  { id: 'arch-lifecycle', label: 'Status lifecycle and versioning' },
+  { id: 'arch-roles', label: 'Roles and question bank access' },
+  { id: 'arch-tags', label: 'Tag schema' },
+  { id: 'arch-competitors', label: 'Competitor question bank models' },
+  { id: 'arch-blueprint', label: 'End-to-end service blueprint' },
+  { id: 'arch-arun', label: "Arun's 3-year strategy" },
+];
 
 const ENTRY_METHODS = [
   { id: 'create', method: 'Create new', who: 'Faculty', desc: 'Write directly in question editor. Starts as Draft.', ai: false },
@@ -89,50 +100,39 @@ const LANES = [
 ];
 
 const ARUN_YEARS = [
-  { year: 'Year 1 · 2026', goal: 'Beat LMS quiz modules', items: ['Canvas/D2L feature parity (no less)', 'Better UI than any LMS', 'One excellent AI use case', 'Lockdown browser (Respondus preferred)', 'Psychometrics at question and assessment level', 'Free for all Prism users'] },
-  { year: 'Year 2 · 2027', goal: 'Equal or better than ExamSoft', items: ['All ExamSoft features + more', 'Several AI use cases (ExamSoft is anti-AI)', 'Seamless Prism integration', 'Better UI than ExamSoft', 'Competitive or lower pricing', 'Charged product'] },
-  { year: 'Year 3 · 2028', goal: 'Way beyond ExamSoft', items: ['AI-powered proctoring', 'Adaptive exams (NCLEX CAT model)', 'Consider own lockdown browser', 'No reason for customers to use ExamSoft'] },
+  { id: 'y1', year: 'Year 1 · 2026', goal: 'Beat LMS quiz modules', items: 'Canvas/D2L feature parity (no less) · better UI than any LMS · one excellent AI use case · lockdown browser (Respondus preferred) · psychometrics at question and assessment level · free for all Prism users.' },
+  { id: 'y2', year: 'Year 2 · 2027', goal: 'Equal or better than ExamSoft', items: 'All ExamSoft features + more · several AI use cases (ExamSoft is anti-AI) · seamless Prism integration · better UI than ExamSoft · competitive or lower pricing · charged product.' },
+  { id: 'y3', year: 'Year 3 · 2028', goal: 'Way beyond ExamSoft', items: 'AI-powered proctoring · adaptive exams (NCLEX CAT model) · consider own lockdown browser · no reason for customers to use ExamSoft.' },
 ];
 
 const ARUN_PRINCIPLES = [
-  { p: 'Speed over design system compliance', d: 'Design system is still a first draft. Freedom to build custom components; mandate comes when convergence is visible.' },
-  { p: 'AI everywhere on admin side', d: 'AI should reduce time faculty spend designing and conducting exams — question generation, option generation, gap detection. Not for the exam taker.' },
-  { p: 'Exam taker UI is its own design system', d: 'The student exam experience has no equivalent in current products. Whatever is built becomes the design system for this context.' },
-  { p: 'Prism integration is differentiator 4', d: 'Seamless Prism integration is a key competitive advantage. Data should flow without re-entry.' },
+  { id: 'p1', p: 'Speed over design system compliance', d: 'Design system is still a first draft. Freedom to build custom components; mandate comes when convergence is visible.' },
+  { id: 'p2', p: 'AI everywhere on admin side', d: 'AI should reduce time faculty spend designing and conducting exams — question generation, option generation, gap detection. Not for the exam taker.' },
+  { id: 'p3', p: 'Exam taker UI is its own design system', d: 'The student exam experience has no equivalent in current products. Whatever is built becomes the design system for this context.' },
+  { id: 'p4', p: 'Prism integration is differentiator 4', d: 'Seamless Prism integration is a key competitive advantage. Data should flow without re-entry.' },
 ];
 
 export function Architecture() {
   return (
     <VStack gap={6}>
+      <SpecOutline items={OUTLINE} />
+
       <SpecSection
         title="Flat pool + Scoped Views"
+        anchorId="arch-pool"
         sub="Architecture decision · Stakeholder Day 1+2 Feb 2026 + Exam Standup Mar 26. Every question lives in a single institution-wide flat pool — no separate course or department banks. Faculty see questions through Smart Views: saved filter queries that look like folders. Tags and permissions determine visibility. This solves the ExamSoft silo problem without rigid hierarchy."
       >
-        <Grid columns={{ minWidth: 320, max: 2 }} gap={3}>
-          <Card variant="muted" padding={3}>
-            <VStack gap={1}>
-              <Text type="label" color="secondary">
-                What the system stores
-              </Text>
-              <Text type="supporting" as="p" textWrap="pretty">
-                One pool. Per question: dept-prefixed ID, original author (never changes), version chain, tags across 7 category
-                types, status lifecycle, department ownership.
-              </Text>
-              <Link href={hrefInsight('ins-em-gap-02')}>QB ownership decision (ins-em-gap-02) →</Link>
-            </VStack>
-          </Card>
-          <Card variant="muted" padding={3}>
-            <VStack gap={1}>
-              <Text type="label" color="secondary">
-                Smart Views — two modes
-              </Text>
-              <Text type="supporting" as="p" textWrap="pretty">
-                Always-updated (live filter) vs fixed snapshot (pinned at creation). Personal views private by default; dept
-                views shared. Smart folders are saved searches applied to the flat pool — not containers you drag things into.
-              </Text>
-            </VStack>
-          </Card>
-        </Grid>
+        <MetadataList columns="multi" title="The storage model">
+          <MetadataListItem label="What the system stores">
+            One pool. Per question: dept-prefixed ID, original author (never changes), version chain, tags across 7 category
+            types, status lifecycle, department ownership.
+          </MetadataListItem>
+          <MetadataListItem label="Smart Views — two modes">
+            Always-updated (live filter) vs fixed snapshot (pinned at creation). Personal views private by default; dept views
+            shared. Smart folders are saved searches applied to the flat pool — not containers you drag things into.
+          </MetadataListItem>
+        </MetadataList>
+        <Link href={hrefInsight('ins-em-gap-02')}>QB ownership decision (ins-em-gap-02) →</Link>
         <Table<Row & (typeof SMART_VIEWS)[number]>
           data={SMART_VIEWS}
           idKey="id"
@@ -145,7 +145,11 @@ export function Architecture() {
         />
       </SpecSection>
 
-      <SpecSection title="How questions enter the bank" sub="Five entry methods; two are AI-assisted. ExamSoft import is the switching-cost killer.">
+      <SpecSection
+        title="How questions enter the bank"
+        anchorId="arch-entry"
+        sub="Five entry methods; two are AI-assisted. ExamSoft import is the switching-cost killer."
+      >
         <Table<Row & (typeof ENTRY_METHODS)[number]>
           data={ENTRY_METHODS}
           idKey="id"
@@ -161,6 +165,7 @@ export function Architecture() {
 
       <SpecSection
         title="Status lifecycle and versioning"
+        anchorId="arch-lifecycle"
         sub="Draft → In Review → Golden → Archived, plus the Action Required overlay (Mar 26 standup naming; the earlier migration pack used Ready/Active/Retired for the same chain — the conflict is noted, not silenced). Every edit creates an immutable version; exams pin to a version at creation."
       >
         <Table<Row & (typeof STATUSES)[number]>
@@ -181,7 +186,11 @@ export function Architecture() {
         </Card>
       </SpecSection>
 
-      <SpecSection title="Roles and question bank access" sub="Six roles with fundamentally different needs. The full per-feature access matrix lives on the Navigation IA page.">
+      <SpecSection
+        title="Roles and question bank access"
+        anchorId="arch-roles"
+        sub="Six roles with fundamentally different needs. The full per-feature access matrix lives on the Navigation IA page."
+      >
         <Table<Row & (typeof ROLES)[number]>
           data={ROLES}
           idKey="id"
@@ -193,11 +202,15 @@ export function Architecture() {
           ]}
         />
         <Link href="/products/exam-management/ia" isStandalone>
-          Full role × feature access matrix (Navigation IA) →
+          Full role × feature access matrix — 12 items × 7 roles (Navigation IA) →
         </Link>
       </SpecSection>
 
-      <SpecSection title="Tag schema" sub="Seven category types, ~20 tags per question when fully used. Structured properties, not freeform text.">
+      <SpecSection
+        title="Tag schema"
+        anchorId="arch-tags"
+        sub="Seven category types, ~20 tags per question when fully used. Structured properties, not freeform text."
+      >
         <Table<Row & (typeof TAGS)[number]>
           data={TAGS}
           idKey="id"
@@ -210,7 +223,11 @@ export function Architecture() {
         />
       </SpecSection>
 
-      <SpecSection title="Competitor question bank models" sub="Why flat pool wins: only 1 of the 5 top tools still uses folders.">
+      <SpecSection
+        title="Competitor question bank models"
+        anchorId="arch-competitors"
+        sub="Why flat pool wins: only 1 of the 5 top tools still uses folders."
+      >
         <Table<Row & (typeof QB_COMPETITORS)[number]>
           data={QB_COMPETITORS}
           idKey="id"
@@ -226,6 +243,7 @@ export function Architecture() {
 
       <SpecSection
         title="End-to-end service blueprint"
+        anchorId="arch-blueprint"
         sub="Admin creates → QB → Assessment Builder → accessibility config → publish → student exam → analytics. The analytics feedback loop (psychometrics flag poor questions, update difficulty, inform the next exam) is the competitive moat against ExamSoft."
       >
         <Table<Row & (typeof BLUEPRINT)[number]>
@@ -255,76 +273,29 @@ export function Architecture() {
         </Collapsible>
       </SpecSection>
 
-      <SpecSection title="Delivery state" sub="Source: Granola Jul 23 + design review Jul 15. Jan 20 2027 MVP is the hard target; offline download is unresolved (Aarti May 19: mandatory; Jul 23 team: March).">
-        <Grid columns={{ minWidth: 340, max: 2 }} gap={4}>
-          <Fig title="MVP readiness by module" caption="Self-reported design + build state; AI features are POC-complete but paused for the roadmap decision.">
-            <RankedList
-              rows={[
-                { key: 'qb', label: 'Question Bank (QA phase)', value: 95, hint: 'folders, Smart Views, permissions in QA' },
-                { key: 'student', label: 'Student Exam UX', value: 85, hint: 'a11y toolbar + navigator; offline cut to March' },
-                { key: 'builder', label: 'Assessment Builder', value: 80, hint: '7 question types built; settings UI in dev' },
-                { key: 'review', label: 'Faculty Review + Scoring', value: 60, hint: "item analysis spec'd; score adjustment in progress" },
-                { key: 'ai', label: 'AI features', value: 15, hint: 'POC complete (100% accuracy); paused' },
-              ]}
-              format={(r) => `${r.value}%`}
-              errorBelow={50}
-            />
-          </Fig>
-          <Fig title="Phase delivery confidence" caption="Jan 20 MVP tracks at 82% design / 75% engineering; the offline-download conflict is surfaced, not resolved.">
-            <RankedList
-              rows={[
-                { key: 'mvp', label: 'Jan 20 MVP overall', value: 82, hint: '82% design · 75% engineering' },
-                { key: 'cohere', label: 'Cohere Sep 2026 demo', value: 65, hint: 'production-ready, not just working' },
-                { key: 'parity', label: 'ExamSoft full parity', value: 40, hint: 'Cronbach alpha, curriculum mapping — Year 2' },
-                { key: 'offline', label: 'Offline download (March LA)', value: 0, hint: 'cut from MVP; Aarti/team conflict open' },
-              ]}
-              format={(r) => `${r.value}%`}
-              errorBelow={50}
-            />
-          </Fig>
-        </Grid>
-      </SpecSection>
-
-      <SpecSection title="Arun's 3-year strategy" sub="Session 791334af · Mar 24 2026.">
+      <SpecSection title="Arun's 3-year strategy" anchorId="arch-arun" sub="Session 791334af · Mar 24 2026.">
         <Blockquote cite="Arun Gautam · Mar 24, 2026 · session 791334af">
           ExamSoft is publicly against AI. We are going to use it. That is our second differentiator.
         </Blockquote>
-        <Grid columns={{ minWidth: 240, max: 3 }} gap={3}>
-          {ARUN_YEARS.map((y) => (
-            <Card key={y.year} padding={3}>
-              <VStack gap={1.5}>
-                <Text type="label" color="secondary">
-                  {y.year}
-                </Text>
-                <Text type="body" weight="semibold">
-                  {y.goal}
-                </Text>
-                {y.items.map((it, i) => (
-                  <Text key={i} type="supporting" as="p" textWrap="pretty">
-                    {it}
-                  </Text>
-                ))}
-              </VStack>
-            </Card>
-          ))}
-        </Grid>
-        <Card variant="muted" padding={3}>
-          <VStack gap={2}>
-            <Text type="label" color="secondary">
-              Design principles from Arun
-            </Text>
-            {ARUN_PRINCIPLES.map((r) => (
-              <VStack key={r.p} gap={0.5}>
-                <Text type="body" weight="semibold">
-                  {r.p}
-                </Text>
-                <Text type="supporting" as="p" textWrap="pretty">
-                  {r.d}
-                </Text>
-              </VStack>
-            ))}
-          </VStack>
-        </Card>
+        <Table<Row & (typeof ARUN_YEARS)[number]>
+          data={ARUN_YEARS}
+          idKey="id"
+          density="balanced"
+          columns={[
+            { key: 'year', header: 'Horizon', width: pixel(130), renderCell: (r) => <Text type="body" weight="semibold">{r.year}</Text> },
+            { key: 'goal', header: 'Goal', width: pixel(220), renderCell: (r) => <Text type="body">{r.goal}</Text> },
+            { key: 'items', header: 'Commitments', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.items}</Text> },
+          ]}
+        />
+        <Table<Row & (typeof ARUN_PRINCIPLES)[number]>
+          data={ARUN_PRINCIPLES}
+          idKey="id"
+          density="balanced"
+          columns={[
+            { key: 'p', header: 'Design principle (Arun)', width: pixel(280), renderCell: (r) => <Text type="body" weight="semibold">{r.p}</Text> },
+            { key: 'd', header: 'What it means', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.d}</Text> },
+          ]}
+        />
       </SpecSection>
     </VStack>
   );

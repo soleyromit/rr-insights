@@ -8,14 +8,18 @@ import { Text } from '@astryxdesign/core/Text';
 export interface SpecSectionProps {
   title: string;
   sub?: string;
+  /** DOM id for SpecOutline anchor navigation. */
+  anchorId?: string;
   children: React.ReactNode;
 }
 
-export function SpecSection({ title, sub, children }: SpecSectionProps) {
+export function SpecSection({ title, sub, anchorId, children }: SpecSectionProps) {
   return (
     <VStack gap={3}>
       <VStack gap={0.5}>
-        <Heading level={2}>{title}</Heading>
+        <Heading level={2} id={anchorId}>
+          {title}
+        </Heading>
         {sub && (
           <Text type="supporting" as="p" textWrap="pretty">
             {sub}

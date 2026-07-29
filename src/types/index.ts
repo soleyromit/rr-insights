@@ -22,7 +22,7 @@ export interface ProductDependency { product: ProductId; dependency: string; }
 export interface ProductMeta {
   id: ProductId; name: string; shortName: string; description: string;
   status: 'active' | 'wip' | 'scoped' | 'planned'; accentColor: string;
-  nps?: number; ticketsPerYear?: number; insightCount: number; criticalGaps: number;
+  nps?: number; ticketsPerYear?: number;
   pilotDate?: string; launchDate?: string; userCount?: string; primaryPersonas: PersonaId[];
   priorityScore: number; daysToDeadline: number | null; urgencyLevel: UrgencyLevel;
   sentimentScore: number; granolaSessions: number; keyQuote: string; keyQuoteSource: string;

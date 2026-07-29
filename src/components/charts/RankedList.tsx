@@ -5,10 +5,16 @@ import { HStack } from '@astryxdesign/core/HStack';
 import { Text } from '@astryxdesign/core/Text';
 import { Link } from '@astryxdesign/core/Link';
 import { ProgressBar } from '@astryxdesign/core/ProgressBar';
+import { TrendDelta } from './TrendDelta';
+import type { TrendDeltaProps } from './TrendDelta';
 import type { RankedRow } from '../../lib/series';
 
+export interface RankedRowWithDelta extends RankedRow {
+  delta?: TrendDeltaProps;
+}
+
 export interface RankedListProps {
-  rows: RankedRow[];
+  rows: RankedRowWithDelta[];
   /** Value formatter for the trailing figure. */
   format?: (r: RankedRow) => string;
   /** Rows at/under this value render with the error variant (e.g. below target). */
@@ -32,16 +38,19 @@ export function RankedList({ rows, format, errorBelow }: RankedListProps) {
               )}
               {r.hint && <Text type="supporting">{r.hint}</Text>}
             </HStack>
-            <Text type="body" hasTabularNumbers color="secondary">
-              {format ? format(r) : String(r.value)}
-            </Text>
+            <HStack gap={2} vAlign="center">
+              {r.delta && <TrendDelta {...r.delta} />}
+              <Text type="body" hasTabularNumbers color="secondary">
+                {format ? format(r) : String(r.value)}
+              </Text>
+            </HStack>
           </HStack>
           <ProgressBar
             label={r.label}
             isLabelHidden
             value={r.value}
             max={max}
-            variant={errorBelow !== undefined && r.value < errorBelow ? 'error' : 'neutral'}
+            variant={errorBelow !== undefined && r.value < errorBelow ? 'error' : 'accent'}
           />
         </VStack>
       ))}

@@ -1,16 +1,20 @@
 // views/products/exam/Decisions.tsx — the six architecture decisions plus the
-// verbatim-grounded gap ledger (what Magic Patterns is missing, what is built).
+// verbatim-grounded gap ledger (v19). The orienting stacked bar is DERIVED
+// from the GAP_GROUPS registry (epic × priority, n=20 — no fabrication) and
+// the gap card walls are now one grouped table with quotes kept inline.
+import { useState } from 'react';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Grid } from '@astryxdesign/core/Grid';
-import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Link } from '@astryxdesign/core/Link';
-import { Blockquote } from '@astryxdesign/core/Blockquote';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Table, pixel, proportional, useTableGroupedRows } from '@astryxdesign/core/Table';
+import { Chart, ChartAxis, ChartGrid, bar, useChartColors } from '@astryxdesign/charts';
+import { Fig } from '../../../components/charts/Fig';
 import { SpecSection } from '../spec/SpecSection';
 import { DecisionCard } from '../spec/DecisionCard';
+import { insightsWhere } from '../../../lib/selectors';
 import { hrefInsights } from '../../../lib/links';
 
 const DECISIONS = [
@@ -59,7 +63,9 @@ const DECISIONS = [
   },
 ];
 
-interface GapItem {
+interface GapRow extends Record<string, unknown> {
+  id: string;
+  group: string;
   who: string;
   gap: string;
   quote?: string;
@@ -67,52 +73,79 @@ interface GapItem {
   built?: boolean;
 }
 
-const GAP_GROUPS: { title: string; sub: string; items: GapItem[] }[] = [
-  {
-    title: 'Student exam-taking view (Epic 1) — absent from Magic Patterns',
-    sub: 'Verbatim cross-check: David + Kunal + Aarti + Romit, session f29a990d.',
-    items: [
-      { who: 'David + Romit (f29a990d)', gap: 'Full student exam view — navigator, flag 2×2, keyboard shortcuts, cross-out, submit logic, section screens, pre-exam tutorial.', quote: 'Student wants to visually cross out answers… crossed-out options remain selectable', p: 'P0' },
-      { who: 'Kunal (f29a990d)', gap: 'Flag is a 2×2 attribute — answered/unanswered × flagged/not-flagged. Not a third bucket.', quote: 'Flag is an attribute of both buckets… it is a 2x2 matrix', p: 'P0' },
-      { who: 'Aarti + Kunal (f29a990d)', gap: 'Submit button always visible but faded; prominent only at the last question or last 5–10 minutes. Never "Exit exam".', quote: 'Do not hide it. Keep it visible but faded until conditions are met', p: 'P0' },
-      { who: 'Aarti (f29a990d)', gap: 'Section entry screen shows title + question count before entering; faculty configures lock (GRE model) or free navigation.', quote: 'You enter a section… screen says section one, this is the topic…', p: 'P0' },
-      { who: 'Romit (f29a990d)', gap: 'Pre-exam tutorial: one sample question + audio check before the timer starts.', p: 'P2' },
-    ],
-  },
-  {
-    title: 'PA Student Dashboard (Epic 5) — the Influx differentiator',
-    sub: 'Vishaka, session 7dbabdb5.',
-    items: [
-      { who: 'Vishaka (7dbabdb5)', gap: 'PA dashboard: PACKRAT 1+2, EOR by all 7 specialties, OSCE, EOC, PANCE readiness predictor (75+ = good passing chance), cohort vs national.', quote: 'Even Influx is not doing this level of report… this would be our differentiator', p: 'P0' },
-      { who: 'Vishaka (7dbabdb5)', gap: 'Bulk CSV upload for PAEA + ExamSoft data; 5-minute manual step acceptable initially; match by student ID.', p: 'P1' },
-      { who: 'Vishaka (7dbabdb5)', gap: 'Cohort dashboard alongside individual view: cohort vs cohort by year plus national averages.', p: 'P2' },
-    ],
-  },
-  {
-    title: 'Ed Razenbach gaps',
-    sub: 'Session ca5a709c.',
-    items: [
-      { who: 'Ed', gap: '"Assessments" label → "Exams" everywhere. Ed and the Touro coordinator said this independently.', quote: 'The word assessment kinda throws everything off. Write down Exams.', p: 'P0' },
-      { who: 'Ed', gap: 'Z-score display alongside raw scores, with national mean + SD from PAEA per exam.', quote: "A raw 412 in EM is not the same as a 382 in women's health", p: 'P1' },
-      { who: 'Ed', gap: 'Remediation exam workflow post-EOR fail: specialty-specific, open book, untimed, sequestered questions.', quote: 'I have exams set aside just for remediation purposes', p: 'P1' },
-      { who: 'Ed', gap: 'OSCE rubric as question type 10 with critical task marking and multi-rubric per encounter.', quote: '100 scenarios across specialties. Done in ExamSoft with rubric functionality.', p: 'P1' },
-      { who: 'Ed', gap: "Bloom's 1–3 only mode (PAEA uses 1–3; ExamSoft 1–5).", p: 'P2' },
-      { who: 'Ed', gap: 'Real-time audit trail: who accessed questions, when, what changed.', quote: 'Who is in there, what was touched — a detailed audit analysis', p: 'P2' },
-      { who: 'Ed + Touro', gap: 'Multi-campus question sharing without print/email/re-upload.', quote: 'We literally had to print out the questions, send them over. It was a nightmare.', p: 'P2' },
-    ],
-  },
-  {
-    title: 'Accessibility + D2L gaps',
-    sub: 'D2L demo c7a8d32e · Nipun UNF pilot 4c9b94f5 · accessibility session 77fc2588.',
-    items: [
-      { who: 'D2L demo · Mar 4', gap: 'Bulk accommodation assignment: 7 students × 10 quizzes = 70 manual D2L setups; program-level profile = 1. First-to-market.', p: 'P0' },
-      { who: 'Nipun · Mar 11', gap: 'V0 accessibility for the UNF Australia pilot (July): magnification, high contrast, extra time. ACR validation required.', p: 'P0', built: true },
-      { who: 'A11y session · Mar 16', gap: 'Two-phase approach confirmed: Phase 1 minimum for UNF pilot; Phase 2 comprehensive revamp with the student portal overhaul.', p: 'P0' },
-      { who: 'A11y session · Mar 16', gap: 'On-screen keyboard must be platform-embedded — LockDown blocks external tools; Pearson is the reference architecture.', p: 'P1' },
-      { who: 'Nipun · Mar 11', gap: 'Question rationale per question, shown after submission; AI-assisted authoring. Low-stakes exam differentiator.', p: 'P2' },
-    ],
-  },
+const GROUPS: { key: string; title: string; sub: string }[] = [
+  { key: 'student-view', title: 'Student exam-taking view (Epic 1) — absent from Magic Patterns', sub: 'Verbatim cross-check: David + Kunal + Aarti + Romit, session f29a990d.' },
+  { key: 'pa-dashboard', title: 'PA Student Dashboard (Epic 5) — the Influx differentiator', sub: 'Vishaka, session 7dbabdb5.' },
+  { key: 'ed', title: 'Ed Razenbach gaps', sub: 'Session ca5a709c.' },
+  { key: 'a11y', title: 'Accessibility + D2L gaps', sub: 'D2L demo c7a8d32e · Nipun UNF pilot 4c9b94f5 · accessibility session 77fc2588.' },
 ];
+
+const GAPS: GapRow[] = [
+  { id: 'sv1', group: 'student-view', who: 'David + Romit (f29a990d)', gap: 'Full student exam view — navigator, flag 2×2, keyboard shortcuts, cross-out, submit logic, section screens, pre-exam tutorial.', quote: 'Student wants to visually cross out answers… crossed-out options remain selectable', p: 'P0' },
+  { id: 'sv2', group: 'student-view', who: 'Kunal (f29a990d)', gap: 'Flag is a 2×2 attribute — answered/unanswered × flagged/not-flagged. Not a third bucket.', quote: 'Flag is an attribute of both buckets… it is a 2x2 matrix', p: 'P0' },
+  { id: 'sv3', group: 'student-view', who: 'Aarti + Kunal (f29a990d)', gap: 'Submit button always visible but faded; prominent only at the last question or last 5–10 minutes. Never "Exit exam".', quote: 'Do not hide it. Keep it visible but faded until conditions are met', p: 'P0' },
+  { id: 'sv4', group: 'student-view', who: 'Aarti (f29a990d)', gap: 'Section entry screen shows title + question count before entering; faculty configures lock (GRE model) or free navigation.', quote: 'You enter a section… screen says section one, this is the topic…', p: 'P0' },
+  { id: 'sv5', group: 'student-view', who: 'Romit (f29a990d)', gap: 'Pre-exam tutorial: one sample question + audio check before the timer starts.', p: 'P2' },
+  { id: 'pa1', group: 'pa-dashboard', who: 'Vishaka (7dbabdb5)', gap: 'PA dashboard: PACKRAT 1+2, EOR by all 7 specialties, OSCE, EOC, PANCE readiness predictor (75+ = good passing chance), cohort vs national.', quote: 'Even Influx is not doing this level of report… this would be our differentiator', p: 'P0' },
+  { id: 'pa2', group: 'pa-dashboard', who: 'Vishaka (7dbabdb5)', gap: 'Bulk CSV upload for PAEA + ExamSoft data; 5-minute manual step acceptable initially; match by student ID.', p: 'P1' },
+  { id: 'pa3', group: 'pa-dashboard', who: 'Vishaka (7dbabdb5)', gap: 'Cohort dashboard alongside individual view: cohort vs cohort by year plus national averages.', p: 'P2' },
+  { id: 'ed1', group: 'ed', who: 'Ed', gap: '"Assessments" label → "Exams" everywhere. Ed and the Touro coordinator said this independently.', quote: 'The word assessment kinda throws everything off. Write down Exams.', p: 'P0' },
+  { id: 'ed2', group: 'ed', who: 'Ed', gap: 'Z-score display alongside raw scores, with national mean + SD from PAEA per exam.', quote: "A raw 412 in EM is not the same as a 382 in women's health", p: 'P1' },
+  { id: 'ed3', group: 'ed', who: 'Ed', gap: 'Remediation exam workflow post-EOR fail: specialty-specific, open book, untimed, sequestered questions.', quote: 'I have exams set aside just for remediation purposes', p: 'P1' },
+  { id: 'ed4', group: 'ed', who: 'Ed', gap: 'OSCE rubric as question type 10 with critical task marking and multi-rubric per encounter.', quote: '100 scenarios across specialties. Done in ExamSoft with rubric functionality.', p: 'P1' },
+  { id: 'ed5', group: 'ed', who: 'Ed', gap: "Bloom's 1–3 only mode (PAEA uses 1–3; ExamSoft 1–5).", p: 'P2' },
+  { id: 'ed6', group: 'ed', who: 'Ed', gap: 'Real-time audit trail: who accessed questions, when, what changed.', quote: 'Who is in there, what was touched — a detailed audit analysis', p: 'P2' },
+  { id: 'ed7', group: 'ed', who: 'Ed + Touro', gap: 'Multi-campus question sharing without print/email/re-upload.', quote: 'We literally had to print out the questions, send them over. It was a nightmare.', p: 'P2' },
+  { id: 'a1', group: 'a11y', who: 'D2L demo · Mar 4', gap: 'Bulk accommodation assignment: 7 students × 10 quizzes = 70 manual D2L setups; program-level profile = 1. First-to-market.', p: 'P0' },
+  { id: 'a2', group: 'a11y', who: 'Nipun · Mar 11', gap: 'V0 accessibility for the UNF Australia pilot (July): magnification, high contrast, extra time. ACR validation required.', p: 'P0', built: true },
+  { id: 'a3', group: 'a11y', who: 'A11y session · Mar 16', gap: 'Two-phase approach confirmed: Phase 1 minimum for UNF pilot; Phase 2 comprehensive revamp with the student portal overhaul.', p: 'P0' },
+  { id: 'a4', group: 'a11y', who: 'A11y session · Mar 16', gap: 'On-screen keyboard must be platform-embedded — LockDown blocks external tools; Pearson is the reference architecture.', p: 'P1' },
+  { id: 'a5', group: 'a11y', who: 'Nipun · Mar 11', gap: 'Question rationale per question, shown after submission; AI-assisted authoring. Low-stakes exam differentiator.', p: 'P2' },
+];
+
+const GROUP_TITLE = new Map(GROUPS.map((g) => [g.key, g]));
+
+// Derived, not asserted: epic × priority counts for the orienting stack.
+const EPIC_LABEL: Record<string, string> = {
+  'student-view': 'Student exam view',
+  'pa-dashboard': 'PA dashboard',
+  ed: 'Ed Razenbach',
+  a11y: 'A11y + D2L',
+};
+const GAP_STACK = GROUPS.map((g) => ({
+  epic: EPIC_LABEL[g.key],
+  p0: GAPS.filter((i) => i.group === g.key && i.p === 'P0').length,
+  p1: GAPS.filter((i) => i.group === g.key && i.p === 'P1').length,
+  p2: GAPS.filter((i) => i.group === g.key && i.p === 'P2').length,
+}));
+const P0_TOTAL = GAPS.filter((g) => g.p === 'P0').length;
+
+function GapStackChart() {
+  const colors = useChartColors();
+  const yMax = Math.max(...GAP_STACK.map((d) => d.p0 + d.p1 + d.p2), 1);
+  return (
+    <Chart
+      data={GAP_STACK as unknown as Record<string, unknown>[]}
+      xKey="epic"
+      height={220}
+      yDomain={[0, yMax]}
+      series={[
+        bar('p0', { stack: 'p', color: colors.semantic.negative, label: 'P0 — blocks Apr 17 demo' }),
+        bar('p1', { stack: 'p', color: colors.semantic.warning, label: 'P1' }),
+        bar('p2', { stack: 'p', color: colors.semantic.neutral, label: 'P2' }),
+      ]}
+      grid={<ChartGrid horizontal tickCount={4} />}
+      axes={
+        <>
+          <ChartAxis position="bottom" />
+          <ChartAxis position="left" tickCount={4} />
+        </>
+      }
+      legend
+      tooltip
+    />
+  );
+}
 
 const BUILT = [
   'Cross-out feature (David) — strike options without removing selectability.',
@@ -125,17 +158,63 @@ const BUILT = [
   'Role switcher: Dept Head, Faculty, Contributor, Reviewer, Outcome Director, Inst Admin.',
 ];
 
-const SCREEN_PRIORITIES = [
-  { screen: 'Screen 1 — QB navigation', deadline: 'Apr 3', detail: 'Two entry points: global QB sidebar item + course-level QB with auto-tag. Smart-view sidebar with personal + dept views. Draft counter badge.' },
-  { screen: 'Screen 2 — QB table / filter', deadline: 'Apr 3', detail: "Columns: ID, stem, type, status, Bloom's, difficulty, author. Filter bar: status, topic, Bloom's, course, type. Bulk action row on selection (Gmail-style floating bar — ia-arch-008)." },
-  { screen: 'Screen 3 — Question editor', deadline: 'Apr 7', detail: 'Role-gated: Faculty sees create/submit, Dept Head sees approve/reject. Version chain visualization. Edit-in-assessment vs master-edit modal split.' },
+interface ScreenRow extends Record<string, unknown> {
+  id: string;
+  screen: string;
+  deadline: string;
+  detail: string;
+}
+const SCREEN_PRIORITIES: ScreenRow[] = [
+  { id: 'sc1', screen: 'Screen 1 — QB navigation', deadline: 'Apr 3', detail: 'Two entry points: global QB sidebar item + course-level QB with auto-tag. Smart-view sidebar with personal + dept views. Draft counter badge.' },
+  { id: 'sc2', screen: 'Screen 2 — QB table / filter', deadline: 'Apr 3', detail: "Columns: ID, stem, type, status, Bloom's, difficulty, author. Filter bar: status, topic, Bloom's, course, type. Bulk action row on selection (Gmail-style floating bar — ia-arch-008)." },
+  { id: 'sc3', screen: 'Screen 3 — Question editor', deadline: 'Apr 7', detail: 'Role-gated: Faculty sees create/submit, Dept Head sees approve/reject. Version chain visualization. Edit-in-assessment vs master-edit modal split.' },
 ];
 
-const P_VARIANT: Record<GapItem['p'], 'error' | 'warning' | 'info'> = { P0: 'error', P1: 'warning', P2: 'info' };
+const P_VARIANT: Record<GapRow['p'], 'error' | 'warning' | 'info'> = { P0: 'error', P1: 'warning', P2: 'info' };
 
 export function Decisions() {
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+  const grouped = useTableGroupedRows<GapRow>({
+    data: GAPS,
+    groupBy: (r) => r.group,
+    collapsedGroups: collapsed,
+    onToggleGroup: (key) =>
+      setCollapsed((prev) => {
+        const next = new Set(prev);
+        if (next.has(key)) next.delete(key);
+        else next.add(key);
+        return next;
+      }),
+    getRowKey: (r) => r.id,
+    groupOrder: GROUPS.map((g) => g.key),
+    renderGroupHeader: (key, count) => {
+      const g = GROUP_TITLE.get(key);
+      return (
+        <HStack gap={2} vAlign="center" wrap="wrap">
+          <Text type="body" weight="semibold">
+            {g?.title ?? key}
+          </Text>
+          <Text type="supporting">
+            {count} gaps · {g?.sub}
+          </Text>
+        </HStack>
+      );
+    },
+  });
+
+  const critical = insightsWhere({ product: 'exam-management', severity: 'critical' });
+
   return (
     <VStack gap={6}>
+      <Fig
+        title="Gap ledger by epic and priority"
+        n={GAPS.length}
+        caption={`Derived from the verbatim-grounded gap ledger below: ${P0_TOTAL} of ${GAPS.length} gaps are P0 and block the Apr 17 demo — over half of them in the student exam-taking view, which is entirely absent from Magic Patterns.`}
+        link={{ href: hrefInsights({ product: 'exam-management', severity: 'critical' }), count: critical.length, label: 'critical exam-management findings' }}
+      >
+        <GapStackChart />
+      </Fig>
+
       <SpecSection title="Design decisions" sub="Six decided positions — each with its rationale and the tradeoff it accepts.">
         <Grid columns={{ minWidth: 380, max: 2 }} gap={3}>
           {DECISIONS.map((d) => (
@@ -144,37 +223,36 @@ export function Decisions() {
         </Grid>
       </SpecSection>
 
-      <SpecSection title="Gap ledger — grounded in verbatim quotes" sub="Every gap traces to a direct quote from a named session. P0 blocks the Apr 17 demo.">
-        <VStack gap={3}>
-          {GAP_GROUPS.map((g) => (
-            <Card key={g.title} padding={4}>
-              <VStack gap={3}>
-                <VStack gap={0.5}>
-                  <Text type="body" weight="semibold">
-                    {g.title}
+      <SpecSection title="Gap ledger — grounded in verbatim quotes" sub="Every gap traces to a direct quote from a named session. P0 blocks the Apr 17 demo. Groups collapse; quotes stay with their gaps.">
+        <Table<GapRow>
+          data={grouped.data}
+          idKey={grouped.idKey}
+          density="balanced"
+          verticalAlign="top"
+          plugins={{ grouped: grouped.plugin }}
+          columns={[
+            { key: 'p', header: 'Pri', width: pixel(64), renderCell: (r) => <Badge variant={P_VARIANT[r.p]} label={r.p} /> },
+            { key: 'built', header: '', width: pixel(64), renderCell: (r) => (r.built ? <Badge variant="success" label="Built" /> : null) },
+            {
+              key: 'gap',
+              header: 'Gap',
+              width: proportional(4),
+              renderCell: (r) => (
+                <VStack gap={1}>
+                  <Text type="body" as="p" textWrap="pretty">
+                    {r.gap}
                   </Text>
-                  <Text type="supporting">{g.sub}</Text>
-                </VStack>
-                {g.items.map((it, i) => (
-                  <VStack key={i} gap={0.5}>
-                    <HStack gap={2} vAlign="center" wrap="wrap">
-                      <Badge variant={P_VARIANT[it.p]} label={it.p} />
-                      {it.built && <Badge variant="success" label="Built" />}
-                      <Text type="supporting">{it.who}</Text>
-                    </HStack>
-                    <Text type="body" as="p" textWrap="pretty">
-                      {it.gap}
+                  {r.quote && (
+                    <Text type="supporting" as="p" textWrap="pretty" color="secondary">
+                      “{r.quote}”
                     </Text>
-                    {it.quote && <Blockquote>{it.quote}</Blockquote>}
-                  </VStack>
-                ))}
-              </VStack>
-            </Card>
-          ))}
-        </VStack>
-        <Link href={hrefInsights({ product: 'exam-management', severity: 'critical' })} isStandalone>
-          All critical exam-management findings →
-        </Link>
+                  )}
+                </VStack>
+              ),
+            },
+            { key: 'who', header: 'Source', width: pixel(180), renderCell: (r) => <Text type="supporting">{r.who}</Text> },
+          ]}
+        />
       </SpecSection>
 
       <SpecSection title="What is built correctly" sub="Present in Magic Patterns and confirmed correct.">
@@ -191,23 +269,16 @@ export function Decisions() {
       </SpecSection>
 
       <SpecSection title="Magic Patterns build priorities" sub="Design implications from the QB architecture — the next three screens, with target dates.">
-        <Grid columns={{ minWidth: 260, max: 3 }} gap={3}>
-          {SCREEN_PRIORITIES.map((s) => (
-            <Card key={s.screen} variant="muted" padding={3}>
-              <VStack gap={1}>
-                <HStack gap={2} vAlign="center" hAlign="between">
-                  <Text type="body" weight="semibold">
-                    {s.screen}
-                  </Text>
-                  <Badge variant="error" label={s.deadline} />
-                </HStack>
-                <Text type="supporting" as="p" textWrap="pretty">
-                  {s.detail}
-                </Text>
-              </VStack>
-            </Card>
-          ))}
-        </Grid>
+        <Table<ScreenRow>
+          data={SCREEN_PRIORITIES}
+          idKey="id"
+          density="balanced"
+          columns={[
+            { key: 'screen', header: 'Screen', width: pixel(220), renderCell: (r) => <Text type="body" weight="semibold">{r.screen}</Text> },
+            { key: 'deadline', header: 'Due', width: pixel(80), renderCell: (r) => <Badge variant="error" label={r.deadline} /> },
+            { key: 'detail', header: 'Scope', width: proportional(4), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.detail}</Text> },
+          ]}
+        />
       </SpecSection>
     </VStack>
   );

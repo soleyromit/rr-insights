@@ -13,18 +13,22 @@ import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/Segme
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { Link } from '@astryxdesign/core/Link';
+import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
+import type { DateRange } from '@astryxdesign/core/DateRangeInput';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { VolumeChart } from '../components/charts/VolumeChart';
+import { StatTile, StatTileRow } from '../components/story/StatTile';
 import { SevDot } from '../components/ui/sev';
 import { insightsWhere, evidenceClass } from '../lib/selectors';
 import { monthlyVolume } from '../lib/series';
 import { scoreOf } from '../lib/score';
+import { formatDay } from '../lib/format';
 import { PRODUCTS, getProduct } from '../data/products';
 import { PERSONAS } from '../data/personas';
 import { ALL_INSIGHTS } from '../data/insights';
-import { hrefInsight } from '../lib/links';
-import type { Insight, SeverityLevel } from '../types';
+import { hrefInsight, parseInsightFilter } from '../lib/links';
+import type { Insight } from '../types';
 
 const PAGE_SIZE = 25;
 const SEVERITIES = ['all', 'critical', 'high', 'medium', 'low'] as const;
@@ -38,13 +42,10 @@ interface Row extends Record<string, unknown> {
 export function InsightIndexView() {
   const [params, setParams] = useSearchParams();
 
-  const q = params.get('q') ?? '';
-  const product = params.get('product') ?? undefined;
-  const persona = params.get('persona') ?? undefined;
-  const severity = (params.get('severity') as SeverityLevel | null) ?? undefined;
-  const signal = params.get('signal') ?? undefined;
-  const tag = params.get('tag') ?? undefined;
-  const sort = (params.get('sort') as 'score' | 'newest' | null) ?? 'score';
+  const filter = parseInsightFilter(params);
+  const q = filter.q ?? '';
+  const { product, persona, severity, signal, tag, since, until } = filter;
+  const sort = filter.sort ?? 'score';
   const page = Math.max(1, Number(params.get('page') ?? 1));
 
   const set = (key: string, value?: string) => {
@@ -60,11 +61,48 @@ export function InsightIndexView() {
     );
   };
 
+  /** Set/clear both date bounds in one URL update (Token remove, DateRangeInput). */
+  const setDates = (nextSince?: string, nextUntil?: string) => {
+    setParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        if (nextSince) p.set('since', nextSince);
+        else p.delete('since');
+        if (nextUntil) p.set('until', nextUntil);
+        else p.delete('until');
+        p.delete('page');
+        return p;
+      },
+      { replace: true }
+    );
+  };
+
   const filtered = useMemo(
-    () => insightsWhere({ q: q || undefined, product, persona, severity, signal, tag, sort }),
-    [q, product, persona, severity, signal, tag, sort]
+    () => insightsWhere({ q: q || undefined, product, persona, severity, signal, tag, since, until, sort }),
+    [q, product, persona, severity, signal, tag, since, until, sort]
   );
   const volume = useMemo(() => monthlyVolume(filtered), [filtered]);
+
+  // Query-context facts for whatever the current filter matches.
+  const queryFacts = useMemo(() => {
+    const n = filtered.length;
+    const critical = filtered.filter((i) => i.severity === 'critical').length;
+    const quotes = filtered.filter((i) => evidenceClass(i) === 'DIRECT QUOTE').length;
+    const newest = filtered.reduce<string | undefined>(
+      (m, i) => (m === undefined || i.createdAt > m ? i.createdAt : m),
+      undefined
+    );
+    return { n, critical, quotes, synthesis: n - quotes, newest };
+  }, [filtered]);
+
+  const dateTokenLabel =
+    since && until
+      ? `${formatDay(since)} – ${formatDay(until)}`
+      : since
+        ? `since ${formatDay(since)}`
+        : until
+          ? `until ${formatDay(until)}`
+          : undefined;
   const pageRows: Row[] = filtered
     .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
     .map((i) => ({ id: i.id, insight: i, score: scoreOf(i) }));
@@ -101,6 +139,14 @@ export function InsightIndexView() {
             <SegmentedControlItem value="score" label="by score" />
             <SegmentedControlItem value="newest" label="newest" />
           </SegmentedControl>
+          <DateRangeInput
+            label="Captured between"
+            isLabelHidden
+            size="sm"
+            placeholder="Any date"
+            value={since && until ? ({ start: since, end: until } as DateRange) : null}
+            onChange={(range) => setDates(range?.start, range?.end)}
+          />
         </HStack>
         <HStack gap={1.5} wrap="wrap" vAlign="center">
           {PRODUCTS.map((p) => (
@@ -121,12 +167,28 @@ export function InsightIndexView() {
           ))}
           {signal && <Token label={`signal: ${signal}`} color="teal" onRemove={() => set('signal', undefined)} />}
           {tag && <Token label={`tag: ${tag}`} color="orange" onRemove={() => set('tag', undefined)} />}
+          {dateTokenLabel && <Token label={dateTokenLabel} color="green" onRemove={() => setDates(undefined, undefined)} />}
         </HStack>
       </VStack>
 
+      <StatTileRow>
+        <StatTile value={queryFacts.n} label="matching insights" />
+        <StatTile
+          value={queryFacts.n ? `${Math.round((queryFacts.critical / queryFacts.n) * 100)}%` : '—'}
+          label={`critical share (${queryFacts.critical})`}
+        />
+        <StatTile value={queryFacts.newest ? formatDay(queryFacts.newest) : '—'} label="newest match" />
+        <StatTile value={`${queryFacts.quotes} / ${queryFacts.synthesis}`} label="direct quote / synthesis" />
+      </StatTileRow>
+
       <Fig
         title="Evidence volume for this query"
-        caption="The histogram re-renders with every filter — a spike names the month the theme landed."
+        n={filtered.length}
+        note={
+          filtered.length === ALL_INSIGHTS.length
+            ? undefined
+            : `Histogram re-computes from the ${filtered.length} insights the current filter matches.`
+        }
       >
         <VolumeChart data={volume} height={140} />
       </Fig>
@@ -177,7 +239,7 @@ export function InsightIndexView() {
               </Text>
             ),
           },
-          { key: 'date', header: 'Captured', width: pixel(100), renderCell: (r: Row) => <Text type="supporting">{r.insight.createdAt}</Text> },
+          { key: 'date', header: 'Captured', width: pixel(110), renderCell: (r: Row) => <Text type="supporting">{formatDay(r.insight.createdAt)}</Text> },
         ]}
       />
 

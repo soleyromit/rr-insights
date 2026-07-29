@@ -1,11 +1,10 @@
-// views/products/ExxatOneView.tsx — the /platform page (v18 Astryx).
-// Ecosystem narrative as MetadataList, product dependency web computed from
-// products.ts, revenue model and confirmed platform UX decisions. Absorbs the
-// ExactOne north-star content that previously hid in the LC spec.
+// views/products/ExxatOneView.tsx — the /platform page (v19). Platform has no
+// productId, so the header stays a plain PageHeader whose facts are computed
+// from the honest non-zero query (tag:'platform' — 16 insights; q:'ExxatOne'
+// matches only 10). Orienting = the 5×5 dependency HeatGrid computed from
+// PRODUCTS[].productDependencies; every hub link carries its live count.
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Token } from '@astryxdesign/core/Token';
@@ -13,12 +12,25 @@ import { Blockquote } from '@astryxdesign/core/Blockquote';
 import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { Fig } from '../../components/charts/Fig';
+import { HeatGrid } from '../../components/charts/HeatGrid';
+import { QueryLink } from '../../components/story/QueryLink';
 import { SpecSection } from './spec/SpecSection';
+import { SectionTabs, useSection } from './spec/SectionTabs';
 import { StoryTable } from './spec/StoryTable';
 import type { StoryRow } from './spec/StoryTable';
 import { PRODUCTS, getProduct } from '../../data/products';
+import { insightsWhere, productFacts } from '../../lib/selectors';
+import { formatDay } from '../../lib/format';
 import { hrefInsights, hrefProduct } from '../../lib/links';
-import { Link } from '@astryxdesign/core/Link';
+
+const SECTIONS = [
+  { id: 'context', label: 'Business context' },
+  { id: 'dependencies', label: 'Dependency web' },
+  { id: 'revenue', label: 'Revenue map' },
+  { id: 'decisions', label: 'UX decisions' },
+  { id: 'stories', label: 'Stories' },
+];
 
 interface DepRow extends Record<string, unknown> {
   id: string;
@@ -36,13 +48,24 @@ const DEPS: DepRow[] = PRODUCTS.flatMap((p) =>
   }))
 );
 
-const EVOLUTION = [
-  { era: 'Before ExxatOne', desc: 'March 1st: all schools emailed all sites simultaneously. Sites overwhelmed; first-come-first-serve conflicts; schools competing for the same slots.' },
-  { era: 'ExxatOne V1', desc: 'Sites post availability; schools apply with specific students. Control shifts from schools to clinical sites; the mass-email chaos ends.' },
-  { era: 'Target state', desc: 'Uber/Airbnb-style ecosystem: placements → jobs → observerships → CME. The student platform for the entire allied healthcare career lifecycle.' },
+interface EvoRow extends Record<string, unknown> {
+  id: string;
+  era: string;
+  desc: string;
+}
+const EVOLUTION: EvoRow[] = [
+  { id: 'e1', era: 'Before ExxatOne', desc: 'March 1st: all schools emailed all sites simultaneously. Sites overwhelmed; first-come-first-serve conflicts; schools competing for the same slots.' },
+  { id: 'e2', era: 'ExxatOne V1', desc: 'Sites post availability; schools apply with specific students. Control shifts from schools to clinical sites; the mass-email chaos ends.' },
+  { id: 'e3', era: 'Target state', desc: 'Uber/Airbnb-style ecosystem: placements → jobs → observerships → CME. The student platform for the entire allied healthcare career lifecycle.' },
 ];
 
-const REVENUE_MAP = [
+interface RevRow extends Record<string, unknown> {
+  id: string;
+  action: string;
+  rev: boolean;
+  note: string;
+}
+const REVENUE_MAP: RevRow[] = [
   { id: 'r1', action: 'Student accepts placement AND pays', rev: true, note: 'The only revenue-generating event' },
   { id: 'r2', action: 'Student creates account', rev: false, note: 'No revenue' },
   { id: 'r3', action: 'Student browses sites + wish lists', rev: false, note: 'No revenue — needed for discovery' },
@@ -72,128 +95,193 @@ const STORIES: StoryRow[] = [
 ];
 
 export function ExxatOneView() {
+  const [section, setSection] = useSection(SECTIONS, 'context');
+
+  // Honest facts source: tag:'platform' (16 insights) beats q:'ExxatOne' (10)
+  // — labeled as what it is, insights *tagged* platform.
+  const platform = insightsWhere({ tag: 'platform' });
+  const platformCritical = platform.filter((i) => i.severity === 'critical').length;
+  const platformNewest = insightsWhere({ tag: 'platform', sort: 'newest' })[0];
+
+  const productShort = (id: string) => getProduct(id)?.shortName ?? id;
+
   return (
     <VStack gap={5} padding={6} maxWidth={1160}>
       <PageHeader
         title="ExxatOne — the platform"
         lede="Placement logistics before clinical work begins: the marketplace layer adjacent to Prism, and the ecosystem every product page depends on."
         meta="Sources: Aarti student + school design reviews (Feb 25), Day 1–2 Marriott (Mar 2–3)"
+        facts={[
+          {
+            value: String(platform.length),
+            label: 'insights tagged “platform”',
+            href: hrefInsights({ tag: 'platform' }),
+          },
+          {
+            value: String(platformCritical),
+            label: 'critical',
+            href: hrefInsights({ tag: 'platform', severity: 'critical' }),
+          },
+          ...(platformNewest
+            ? [
+                {
+                  value: formatDay(platformNewest.createdAt),
+                  label: 'newest',
+                  href: hrefInsights({ tag: 'platform', sort: 'newest' }),
+                },
+              ]
+            : []),
+        ]}
       />
+
+      <Fig
+        title="Product dependency web — who depends on whom"
+        n={DEPS.length}
+        caption={`Computed from each product's declared dependencies in the registry: ${DEPS.length} directed edges across ${PRODUCTS.length} products. Rows depend on columns; a cell links to the depending product's hub.`}
+      >
+        <HeatGrid
+          rows={PRODUCTS.map((p) => p.shortName)}
+          cols={PRODUCTS.map((p) => p.shortName)}
+          cell={(r, c) => {
+            const from = PRODUCTS[r];
+            const to = PRODUCTS[c];
+            const dep = from.productDependencies.find((d) => d.product === to.id);
+            return dep
+              ? {
+                  value: 1,
+                  label: '●',
+                  title: `${from.shortName} → ${to.shortName}: ${dep.dependency}`,
+                  href: hrefProduct(from.id),
+                }
+              : { value: 0 };
+          }}
+          rowHref={(r) => hrefProduct(PRODUCTS[r].id)}
+          emptyHint="no declared dependency"
+        />
+      </Fig>
 
       <Blockquote cite="Aarti · ExxatOne Student + School · Feb 25 · sessions d4c622ef + 72f8b82e">
         We are creating the concept of an allied health care student — just like Airbnb created the concept of a traveler.
       </Blockquote>
 
-      <SpecSection title="Business context" sub="The numbers Romit designs within — Day 1 Marriott (Mar 2) + Aarti reviews.">
-        <MetadataList columns="multi" title="Platform facts">
-          <MetadataListItem label="Revenue trigger">One action: student pays for an accepted placement. Nothing else generates revenue.</MetadataListItem>
-          <MetadataListItem label="PA market penetration">51% — 105 of ~300 PA programs; the rest blocked by semester registration, multi-site tracking, competency visualization</MetadataListItem>
-          <MetadataListItem label="Demo close rate">40% — 4 of 10 demos close</MetadataListItem>
-          <MetadataListItem label="Jobs module launch">Apr 15 — post-graduation employment, licensed students only</MetadataListItem>
-          <MetadataListItem label="KKR thesis">TAM $300M → $1B; Rule of 40 target 50–60; clinical education consolidates to 1–3 players and Exxat must be one</MetadataListItem>
-          <MetadataListItem label="Incumbent weakness">ExamSoft NPS 1/5, sold by Turnitin, publicly anti-AI — the displacement window is open</MetadataListItem>
-        </MetadataList>
-        <Grid columns={{ minWidth: 260, max: 3 }} gap={3}>
-          {EVOLUTION.map((e) => (
-            <Card key={e.era} variant="muted" padding={3}>
-              <VStack gap={1}>
-                <Text type="body" weight="semibold">
-                  {e.era}
-                </Text>
-                <Text type="supporting" as="p" textWrap="pretty">
-                  {e.desc}
-                </Text>
-              </VStack>
-            </Card>
-          ))}
-        </Grid>
-      </SpecSection>
+      <SectionTabs sections={SECTIONS} value={section} onChange={setSection} />
 
-      <SpecSection
-        title="Product dependency web"
-        sub="Computed from each product's declared dependencies in the registry — every row links to both product hubs."
-      >
-        <Table<DepRow>
-          data={DEPS}
-          idKey="id"
-          density="compact"
-          hasHover
-          columns={[
-            {
-              key: 'from',
-              header: 'Product',
-              width: pixel(130),
-              renderCell: (r) => <Token label={getProduct(r.from)?.shortName ?? r.from} href={hrefProduct(r.from)} color="blue" />,
-            },
-            {
-              key: 'to',
-              header: 'Depends on',
-              width: pixel(130),
-              renderCell: (r) => <Token label={getProduct(r.to)?.shortName ?? r.to} href={hrefProduct(r.to)} />,
-            },
-            {
-              key: 'dependency',
-              header: 'Dependency',
-              width: proportional(4),
-              renderCell: (r) => (
-                <Text type="supporting" as="p" textWrap="pretty">
-                  {r.dependency}
-                </Text>
-              ),
-            },
-          ]}
-        />
-      </SpecSection>
+      {section === 'context' && (
+        <SpecSection title="Business context" sub="The numbers Romit designs within — Day 1 Marriott (Mar 2) + Aarti reviews.">
+          <MetadataList columns="multi" title="Platform facts">
+            <MetadataListItem label="Revenue trigger">One action: student pays for an accepted placement. Nothing else generates revenue.</MetadataListItem>
+            <MetadataListItem label="PA market penetration">51% — 105 of ~300 PA programs; the rest blocked by semester registration, multi-site tracking, competency visualization</MetadataListItem>
+            <MetadataListItem label="Demo close rate">40% — 4 of 10 demos close</MetadataListItem>
+            <MetadataListItem label="Jobs module launch">Apr 15 — post-graduation employment, licensed students only</MetadataListItem>
+            <MetadataListItem label="KKR thesis">TAM $300M → $1B; Rule of 40 target 50–60; clinical education consolidates to 1–3 players and Exxat must be one</MetadataListItem>
+            <MetadataListItem label="Incumbent weakness">ExamSoft NPS 1/5, sold by Turnitin, publicly anti-AI — the displacement window is open</MetadataListItem>
+          </MetadataList>
+          <Table<EvoRow>
+            data={EVOLUTION}
+            idKey="id"
+            density="balanced"
+            verticalAlign="top"
+            columns={[
+              { key: 'era', header: 'Era', width: pixel(170), renderCell: (r) => <Text type="body" weight="semibold">{r.era}</Text> },
+              { key: 'desc', header: 'How placement works', width: proportional(4), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.desc}</Text> },
+            ]}
+          />
+        </SpecSection>
+      )}
 
-      <SpecSection title="Revenue map" sub="What generates revenue vs what does not — this asymmetry shapes every design priority.">
-        <Card padding={4}>
-          <VStack gap={1.5}>
-            {REVENUE_MAP.map((r) => (
-              <HStack key={r.id} gap={2} vAlign="center" wrap="wrap">
-                <Badge variant={r.rev ? 'success' : 'neutral'} label={r.rev ? 'revenue' : 'free'} />
-                <Text type="body" weight={r.rev ? 'semibold' : undefined}>
-                  {r.action}
-                </Text>
-                <Text type="supporting">{r.note}</Text>
-              </HStack>
-            ))}
-          </VStack>
-        </Card>
-        <Card variant="muted" padding={3}>
+      {section === 'dependencies' && (
+        <SpecSection
+          title="Product dependency web"
+          sub="The rows behind the header grid — every row links both product hubs."
+        >
+          <Table<DepRow>
+            data={DEPS}
+            idKey="id"
+            density="compact"
+            hasHover
+            columns={[
+              {
+                key: 'from',
+                header: 'Product',
+                width: pixel(130),
+                renderCell: (r) => <Token label={productShort(r.from)} href={hrefProduct(r.from)} color="blue" />,
+              },
+              {
+                key: 'to',
+                header: 'Depends on',
+                width: pixel(130),
+                renderCell: (r) => <Token label={productShort(r.to)} href={hrefProduct(r.to)} />,
+              },
+              {
+                key: 'dependency',
+                header: 'Dependency',
+                width: proportional(4),
+                renderCell: (r) => (
+                  <Text type="supporting" as="p" textWrap="pretty">
+                    {r.dependency}
+                  </Text>
+                ),
+              },
+            ]}
+          />
+        </SpecSection>
+      )}
+
+      {section === 'revenue' && (
+        <SpecSection title="Revenue map" sub="What generates revenue vs what does not — this asymmetry shapes every design priority.">
+          <Table<RevRow>
+            data={REVENUE_MAP}
+            idKey="id"
+            density="compact"
+            columns={[
+              { key: 'rev', header: '', width: pixel(100), renderCell: (r) => <Badge variant={r.rev ? 'success' : 'neutral'} label={r.rev ? 'revenue' : 'free'} /> },
+              { key: 'action', header: 'Event', width: proportional(2), renderCell: (r) => <Text type="body" weight={r.rev ? 'semibold' : undefined}>{r.action}</Text> },
+              { key: 'note', header: 'Why', width: proportional(2), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.note}</Text> },
+            ]}
+          />
           <Text type="supporting" as="p" textWrap="pretty">
-            Ecosystem expansion: Placements (live) → Jobs module (Apr 15) → Observerships/shadowships (future) →
-            CME (2027, "coming soon" tab under consideration). Student phases: pre-placement is P0 (pay, upload compliance,
-            onboard — must complete before entering a facility); during-placement activity stays in Prism; offboarding usage
-            is very low and may merge into during-placement.
+            Ecosystem expansion: Placements (live) → Jobs module (Apr 15) → Observerships/shadowships (future) → CME (2027,
+            "coming soon" tab under consideration). Student phases: pre-placement is P0 (pay, upload compliance, onboard —
+            must complete before entering a facility); during-placement activity stays in Prism; offboarding usage is very low
+            and may merge into during-placement.
           </Text>
-        </Card>
-      </SpecSection>
+        </SpecSection>
+      )}
 
-      <SpecSection title="Confirmed platform UX decisions" sub="Validated by Aarti in the Feb 25 design reviews.">
-        <Table<Record<string, unknown> & (typeof DECISIONS)[number]>
-          data={DECISIONS}
-          idKey="id"
-          density="balanced"
-          columns={[
-            { key: 'decision', header: 'Decision', width: pixel(240), renderCell: (r) => <Text type="body" weight="semibold">{r.decision}</Text> },
-            { key: 'detail', header: 'Detail', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.detail}</Text> },
-            { key: 'src', header: 'Source', width: pixel(180), renderCell: (r) => <Text type="supporting">{r.src}</Text> },
-          ]}
-        />
-      </SpecSection>
+      {section === 'decisions' && (
+        <SpecSection title="Confirmed platform UX decisions" sub="Validated by Aarti in the Feb 25 design reviews.">
+          <Table<Record<string, unknown> & (typeof DECISIONS)[number]>
+            data={DECISIONS}
+            idKey="id"
+            density="balanced"
+            columns={[
+              { key: 'decision', header: 'Decision', width: pixel(240), renderCell: (r) => <Text type="body" weight="semibold">{r.decision}</Text> },
+              { key: 'detail', header: 'Detail', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.detail}</Text> },
+              { key: 'src', header: 'Source', width: pixel(180), renderCell: (r) => <Text type="supporting">{r.src}</Text> },
+            ]}
+          />
+        </SpecSection>
+      )}
 
-      <SpecSection title="Platform user stories" sub="From the Aarti design reviews and Day 2 Marriott.">
-        <StoryTable rows={STORIES} />
-      </SpecSection>
+      {section === 'stories' && (
+        <SpecSection title="Platform user stories" sub="From the Aarti design reviews and Day 2 Marriott.">
+          <StoryTable rows={STORIES} />
+        </SpecSection>
+      )}
 
       <HStack gap={4} wrap="wrap">
-        <Link href={hrefInsights({ q: 'ExxatOne' })} isStandalone>
-          Platform evidence in the corpus →
-        </Link>
+        <QueryLink
+          href={hrefInsights({ tag: 'platform' })}
+          count={platform.length}
+          label="platform-tagged findings in the corpus"
+        />
         {PRODUCTS.map((p) => (
-          <Link key={p.id} href={hrefProduct(p.id)} isStandalone>
-            {p.shortName} hub →
-          </Link>
+          <QueryLink
+            key={p.id}
+            href={hrefProduct(p.id)}
+            count={productFacts(p.id).n}
+            label={`insights · ${p.shortName} hub`}
+          />
         ))}
       </HStack>
     </VStack>

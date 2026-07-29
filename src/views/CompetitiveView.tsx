@@ -20,6 +20,9 @@ import { parsePhaseDate } from '../lib/phaseDates';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { RankedList } from '../components/charts/RankedList';
+import { ConflictNote } from '../components/story/ConflictNote';
+import { QueryLink } from '../components/story/QueryLink';
+import { insightsWhere } from '../lib/selectors';
 import { hrefInsights, hrefProduct } from '../lib/links';
 
 type CellValue = boolean | 'partial';
@@ -35,9 +38,9 @@ const score = (v: CellValue) => (v === true ? 1 : v === 'partial' ? 0.5 : 0);
 // The three reasons programs stay on ExamSoft (Dr. Vicky Mody session, Mar 20)
 // and Exxat's answer to each. Status is stated, not scored: nothing is measured yet.
 const ANCHORS = [
-  { title: 'Curriculum mapping', state: 'partial', response: 'Flat tagging architecture + bulk tag on import. One system, no Excel.', evidence: 'ins-em-008 · ins-em-011', q: 'curriculum mapping' },
-  { title: 'Faculty training over years', state: 'planned', response: 'Canvas-level UX so training is unnecessary; migration UX designed for the switching moment.', evidence: 'ins-em-018', q: 'ExamSoft' },
-  { title: 'Strong item analytics', state: 'planned', response: 'Item heatmaps + p-values in Assessment analytics; AI layer (May sprint) surpasses rather than matches.', evidence: 'ins-em-015 · ins-em-016', q: 'item analytics' },
+  { title: 'Curriculum mapping', state: 'partial', response: 'Flat tagging architecture + bulk tag on import. One system, no Excel.', evidenceIds: ['ins-em-008', 'ins-em-011'], q: 'curriculum mapping' },
+  { title: 'Faculty training over years', state: 'planned', response: 'Canvas-level UX so training is unnecessary; migration UX designed for the switching moment.', evidenceIds: ['ins-em-018'], q: 'ExamSoft' },
+  { title: 'Strong item analytics', state: 'planned', response: 'Item heatmaps + p-values in Assessment analytics; AI layer (May sprint) surpasses rather than matches.', evidenceIds: ['ins-em-015', 'ins-em-016'], q: 'item analytics' },
 ];
 
 interface FeatureRow extends Record<string, unknown> {
@@ -88,12 +91,7 @@ export function CompetitiveView() {
         meta={`${COMPETITOR_FEATURES.length} features × ${PLATFORMS.length} platforms · Cohere in ${daysToCohere ?? '?'} days (rendered ${COHERE_LAUNCH.rendered}, ${COHERE_LAUNCH.status}, owner ${COHERE_LAUNCH.owner})`}
       />
 
-      <HStack gap={2} vAlign="center">
-        <StatusDot variant="warning" label="date conflict" />
-        <Text type="supporting" as="p" textWrap="pretty">
-          {COHERE_LAUNCH.note}
-        </Text>
-      </HStack>
+      <ConflictNote label="Cohere launch date" conflict={COHERE_LAUNCH} />
 
       <Fig
         title="Feature parity matrix"
@@ -141,12 +139,25 @@ export function CompetitiveView() {
           caption="Features no tracked platform ships. These lead the Cohere story, not the parity table."
         >
           <VStack gap={2}>
-            {openTerritory.map((f) => (
-              <HStack key={f.name} gap={2} vAlign="center" hAlign="between">
-                <Link href={hrefInsights({ product: 'exam-management', q: f.name })}>{f.name}</Link>
-                <Text type="supporting">{f.exxat === true ? 'shipped' : 'in design'}</Text>
-              </HStack>
-            ))}
+            {openTerritory.map((f) => {
+              const backing = insightsWhere({ product: 'exam-management', q: f.name }).length;
+              return (
+                <HStack key={f.name} gap={2} vAlign="center" hAlign="between">
+                  <Text type="body">{f.name}</Text>
+                  <HStack gap={2} vAlign="center">
+                    {backing > 0 && (
+                      <QueryLink
+                        href={hrefInsights({ product: 'exam-management', q: f.name })}
+                        count={backing}
+                        label={`backing insight${backing === 1 ? '' : 's'}`}
+                        isStandalone={false}
+                      />
+                    )}
+                    <Text type="supporting">{f.exxat === true ? 'shipped' : 'in design'}</Text>
+                  </HStack>
+                </HStack>
+              );
+            })}
           </VStack>
         </Fig>
       </Grid>
@@ -171,10 +182,23 @@ export function CompetitiveView() {
                 <Text type="body" as="p" textWrap="pretty">
                   {a.response}
                 </Text>
-                <Text type="supporting">{a.evidence}</Text>
-                <Link href={hrefInsights({ product: 'exam-management', q: a.q })} isStandalone>
-                  Evidence for this anchor →
-                </Link>
+                <HStack gap={4} vAlign="center" wrap="wrap">
+                  <QueryLink
+                    href={hrefInsights({ ids: a.evidenceIds })}
+                    count={a.evidenceIds.length}
+                    label={`anchor insight${a.evidenceIds.length === 1 ? '' : 's'} (${a.evidenceIds.join(' · ')})`}
+                  />
+                  {(() => {
+                    const n = insightsWhere({ product: 'exam-management', q: a.q }).length;
+                    return n > 0 ? (
+                      <QueryLink
+                        href={hrefInsights({ product: 'exam-management', q: a.q })}
+                        count={n}
+                        label={`exam insights matching “${a.q}”`}
+                      />
+                    ) : null;
+                  })()}
+                </HStack>
               </VStack>
             </Collapsible>
           ))}

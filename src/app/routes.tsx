@@ -46,7 +46,7 @@ export const ROUTES: RouteDef[] = [
   { path: '/products/learning-contracts/spec', label: 'LC — Spec', productId: 'learning-contracts', component: v(() => import('../views/products/LearningContractsView'), 'LearningContractsView') },
   { path: '/products/exam-management/audit', label: 'Exam — Admin Audit', productId: 'exam-management', component: v(() => import('../views/products/ExamAdminAuditView'), 'ExamAdminAuditView') },
   { path: '/products/exam-management/ia', label: 'Exam — Nav IA', productId: 'exam-management', component: v(() => import('../views/products/NavIAView'), 'NavIAView') },
-  { path: '/platform', label: 'ExxatOne Platform', component: v(() => import('../views/products/ExxatOneView'), 'ExxatOneView') },
+  { path: '/platform', label: 'Platform', section: 'products', component: v(() => import('../views/products/ExxatOneView'), 'ExxatOneView') },
 
   { path: '/story', label: 'Connect the Dots', section: 'story', component: v(() => import('../views/NarrativeView'), 'NarrativeView'), needsOnNav: true },
   { path: '/roadmap', label: 'Roadmap', section: 'story', component: v(() => import('../views/RoadmapView'), 'RoadmapView') },

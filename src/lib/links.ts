@@ -12,8 +12,37 @@ export interface InsightFilter {
   persona?: string;
   signal?: string;
   source?: string;
+  /** Inclusive ISO-day bounds on createdAt; lexicographic compare is safe on ISO. */
+  since?: string;
+  until?: string;
   sort?: 'score' | 'newest';
   ids?: string[];
+}
+
+/** Inclusive day bounds for a 'YYYY-MM' month, for chart marks that open their month. */
+export function monthRange(month: string): { since: string; until: string } {
+  const [y, m] = month.split('-').map(Number);
+  const last = new Date(y, m, 0).getDate();
+  return { since: `${month}-01`, until: `${month}-${String(last).padStart(2, '0')}` };
+}
+
+/** Inverse of hrefInsights — one parser so every page reads filters identically. */
+export function parseInsightFilter(params: URLSearchParams): InsightFilter {
+  const get = (k: string) => params.get(k) ?? undefined;
+  const ids = get('ids');
+  return {
+    q: get('q'),
+    tag: get('tag'),
+    severity: get('severity') as SeverityLevel | undefined,
+    product: get('product'),
+    persona: get('persona'),
+    signal: get('signal'),
+    source: get('source'),
+    since: get('since'),
+    until: get('until'),
+    sort: get('sort') as InsightFilter['sort'],
+    ids: ids ? ids.split(',').filter(Boolean) : undefined,
+  };
 }
 
 function qs(params: Record<string, string | undefined>): string {
@@ -32,6 +61,8 @@ export const hrefInsights = (f: InsightFilter = {}) =>
     persona: f.persona,
     signal: f.signal,
     source: f.source,
+    since: f.since,
+    until: f.until,
     sort: f.sort,
     ids: f.ids?.join(','),
   })}`;
@@ -54,7 +85,8 @@ export const hrefProductSpec = (id: string, section?: string) =>
   section ? `/products/${id}/spec/${section}` : `/products/${id}/spec`;
 
 export const hrefHighlights = (product?: string) => `/highlights${qs({ product })}`;
-export const hrefCharts = (dim?: string) => `/charts${qs({ dim })}`;
+export const hrefCharts = (dim?: string, viz?: 'ranked' | 'severity' | 'volume') =>
+  `/charts${qs({ dim, viz })}`;
 export const hrefCompetitive = (product?: string) => `/competitive${qs({ product })}`;
 export const hrefBriefings = (audience?: string) => `/briefings${qs({ audience })}`;
 export const hrefSources = (session?: string) => `/sources${qs({ session })}`;

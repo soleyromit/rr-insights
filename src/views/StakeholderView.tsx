@@ -1,20 +1,22 @@
-// views/StakeholderView.tsx — Briefings (v18 Astryx rebuild).
+// views/StakeholderView.tsx — Briefings (v19 redesign).
 // One audience at a time (synced to ?audience=), letter format, copy-ready.
-// Writing rules enforced on render and copy: no em dashes leave this page.
-// Risk rows link to their signal case files; referenced products link to hubs.
+// The letter now sits beside a 380px evidence rail that proves its numbers:
+// criticals by product, a 6-month volume sparkline, the signal register as
+// linked rows, and a newest-first findings teaser. Writing rules enforced on
+// render and copy: no em dashes leave this page.
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
-import { Grid } from '@astryxdesign/core/Grid';
+import { Layout, LayoutPanel } from '@astryxdesign/core/Layout';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
 import { Heading } from '@astryxdesign/core/Heading';
-import { Link } from '@astryxdesign/core/Link';
 import { Token } from '@astryxdesign/core/Token';
 import { Button } from '@astryxdesign/core/Button';
 import { Icon } from '@astryxdesign/core/Icon';
 import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
 import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
 import { useToast } from '@astryxdesign/core/Toast';
 import { DECKS, SIGNAL_RISKS } from '../data/briefings';
@@ -22,9 +24,15 @@ import { ALL_INSIGHTS } from '../data/insights';
 import { MILESTONES } from '../data/personas';
 import { PRODUCTS } from '../data/products';
 import { SESSIONS_SYNCED } from '../data/version';
-import { allSignals } from '../lib/selectors';
+import { allSignals, insightsWhere, productFacts, corpusFacts, CORPUS_ANCHOR } from '../lib/selectors';
+import { monthlyVolume } from '../lib/series';
+import { useParamState } from '../lib/useParamState';
 import { PageHeader } from '../components/ui/PageHeader';
-import { hrefSignal, hrefProduct } from '../lib/links';
+import { Fig } from '../components/charts/Fig';
+import { RankedList } from '../components/charts/RankedList';
+import { Sparkline } from '../components/charts/Sparkline';
+import { FindingsFeed } from '../components/story/FindingsFeed';
+import { hrefSignal, hrefProduct, hrefInsights } from '../lib/links';
 
 // Writing rule: no em dashes leave this page, on screen or on the clipboard.
 const clean = (t: string) => t.replace(/\s+—\s+/g, ', ').replace(/—/g, ', ');
@@ -54,27 +62,45 @@ function riskHref(text: string): string | undefined {
 }
 
 export function StakeholderView() {
-  const [params, setParams] = useSearchParams();
+  const [audienceParam, setAudience] = useParamState('audience', slug(DECKS[0].audience));
   const toast = useToast();
 
-  const audience = params.get('audience') ?? slug(DECKS[0].audience);
-  const deck = DECKS.find((d) => slug(d.audience) === audience) ?? DECKS[0];
-
-  const setAudience = (v: string) =>
-    setParams(
-      (prev) => {
-        const p = new URLSearchParams(prev);
-        if (v === slug(DECKS[0].audience)) p.delete('audience');
-        else p.set('audience', v);
-        return p;
-      },
-      { replace: true }
-    );
+  const deck = DECKS.find((d) => slug(d.audience) === audienceParam) ?? DECKS[0];
 
   const referencedProducts = useMemo(() => {
     const text = SECTIONS.map((s) => deck[s.key]).join(' ');
     return PRODUCTS.filter((p) => text.includes(p.name) || text.includes(p.shortName));
   }, [deck]);
+
+  // Evidence rail data — every number in the letter is provable one click away.
+  const criticalRows = useMemo(
+    () =>
+      PRODUCTS.map((p) => {
+        const f = productFacts(p.id);
+        return {
+          key: p.id,
+          label: p.shortName,
+          value: f.critical,
+          hint: `of ${f.n}`,
+          href: hrefInsights({ product: p.id, severity: 'critical' }),
+        };
+      }).sort((a, b) => b.value - a.value),
+    []
+  );
+
+  const sparkData = useMemo(
+    () =>
+      monthlyVolume(ALL_INSIGHTS)
+        .slice(-6)
+        .map((m) => ({ label: m.label, value: m.total })),
+    []
+  );
+
+  const since7 = useMemo(
+    () => new Date(new Date(CORPUS_ANCHOR).getTime() - 7 * 86400000).toISOString().slice(0, 10),
+    []
+  );
+  const newest = useMemo(() => insightsWhere({ sort: 'newest' }), []);
 
   const copyText = () => {
     const text = [
@@ -86,10 +112,10 @@ export function StakeholderView() {
   };
 
   return (
-    <VStack gap={5} padding={6} maxWidth={1080}>
+    <VStack gap={5} padding={6} maxWidth={1180}>
       <PageHeader
         title="Briefings"
-        lede="The same research, three registers: evidence-grounded for Arun, business-outcome for Kunal, decision-only for Aarti — pick the audience, copy the letter, send it."
+        lede="The same research, three registers: evidence-grounded for Arun, business-outcome for Kunal, decision-only for Aarti — pick the audience, copy the letter, send it. The rail alongside proves every number the letter quotes."
         meta={`${DECKS.length} audiences · computed live from ${ALL_INSIGHTS.length} insights across ${SESSIONS_SYNCED} synced sessions · copy strips em dashes per writing rules`}
       />
 
@@ -99,7 +125,74 @@ export function StakeholderView() {
         ))}
       </SegmentedControl>
 
-      <Grid columns={{ minWidth: 380, max: 2 }} gap={4}>
+      <Layout
+        height="auto"
+        end={
+          <LayoutPanel width={380} hasDivider isScrollable={false} padding={3} label="Evidence rail">
+            <VStack gap={4}>
+              <Fig
+                title="Critical load by product"
+                n={corpusFacts().critical}
+                caption="Computed live from the corpus — the same numbers the letters quote. Each row opens that product's critical query."
+              >
+                <RankedList rows={criticalRows} format={(r) => `${r.value} critical`} />
+              </Fig>
+
+              <Fig
+                title="Evidence volume — last 6 months"
+                n={sparkData.reduce((n, d) => n + d.value, 0)}
+                link={{
+                  href: hrefInsights({ sort: 'newest', since: since7 }),
+                  count: corpusFacts().last7d,
+                  label: 'added this week — newest first',
+                }}
+              >
+                <Sparkline data={sparkData} height={48} />
+              </Fig>
+
+              <Card padding={3}>
+                <List
+                  density="compact"
+                  hasDividers
+                  header={
+                    <Text type="label" color="secondary">
+                      Signal register, quoted in the briefings
+                    </Text>
+                  }
+                >
+                  {SIGNAL_RISKS.map((r, i) => {
+                    const href = riskHref(r.signal);
+                    return (
+                      <Item
+                        key={i}
+                        as="li"
+                        align="start"
+                        href={href}
+                        startContent={<StatusDot variant={RISK_DOT[r.type] ?? 'neutral'} label={r.type} tooltip={r.type} />}
+                        label={clean(r.signal)}
+                        labelLines={3}
+                      />
+                    );
+                  })}
+                </List>
+              </Card>
+
+              <Card padding={3}>
+                <FindingsFeed
+                  insights={newest}
+                  limit={3}
+                  from="/briefings"
+                  header={
+                    <Text type="label" color="secondary">
+                      What's new
+                    </Text>
+                  }
+                />
+              </Card>
+            </VStack>
+          </LayoutPanel>
+        }
+      >
         <Card padding={5}>
           <VStack gap={4}>
             <HStack gap={3} vAlign="center" hAlign="between">
@@ -131,34 +224,7 @@ export function StakeholderView() {
             )}
           </VStack>
         </Card>
-
-        <Card padding={4}>
-          <VStack gap={3}>
-            <Text type="label" color="secondary">
-              Signal register, quoted in the briefings
-            </Text>
-            {SIGNAL_RISKS.map((r, i) => {
-              const href = riskHref(r.signal);
-              return (
-                <HStack key={i} gap={2}>
-                  <StatusDot variant={RISK_DOT[r.type] ?? 'neutral'} label={r.type} tooltip={r.type} />
-                  {href ? (
-                    <Link href={href}>
-                      <Text type="body" as="p" textWrap="pretty">
-                        {clean(r.signal)}
-                      </Text>
-                    </Link>
-                  ) : (
-                    <Text type="body" as="p" textWrap="pretty">
-                      {clean(r.signal)}
-                    </Text>
-                  )}
-                </HStack>
-              );
-            })}
-          </VStack>
-        </Card>
-      </Grid>
+      </Layout>
     </VStack>
   );
 }

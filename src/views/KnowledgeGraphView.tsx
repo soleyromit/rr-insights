@@ -7,21 +7,23 @@
 // in the detail panel.
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useChartColors } from '@astryxdesign/charts';
+import { useChartColors, ChartLegend } from '@astryxdesign/charts';
+import type { LegendItem } from '@astryxdesign/charts';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Card } from '@astryxdesign/core/Card';
 import { Text } from '@astryxdesign/core/Text';
-import { Link } from '@astryxdesign/core/Link';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Token } from '@astryxdesign/core/Token';
 import { Button } from '@astryxdesign/core/Button';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { PageHeader } from '../components/ui/PageHeader';
+import { QueryLink } from '../components/story/QueryLink';
 import { getProduct } from '../data/products';
 import { PERSONAS } from '../data/personas';
-import { insightById } from '../lib/selectors';
-import { hrefProduct, hrefPersona, hrefInsight } from '../lib/links';
+import { ALL_INSIGHTS } from '../data/insights';
+import { insightById, insightsWhere, productFacts } from '../lib/selectors';
+import { hrefProduct, hrefPersona, hrefInsight, hrefInsights } from '../lib/links';
 
 // ─── Static graph data built from SKILL.md Section 1 ─────────────────────
 // Every node = real information source. Every edge = real documented connection.
@@ -170,6 +172,19 @@ function routeForNode(n: GNode): string | null {
   return null;
 }
 
+/** Corpus query for a session node via source-substring match. Tries the node
+ * label, then each named speaker; returns the first fragment that matches. */
+function sessionQuery(n: GNode): { href: string; count: number } | null {
+  if (n.type !== 'session') return null;
+  const candidates = [n.label, ...(n.speaker ? n.speaker.split(',').map((s) => s.trim()) : [])];
+  for (const frag of candidates) {
+    if (!frag) continue;
+    const count = insightsWhere({ source: frag }).length;
+    if (count > 0) return { href: hrefInsights({ source: frag }), count };
+  }
+  return null;
+}
+
 export function KnowledgeGraphView() {
   const navigate = useNavigate();
   const colors = useChartColors();
@@ -312,7 +327,7 @@ export function KnowledgeGraphView() {
       <PageHeader
         title="Knowledge Graph"
         lede="Every Granola session, project doc, insight, and feature — connected by evidence. Click any node to trace its information lineage."
-        meta={`${NODES.length} nodes · ${EDGES.length} edges · edge direction = information flow`}
+        meta={`${NODES.length} curated nodes · ${EDGES.length} edges — a hand-built subset tracing key chains, not auto-derived from the ${ALL_INSIGHTS.length}-insight corpus · edge direction = information flow`}
       />
 
       <HStack gap={3} vAlign="center" wrap="wrap">
@@ -410,22 +425,16 @@ export function KnowledgeGraphView() {
             </div>
           </Card>
 
-          <HStack gap={3} wrap="wrap" vAlign="center">
-            {(Object.keys(NODE_LETTER) as GNode['type'][])
-              .filter((t) => t !== 'persona')
-              .map((type) => (
-                <HStack key={type} gap={1} vAlign="center">
-                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: NODE_TYPE_COLORS[type], display: 'inline-block' }} />
-                  <Text type="supporting">{type}</Text>
-                </HStack>
-              ))}
-            {(Object.entries(EDGE_COLORS) as [GEdge['type'], string][]).map(([type, color]) => (
-              <HStack key={type} gap={1} vAlign="center">
-                <span style={{ width: 18, height: 2, background: color, display: 'inline-block' }} />
-                <Text type="supporting">{type.replace('-', ' ')}</Text>
-              </HStack>
-            ))}
-          </HStack>
+          <ChartLegend
+            items={[
+              ...(Object.keys(NODE_LETTER) as GNode['type'][])
+                .filter((t) => t !== 'persona')
+                .map((type): LegendItem => ({ label: type, color: NODE_TYPE_COLORS[type], type: 'bar' })),
+              ...(Object.entries(EDGE_COLORS) as [GEdge['type'], string][]).map(
+                ([type, color]): LegendItem => ({ label: type.replace('-', ' '), color, type: 'line' })
+              ),
+            ]}
+          />
         </VStack>
 
         <VStack gap={3} maxWidth={300}>
@@ -450,10 +459,16 @@ export function KnowledgeGraphView() {
                 <Text type="supporting" as="p" textWrap="pretty">
                   {selectedNode.detail}
                 </Text>
+                {(() => {
+                  const sq = sessionQuery(selectedNode);
+                  return sq ? <QueryLink href={sq.href} count={sq.count} label="insights from this session" /> : null;
+                })()}
                 {selectedProduct && (
-                  <Link href={hrefProduct(selectedProduct.id)} isStandalone>
-                    {selectedProduct.name} hub →
-                  </Link>
+                  <QueryLink
+                    href={hrefProduct(selectedProduct.id)}
+                    count={productFacts(selectedProduct.id).n}
+                    label={`insights · ${selectedProduct.name} hub`}
+                  />
                 )}
                 <VStack gap={2}>
                   <Text type="label" color="secondary">

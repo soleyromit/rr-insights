@@ -1,19 +1,20 @@
-// views/ChangelogView.tsx — Changelog (v18 Astryx rebuild).
-// Hero: build velocity — sessions synced per release as bars, the recorded
-// corpus size as a line. Below, the full release table with changed-file
-// tokens. This page may remain a leaf.
-import { useMemo } from 'react';
+// views/ChangelogView.tsx — Changelog (v19, light touch). Hero: build velocity
+// as bars + corpus line. The release table gains row expansion (full release
+// note inside the row) and a corpus TrendDelta against the prior release in
+// the Counts column. This page remains a leaf on purpose.
+import { useMemo, useState } from 'react';
 import { Chart, ChartAxis, ChartGrid, bar, line, useChartColors } from '@astryxdesign/charts';
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Text } from '@astryxdesign/core/Text';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Token } from '@astryxdesign/core/Token';
-import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { Table, pixel, proportional, useTableRowExpansion, useTableRowExpansionState } from '@astryxdesign/core/Table';
 import { VERSION_HISTORY } from '../data/personas';
 import { VERSION, LAST_UPDATED, SESSIONS_SYNCED, INSIGHTS_TOTAL } from '../data/version';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
+import { TrendDelta } from '../components/charts/TrendDelta';
 import type { VersionEntry } from '../types';
 
 const FILE_TOKEN_LIMIT = 4;
@@ -56,16 +57,42 @@ interface Row extends Record<string, unknown> {
   id: string;
   entry: VersionEntry;
   latest: boolean;
+  /** Prior (older) release's recorded corpus size, for the Counts delta. */
+  priorCount?: number;
+  kind: 'release' | 'note';
 }
 
 export function ChangelogView() {
-  const rows: Row[] = VERSION_HISTORY.map((entry, i) => ({ id: entry.version, entry, latest: i === 0 }));
+  const baseRows: Row[] = useMemo(
+    () =>
+      VERSION_HISTORY.map((entry, i) => ({
+        id: entry.version,
+        entry,
+        latest: i === 0,
+        priorCount: VERSION_HISTORY[i + 1]?.insightCount,
+        kind: 'release' as const,
+      })),
+    []
+  );
+
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+  const { data, expansionConfig } = useTableRowExpansionState<Row>({
+    baseData: baseRows,
+    getChildren: (r) =>
+      r.kind === 'release'
+        ? [{ id: `${r.entry.version}-note`, entry: r.entry, latest: false, kind: 'note' as const }]
+        : [],
+    getRowKey: (r) => r.id,
+    expandedKeys,
+    setExpandedKeys,
+  });
+  const expansion = useTableRowExpansion<Row>({ ...expansionConfig, hasRowClickExpansion: true });
 
   return (
     <VStack gap={5} padding={6} maxWidth={1100}>
       <PageHeader
         title="Changelog"
-        lede="Every version pushed to soleyromit.github.io/rr-insights by Claude — the release history is the research velocity record."
+        lede="Every version pushed to soleyromit.github.io/rr-insights by Claude — the release history is the research velocity record. Click a row for the full release note."
         meta={`Current ${VERSION} · ${LAST_UPDATED} · ${INSIGHTS_TOTAL} insights · ${SESSIONS_SYNCED} sessions synced · zero manual push steps`}
       />
 
@@ -77,71 +104,88 @@ export function ChangelogView() {
       </Fig>
 
       <Table<Row>
-        data={rows}
+        data={data}
         idKey="id"
         density="balanced"
         hasHover
+        plugins={{ expansion }}
         columns={[
           {
             key: 'version',
             header: 'Version',
-            width: pixel(110),
-            renderCell: (r: Row) => (
-              <VStack gap={0.5}>
-                <Text type="body" weight="semibold" hasTabularNumbers>
-                  {r.entry.version}
-                </Text>
-                {r.latest && <Badge variant="info" label="latest" />}
-              </VStack>
-            ),
+            width: pixel(120),
+            renderCell: (r: Row) =>
+              r.kind === 'note' ? null : (
+                <VStack gap={0.5}>
+                  <Text type="body" weight="semibold" hasTabularNumbers>
+                    {r.entry.version}
+                  </Text>
+                  {r.latest && <Badge variant="info" label="latest" />}
+                </VStack>
+              ),
           },
           {
             key: 'date',
             header: 'Date',
             width: pixel(110),
-            renderCell: (r: Row) => <Text type="supporting">{r.entry.date}</Text>,
+            renderCell: (r: Row) =>
+              r.kind === 'note' ? null : <Text type="supporting">{r.entry.date}</Text>,
           },
           {
             key: 'summary',
             header: 'Summary',
             width: proportional(3),
-            renderCell: (r: Row) => (
-              <Text type="supporting" as="p" maxLines={4} hasTruncateTooltip textWrap="pretty">
-                {r.entry.summary}
-              </Text>
-            ),
+            renderCell: (r: Row) =>
+              r.kind === 'note' ? (
+                <Text type="supporting" as="p" textWrap="pretty">
+                  {r.entry.summary}
+                </Text>
+              ) : (
+                <Text type="supporting" as="p" maxLines={2} textWrap="pretty">
+                  {r.entry.summary}
+                </Text>
+              ),
           },
           {
             key: 'counts',
             header: 'Counts',
-            width: pixel(120),
-            renderCell: (r: Row) => (
-              <VStack gap={0}>
-                <Text type="supporting" hasTabularNumbers>
-                  {r.entry.insightCount} insights
-                </Text>
-                {r.entry.sessionsAdded > 0 && (
+            width: pixel(170),
+            renderCell: (r: Row) =>
+              r.kind === 'note' ? null : (
+                <VStack gap={0.5}>
                   <Text type="supporting" hasTabularNumbers>
-                    +{r.entry.sessionsAdded} sessions
+                    {r.entry.insightCount} insights
                   </Text>
-                )}
-              </VStack>
-            ),
+                  {r.priorCount !== undefined && (
+                    <TrendDelta
+                      current={r.entry.insightCount}
+                      prior={r.priorCount}
+                      windowLabel="vs prior release"
+                    />
+                  )}
+                  {r.entry.sessionsAdded > 0 && (
+                    <Text type="supporting" hasTabularNumbers>
+                      +{r.entry.sessionsAdded} sessions
+                    </Text>
+                  )}
+                </VStack>
+              ),
           },
           {
             key: 'files',
             header: 'Changed files',
             width: proportional(2),
-            renderCell: (r: Row) => (
-              <HStack gap={1} wrap="wrap">
-                {r.entry.changedFiles.slice(0, FILE_TOKEN_LIMIT).map((f) => (
-                  <Token key={f} label={f.split('/').pop() ?? f} size="sm" />
-                ))}
-                {r.entry.changedFiles.length > FILE_TOKEN_LIMIT && (
-                  <Token label={`+${r.entry.changedFiles.length - FILE_TOKEN_LIMIT}`} size="sm" />
-                )}
-              </HStack>
-            ),
+            renderCell: (r: Row) =>
+              r.kind === 'note' ? null : (
+                <HStack gap={1} wrap="wrap">
+                  {r.entry.changedFiles.slice(0, FILE_TOKEN_LIMIT).map((f) => (
+                    <Token key={f} label={f.split('/').pop() ?? f} size="sm" />
+                  ))}
+                  {r.entry.changedFiles.length > FILE_TOKEN_LIMIT && (
+                    <Token label={`+${r.entry.changedFiles.length - FILE_TOKEN_LIMIT}`} size="sm" />
+                  )}
+                </HStack>
+              ),
           },
         ]}
       />
