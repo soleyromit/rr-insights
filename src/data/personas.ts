@@ -153,6 +153,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v19.2',
+    date: '2026-07-29',
+    summary: 'Performance Ledger refreshed from four months of unsynced sources: seven Arun sessions (Mar 24 → Jul 20) pulled from Granola transcripts + Obsidian meeting notes. New 1:1 arc timeline (firefighting → stabilizing → candid reset → positive turn). Criteria rescored with dated rationale: Prototypes 55→82 (designs now run AHEAD of documentation, ~80–85% of Course Eval designed — the Mar "no prototype exists" rationale was obsolete), UI Design 68→78, Collaboration re-based 76→72 against Arun\'s new consensus expectation ("skills we got… the teamwork is not up to the standard I want"), Reviews+Specs stays the weak axis at 58. Weighted overall 72→79. Seven new verbatim Jul 20 Arun quotes added (speed-is-skill, executed ideas, consensus bar, throwaway-work reassurance, intelligent-professional product standard).',
+    insightCount: 420,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/ArunPerformanceView.tsx', 'src/data/version.ts'],
+  },
+  {
     version: 'v19.1',
     date: '2026-07-29',
     summary: 'Archive restored + Intelligence Analytics reinstated. The v18 IA had dropped the sidebar Archive group — NPS Intelligence 2025, Exam Admin Audit, Nav IA and Performance Ledger were reachable only through in-page links, and the Intelligence Analytics page was deleted with its metrics never re-homed. New Archive nav section carries all four reports again, and /analytics returns as a v19-grade metrics page with every number recomputed live: cumulative corpus growth, severity mix by month, tag movers since the March spike (diverging bars), a backlog-aging scatter (days-old × opportunity score, severity-colored — 66 high-value findings are 90+ days old), computed persona × product coverage, aligned per-product small multiples, and per-product evidence-quality meters. Legacy #analytics deep links now land on the new page.',

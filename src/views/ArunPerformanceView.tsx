@@ -1,9 +1,9 @@
-// views/ArunPerformanceView.tsx — Performance Ledger (v18 Astryx rebuild).
+// views/ArunPerformanceView.tsx — Performance Ledger (v19.2 refresh).
 // Source 1: Offer of Appointment — Kunal Vaishnav / Exxat Inc · Mar 15, 2026.
-// Source 2: Granola raw transcript — Arun<>Romit Vision · Mar 24, 2026 (791334af).
-// Seven offer-letter criteria as a scored table with rationale, a ranked hero
-// of scores against the 85 target, and the ten verbatim Arun quotes kept whole.
-// (v18 cut: evidence/gap/action sublists, velocity chart, milestone board.)
+// Source 2: Granola raw transcripts + Obsidian meeting notes — seven Arun
+// sessions Mar 24 → Jul 20, 2026 (791334af, 277a02d9, a4a0e1db, 84c5d242,
+// e69904b6, a1eda6e2, 2870dd23). Seven offer-letter criteria scored with
+// dated rationale, the 1:1 arc as a timeline, and verbatim Arun quotes only.
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Card } from '@astryxdesign/core/Card';
@@ -25,8 +25,29 @@ import type { InsightFilter } from '../lib/links';
 
 const TARGET = 85;
 
-// ── Verbatim Arun quotes from the raw transcript (791334af) — not paraphrased ──
+// ── The 1:1 arc — every entry sourced to a dated session (Granola id in the
+// vault note frontmatter). The trajectory IS the review: firefighting →
+// stabilizing → "speed is the skill signal". ──
+const REVIEW_TIMELINE = [
+  { date: 'Mar 24', title: '3-year vision session', signal: 'baseline', note: 'Exam taker experience + assessment creation set as sole priority; AI everywhere; speed over design-system compliance; one review per phase.' },
+  { date: 'Apr 20', title: 'First 1:1', signal: 'expectations', note: 'Decision hierarchy set: verbal alignment → Vishaka approval → then design. US proximity flagged as strategic asset. DS co-ownership with Himanshu, accessibility first.' },
+  { date: 'Jun 9', title: 'Execution reset', signal: 'corrective', note: 'Both products delayed in approval loops. New framework: critical path only, PMs drive, all Aarti requests route through PMs. "Done" = the next person understands the design. DS deprioritized for speed.' },
+  { date: 'Jun 30', title: 'Roadmap + DS strategy', signal: 'stabilizing', note: 'Priorities fixed: Exam #1, Course Eval #2. Speed wins when the DS bottlenecks; retrofit alignment later. Designer time should shift to non-trivial UI; AI covers commodity screens.' },
+  { date: 'Jul 6', title: '1:1 — oversight change', signal: 'stabilizing', note: 'Aarti steps back; Yash + PMs drive approvals. 100% focus on PM-driven work. Role boundary: share design ideas, PMs decide. Time-zone concern raised by others — Arun not entertaining it yet.' },
+  { date: 'Jul 13', title: '1:1 — process gaps', signal: 'candid', note: 'Romit raises: assessment-creation designs bypassed (devs built below-standard screens), no PRDs/tracker, pixel-perfect double standard. Arun: establish collaboration first; design iterates post-build; daily syncs agreed.' },
+  { date: 'Jul 20', title: '1:1 — positive turn', signal: 'positive', note: 'Designs and prototypes AHEAD of documentation — endorsed as "absolutely the right approach". ~80–85% of Course Eval designed. Speed reframed as the skill signal; consensus plans expected over individual escalations; AI feature decisions PM-owned.' },
+];
+
+// ── Verbatim Arun quotes — not paraphrased. Mar 24 set from transcript
+// 791334af; Jul 20 set from transcript 2870dd23. ──
 const ARUN_VERBATIM = [
+  { quote: 'Speed is not just for the sake of doing it quickly. Speed is a sign of skill. Given infinite time, anybody can do anything in this world.', context: 'Reframing speed as the skill measurement itself', source: 'Raw transcript · Jul 20' },
+  { quote: 'High ideas are only ideas. I only care about executed ideas.', context: 'On design ambition vs. delivery — execution is the currency', source: 'Raw transcript · Jul 20' },
+  { quote: 'First, you need to show me, not tell me the idea.', context: 'The bar for proposals: demonstrated, not described', source: 'Raw transcript · Jul 20' },
+  { quote: 'The skills I am comfortable with — skills we got. But the teamwork is not up to like the standard I want.', context: 'Individual skills explicitly endorsed; team consensus named as THE gap', source: 'Raw transcript · Jul 20' },
+  { quote: 'Why do you even need to escalate this to me? Why don\'t you, all of you together decide we are going to do something great?', context: 'The new expectation: arrive with a consensus plan, not individual escalations', source: 'Raw transcript · Jul 20' },
+  { quote: 'We will have some throwaway work. That\'s fine.', context: 'Current phase is foundational — beta expectations, iteration expected', source: 'Raw transcript · Jul 20' },
+  { quote: 'Even to enter the territory of a great product, I will say, the thing has to be like a intelligent professional first.', context: 'Arun\'s product bar: an intelligent professional that manages data, not a data tool', source: 'Raw transcript · Jul 20' },
   { quote: 'Your top top top priority is this only — exam taker experience and admin/faculty assessment creation.', context: 'Confirming Exam Management as sole priority for next few weeks', source: 'Raw transcript · Mar 24' },
   { quote: 'AI can be used, it should be used. Everywhere. Like, everywhere. AI can be used, it should be used.', context: 'On AI integration philosophy — not selective, not optional', source: 'Raw transcript · Mar 24' },
   { quote: 'We want to reduce the amount of time faculty has to spend. That is the goal. We want to actively reduce the amount of time they have to spend designing exams.', context: 'Defining the core AI success metric explicitly', source: 'Raw transcript · Mar 24' },
@@ -57,45 +78,45 @@ interface Criterion {
 // names the surface in this app where the rationale's evidence lives. ──
 const CRITERIA: Criterion[] = [
   {
-    id: 'ui-design', label: 'UI Design', weight: 22, score: 68, status: 'in-progress',
+    id: 'ui-design', label: 'UI Design', weight: 22, score: 78, status: 'on-track',
     offerText: 'Designing user interface components, workflows, and interaction patterns for assigned features within Exxat\'s software platform.',
-    rationale: 'Architecture and component decisions are strong and well-reasoned. Score held at 68 because zero Magic Patterns interactive artifacts exist yet — the offer letter requirement is "designing components", which requires built, not described, components.',
+    rationale: 'Raised 68 → 78 (Jul 20): ~80–85% of Course Eval screens designed, running AHEAD of documentation — Arun called it "absolutely the right approach". Held below target because assessment-creation screens shipped dev-built without design follow-through (Jul 13), and the Cohere-release design wrap is still open.',
     cite: { label: 'Portfolio', href: hrefPortfolio() },
   },
   {
-    id: 'prototypes', label: 'Prototypes', weight: 20, score: 55, status: 'at-risk',
+    id: 'prototypes', label: 'Prototypes', weight: 20, score: 82, status: 'on-track',
     offerText: 'Creating wireframes, mockups, and interactive prototypes to support product development and usability improvements.',
-    rationale: 'Score 55 because no MP prototype exists for any Exam Management screen. The offer letter\'s primary deliverable here is interactive prototypes; engineering joined needing design assets. The single highest-risk criterion.',
+    rationale: 'Raised 55 → 82: the Mar "no prototype exists" rationale is obsolete — by Jul 20 designs and prototypes run ahead of the documents, shared through Cloud Design to Aarti/Kunal/product (Jul 13). Remaining gap: prototypes live in shares, not a persistent artifact library the team can self-serve.',
     cite: { label: 'Portfolio pipeline', href: hrefPortfolio() },
   },
   {
-    id: 'requirements', label: 'Requirements → Design', weight: 18, score: 87, status: 'strong',
+    id: 'requirements', label: 'Requirements → Design', weight: 18, score: 88, status: 'strong',
     offerText: 'Translating product requirements and user stories into clear, user-centered interface designs.',
-    rationale: 'Score raised to 87. Romit not only translates requirements — he identified the gap Arun himself agreed with: PRDs lack strategic AI thinking, raised directly in session. That goes beyond the offer letter\'s stated expectation.',
+    rationale: 'Score 88. Works from Excel-only inputs where PRDs don\'t exist, recreating PM mocks into purposeful screens (Jul 13); multi-survey analytics designed with no PRD at all. Arun\'s operating guidance adopted: align with the PM by call before designing rather than assuming.',
     cite: { label: 'Briefings', href: hrefBriefings() },
   },
   {
-    id: 'collaboration', label: 'PM + Eng Collaboration', weight: 16, score: 76, status: 'on-track',
+    id: 'collaboration', label: 'PM + Eng Collaboration', weight: 16, score: 72, status: 'in-progress',
     offerText: 'Collaborating with product managers and engineering teams to ensure designs align with product requirements and technical constraints.',
-    rationale: 'Score 76. Sessions are happening and decisions are being aligned; the gap is that the formal handoff artifact (MP file + spec) does not exist yet, so collaboration is still verbal, not documented.',
+    rationale: 'Adjusted 76 → 72 because the bar moved, not the work: Arun explicitly endorsed the skills ("skills we got") and named team consensus as THE gap (Jul 20) — the expectation is now arriving with a consensus plan, not individual escalations. Role boundary set Jul 6: share design ideas, PMs decide. Daily syncs agreed Jul 13. This is the primary growth axis for the next review.',
     cite: { label: 'Briefings', href: hrefBriefings() },
   },
   {
-    id: 'design-reviews', label: 'Reviews + Specs', weight: 10, score: 60, status: 'at-risk',
+    id: 'design-reviews', label: 'Reviews + Specs', weight: 10, score: 58, status: 'at-risk',
     offerText: 'Participating in design reviews and supporting implementation by providing design specifications and clarifying design intent during development.',
-    rationale: 'Score 60. Arun said he will only run one phase-end review, which reduces review pressure — but the offer letter requires design specifications and intent documentation, and zero specs exist. That is a real gap.',
+    rationale: 'Score 58 — still the weak axis, now with sharper evidence: documentation lagging active development caused mid-build design surprises for devs (Jul 6); no formal tracking exists (no ADO/VSTS user stories, Jul 13). Two-sided (PMs lack PRDs too), but the offer-letter deliverable is design specs and they remain thin. Domain-expert review round now running (Jul 20) partially offsets.',
     cite: { label: 'Design-system evidence', href: hrefInsights({ q: 'design system' }), filter: { q: 'design system' } },
   },
   {
     id: 'usability', label: 'Usability + Feedback', weight: 8, score: 88, status: 'strong',
     offerText: 'Evaluating product usability through feedback from users and internal stakeholders to improve overall user experience.',
-    rationale: 'Score 88. The NPS analysis and multi-persona research are genuinely strong — 1,494 responses analysed, 8+ personas interviewed, domain breakdown with NPS leverage calculated. The gap is Pendo behavioral data and SCCE under-representation.',
+    rationale: 'Score 88. The NPS analysis and multi-persona research remain strong — 1,494 responses analysed, 8+ personas interviewed — and a domain-expert review round over the Course Eval designs is live (Jul 20). The gap is unchanged: Pendo behavioral data and SCCE under-representation.',
     cite: { label: 'NPS-sourced insights', href: hrefInsights({ source: 'NPS' }), filter: { source: 'NPS' } },
   },
   {
     id: 'accessibility', label: 'Accessibility + Compliance', weight: 6, score: 91, status: 'strong',
     offerText: 'Incorporating accessibility and compliance considerations, including applicable healthcare education regulations such as HIPAA, FERPA, and ADA, when designing product interfaces and workflows.',
-    rationale: 'Highest-scoring criterion at 91. Program-level accommodation profiles are a first-to-market architecture decision; the WCAG 2.1 AA feature map is complete and the publish gate is designed. The only gap is formal delivery to Himanshu as a written spec.',
+    rationale: 'Highest-scoring criterion at 91. Program-level accommodation profiles are a first-to-market architecture decision; the WCAG 2.1 AA feature map is complete and the publish gate is designed. Note: Arun paused Himanshu\'s DS work to realign with the React library (Jul 20) — a11y specs stay with design in the meantime.',
     cite: { label: 'Accessibility evidence', href: hrefInsights({ tag: 'accessibility' }), filter: { tag: 'accessibility' } },
   },
 ];
@@ -131,16 +152,36 @@ export function ArunPerformanceView() {
     <VStack gap={5} padding={6} maxWidth={1100}>
       <PageHeader
         title="Performance Ledger"
-        lede="Seven criteria from the official offer letter, cross-referenced with the raw Granola transcript of the Arun session — every Arun quote is verbatim, not paraphrased."
-        meta={`Weighted score ${OVERALL}/100 · offer letter: Kunal Vaishnav · Mar 15, 2026 · transcript 791334af · Mar 24, 2026 · reports to Arun Gautam`}
+        lede="Seven criteria from the official offer letter, cross-referenced with seven Arun sessions from the Granola transcripts and Obsidian notes — every Arun quote is verbatim, not paraphrased. The Jul 20 arc: skills endorsed, speed reframed as the skill signal, team consensus named as the growth axis."
+        meta={`Weighted score ${OVERALL}/100 · offer letter: Kunal Vaishnav · Mar 15, 2026 · sessions Mar 24 → Jul 20, 2026 · reports to Arun Gautam · updated Jul 29`}
       />
 
       <Fig
         title={`Criterion scores against the ${TARGET} target`}
-        caption={`Self-scored, editorial — not an external measurement. Red bars sit under 70 — prototypes and specs are the two at-risk criteria, and both are unblocked by the same deliverable: built Magic Patterns artifacts. Each bar links to the evidence surface its rationale cites. Weighted overall: ${OVERALL}/100.`}
+        caption={`Self-scored, editorial — not an external measurement. Rescored Jul 29 against the Mar–Jul session evidence: prototypes recovered from the sole at-risk criterion (55 → 82, designs now run ahead of documentation) while specs remain the weak axis and collaboration was re-based against Arun's new consensus expectation. Each bar links to the evidence surface its rationale cites. Weighted overall: ${OVERALL}/100.`}
         note={`Thresholds: red marks scores below 70; ${TARGET} is the stated target — bars between 70 and ${TARGET} are not yet at target even though they render in the default color.`}
       >
         <RankedList rows={heroRows} errorBelow={70} format={(r) => `${r.value}/100`} />
+      </Fig>
+
+      <Fig
+        title="The 1:1 arc — seven sessions, Mar 24 → Jul 20"
+        n={REVIEW_TIMELINE.length}
+        caption="Sourced from Granola transcripts and the Obsidian meeting notes. The trajectory is the review: firefighting (Jun 9) → stabilizing (Jun 30–Jul 6) → candid process reset (Jul 13) → the positive turn (Jul 20)."
+      >
+        <List density="balanced" hasDividers>
+          {REVIEW_TIMELINE.map((t) => (
+            <Item
+              key={t.date}
+              as="li"
+              label={`${t.date} — ${t.title}`}
+              description={t.note}
+              descriptionLines={3}
+              endContent={<Badge variant={t.signal === 'positive' ? 'success' : t.signal === 'corrective' ? 'error' : t.signal === 'candid' ? 'warning' : 'neutral'} label={t.signal} />}
+              align="start"
+            />
+          ))}
+        </List>
       </Fig>
 
       <Fig
@@ -205,7 +246,7 @@ export function ArunPerformanceView() {
 
       <Card padding={4}>
         <Collapsible
-          trigger={<Text type="label" color="secondary">{`Arun verbatim — ${ARUN_VERBATIM.length} direct quotes (raw transcript 791334af · Mar 24, 2026)`}</Text>}
+          trigger={<Text type="label" color="secondary">{`Arun verbatim — ${ARUN_VERBATIM.length} direct quotes (raw transcripts · Mar 24 + Jul 20, 2026)`}</Text>}
           defaultIsOpen={false}
         >
           <List density="spacious" hasDividers>
