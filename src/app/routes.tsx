@@ -5,7 +5,7 @@
 import { lazy } from 'react';
 import type { ComponentType, LazyExoticComponent } from 'react';
 
-export type NavSection = 'home' | 'explore' | 'products' | 'story' | 'library';
+export type NavSection = 'home' | 'explore' | 'products' | 'story' | 'archive' | 'library';
 
 export interface RouteDef {
   path: string;
@@ -44,8 +44,8 @@ export const ROUTES: RouteDef[] = [
   { path: '/products/course-eval/spec', label: 'Course Eval — Spec', productId: 'course-eval', component: v(() => import('../views/products/CourseEvalView'), 'CourseEvalView') },
   { path: '/products/skills-checklist/spec', label: 'Skills — Spec', productId: 'skills-checklist', component: v(() => import('../views/products/SkillsChecklistView'), 'SkillsChecklistView') },
   { path: '/products/learning-contracts/spec', label: 'LC — Spec', productId: 'learning-contracts', component: v(() => import('../views/products/LearningContractsView'), 'LearningContractsView') },
-  { path: '/products/exam-management/audit', label: 'Exam — Admin Audit', productId: 'exam-management', component: v(() => import('../views/products/ExamAdminAuditView'), 'ExamAdminAuditView') },
-  { path: '/products/exam-management/ia', label: 'Exam — Nav IA', productId: 'exam-management', component: v(() => import('../views/products/NavIAView'), 'NavIAView') },
+  { path: '/products/exam-management/audit', label: 'Exam Admin Audit', section: 'archive', productId: 'exam-management', component: v(() => import('../views/products/ExamAdminAuditView'), 'ExamAdminAuditView') },
+  { path: '/products/exam-management/ia', label: 'Nav IA · Apr 1', section: 'archive', productId: 'exam-management', component: v(() => import('../views/products/NavIAView'), 'NavIAView') },
   { path: '/platform', label: 'Platform', section: 'products', component: v(() => import('../views/products/ExxatOneView'), 'ExxatOneView') },
 
   { path: '/story', label: 'Connect the Dots', section: 'story', component: v(() => import('../views/NarrativeView'), 'NarrativeView'), needsOnNav: true },
@@ -53,9 +53,10 @@ export const ROUTES: RouteDef[] = [
   { path: '/competitive', label: 'Competitive Parity', section: 'story', component: v(() => import('../views/CompetitiveView'), 'CompetitiveView') },
   { path: '/briefings', label: 'Briefings', section: 'story', component: v(() => import('../views/StakeholderView'), 'StakeholderView') },
   { path: '/portfolio', label: 'Portfolio', section: 'story', component: v(() => import('../views/PortfolioView'), 'PortfolioView') },
-  { path: '/reports/nps-2025', label: 'NPS 2025', component: v(() => import('../views/NPSView'), 'NPSView') },
-  { path: '/performance', label: 'Performance Ledger', component: v(() => import('../views/ArunPerformanceView'), 'ArunPerformanceView') },
+  { path: '/reports/nps-2025', label: 'NPS Intelligence 2025', section: 'archive', component: v(() => import('../views/NPSView'), 'NPSView') },
+  { path: '/performance', label: 'Performance Ledger', section: 'archive', component: v(() => import('../views/ArunPerformanceView'), 'ArunPerformanceView') },
   { path: '/charts', label: 'Charts', section: 'explore', component: v(() => import('../views/ChartsView'), 'ChartsView') },
+  { path: '/analytics', label: 'Analytics', section: 'explore', component: v(() => import('../views/AnalyticsView'), 'AnalyticsView') },
 
   { path: '/sources', label: 'Source Library', section: 'library', component: v(() => import('../views/WhiteboardView'), 'WhiteboardView'), needsOnNav: true },
   { path: '/changelog', label: 'Changelog', section: 'library', component: v(() => import('../views/ChangelogView'), 'ChangelogView') },
@@ -90,7 +91,7 @@ export const VIEW_PATH: Record<string, string> = {
   portfolio: '/portfolio',
   nps: '/reports/nps-2025',
   'arun-performance': '/performance',
-  analytics: '/charts',
+  analytics: '/analytics',
   whiteboard: '/sources',
   changelog: '/changelog',
 };
@@ -100,6 +101,7 @@ export const SECTION_LABELS: Record<NavSection, string> = {
   explore: 'Explore',
   products: 'Products',
   story: 'Story & Outputs',
+  archive: 'Archive',
   library: 'Library',
 };
 

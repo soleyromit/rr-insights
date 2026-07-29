@@ -21,7 +21,7 @@ import { paletteItems } from '../lib/search';
 import type { PaletteItem } from '../lib/search';
 import { VERSION, LAST_UPDATED } from '../data/version';
 
-const NAV_SECTIONS: NavSection[] = ['home', 'explore', 'products', 'story', 'library'];
+const NAV_SECTIONS: NavSection[] = ['home', 'explore', 'products', 'story', 'archive', 'library'];
 
 function isSelected(pathname: string, path: string): boolean {
   if (path === '/') return pathname === '/';

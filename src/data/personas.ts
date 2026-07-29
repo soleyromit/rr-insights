@@ -153,6 +153,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v19.1',
+    date: '2026-07-29',
+    summary: 'Archive restored + Intelligence Analytics reinstated. The v18 IA had dropped the sidebar Archive group — NPS Intelligence 2025, Exam Admin Audit, Nav IA and Performance Ledger were reachable only through in-page links, and the Intelligence Analytics page was deleted with its metrics never re-homed. New Archive nav section carries all four reports again, and /analytics returns as a v19-grade metrics page with every number recomputed live: cumulative corpus growth, severity mix by month, tag movers since the March spike (diverging bars), a backlog-aging scatter (days-old × opportunity score, severity-colored — 66 high-value findings are 90+ days old), computed persona × product coverage, aligned per-product small multiples, and per-product evidence-quality meters. Legacy #analytics deep links now land on the new page.',
+    insightCount: 420,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/AnalyticsView.tsx (new)', 'src/components/charts/ScatterChart.tsx (new)', 'src/app/routes.tsx', 'src/app/Shell.tsx', 'src/data/version.ts'],
+  },
+  {
     version: 'v19.0',
     date: '2026-07-29',
     summary: 'Visualization-first redesign of all 24+ views. Latest findings per product: hubs open with a "What\'s new" feed (newest evidence, sparkline momentum, 30d trend delta, staleness meter); Command Center leads with a cross-product freshness strip. Count integrity: declared products.ts counts removed — every number derives live from the corpus (briefings and hubs now agree at 245/43); milestone state derives from dates. Link contract gains since/until date params: month marks and freshness links open the Insight Index with a removable date token. Chart kit v2 (Sparkline, TrendDelta, SmallMultiples, true diverging NPS bars, tooltips/legends, n= badges everywhere) + story kit (evidence feed rows replacing card soup, Citation quote rows replacing the Highlights masonry, ConflictNote for the contested Cohere date, stat tile rows). One spec architecture across 12 spec surfaces: claim lede + live corpus chips + one orienting visual each — NavIA access HeatGrid, Skills method-coverage grid, LC per-persona chart that tests (and corrects) the SCCE-highest-risk claim, exam parity/gap stacked bars. Roadmap rebuilt as a real date-axis milestone chart with product lanes and a today line; LC honestly shows zero dated milestones. Platform orphan route joined the sidebar. tsc 0 errors; build green.',
