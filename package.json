@@ -16,12 +16,10 @@
     "@astryxdesign/charts": "0.1.9-canary.b7d7f4b",
     "@astryxdesign/core": "0.1.9-canary.b7d7f4b",
     "@astryxdesign/theme-neutral": "0.1.9",
-    "@observablehq/plot": "^0.6.17",
     "lucide-react": "0.522.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^6.30.4",
-    "recharts": "^2.15.4"
+    "react-router-dom": "^6.30.4"
   },
   "devDependencies": {
     "@astryxdesign/cli": "0.1.9",
@@ -31,12 +29,9 @@
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "latest",
     "eslint": "^8.50.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.1",
-    "postcss": "latest",
-    "tailwindcss": "3.4.17",
     "typescript": "^5.5.4",
     "vite": "^5.2.0"
   },
