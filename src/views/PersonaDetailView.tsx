@@ -83,7 +83,14 @@ export function PersonaDetailView() {
             <MetadataListItem label="Current tools">{persona.currentTools.join(', ')}</MetadataListItem>
           </MetadataList>
 
-          <Collapsible label={`Empathy map (${persona.empathyMap.thinks.length + persona.empathyMap.feels.length + persona.empathyMap.says.length + persona.empathyMap.does.length} entries)`}>
+          <Collapsible
+            defaultIsOpen={false}
+            trigger={
+              <Text type="label" color="secondary">
+                Empathy map ({persona.empathyMap.thinks.length + persona.empathyMap.feels.length + persona.empathyMap.says.length + persona.empathyMap.does.length} entries)
+              </Text>
+            }
+          >
             <Grid columns={{ minWidth: 200, max: 2 }} gap={3}>
               {(['thinks', 'feels', 'says', 'does'] as const).map((k) => (
                 <Card key={k} variant="muted" padding={3}>

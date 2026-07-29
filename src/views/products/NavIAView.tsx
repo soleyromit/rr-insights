@@ -1,369 +1,247 @@
-// @ts-nocheck
-// NavIAView.tsx — Exam Management Navigation IA
-// Synthesized from: Claude conversation Apr 1 2026
-// Sources: Granola (all 40 sessions), ExamSoft screenshot analysis, system_hierarchy_blueprint.md
+// views/products/NavIAView.tsx — Exam Management Navigation IA (v18 Astryx).
+// Role hierarchy as a TreeList, the nav merge map and access matrix as
+// Tables, and the dual meaning of "Sections" as cards.
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Link } from '@astryxdesign/core/Link';
+import { TreeList } from '@astryxdesign/core/TreeList';
+import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { SpecSection } from './spec/SpecSection';
+import { SpecFooter } from './spec/SpecFooter';
+import { hrefProductSpec } from '../../lib/links';
 
-import { useState } from 'react';
-import { Card, CardTitle } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
+const PRODUCT_ID = 'exam-management';
 
-type Tab = 'roles' | 'merge' | 'sections' | 'matrix';
-
-const TABS: { id: Tab; label: string; alert?: boolean }[] = [
-  { id: 'roles',   label: 'Role hierarchy' },
-  { id: 'merge',   label: 'Nav merge map' },
-  { id: 'sections',label: 'What is Sections?', alert: true },
-  { id: 'matrix',  label: 'Access matrix' },
-];
-
-const ts = (tab: Tab, cur: Tab) => ({
-  padding: '10px 18px', fontSize: 14.5,
-  fontWeight: cur === tab ? 600 : 400,
-  color: cur === tab ? 'var(--brand)' : 'var(--text-secondary)',
-  borderBottom: `2px solid ${cur === tab ? 'var(--brand)' : 'transparent'}`,
-  marginBottom: -1, background: 'none', border: 'none',
-  cursor: 'pointer', whiteSpace: 'nowrap' as const,
-});
-
-// ─── Data ───────────────────────────────────────────────────────────────────
-
-const ROLES = [
+const ROLE_TREE = [
   {
-    tier: 1, label: 'Institution admin', group: 'institution',
-    color: '#534AB7', bg: '#EEEDFE',
-    desc: 'Full platform config, audit, user management, LMS/Canvas LTI setup, Respondus proctoring config. Sits above all programs.',
-    nav: ['All exams', 'Question bank (full)', 'Assessments + Sections builder', 'Distribution', 'Analytics', 'Outcome & accreditation', 'Audit trail', 'Settings / user mgmt', 'LMS integration'],
-    granola: 'Confirmed: role-based access controls at field and page levels (Granola session 39)',
+    id: 'tier1',
+    label: 'Tier 1 — Institution',
+    isExpanded: true,
+    children: [
+      {
+        id: 'inst-admin',
+        label: 'Institution admin — full platform config, audit, user mgmt, LMS/LTI, Respondus proctoring',
+        children: ['All exams', 'Question bank (full)', 'Assessments + Sections builder', 'Distribution', 'Analytics', 'Outcome & accreditation', 'Audit trail', 'Settings / user mgmt', 'LMS integration'].map((n, i) => ({ id: `ia-${i}`, label: n })),
+      },
+    ],
   },
   {
-    tier: 2, label: 'Program director', group: 'program',
-    color: '#0F6E56', bg: '#E1F5EE',
-    desc: 'Accreditation compliance, PANCE/ARC-PA reporting, outcome oversight. Primary job: narrative synthesis + structured accreditation reports.',
-    nav: ['All exams (read)', 'Question bank (read)', 'Assessments (read)', 'Analytics (full)', 'Outcome & accreditation (full)'],
-    granola: 'Confirmed: ARC-PA quarterly reporting, PANCE pass rate tracking, program-level outcome oversight (Granola sessions 25, 42)',
+    id: 'tier2',
+    label: 'Tier 2 — Program',
+    isExpanded: true,
+    children: [
+      {
+        id: 'prog-dir',
+        label: 'Program director — accreditation compliance, PANCE/ARC-PA reporting, outcome oversight',
+        children: ['All exams (read)', 'Question bank (read)', 'Assessments (read)', 'Analytics (full)', 'Outcome & accreditation (full)'].map((n, i) => ({ id: `pd-${i}`, label: n })),
+      },
+      {
+        id: 'hod',
+        label: 'Dept head / HOD — question governance, review queue, version visibility across faculty',
+        children: ['All exams', 'Question bank (full)', 'Assessments + Sections builder', 'Review queue (full)', 'Distribution', 'Analytics (full)'].map((n, i) => ({ id: `hod-${i}`, label: n })),
+      },
+      {
+        id: 'outcome-dir',
+        label: 'Outcome director (CONFIRM — may be a Dept Head responsibility, not a standalone role)',
+        children: ['Analytics (full)', 'Outcome & accreditation (full)'].map((n, i) => ({ id: `od-${i}`, label: n })),
+      },
+    ],
   },
   {
-    tier: 2, label: 'Dept head / HOD', group: 'program',
-    color: '#0F6E56', bg: '#E1F5EE',
-    desc: 'Question governance and approval. Owns review queue. Sees all question versions across faculty. Sets department-defined tag categories.',
-    nav: ['All exams', 'Question bank (full)', 'Assessments + Sections builder', 'Review queue (full)', 'Distribution', 'Analytics (full)'],
-    granola: '"HOD visibility into question version usage across faculty" — explicit Granola requirement (session 8c94698f Mar 4)',
-  },
-  {
-    tier: 2, label: 'Outcome director', group: 'program',
-    color: '#0F6E56', bg: '#E1F5EE',
-    desc: 'Competency tracking and accreditation data only. Does not touch question creation or distribution. Generates 1-click accreditation reports.',
-    nav: ['Analytics (full)', 'Outcome & accreditation (full)'],
-    granola: 'Status: open question — may be dept head with additional responsibility, not a standalone role. Confirm with Vishaka (Apr 1 session)',
-    openQuestion: true,
-  },
-  {
-    tier: 3, label: 'Contributor', group: 'scoped',
-    color: '#5F5E5A', bg: '#F1EFE8',
-    desc: 'Can add questions to assigned sections only. Cannot publish, approve, or access reports. Entry point of the HOD approval workflow.',
-    nav: ['Question bank (add only — assigned sections)', 'My drafts'],
-    granola: '"Approval workflows needed before campus-wide availability" — Contributor is the start of this workflow (session f59ac2a6 Mar 12)',
-  },
-  {
-    tier: 3, label: 'Reviewer', group: 'scoped',
-    color: '#5F5E5A', bg: '#F1EFE8',
-    desc: 'Approves drafts within their scope. Read-only access to question content. Cannot create or edit. Missing capability identified in current platform.',
-    nav: ['Review queue (scoped)', 'Question bank (read-only, scoped)'],
-    granola: 'Gap confirmed: read-only access roles missing across all permission levels (Granola session 86820dfe)',
-  },
-  {
-    tier: 3, label: 'DCE', group: 'scoped',
-    color: '#5F5E5A', bg: '#F1EFE8',
-    desc: 'Director of Clinical Education. Manages clinical exam oversight and student accommodation profiles for clinical placements.',
-    nav: ['Assessments', 'Students / accommodations', 'Question bank (scoped to clinical)'],
-    granola: 'Confirmed persona across FaaS, Skills Checklist, and Exam Management (all Granola sessions)',
+    id: 'tier3',
+    label: 'Tier 3 — Scoped',
+    isExpanded: true,
+    children: [
+      {
+        id: 'contributor',
+        label: 'Contributor — adds questions to assigned sections only; entry point of the HOD approval workflow',
+        children: ['Question bank (add only — assigned sections)', 'My drafts'].map((n, i) => ({ id: `co-${i}`, label: n })),
+      },
+      {
+        id: 'reviewer',
+        label: 'Reviewer — approves drafts within scope; read-only content access (missing capability today)',
+        children: ['Review queue (scoped)', 'Question bank (read-only, scoped)'].map((n, i) => ({ id: `re-${i}`, label: n })),
+      },
+      {
+        id: 'dce',
+        label: 'DCE — clinical exam oversight and student accommodation profiles for placements',
+        children: ['Assessments', 'Students / accommodations', 'Question bank (scoped to clinical)'].map((n, i) => ({ id: `dce-${i}`, label: n })),
+      },
+    ],
   },
 ];
 
-const MERGE_ITEMS = [
-  { label: 'All exams / dashboard', status: 'shared', note: 'Same layout. Admin sees all programs. Faculty sees their courses.' },
-  { label: 'Question bank', status: 'shared', note: 'Same table. Admin sees all + approval controls. Faculty sees course-scoped + approval status tags.' },
-  { label: 'Assessments', status: 'shared', note: 'Same creation flow. Admin drops to all programs. Faculty scoped to course assignments.' },
-  { label: 'Rubrics', status: 'shared', note: 'OSCE rubric creation. Admin sees all programs. Faculty sees assigned courses.' },
-  { label: 'Review queue', status: 'shared', note: 'HOD/Admin sees full queue. Faculty sees only items pending on their questions.' },
-  { label: 'Analytics', status: 'shared', note: 'Admin = program-level. Faculty = course-level. Same component, different data scope.' },
-  { label: 'Students / accommodations', status: 'admin-only', note: 'Enrollment, accommodation profiles, extended time. No faculty equivalent.' },
-  { label: 'Sections (assessment builder)', status: 'shared', note: 'Tab inside Assessment Builder — admin divides an exam into content-area blocks with individual time limits, question pools, and nav rules. Not a standalone sidebar nav item.' },
-  { label: 'Distribution', status: 'admin-only', note: 'Live exam console, submit on behalf of student. No faculty equivalent.' },
-  { label: 'Outcome & accreditation', status: 'admin-only', note: 'ARC-PA reports, competency dashboards. No faculty equivalent.' },
-  { label: 'Audit trail', status: 'admin-only', note: 'Full platform audit log. No faculty equivalent.' },
-  { label: 'Settings / user mgmt', status: 'admin-only', note: 'RBAC, LMS integration, proctoring config. No faculty equivalent.' },
-  { label: 'My courses', status: 'faculty-only', note: 'Course-based entry point to question bank. Confirmed in Granola as faculty default nav.' },
-  { label: 'Student exam shell', status: 'student-only', note: 'No sidebar. Progress bar, 3-state navigator, accessibility controls. Completely separate surface.' },
+interface MergeRow extends Record<string, unknown> {
+  id: string;
+  label: string;
+  status: string;
+  note: string;
+}
+const MERGE: MergeRow[] = [
+  { id: 'm1', label: 'All exams / dashboard', status: 'shared', note: 'Same layout; admin sees all programs, faculty sees their courses.' },
+  { id: 'm2', label: 'Question bank', status: 'shared', note: 'Same table; admin adds approval controls, faculty is course-scoped with status tags.' },
+  { id: 'm3', label: 'Assessments', status: 'shared', note: 'Same creation flow; admin drops to all programs, faculty scoped to course assignments.' },
+  { id: 'm4', label: 'Rubrics', status: 'shared', note: 'OSCE rubric creation; admin all programs, faculty assigned courses.' },
+  { id: 'm5', label: 'Review queue', status: 'shared', note: 'HOD/Admin full queue; faculty sees only items pending on their questions.' },
+  { id: 'm6', label: 'Analytics', status: 'shared', note: 'Admin program-level, faculty course-level — same component, different data scope.' },
+  { id: 'm7', label: 'Sections (assessment builder)', status: 'shared', note: 'A tab inside Assessment Builder — content-area blocks with time limits, pools, nav rules. NOT a standalone sidebar item.' },
+  { id: 'm8', label: 'Students / accommodations', status: 'admin-only', note: 'Enrollment, accommodation profiles, extended time.' },
+  { id: 'm9', label: 'Distribution', status: 'admin-only', note: 'Live exam console; submit on behalf of a student.' },
+  { id: 'm10', label: 'Outcome & accreditation', status: 'admin-only', note: 'ARC-PA reports, competency dashboards.' },
+  { id: 'm11', label: 'Audit trail', status: 'admin-only', note: 'Full platform audit log.' },
+  { id: 'm12', label: 'Settings / user mgmt', status: 'admin-only', note: 'RBAC, LMS integration, proctoring config.' },
+  { id: 'm13', label: 'My courses', status: 'faculty-only', note: 'Course-based entry to the question bank — confirmed faculty default nav.' },
+  { id: 'm14', label: 'Student exam shell', status: 'student-only', note: 'No sidebar. Progress bar, 3-state navigator, accessibility controls — a completely separate surface.' },
 ];
 
-const SECTIONS_MEANINGS = [
-  {
-    title: 'What Sections is — assessment builder construct',
-    color: '#0F6E56', bg: '#E1F5EE',
-    description: 'Sections is a feature inside the Assessment Builder where an admin divides an exam into named content-area blocks. Each section has its own question pool, time limit, point weighting, and navigation rules. For example: Section 1 = Pulmonology (20 questions, 30 min), Section 2 = Cardiology (18 questions, 25 min). Admin configures sections when building the exam — not as a standalone nav destination.',
-    where: 'Assessment Builder → exam configuration → Sections tab',
-    granola: 'Confirmed: sequential vs flexible navigation per section, section-level time limits, blueprint-based question assignment per content area (Granola sessions f5d66e4c, a4625ac7 Mar 11–27)',
-    confusion: false,
-  },
-  {
-    title: 'Student experience of Sections',
-    color: '#185FA5', bg: '#E6F1FB',
-    description: 'Once published, students see a Section Entry Screen before each block — showing the section title, question count, and time limit. Navigation behavior is configurable: sequential (submit Section 1 before accessing Section 2, cannot return) or flexible (move between sections freely within total exam time). The SectionEntryScreen.tsx component in Magic Patterns handles this.',
-    where: 'Student exam shell → SectionEntryScreen → exam questions',
-    granola: '"Section entry screen with section title and question count" confirmed in accessibility design session (f29a990d Mar 20). Sequential lock-out confirmed for standardised exam types.',
-    confusion: false,
-  },
-  {
-    title: 'Correction note — not a sidebar nav item',
-    color: '#854F0B', bg: '#FAEEDA',
-    description: 'Previous analysis incorrectly classified Sections as a top-level admin sidebar nav item for roster/cohort management. Sections is not a standalone nav destination — it is a tab within the Assessment Builder. The ExamSoft "Sections" top nav tab is used to manage question bank course sections (master vs live), not student enrollment groups. Corrected Apr 1 2026.',
-    where: 'Assessment Builder → not sidebar nav',
-    granola: 'Correction confirmed by Romit Apr 1 2026. Removed from access matrix as a standalone nav row.',
-    confusion: true,
-  },
+interface MatrixRow extends Record<string, unknown> {
+  id: string;
+  feature: string;
+  cells: string[];
+}
+const MATRIX_HEADERS = ['Inst. admin', 'Prog. director', 'HOD', 'Outcome dir.', 'Contributor', 'Reviewer', 'DCE'];
+const MATRIX: MatrixRow[] = [
+  { id: 'x1', feature: 'All exams / dashboard', cells: ['full', 'read', 'full', 'read', 'read', '—', 'read'] },
+  { id: 'x2', feature: 'Question bank', cells: ['full', 'read', 'full', '—', 'add', 'read', 'scoped'] },
+  { id: 'x3', feature: 'Assessments', cells: ['full', 'read', 'full', '—', '—', '—', 'read'] },
+  { id: 'x4', feature: 'Review queue', cells: ['full', '—', 'full', '—', '—', 'scoped', '—'] },
+  { id: 'x5', feature: 'Sections (in Assessment Builder)', cells: ['full', 'read', 'full', '—', '—', '—', 'read'] },
+  { id: 'x6', feature: 'Distribution', cells: ['full', '—', 'full', '—', '—', '—', '—'] },
+  { id: 'x7', feature: 'Analytics', cells: ['full', 'full', 'full', 'full', '—', '—', '—'] },
+  { id: 'x8', feature: 'Outcome & accreditation', cells: ['full', 'full', 'read', 'full', '—', '—', '—'] },
+  { id: 'x9', feature: 'Audit trail', cells: ['full', '—', '—', '—', '—', '—', '—'] },
+  { id: 'x10', feature: 'Settings / user mgmt', cells: ['full', '—', '—', '—', '—', '—', '—'] },
+  { id: 'x11', feature: 'LMS / integration', cells: ['full', '—', '—', '—', '—', '—', '—'] },
+  { id: 'x12', feature: 'My courses (faculty)', cells: ['—', '—', '—', '—', 'full', 'read', '—'] },
 ];
 
-const MATRIX_ROWS = [
-  { feature: 'All exams / dashboard', instAdmin: 'full', progDir: 'read', hod: 'full', outcomeDr: 'read', contributor: 'read', reviewer: '—', dce: 'read' },
-  { feature: 'Question bank', instAdmin: 'full', progDir: 'read', hod: 'full', outcomeDr: '—', contributor: 'add', reviewer: 'read', dce: 'scoped' },
-  { feature: 'Assessments', instAdmin: 'full', progDir: 'read', hod: 'full', outcomeDr: '—', contributor: '—', reviewer: '—', dce: 'read' },
-  { feature: 'Review queue', instAdmin: 'full', progDir: '—', hod: 'full', outcomeDr: '—', contributor: '—', reviewer: 'scoped', dce: '—' },
-  { feature: 'Sections (inside Assessment Builder)', instAdmin: 'full', progDir: 'read', hod: 'full', outcomeDr: '—', contributor: '—', reviewer: '—', dce: 'read' },
-  { feature: 'Distribution', instAdmin: 'full', progDir: '—', hod: 'full', outcomeDr: '—', contributor: '—', reviewer: '—', dce: '—' },
-  { feature: 'Analytics', instAdmin: 'full', progDir: 'full', hod: 'full', outcomeDr: 'full', contributor: '—', reviewer: '—', dce: '—' },
-  { feature: 'Outcome & accreditation', instAdmin: 'full', progDir: 'full', hod: 'read', outcomeDr: 'full', contributor: '—', reviewer: '—', dce: '—' },
-  { feature: 'Audit trail', instAdmin: 'full', progDir: '—', hod: '—', outcomeDr: '—', contributor: '—', reviewer: '—', dce: '—' },
-  { feature: 'Settings / user mgmt', instAdmin: 'full', progDir: '—', hod: '—', outcomeDr: '—', contributor: '—', reviewer: '—', dce: '—' },
-  { feature: 'LMS / integration', instAdmin: 'full', progDir: '—', hod: '—', outcomeDr: '—', contributor: '—', reviewer: '—', dce: '—' },
-  { feature: 'My courses (faculty)', instAdmin: '—', progDir: '—', hod: '—', outcomeDr: '—', contributor: 'full', reviewer: 'read', dce: '—' },
-];
-
-const ACCESS_COLORS: Record<string, string> = {
-  'full':   '#0F6E56',
-  'read':   '#185FA5',
-  'add':    '#854F0B',
-  'scoped': '#534AB7',
-  '—':      '#B4B2A9',
-};
-const ACCESS_BG: Record<string, string> = {
-  'full':   '#E1F5EE',
-  'read':   '#E6F1FB',
-  'add':    '#FAEEDA',
-  'scoped': '#EEEDFE',
-  '—':      'transparent',
+const ACCESS_VARIANT: Record<string, 'success' | 'info' | 'warning' | 'neutral'> = {
+  full: 'success',
+  read: 'info',
+  add: 'warning',
+  scoped: 'neutral',
 };
 
-// ─── Component ──────────────────────────────────────────────────────────────
+const MERGE_VARIANT: Record<string, 'info' | 'error' | 'success' | 'neutral'> = {
+  shared: 'info',
+  'admin-only': 'error',
+  'faculty-only': 'success',
+  'student-only': 'neutral',
+};
 
 export function NavIAView() {
-  const [tab, setTab] = useState<Tab>('roles');
-
   return (
-    <div style={{ padding: '24px 28px', maxWidth: 1100 }}>
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={{ fontSize: 20, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>
-          Navigation IA — Exam Management
-        </h2>
-        <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 680 }}>
-          Synthesized Apr 1 2026 from 40 Granola sessions, ExamSoft screenshot analysis, and system hierarchy blueprint.
-          Covers all admin-layer roles, nav merge decisions, and the dual meaning of "Sections".
-        </p>
-      </div>
+    <VStack gap={5} padding={6} maxWidth={1160}>
+      <PageHeader
+        title="Exam Management — Navigation IA"
+        lede="Synthesized Apr 1 2026 from 40 Granola sessions, ExamSoft screenshot analysis, and the system hierarchy blueprint."
+        meta="Merge principle: unified interface, role controls data scope — not layout. Shared screens confirmed: Question Bank, Assessments, Rubrics (+ Analytics at different scopes)."
+      />
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 24, gap: 0, overflowX: 'auto' }}>
-        {TABS.map(t => (
-          <button key={t.id} style={ts(t.id, tab)} onClick={() => setTab(t.id)}>
-            {t.label}{t.alert && <span style={{ marginLeft: 4, fontSize: 12, color: '#E24B4A', fontWeight: 700 }}>●</span>}
-          </button>
-        ))}
-      </div>
+      <SpecSection title="Role hierarchy" sub="Three tiers; expand a role for its nav items. Open question flagged Apr 1: is Outcome Director standalone or a Dept Head responsibility? Confirm with Vishaka before building that nav state.">
+        <Card padding={4}>
+          <TreeList items={ROLE_TREE} density="compact" />
+        </Card>
+      </SpecSection>
 
-      {/* Role hierarchy */}
-      {tab === 'roles' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {/* Tier labels */}
-          <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, alignItems: 'start' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
-              Tier 1<br />Institution
-            </div>
-            <div style={{ display: 'flex', gap: 12 }}>
-              {ROLES.filter(r => r.tier === 1).map(role => (
-                <RoleCard key={role.label} role={role} />
-              ))}
-            </div>
-          </div>
-          <div style={{ marginLeft: 120, height: 1, background: 'var(--border)', marginBottom: 4 }} />
-          <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, alignItems: 'start' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
-              Tier 2<br />Program
-            </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
-              {ROLES.filter(r => r.tier === 2).map(role => (
-                <RoleCard key={role.label} role={role} />
-              ))}
-            </div>
-          </div>
-          <div style={{ marginLeft: 120, height: 1, background: 'var(--border)', marginBottom: 4 }} />
-          <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, alignItems: 'start' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
-              Tier 3<br />Scoped
-            </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
-              {ROLES.filter(r => r.tier === 3).map(role => (
-                <RoleCard key={role.label} role={role} />
-              ))}
-            </div>
-          </div>
-          <Card style={{ marginTop: 8, background: 'var(--surface2)', border: '1px solid var(--border)' }}>
-            <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-              <strong style={{ color: 'var(--text)' }}>Open question (confirm with Vishaka):</strong> Outcome Director — is this a standalone role or additional responsibility layered onto Dept Head? Apr 1 session flagged this. Confirm before building the nav state for this role.
-            </p>
+      <SpecSection title="Nav merge map" sub="Which surfaces are shared across roles vs owned by one audience.">
+        <Table<MergeRow>
+          data={MERGE}
+          idKey="id"
+          density="compact"
+          columns={[
+            { key: 'status', header: 'Ownership', width: pixel(120), renderCell: (r) => <Badge variant={MERGE_VARIANT[r.status]} label={r.status.replace('-', ' ')} /> },
+            { key: 'label', header: 'Nav item', width: pixel(220), renderCell: (r) => <Text type="body">{r.label}</Text> },
+            { key: 'note', header: 'Behavior', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.note}</Text> },
+          ]}
+        />
+      </SpecSection>
+
+      <SpecSection title='What "Sections" means' sub='The word carries two meanings at different product layers — a P0 naming decision before April 17.'>
+        <Grid columns={{ minWidth: 320, max: 3 }} gap={3}>
+          <Card variant="muted" padding={3}>
+            <VStack gap={1}>
+              <Text type="body" weight="semibold">
+                Builder construct
+              </Text>
+              <Text type="supporting" as="p" textWrap="pretty">
+                A tab inside Assessment Builder where an admin divides an exam into named content-area blocks — each with its
+                own question pool, time limit, point weighting and navigation rules (e.g. Section 1 = Pulmonology, 20
+                questions, 30 min). Confirmed: sequential vs flexible navigation per section, blueprint-based assignment per
+                content area (sessions f5d66e4c, a4625ac7).
+              </Text>
+            </VStack>
           </Card>
-        </div>
-      )}
+          <Card variant="muted" padding={3}>
+            <VStack gap={1}>
+              <Text type="body" weight="semibold">
+                Student experience
+              </Text>
+              <Text type="supporting" as="p" textWrap="pretty">
+                A Section Entry Screen precedes each block: title, question count, time limit. Navigation is configurable —
+                sequential (submit Section 1 before Section 2, no return) or flexible within total time. Handled by
+                SectionEntryScreen.tsx; sequential lock-out confirmed for standardized exam types (f29a990d).
+              </Text>
+            </VStack>
+          </Card>
+          <Card variant="muted" padding={3}>
+            <VStack gap={1}>
+              <HStack gap={2} vAlign="center">
+                <Text type="body" weight="semibold">
+                  Correction note
+                </Text>
+                <Badge variant="warning" label="corrected Apr 1" />
+              </HStack>
+              <Text type="supporting" as="p" textWrap="pretty">
+                Earlier analysis wrongly classified Sections as a top-level admin nav item for roster/cohort management. It is
+                not a standalone destination. Action: propose renaming any admin-nav "Sections" to "Cohorts" before the April
+                17 demo — ExamSoft's naming confusion is a documented pain point.
+              </Text>
+            </VStack>
+          </Card>
+        </Grid>
+      </SpecSection>
 
-      {/* Nav merge map */}
-      {tab === 'merge' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 8, flexWrap: 'wrap' as const }}>
-            {[
-              { status: 'shared', label: 'Shared — admin + faculty', color: '#534AB7', bg: '#EEEDFE' },
-              { status: 'admin-only', label: 'Admin only', color: '#9D174D', bg: '#FCE7F3' },
-              { status: 'faculty-only', label: 'Faculty only', color: '#065F46', bg: '#D1FAE5' },
-              { status: 'student-only', label: 'Student only', color: '#185FA5', bg: '#E6F1FB' },
-            ].map(l => (
-              <span key={l.status} style={{ fontSize: 13, fontWeight: 600, padding: '3px 10px', borderRadius: 20, background: l.bg, color: l.color }}>
-                {l.label}
-              </span>
-            ))}
-          </div>
-          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 12, lineHeight: 1.5 }}>
-            Merge principle from Granola: unified interface, role controls data scope — not layout. Same screen renders differently based on role context. Three shared screens confirmed: Question Bank, Assessments, Rubrics (plus Analytics at different scopes).
-          </p>
-          {MERGE_ITEMS.map(item => {
-            const colors = {
-              'shared':       { c: '#534AB7', bg: '#EEEDFE' },
-              'admin-only':   { c: '#9D174D', bg: '#FCE7F3' },
-              'faculty-only': { c: '#065F46', bg: '#D1FAE5' },
-              'student-only': { c: '#185FA5', bg: '#E6F1FB' },
-            }[item.status] || { c: '#888', bg: '#eee' };
-            return (
-              <div key={item.label} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)' }}>
-                <span style={{ fontSize: 13, fontWeight: 700, padding: '2px 8px', borderRadius: 12, background: colors.bg, color: colors.c, flexShrink: 0, marginTop: 1, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  {item.status.replace('-', ' ')}
-                </span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text)', marginBottom: 2 }}>{item.label}</div>
-                  <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{item.note}</div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <SpecSection title="Access matrix" sub="full = create/edit/delete · read = view only · add = create only · scoped = within assigned scope.">
+        <Table<MatrixRow>
+          data={MATRIX}
+          idKey="id"
+          density="compact"
+          columns={[
+            { key: 'feature', header: 'Nav item', width: pixel(220), renderCell: (r) => <Text type="body">{r.feature}</Text> },
+            ...MATRIX_HEADERS.map((h, i) => ({
+              key: `c${i}`,
+              header: h,
+              width: proportional(1),
+              renderCell: (r: MatrixRow) =>
+                r.cells[i] === '—' ? (
+                  <Text type="supporting">—</Text>
+                ) : (
+                  <Badge variant={ACCESS_VARIANT[r.cells[i]] ?? 'neutral'} label={r.cells[i]} />
+                ),
+            })),
+          ]}
+        />
+      </SpecSection>
 
-      {/* What is Sections */}
-      {tab === 'sections' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 680 }}>
-            "Sections" carries two distinct meanings in Exam Management. They live at different layers of the product and should never share a label. This is a P0 naming decision before April 17.
-          </p>
-          {SECTIONS_MEANINGS.map(m => (
-            <Card key={m.title} style={{ border: `1px solid ${m.color}33`, background: m.bg }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                <div style={{ width: 4, minHeight: 80, borderRadius: 2, background: m.color, flexShrink: 0, marginTop: 2 }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: m.color, marginBottom: 8 }}>{m.title}</div>
-                  <p style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.65, marginBottom: 10 }}>{m.description}</p>
-                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
-                    <div style={{ fontSize: 13, color: m.color, fontWeight: 500 }}>
-                      Where: <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{m.where}</span>
-                    </div>
-                  </div>
-                  <div style={{ marginTop: 8, fontSize: 13, color: 'var(--text-secondary)', fontStyle: 'italic' }}>
-                    {m.granola}
-                  </div>
-                  {m.confusion && (
-                    <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 6, background: '#FAEEDA', border: '1px solid #F0997B' }}>
-                      <span style={{ fontSize: 13.5, fontWeight: 600, color: '#854F0B' }}>Action required: </span>
-                      <span style={{ fontSize: 13.5, color: '#854F0B' }}>Propose renaming "Sections" (admin nav) to "Cohorts" to Vishaka before April 17 demo. ExamSoft's naming confusion is a documented pain point — fix it before launch.</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Access matrix */}
-      {tab === 'matrix' && (
-        <div style={{ overflowX: 'auto' }}>
-          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 16, lineHeight: 1.5 }}>
-            Access key: <span style={{ background: '#E1F5EE', color: '#0F6E56', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>full</span> = create/edit/delete &nbsp;
-            <span style={{ background: '#E6F1FB', color: '#185FA5', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>read</span> = view only &nbsp;
-            <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>add</span> = create only &nbsp;
-            <span style={{ background: '#EEEDFE', color: '#534AB7', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>scoped</span> = within assigned scope only
-          </p>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
-            <thead>
-              <tr style={{ background: 'var(--surface2)' }}>
-                <th style={{ textAlign: 'left', padding: '10px 12px', fontWeight: 600, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)', minWidth: 180 }}>Nav item</th>
-                {['Inst. admin', 'Prog. director', 'HOD', 'Outcome dir.', 'Contributor', 'Reviewer', 'DCE'].map(h => (
-                  <th key={h} style={{ textAlign: 'center', padding: '10px 8px', fontWeight: 600, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)', minWidth: 88 }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {MATRIX_ROWS.map((row, i) => (
-                <tr key={row.feature} style={{ background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface2)', borderBottom: '1px solid var(--border)' }}>
-                  <td style={{ padding: '9px 12px', fontWeight: 500, color: 'var(--text)' }}>{row.feature}</td>
-                  {[row.instAdmin, row.progDir, row.hod, row.outcomeDr, row.contributor, row.reviewer, row.dce].map((val, vi) => (
-                    <td key={vi} style={{ textAlign: 'center', padding: '9px 8px' }}>
-                      {val !== '—' ? (
-                        <span style={{ background: ACCESS_BG[val] || 'transparent', color: ACCESS_COLORS[val] || '#888', padding: '2px 8px', borderRadius: 10, fontWeight: 600, fontSize: 13 }}>{val}</span>
-                      ) : (
-                        <span style={{ color: 'var(--border)', fontSize: 14.5 }}>—</span>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function RoleCard({ role }: { role: typeof ROLES[0] }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div
-      onClick={() => setOpen(o => !o)}
-      style={{ flex: '1 1 240px', maxWidth: 320, padding: '14px 16px', borderRadius: 10, border: `1px solid ${role.color}33`, background: role.bg, cursor: 'pointer', transition: 'box-shadow 0.15s' }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-        <div style={{ width: 8, height: 8, borderRadius: '50%', background: role.color, flexShrink: 0 }} />
-        <span style={{ fontSize: 14.5, fontWeight: 600, color: role.color }}>{role.label}</span>
-        {role.openQuestion && <span style={{ fontSize: 12, color: '#E24B4A', fontWeight: 700, marginLeft: 2 }}>CONFIRM</span>}
-      </div>
-      <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0, marginBottom: 8 }}>{role.desc}</p>
-      {open && (
-        <div style={{ marginTop: 8, borderTop: `1px solid ${role.color}22`, paddingTop: 8 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: role.color, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nav items</div>
-          {role.nav.map(n => (
-            <div key={n} style={{ fontSize: 13, color: 'var(--text-secondary)', padding: '2px 0', display: 'flex', gap: 6, alignItems: 'center' }}>
-              <span style={{ color: role.color, fontSize: 12 }}>›</span> {n}
-            </div>
-          ))}
-          <div style={{ marginTop: 8, fontSize: 12, color: role.color, fontStyle: 'italic', lineHeight: 1.4 }}>{role.granola}</div>
-        </div>
-      )}
-      <div style={{ fontSize: 12, color: role.color, opacity: 0.6 }}>{open ? 'click to collapse' : 'click for nav items'}</div>
-    </div>
+      <SpecFooter
+        productId={PRODUCT_ID}
+        extra={
+          <>
+            <Link href={`${hrefProductSpec(PRODUCT_ID)}?section=architecture`} isStandalone>
+              Spec: QB architecture →
+            </Link>
+            <Link href={`${hrefProductSpec(PRODUCT_ID)}?section=builder`} isStandalone>
+              Spec: builder + stories →
+            </Link>
+          </>
+        }
+      />
+    </VStack>
   );
 }

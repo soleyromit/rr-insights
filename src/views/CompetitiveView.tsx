@@ -1,125 +1,203 @@
-// @ts-nocheck
-// views/CompetitiveView.tsx — Competitive Parity (P3 rebuild, UX Audit v1)
-// Viz-first: parity matrix + scores lead; the ExamSoft retention anchors carry the narrative.
+// views/CompetitiveView.tsx — Competitive Parity (v18 Astryx rebuild).
+// Parity matrix as a table of status cells, weighted-parity ranked meters, the
+// open-territory list, and the three ExamSoft retention anchors — each ending
+// in the evidence query that backs it. The Cohere date conflict stays surfaced.
 import { useMemo } from 'react';
-import * as Plot from '@observablehq/plot';
-import { COMPETITOR_FEATURES, MILESTONES } from '../data/personas';
-import { getProduct } from '../data/products';
-import { Figure, Masthead } from '../components/ui/Figure';
-import { PlotFigure } from '../components/charts/PlotFigure';
-import { RankedBars } from '../components/charts/RankedBars';
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@astryxdesign/core/Link';
+import { Token } from '@astryxdesign/core/Token';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { COMPETITOR_FEATURES } from '../data/personas';
+import { PRODUCTS } from '../data/products';
+import { COHERE_LAUNCH } from '../data/taxonomy';
+import { parsePhaseDate } from '../lib/phaseDates';
+import { PageHeader } from '../components/ui/PageHeader';
+import { Fig } from '../components/charts/Fig';
+import { RankedList } from '../components/charts/RankedList';
+import { hrefInsights, hrefProduct } from '../lib/links';
 
-const MONO = "'JetBrains Mono', monospace";
+type CellValue = boolean | 'partial';
 const PLATFORMS = [
   { key: 'exxat', label: 'Exxat' },
   { key: 'examsoft', label: 'ExamSoft' },
   { key: 'blackboard', label: 'Blackboard' },
   { key: 'd2l', label: 'D2L' },
-];
-const STATUS_COLOR = { yes: '#2ec4a0', partial: '#f5a623', no: '#f0ede7' };
-const STATUS_GLYPH = { yes: '✓', partial: '◐', no: '' };
-const score = v => (v === true ? 1 : v === 'partial' ? 0.5 : 0);
+] as const;
 
-// The three reasons programs stay on ExamSoft (Dr. Vicky Mody session, Mar 20) and Exxat's answer to each.
+const score = (v: CellValue) => (v === true ? 1 : v === 'partial' ? 0.5 : 0);
+
+// The three reasons programs stay on ExamSoft (Dr. Vicky Mody session, Mar 20)
+// and Exxat's answer to each. Status is stated, not scored: nothing is measured yet.
 const ANCHORS = [
-  { title: 'Curriculum mapping', state: 'partial', response: 'Flat tagging architecture + bulk tag on import. One system, no Excel.', evidence: 'ins-em-008 · ins-em-011' },
-  { title: 'Faculty training over years', state: 'planned', response: 'Canvas-level UX so training is unnecessary; migration UX designed for the switching moment.', evidence: 'ins-em-018' },
-  { title: 'Strong item analytics', state: 'planned', response: 'Item heatmaps + p-values in Assessment analytics; AI layer (May sprint) surpasses rather than matches.', evidence: 'ins-em-015 · ins-em-016' },
+  { title: 'Curriculum mapping', state: 'partial', response: 'Flat tagging architecture + bulk tag on import. One system, no Excel.', evidence: 'ins-em-008 · ins-em-011', q: 'curriculum mapping' },
+  { title: 'Faculty training over years', state: 'planned', response: 'Canvas-level UX so training is unnecessary; migration UX designed for the switching moment.', evidence: 'ins-em-018', q: 'ExamSoft' },
+  { title: 'Strong item analytics', state: 'planned', response: 'Item heatmaps + p-values in Assessment analytics; AI layer (May sprint) surpasses rather than matches.', evidence: 'ins-em-015 · ins-em-016', q: 'item analytics' },
 ];
+
+interface FeatureRow extends Record<string, unknown> {
+  id: string;
+  name: string;
+  exxat: CellValue;
+  examsoft: CellValue;
+  blackboard: CellValue;
+  d2l: CellValue;
+}
+
+function StatusCell({ v }: { v: CellValue }) {
+  if (v === true) return <StatusDot variant="success" label="have" />;
+  if (v === 'partial') return <StatusDot variant="warning" label="partial" />;
+  return <StatusDot variant="neutral" label="missing" />;
+}
 
 export function CompetitiveView() {
-  const cells = useMemo(() => {
-    const out = [];
-    for (const f of COMPETITOR_FEATURES)
-      for (const p of PLATFORMS) {
-        const v = f[p.key];
-        out.push({ feature: f.name, platform: p.label, status: v === true ? 'yes' : v === 'partial' ? 'partial' : 'no' });
-      }
-    return out;
-  }, []);
+  const featureRows: FeatureRow[] = useMemo(
+    () => COMPETITOR_FEATURES.map((f) => ({ id: f.name, name: f.name, exxat: f.exxat, examsoft: f.examsoft, blackboard: f.blackboard, d2l: f.d2l })),
+    []
+  );
 
-  const parityScores = useMemo(() => PLATFORMS.map(p => ({
-    platform: p.label,
-    pct: Math.round(100 * COMPETITOR_FEATURES.reduce((n, f) => n + score(f[p.key]), 0) / COMPETITOR_FEATURES.length),
-  })), []);
+  const parity = useMemo(
+    () =>
+      PLATFORMS.map((p) => ({
+        key: p.label,
+        label: p.label,
+        value: Math.round((100 * COMPETITOR_FEATURES.reduce((n, f) => n + score(f[p.key]), 0)) / COMPETITOR_FEATURES.length),
+        hint: p.key === 'exxat' ? 'us — weighted coverage %' : 'weighted coverage %',
+        href: p.key === 'exxat' ? hrefInsights({ product: 'exam-management', tag: 'competitive' }) : undefined,
+      })).sort((a, b) => b.value - a.value),
+    []
+  );
 
-  const differentiators = COMPETITOR_FEATURES.filter(f =>
-    score(f.exxat) > 0 && score(f.examsoft) === 0 && score(f.blackboard) === 0 && score(f.d2l) === 0);
+  const openTerritory = COMPETITOR_FEATURES.filter(
+    (f) => score(f.exxat) > 0 && score(f.examsoft) === 0 && score(f.blackboard) === 0 && score(f.d2l) === 0
+  );
 
-  // Cohere date is CONFLICTED across sources: milestones say Aug 2026, product plan says Sep 2026.
-  // Render the earlier (conservative) date and flag the conflict; do not silently pick.
-  const cohereMs = MILESTONES.find(m => /cohere/i.test(m.label));
-  const cohereDate = cohereMs ? new Date(cohereMs.date.replace(/^(\w+) (\d{4})$/, '$1 1, $2')) : null;
-  const coherePlan = getProduct('exam-management')?.pilotDate ?? '';
-  const cohereConflict = coherePlan && cohereDate && !coherePlan.toLowerCase().startsWith(cohereDate.toLocaleDateString('en-US', { month: 'short' }).toLowerCase());
-  const daysToCohere = cohereDate ? Math.max(0, Math.round((cohereDate - new Date()) / 86400000)) : null;
-
-  const exxatPct = parityScores.find(sc => sc.platform === 'Exxat')?.pct ?? 0;
-  const leader = parityScores.slice().sort((a, b) => b.pct - a.pct)[0];
-  const digest = `Exxat sits at ${exxatPct}% weighted parity (${leader.platform === 'Exxat' ? 'leading the tracked set' : leader.platform + ' leads at ' + leader.pct + '%'}); ${differentiators.length} tracked features remain open territory no platform ships.`;
+  const cohereDate = parsePhaseDate(COHERE_LAUNCH.rendered);
+  const daysToCohere = cohereDate ? Math.max(0, Math.round((cohereDate.getTime() - Date.now()) / 86400000)) : null;
 
   return (
-    <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
-      <Masthead title="Competitive parity"
-        lede="Twelve tracked features across four platforms, and the three reasons programs actually stay on ExamSoft. Displacement happens at the switching moment; these are the switching conditions."
-        byline={`Cohere in ${daysToCohere} days per milestones (Aug 2026)${cohereConflict ? ` · CONFLICT: product plan says ${coherePlan}, confirm with Arun` : ''} · feature evidence from Granola sessions Mar 2026`}
-        digest={digest} />
+    <VStack gap={5} padding={6}>
+      <PageHeader
+        title="Competitive Parity"
+        lede="Twelve tracked features across four platforms, and the three reasons programs actually stay on ExamSoft — displacement happens at the switching moment."
+        meta={`${COMPETITOR_FEATURES.length} features × ${PLATFORMS.length} platforms · Cohere in ${daysToCohere ?? '?'} days (rendered ${COHERE_LAUNCH.rendered}, ${COHERE_LAUNCH.status}, owner ${COHERE_LAUNCH.owner})`}
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.4fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
-        <Figure title="Fig. 1 · Feature parity matrix" caption="Full ✓, partial ◐, absent blank. Decision: blank Exxat cells in rows where any competitor is green are the build queue; rows where every column is blank are open territory.">
-          <PlotFigure minHeight={COMPETITOR_FEATURES.length * 26 + 60} deps={[cells]} build={() => ({
-            height: COMPETITOR_FEATURES.length * 26 + 56,
-            marginLeft: 172, marginTop: 26, marginBottom: 4, marginRight: 8,
-            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
-            x: { axis: 'top', label: null, domain: PLATFORMS.map(p => p.label), tickSize: 0, padding: 0.1 },
-            y: { label: null, domain: COMPETITOR_FEATURES.map(f => f.name), tickSize: 0, padding: 0.18 },
-            color: { domain: ['yes', 'partial', 'no'], range: [STATUS_COLOR.yes, STATUS_COLOR.partial, STATUS_COLOR.no] },
-            marks: [
-              Plot.cell(cells, { x: 'platform', y: 'feature', fill: 'status', rx: 4, inset: 1.5 }),
-              Plot.text(cells, { x: 'platform', y: 'feature', text: d => STATUS_GLYPH[d.status], fill: '#fff', fontSize: 13, fontWeight: 700 }),
-            ],
-          })} />
-        </Figure>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <Figure title="Fig. 2 · Parity score" caption="Weighted coverage of the 12 tracked features (full = 1, partial = half). Decision: the Exxat number is the one to move before Cohere; report it in every Arun check-in. Exam-heavy feature set — per-product extension is in the content plan.">
-            <RankedBars maxHint={100} rows={parityScores.slice().sort((a, b) => b.pct - a.pct).map(sc => ({
-              key: sc.platform, label: sc.platform, total: sc.pct,
-              barColor: sc.platform === 'Exxat' ? '#6d5ed4' : '#b8b2a8',
-              sub: sc.platform === 'Exxat' ? 'us — weighted coverage %' : 'weighted coverage %',
-            }))} />
-          </Figure>
-          <Figure title="Fig. 3 · Open territory" caption="Features no tracked platform ships. Decision: these are launch-moment differentiators; they lead the Cohere story, not the parity table.">
-            <div>
-              {differentiators.map(f => (
-                <div key={f.name} className="flex items-center gap-2.5" style={{ padding: '7px 0', borderBottom: '1px solid var(--bg3)' }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#6d5ed4', flexShrink: 0 }} />
-                  <span style={{ fontSize: 14.5, color: 'var(--text)' }}>{f.name}</span>
-                  <span className="mono" style={{ marginLeft: 'auto', fontSize: 12, color: f.exxat === true ? '#1d8a6e' : '#b45309' }}>{f.exxat === true ? 'shipped' : 'in design'}</span>
-                </div>
-              ))}
-            </div>
-          </Figure>
-        </div>
-      </div>
+      <HStack gap={2} vAlign="center">
+        <StatusDot variant="warning" label="date conflict" />
+        <Text type="supporting" as="p" textWrap="pretty">
+          {COHERE_LAUNCH.note}
+        </Text>
+      </HStack>
 
-      <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px 22px' }}>
-        <div className="rr-serif" style={{ fontSize: 19.5, color: 'var(--text)', marginBottom: 2 }}>The three retention anchors</div>
-        <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.5, maxWidth: 640, marginBottom: 16 }}>
-          Programs stay on ExamSoft for exactly three reasons (School of Pharmacy session, Mar 20). Match or beat all three and there is, in Arun's words, no rational reason to stay. Readiness carries no percentage here on purpose: nothing is measured yet, so status is stated, not scored.
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+      <Fig
+        title="Feature parity matrix"
+        caption="Green = shipped, amber = partial, hollow = missing. Empty Exxat cells in rows where any competitor is green are the build queue; each feature name opens the exam-management evidence behind it."
+      >
+        <Table<FeatureRow>
+          data={featureRows}
+          idKey="id"
+          density="compact"
+          hasHover
+          columns={[
+            {
+              key: 'name',
+              header: 'Feature',
+              width: proportional(2),
+              renderCell: (r: FeatureRow) => <Link href={hrefInsights({ product: 'exam-management', q: r.name })}>{r.name}</Link>,
+            },
+            ...PLATFORMS.map((p) => ({
+              key: p.key,
+              header: p.label,
+              width: pixel(110),
+              renderCell: (r: FeatureRow) =>
+                r[p.key] === true || r[p.key] === 'partial' ? (
+                  <Link href={hrefInsights({ product: 'exam-management', q: r.name })} aria-label={`${r.name} on ${p.label}`}>
+                    <StatusCell v={r[p.key] as CellValue} />
+                  </Link>
+                ) : (
+                  <StatusCell v={false} />
+                ),
+            })),
+          ]}
+        />
+      </Fig>
+
+      <Grid columns={{ minWidth: 360, max: 2 }} gap={4}>
+        <Fig
+          title="Weighted parity score"
+          caption="Coverage of the 12 tracked features (full = 1, partial = half). The Exxat number is the one to move before Cohere — report it in every Arun check-in."
+        >
+          <RankedList rows={parity} format={(r) => `${r.value}%`} />
+        </Fig>
+
+        <Fig
+          title="Open territory"
+          caption="Features no tracked platform ships. These lead the Cohere story, not the parity table."
+        >
+          <VStack gap={2}>
+            {openTerritory.map((f) => (
+              <HStack key={f.name} gap={2} vAlign="center" hAlign="between">
+                <Link href={hrefInsights({ product: 'exam-management', q: f.name })}>{f.name}</Link>
+                <Text type="supporting">{f.exxat === true ? 'shipped' : 'in design'}</Text>
+              </HStack>
+            ))}
+          </VStack>
+        </Fig>
+      </Grid>
+
+      <Card padding={4}>
+        <VStack gap={3}>
+          <VStack gap={0}>
+            <Text type="label" color="secondary">
+              The three retention anchors
+            </Text>
+            <Text type="supporting" as="p" textWrap="pretty">
+              Programs stay on ExamSoft for exactly three reasons (School of Pharmacy session, Mar 20). Match or beat all three and there is, in Arun's words, no rational reason to stay. Readiness carries no percentage on purpose: nothing is measured yet, so status is stated, not scored.
+            </Text>
+          </VStack>
           {ANCHORS.map((a, i) => (
-            <div key={a.title} style={{ border: '1px solid var(--bg3)', borderRadius: 'var(--radius-sm)', padding: '14px 15px' }}>
-              <div className="flex items-baseline justify-between" style={{ marginBottom: 6 }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)' }}>{i + 1}. {a.title}</span>
-                <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: a.state === 'partial' ? '#b45309' : '#6d5ed4' }}>{a.state.toUpperCase()}</span>
-              </div>
-              <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>{a.response}</p>
-              <span className="mono" style={{ fontSize: 12, color: 'var(--text3)' }}>{a.evidence}</span>
-            </div>
+            <Collapsible
+              key={a.title}
+              trigger={<Text type="body" weight="semibold">{`${i + 1}. ${a.title} — ${a.state}`}</Text>}
+              defaultIsOpen={false}
+            >
+              <VStack gap={2}>
+                <Text type="body" as="p" textWrap="pretty">
+                  {a.response}
+                </Text>
+                <Text type="supporting">{a.evidence}</Text>
+                <Link href={hrefInsights({ product: 'exam-management', q: a.q })} isStandalone>
+                  Evidence for this anchor →
+                </Link>
+              </VStack>
+            </Collapsible>
           ))}
-        </div>
-      </div>
-    </div>
+        </VStack>
+      </Card>
+
+      <Card padding={4}>
+        <VStack gap={3}>
+          <Text type="label" color="secondary">
+            Competitor sets per product
+          </Text>
+          {PRODUCTS.map((p) => (
+            <HStack key={p.id} gap={2} vAlign="center" wrap="wrap">
+              <Link href={hrefProduct(p.id)}>
+                <Text type="supporting">{p.shortName}</Text>
+              </Link>
+              {p.competitors.map((c) => (
+                <Token key={c} label={c} href={hrefInsights({ product: p.id, q: c })} />
+              ))}
+            </HStack>
+          ))}
+        </VStack>
+      </Card>
+    </VStack>
   );
 }

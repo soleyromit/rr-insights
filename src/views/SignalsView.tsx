@@ -91,7 +91,7 @@ export function SignalsView() {
 
       <Grid columns={{ minWidth: 320, max: 2 }} gap={4}>
         {ranked.map(({ sig, mass }, i) => (
-          <ClickableCard key={sig.def.id} onClick={() => navigate(hrefSignal(sig.def.id))} padding={4}>
+          <ClickableCard key={sig.def.id} label={`Open signal: ${sig.def.title}`} onClick={() => navigate(hrefSignal(sig.def.id))} padding={4}>
             <VStack gap={2}>
               <HStack gap={2} vAlign="center" hAlign="between">
                 <HStack gap={2} vAlign="center">

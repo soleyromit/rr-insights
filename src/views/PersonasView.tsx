@@ -59,7 +59,7 @@ export function PersonasView() {
           const evidence = insightsWhere({ persona: p.id });
           const critical = evidence.filter((i) => i.severity === 'critical').length;
           return (
-            <ClickableCard key={p.id} onClick={() => navigate(hrefPersona(p.id))} padding={4}>
+            <ClickableCard key={p.id} label={`Open persona: ${p.name}`} onClick={() => navigate(hrefPersona(p.id))} padding={4}>
               <VStack gap={2}>
                 <HStack gap={2} vAlign="center">
                   <Avatar name={p.name} size="sm" tooltip={false} />

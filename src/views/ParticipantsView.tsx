@@ -38,7 +38,7 @@ export function ParticipantsView() {
         {REAL_VOICES.map((v) => {
           const contributed = insightsForVoice(v).length;
           return (
-            <ClickableCard key={v.id} onClick={() => navigate(hrefParticipant(v.id))} padding={4}>
+            <ClickableCard key={v.id} label={`Open participant: ${v.name}`} onClick={() => navigate(hrefParticipant(v.id))} padding={4}>
               <VStack gap={2}>
                 <HStack gap={2} vAlign="center">
                   <Avatar name={v.name} size="sm" tooltip={false} />

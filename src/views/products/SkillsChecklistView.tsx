@@ -1,533 +1,343 @@
-// @ts-nocheck
-import { useState } from 'react';
-import { getInsightsByProduct } from '../../data/insights';
-import { Card, CardTitle, MetricCard } from '../../components/ui/Card';
-import { InsightRow, AIStrip } from '../../components/ui/InsightRow';
-import { Badge } from '../../components/ui/Badge';
-import {
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-} from 'recharts';
+// views/products/SkillsChecklistView.tsx — Skills Checklist spec archive (v18
+// Astryx). The invented coverage radar and the fabricated student matrix are
+// gone; the confirmed UX decisions they illustrated ("just the reds", the
+// culminating slot) survive as text with their sources.
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Blockquote } from '@astryxdesign/core/Blockquote';
+import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { SpecSection } from './spec/SpecSection';
+import { DecisionCard } from './spec/DecisionCard';
+import { StoryTable } from './spec/StoryTable';
+import type { StoryRow } from './spec/StoryTable';
+import { SectionTabs, useSection } from './spec/SectionTabs';
+import { SpecFooter } from './spec/SpecFooter';
 
 const PRODUCT_ID = 'skills-checklist';
-type TabId = 'insights' | 'architecture' | 'domains' | 'workflows' | 'accreditation' | 'stories' | 'procedure-tracker';
-const TABS: { id: TabId; label: string }[] = [
-  { id: 'insights', label: 'Insights' },
-  { id: 'architecture', label: 'System architecture' },
-  { id: 'domains', label: 'Domain variations' },
+
+const SECTIONS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'architecture', label: 'Architecture' },
+  { id: 'domains', label: 'Domains' },
   { id: 'workflows', label: 'Workflows' },
   { id: 'accreditation', label: 'Accreditation' },
-  { id: 'stories', label: 'UX stories' },
-  { id: 'procedure-tracker', label: 'Procedure Tracker — “Just the reds”' },
+  { id: 'stories', label: 'Stories' },
 ];
 
-const radarData = [
-  { area: 'PA Programs', completeness: 72, complexity: 65 },
-  { area: 'Nursing', completeness: 45, complexity: 85 },
-  { area: 'Social Work', completeness: 38, complexity: 78 },
-  { area: 'Rad Tech', completeness: 55, complexity: 90 },
-  { area: 'CVT', completeness: 30, complexity: 95 },
-  { area: 'PT/OT', completeness: 60, complexity: 70 },
-];
-
-const evaluationApproaches = [
-  { method: 'Binary (Yes/No + signature)', programs: 'PA, PT, PTA', note: 'Simple procedure completion. USC PA passport model.' },
-  { method: 'Scaled (1–5 or custom)', programs: 'Nursing, CVT, Social Work', note: 'CVT uses 0/5/7.5/9/10 scale across 30 criteria per competency.' },
-  { method: 'Rubric-based', programs: 'PA, Nursing, OT', note: 'Multi-dimension scoring. Critical task marking for OSCE-linked skills.' },
-  { method: 'Narrative feedback', programs: 'Social Work, PT', note: 'Qualitative comments with structured prompts. Aligned to learning contracts.' },
-  { method: 'Self-assessment + validation', programs: 'PT, PA, Nursing', note: 'Student rates first, then preceptor confirms or overrides.' },
-  { method: 'Physical signature (passport)', programs: 'PA (USC model)', note: 'Paper-style passport digitized. 15 core technical skills across all rotations.' },
-];
-
-const domains = [
+const ARCH_DECISIONS = [
   {
-    name: 'PA Programs',
-    ref: 'Day 4 Marriott · Mar 5',
-    skills: '15 core technical skills across all rotations',
-    structure: 'Organized by rotation type (EM, family med, surgery). Required vs optional per rotation clearly marked.',
-    trigger: 'Student logs patient → system prompts skill evaluation request to preceptor',
-    graduation: 'Clinical passport completion required for graduation clearance',
-    evaluator: 'Site preceptor (same day as procedure)',
-    gaps: 'Patient logging trigger not yet integrated. USC passport model needs digitization path.',
+    title: 'Skills as student program-level entity, not placement-specific',
+    decision: 'A new entity sits above courses, placements and individual evaluations.',
+    rationale: 'The current system cannot answer "Has student done skill X across all placements?" — skills are artificially constrained to placement boundaries, so 80–90% of students keep external tracking docs.',
+    tradeoff: 'More complex data model; backward compatibility with the existing competency system; migration risk for existing clients.',
+    source: 'Day 4 Marriott · Mar 5',
   },
   {
-    name: 'Nursing (FNP/PNP/CRNA)',
-    ref: 'Day 4 Marriott · Mar 5',
-    skills: '50+ skills organized by body systems and procedure types',
-    structure: 'Rows = students, columns = skills. Batch evaluation preferred by faculty. Skills lab before clinical.',
-    trigger: 'Scheduled milestones (week 5, end of rotation, end of program)',
-    graduation: 'All required skills signed off. GPA threshold + skills together.',
-    evaluator: 'Faculty (lab) + clinical preceptor (field)',
-    gaps: 'Batch evaluation UI not built. Skills lab integration separate from clinical.',
+    title: 'Student-initiated evaluation, not preceptor-initiated',
+    decision: 'The student decides when ready and requests sign-off from whoever supervised them that day.',
+    rationale: 'Matches real clinical workflow — the supervisor of the moment may not be the main preceptor.',
+    tradeoff: 'Some programs use preceptor-initiated or scheduled triggers; the system must support all trigger types.',
+    source: 'Day 4 Marriott · Mar 5',
   },
   {
-    name: 'Radiation Technology',
-    ref: 'Day 4 Marriott · Mar 5',
-    skills: '50+ X-ray procedures across complex hierarchy (body parts → systems → procedures)',
-    structure: 'Abdomen → multiple sub-areas → specific scanning techniques. "Does not meet / Meets / Exceeds / N/A."',
-    trigger: 'Student selects preceptor → form routes for evaluation',
-    graduation: '"Does student demonstrate competence in this exam?" — final determination required',
-    evaluator: 'Preceptor at scan time',
-    gaps: 'Hierarchy depth (4 levels) is the hardest UX problem. Dropdown with 100+ items is unusable.',
+    title: 'Same backend, domain-specific UIs',
+    decision: 'Nursing sees "Skills Tracking Dashboard", PA sees a clinical passport, social work sees competency management — one data model, different labels, workflows and scales.',
+    rationale: 'Five documented domain models must work on one backend; forcing one UI on all five fails every discipline.',
+    tradeoff: 'Frontend complexity and UX-drift risk. Mitigation: shared component library with a domain configuration layer.',
+    source: 'Day 4 Marriott · Mar 5',
   },
   {
-    name: 'CVT (Cardiovascular Technology)',
-    ref: 'Day 4 Marriott · Mar 5',
-    skills: 'Each competency includes detailed instructions and daily guidelines',
-    structure: '20–30 questions per competency. Dimensions: patient interaction, communication, equipment, scrubbing, hemodynamic analysis.',
-    trigger: 'Student performs procedure → selects preceptor → form routed',
-    graduation: 'Custom scoring: 0 / 5 / 7.5 / 9 / 10 across all criteria. Average determines pass.',
-    evaluator: 'Preceptor (real-time)',
-    gaps: 'Custom scoring scale (not 1–5) requires configurable scale support. Highest complexity domain.',
+    title: 'Template-based cohort versioning',
+    decision: 'Requirement changes apply to new cohorts, not existing students; old versions archive.',
+    rationale: 'Accreditation standards change; Class of 2024 vs 2025 may carry different requirements.',
+    tradeoff: 'Version management complexity; edge case: student changes program mid-cohort.',
+    source: 'Day 4 Marriott · Mar 5',
   },
   {
-    name: 'Social Work',
-    ref: 'Day 4 Marriott · Mar 5',
-    skills: '9 EPAS competencies × 5 sub-areas (knowledge, values, skills, cognitive, affective)',
-    structure: 'Skills evaluation maps directly to professional competencies. Learning contract integration is mandatory.',
-    trigger: 'Pre-planned (learning contract commits → evaluation at midterm + final)',
-    graduation: 'All 9 competency areas achieved + learning contract closed',
-    evaluator: 'Site supervisor (comments) + faculty coordinator (official ratings)',
-    gaps: 'Learning contract and evaluation must be visible side-by-side. Current system keeps them separate.',
+    title: 'PDF auto-import for existing checklists',
+    decision: 'AI imports 20+ years of paper/PDF checklists into the skill hierarchy.',
+    rationale: '"Rebuild from scratch" friction is the primary adoption blocker.',
+    tradeoff: 'AI accuracy is not 100% — human review workflow required; complex custom scales need manual mapping.',
+    source: 'Day 4 Marriott · Mar 5',
   },
 ];
 
-const architectureDecisions = [
-  {
-    decision: 'Skills as student program-level entity, not placement-specific',
-    rationale: 'Cannot ask "Has student done skill X across all placements?" in current system. Skills artificially constrained to placement boundaries. New entity sits above courses, placements, and individual evaluations.',
-    tradeoff: 'More complex data model. Must maintain backward compatibility with existing competency system. Migration risk for existing clients.',
-    src: 'Day 4 Marriott · Mar 5',
-  },
-  {
-    decision: 'Student-initiated evaluation, not preceptor-initiated',
-    rationale: 'Student decides when ready for assessment. Matches real clinical workflow — student performs procedure, then requests sign-off from whoever worked with them that day (may not be main preceptor).',
-    tradeoff: 'Some programs use preceptor-initiated or scheduled. System must support all trigger types. Not a pure student-initiated system.',
-    src: 'Day 4 Marriott · Mar 5',
-  },
-  {
-    decision: 'Same backend, domain-specific UIs',
-    rationale: 'Nursing interface labeled "Skills Tracking Dashboard." PA interface is clinical passport. Social work is competency management. Same data model, different labels, workflows, and scoring scales per discipline.',
-    tradeoff: 'More frontend complexity. Risk of UX drift. Mitigation: shared component library with domain-specific configuration layer.',
-    src: 'Day 4 Marriott · Mar 5',
-  },
-  {
-    decision: 'Template-based cohort versioning',
-    rationale: 'Skills requirements change with new accreditation standards. Changes apply to new cohorts, not existing students. Archive old versions. Class of 2024 vs Class of 2025 may have different requirements.',
-    tradeoff: 'Version management complexity. Clients must understand what version applies to whom. Edge case: student changes program mid-cohort.',
-    src: 'Day 4 Marriott · Mar 5',
-  },
-  {
-    decision: 'PDF auto-import for existing checklists',
-    rationale: 'Programs have 20+ years of paper and PDF checklists. AI import of existing skills checklists into the hierarchy is the fastest migration path. Prevents "rebuild from scratch" friction that blocks adoption.',
-    tradeoff: 'AI accuracy not 100%. Must have human review workflow. Programs with complex custom scales need manual mapping.',
-    src: 'Day 4 Marriott · Mar 5',
-  },
+interface TriggerRow extends Record<string, unknown> {
+  id: string;
+  trigger: string;
+  desc: string;
+  programs: string;
+}
+const TRIGGERS: TriggerRow[] = [
+  { id: 't1', trigger: 'Student-initiated', desc: 'Student decides when ready, selects preceptor; form routed for evaluation.', programs: 'PA, CVT, Rad Tech' },
+  { id: 't2', trigger: 'Preceptor-initiated', desc: 'Supervisor identifies readiness and sends the evaluation form.', programs: 'PT, OT' },
+  { id: 't3', trigger: 'Scheduled milestones', desc: 'Auto-triggers at week 5, end of rotation, end of program.', programs: 'Nursing' },
+  { id: 't4', trigger: 'Event-triggered', desc: 'Patient log entry prompts a skill evaluation request — the most automated path.', programs: 'PA (target)' },
+  { id: 't5', trigger: 'Emergency reassessment', desc: 'Incident report triggers immediate competency re-evaluation.', programs: 'All clinical disciplines' },
 ];
 
+interface DomainRow extends Record<string, unknown> {
+  id: string;
+  name: string;
+  skills: string;
+  structure: string;
+  trigger: string;
+  graduation: string;
+  evaluator: string;
+  gap: string;
+}
+const DOMAINS: DomainRow[] = [
+  { id: 'pa', name: 'PA Programs', skills: '15 core technical skills across all rotations', structure: 'Organized by rotation type (EM, family med, surgery); required vs optional marked per rotation.', trigger: 'Student logs patient → system prompts a skill evaluation request to the preceptor.', graduation: 'Clinical passport completion required for graduation clearance.', evaluator: 'Site preceptor, same day as the procedure', gap: 'Patient-logging trigger not yet integrated; USC passport model needs a digitization path.' },
+  { id: 'nursing', name: 'Nursing (FNP/PNP/CRNA)', skills: '50+ skills organized by body systems and procedure types', structure: 'Rows = students, columns = skills; batch evaluation preferred; skills lab before clinical.', trigger: 'Scheduled milestones (week 5, end of rotation, end of program).', graduation: 'All required skills signed off; GPA threshold + skills together.', evaluator: 'Faculty (lab) + clinical preceptor (field)', gap: 'Batch evaluation UI not built; skills lab integration separate from clinical.' },
+  { id: 'radtech', name: 'Radiation Technology', skills: '50+ X-ray procedures in a body-part → system → procedure hierarchy', structure: '"Does not meet / Meets / Exceeds / N/A" per procedure.', trigger: 'Student selects preceptor → form routes for evaluation.', graduation: '"Does the student demonstrate competence in this exam?" — final determination required.', evaluator: 'Preceptor at scan time', gap: 'The 4-level hierarchy is the hardest UX problem — a dropdown with 100+ items is unusable.' },
+  { id: 'cvt', name: 'CVT (Cardiovascular Tech)', skills: 'Each competency includes detailed instructions and daily guidelines', structure: '20–30 questions per competency: patient interaction, communication, equipment, scrubbing, hemodynamic analysis.', trigger: 'Student performs procedure → selects preceptor → form routed.', graduation: 'Custom 0 / 5 / 7.5 / 9 / 10 scoring across all criteria; average determines pass.', evaluator: 'Preceptor, real-time', gap: 'Non-1-to-5 scoring requires configurable scale support — the highest-complexity domain.' },
+  { id: 'sw', name: 'Social Work', skills: '9 EPAS competencies × 5 sub-areas (knowledge, values, skills, cognitive, affective)', structure: 'Skills evaluation maps to professional competencies; learning contract integration mandatory.', trigger: 'Pre-planned: contract commits → evaluation at midterm + final.', graduation: 'All 9 competency areas achieved + learning contract closed.', evaluator: 'Site supervisor (comments) + faculty coordinator (official ratings)', gap: 'Contract and evaluation must sit side-by-side; the current system separates them.' },
+];
 
-// Transcript gap from Day 4 Marriott session (5890b614 Mar 5)
-const SC_TRANSCRIPT_GAPS = [
-  { src:'Day 4 Marriott (5890b614 Mar 5)', gap:'Skills are program-scoped goals, NOT placement-scoped. A student can satisfy any skill in any placement. Current system ties skills to individual placements — forcing students to track completion in external spreadsheets. Fix: program-level aggregate view spanning all placements.', severity:'Critical' },
-  { src:'Day 4 Marriott (5890b614 Mar 5)', gap:'PA programs use a "passport" model — procedure-based checklist, not competency-based. Lower-degree programs (PTA, lab assistant) focus on did-you-do-it. Higher-degree programs (PA, OT) focus on confidence and competency. Skills Checklist must support both models.', severity:'High' },
-  { src:'Day 4 Marriott (5890b614 Mar 5)', gap:'Students trigger their own evaluation when they feel ready — faculty/preceptor does NOT initiate. The student decides "I am ready to be evaluated on this skill" and sends the form. This is fundamentally different from faculty-initiated evaluation.', severity:'High' },
+interface MethodRow extends Record<string, unknown> {
+  id: string;
+  method: string;
+  programs: string;
+  note: string;
+}
+const METHODS: MethodRow[] = [
+  { id: 'm1', method: 'Binary (Yes/No + signature)', programs: 'PA, PT, PTA', note: 'Simple procedure completion — the USC PA passport model.' },
+  { id: 'm2', method: 'Scaled (1–5 or custom)', programs: 'Nursing, CVT, Social Work', note: 'CVT uses 0/5/7.5/9/10 across 30 criteria per competency.' },
+  { id: 'm3', method: 'Rubric-based', programs: 'PA, Nursing, OT', note: 'Multi-dimension scoring with critical task marking for OSCE-linked skills.' },
+  { id: 'm4', method: 'Narrative feedback', programs: 'Social Work, PT', note: 'Qualitative comments with structured prompts, aligned to learning contracts.' },
+  { id: 'm5', method: 'Self-assessment + validation', programs: 'PT, PA, Nursing', note: 'Student rates first; preceptor confirms or overrides.' },
+  { id: 'm6', method: 'Physical signature (passport)', programs: 'PA (USC model)', note: 'Paper passport digitized: 15 core technical skills across all rotations.' },
+];
+
+const WORKFLOWS = [
+  { title: 'Clinical passport (PA — USC model)', steps: ['Student performs procedure at the clinical site', 'Student logs the patient encounter', 'System detects an eligible procedure and prompts a skill evaluation request', 'Student selects the preceptor who supervised', 'Preceptor gets a mobile notification — verifies and signs', 'Skill logs against the passport; progress bar updates', 'DCE views the graduation clearance dashboard — red flags for students under minimums'] },
+  { title: 'Nursing batch evaluation (faculty-led)', steps: ['Faculty opens the Skills Dashboard — rows = students, columns = skills', 'Selects a skill; batch assessment mode opens', 'Per student: observed / not observed / needs repeat in one pass', 'Submits the batch — all 40 students update simultaneously', 'PD sees the cohort aggregate ("38/40 achieved hand washing")', 'At-risk students surface with an intervention recommendation'] },
+  { title: 'Social work learning contract + evaluation', steps: ['Pre-placement: student, preceptor and faculty agree the contract (9 EPAS competencies)', 'Student defines tasks per competency area', 'All parties sign — the contract is a living document', 'Midterm: evaluation opens side-by-side with the contract commitments', 'Site supervisor comments per competency; faculty coordinator rates officially', 'Final evaluation repeats; contract closes when all competencies are achieved'] },
+  { title: 'Graduation clearance (program-level)', steps: ['Program sets minimum counts per skill (e.g. 3× venipuncture)', 'System accumulates across ALL placements, not per rotation', 'Deficiency filter shows only students under threshold ("just the reds")', 'DCE alerted 8 weeks before the graduation deadline', 'Student completes missing procedures in the 10th/culminating rotation', 'One-click accreditation-ready report: all students × skills × sign-offs'] },
+];
+
+interface AccredRow extends Record<string, unknown> {
+  id: string;
+  body: string;
+  standard: string;
+  detail: string;
+  report: string;
+}
+const ACCRED: AccredRow[] = [
+  { id: 'capte', body: 'CAPTE (PT/PTA)', standard: 'Clinical Performance Instrument (CPI)', detail: '18 performance criteria; entry-level performance by graduation; CPI Web is the digital form — Exxat must map to the CPI taxonomy.', report: 'All 18 criteria achieved per student + cohort aggregate' },
+  { id: 'acote', body: 'ACOTE (OT)', standard: 'Fieldwork Performance Evaluation (FWPE)', detail: '27-item rating scale completed by the fieldwork supervisor; Level II fieldwork = 24 weeks full-time supervised practice.', report: 'FWPE scores + hours log per student' },
+  { id: 'arcpa', body: 'ARC-PA (PA)', standard: 'Program-defined competencies', detail: '9 mandated competency areas; clinical passport for procedure minimums; evidence that competencies were communicated AND assessed AND reported; summative OSCE in the last 4 months.', report: 'Passport completion + OSCE results + EOR z-scores (Ed Razenbach)' },
+  { id: 'ccne', body: 'CCNE (Nursing)', standard: 'QSEN competencies + program outcomes', detail: 'Patient safety, EBP, teamwork, informatics, QI — all mapped to clinical and didactic activities: "has every student demonstrated this at least once?"', report: 'Competency achievement by student by area' },
+  { id: 'cswe', body: 'CSWE (Social Work)', standard: 'EPAS 2022 — 9 competencies × 5 sub-areas', detail: '45+ trackable items minimum across professional identity, ethics, justice, research, policy, engagement, assessment, intervention, evaluation.', report: 'All 9 competencies per student + contract closure per placement' },
+  { id: 'monster', body: 'Dr. T (Touro) request', standard: 'Monster Grid', detail: 'Didactic + SPAC + clinical data in one consolidated view; PAEA export + ExamSoft integration; bulk upload for external sources.', report: 'Excel export: students × data points × placements, filterable to "only deficient students"' },
+];
+
+const STORIES: StoryRow[] = [
+  { id: 'SC-01', who: 'Student (PA)', what: 'log a completed procedure and immediately request preceptor sign-off on mobile', why: 'logging while the preceptor is still present is the only reliable workflow', source: 'Day 4 Marriott · Mar 5' },
+  { id: 'SC-02', who: 'Student (any)', what: 'see my complete skills progress across all placements in one view', why: '"How many venipunctures total?" currently requires navigating 8 separate forms', source: 'Day 4 Marriott · Mar 5' },
+  { id: 'SC-03', who: 'Preceptor (mobile)', what: 'verify a student skill with a single tap and signature, no account setup', why: 'any friction and preceptors stop signing — the data goes incomplete', source: 'Day 4 Marriott · Mar 5' },
+  { id: 'SC-04', who: 'Faculty (Nursing)', what: 'assess 40 students on one skill in a single batch session', why: 'one-at-a-time forms waste 90 minutes per skill', source: 'Day 4 Marriott · Mar 5' },
+  { id: 'SC-05', who: 'DCE', what: 'see which students are below minimum procedure counts 8 weeks before clearance', why: 'finding gaps the week before graduation is too late', source: 'Dr. T Touro · Mar 11' },
+  { id: 'SC-06', who: 'Program Director', what: 'generate an accreditation-ready competency report in one click', why: 'the manual download-merge-format cycle repeats every accreditation cycle', source: 'Day 4 Marriott · Mar 5' },
+  { id: 'SC-07', who: 'Social Work student', what: 'see my learning contract side-by-side with my evaluation form', why: 'the contract defines success; the evaluation measures it', source: 'Day 4 Marriott · Mar 5' },
+  { id: 'SC-08', who: 'Admin', what: 'import an existing PDF checklist and get the skill hierarchy auto-generated', why: 'rebuilding from scratch is the primary adoption blocker', source: 'Day 4 Marriott · Mar 5' },
 ];
 
 export function SkillsChecklistView() {
-  const [tab, setTab] = useState<TabId>('insights');
-  const insights = getInsightsByProduct(PRODUCT_ID);
-
-  const tabStyle = (id: TabId) => ({
-    padding: '10px 18px',
-    fontSize: 14.5,
-    fontWeight: tab === id ? 600 : 400,
-    color: tab === id ? 'var(--brand)' : 'var(--text-secondary)',
-    borderBottom: `2px solid ${tab === id ? 'var(--brand)' : 'transparent'}`,
-    marginBottom: -1,
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    whiteSpace: 'nowrap' as const,
-  });
-
+  const [section, setSection] = useSection(SECTIONS, 'overview');
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 0, height: '100%' }}>
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', background: 'var(--surface-primary)', flexShrink: 0, overflowX: 'auto' }}>
-        {TABS.map(t => <button key={t.id} onClick={() => setTab(t.id)} style={tabStyle(t.id)}>{t.label}</button>)}
-      </div>
+    <VStack gap={5} padding={6} maxWidth={1160}>
+      <PageHeader
+        title="Skills Checklist — spec archive"
+        lede="Clinical competency tracking across 6+ disciplines — the richest requirements document in the corpus (Day 4 Marriott: 80+ requirements)."
+        meta="Q2 2026 requirements + prototyping · Q3–Q4 development · Jan 1 2027 launch · competitors: Typhon, CompetencyAI, eValue, CORE, Excel"
+      />
+      <SectionTabs sections={SECTIONS} value={section} onChange={setSection} />
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-
-        {/* ── INSIGHTS ── */}
-        {tab === 'insights' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Primary source: Day 4 Marriott meeting (Mar 5) — 80+ requirements across nursing, PA, social work, rad tech, CVT. Dr. T Touro (Mar 11) — procedure tracking and Monster Grid. This is the richest product document in the corpus. Timeline: Q2 prototypes, Jan 2027 launch." />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
-              <MetricCard label="Disciplines covered" value="6+" delta="PA, Nursing, SocialWork, RadTech, CVT, PT/OT" />
-              <MetricCard label="Timeline" value="Jan 2027" delta="Q2 requirements · Q3–Q4 dev" />
-              <MetricCard label="Evaluation methods" value="6" delta="Binary to rubric-based" />
-              <MetricCard label="Competitors" value="Typhon, CompetencyAI" delta="Must beat both at launch" deltaPositive={false} />
-            </div>
-
-            <Card>
-              <CardTitle sub="Current vs target state — Day 4 Marriott">The core problem in one sentence</CardTitle>
-              <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)', marginBottom: 12 }}>
-                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 4px' }}>Current state</p>
-                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>Skills are locked inside individual placement forms. Cannot answer: "Has this student completed venipuncture at least once across all 8 rotations?" Students lack a comprehensive view of their progress toward graduation. Faculty cannot see aggregate competency achievement across a program cohort.</p>
-              </div>
-              <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 4px' }}>Target state</p>
-                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>Skills exist at student program level — a cross-cutting entity above courses, placements, and evaluations. Student initiates assessment when ready. Aggregates across all placements automatically. Graduation clearance dashboard shows at-risk students weeks before the deadline.</p>
-              </div>
-            </Card>
-
-            <Card>
-              <CardTitle sub="Complexity and current coverage by discipline">Domain coverage radar</CardTitle>
-              <ResponsiveContainer width="100%" height={200}>
-                <RadarChart data={radarData}>
-                  <PolarGrid stroke="var(--border)" />
-                  <PolarAngleAxis dataKey="area" tick={{ fontSize: 13, fill: 'var(--text-secondary)' }} />
-                  <Radar name="Coverage" dataKey="completeness" stroke="#10B981" fill="#10B981" fillOpacity={0.15} />
-                  <Radar name="Complexity" dataKey="complexity" stroke="#E31C79" fill="#E31C79" fillOpacity={0.1} />
-                </RadarChart>
-              </ResponsiveContainer>
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>Green = research coverage · Pink = implementation complexity</div>
-            </Card>
-
-            {insights.slice(0, 5).map((ins, i) => <InsightRow key={i} insight={ins} />)}
-          </div>
-        )}
-
-        {/* ── ARCHITECTURE ── */}
-        {tab === 'architecture' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="System architecture decisions from Day 4 Marriott (Mar 5). These are not suggestions — they are the decided approach that Arun owns technically, Vishaka leads UX on." />
-            {architectureDecisions.map((a, i) => (
-              <Card key={i}>
-                <CardTitle sub={a.src}>{a.decision}</CardTitle>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {[{ label: 'Rationale', text: a.rationale, color: '#10B981' }, { label: 'Tradeoff', text: a.tradeoff, color: '#F59E0B' }].map(row => (
-                    <div key={row.label} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: row.color, width: 72, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
-                      <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{row.text}</p>
-                    </div>
-                  ))}
-                </div>
+      {section === 'overview' && (
+        <VStack gap={6}>
+          <SpecSection title="The core problem in one sentence" sub="Current vs target state — Day 4 Marriott (Mar 5).">
+            <Grid columns={{ minWidth: 340, max: 2 }} gap={3}>
+              <Card variant="muted" padding={3}>
+                <VStack gap={1}>
+                  <Badge variant="error" label="Current state" />
+                  <Text type="supporting" as="p" textWrap="pretty">
+                    Skills are locked inside individual placement forms. Nobody can answer "has this student completed
+                    venipuncture at least once across all 8 rotations?" — so 80–90% of students build external tracking docs,
+                    and faculty cannot see cohort-level competency achievement.
+                  </Text>
+                </VStack>
               </Card>
-            ))}
-            <Card>
-              <CardTitle sub="Evaluation trigger types — must support all">Trigger mechanism matrix</CardTitle>
-              {[
-                { trigger: 'Student-initiated', desc: 'Student decides when ready. Selects preceptor. Form routed for evaluation.', programs: 'PA, CVT, Rad Tech' },
-                { trigger: 'Preceptor-initiated', desc: 'Supervisor identifies readiness. Sends evaluation form to student/themselves.', programs: 'PT, OT' },
-                { trigger: 'Scheduled milestones', desc: 'System auto-triggers at week 5, end of rotation, end of program.', programs: 'Nursing' },
-                { trigger: 'Event-triggered', desc: 'Patient log entry → system prompts skill evaluation request. Most automated path.', programs: 'PA (target)' },
-                { trigger: 'Emergency reassessment', desc: 'Incident report triggers immediate competency re-evaluation.', programs: 'All clinical disciplines' },
-              ].map((t, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
-                  <Badge variant="default">{t.trigger}</Badge>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 2px' }}>{t.desc}</p>
-                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Used by: {t.programs}</span>
-                  </div>
-                </div>
+              <Card variant="muted" padding={3}>
+                <VStack gap={1}>
+                  <Badge variant="success" label="Target state" />
+                  <Text type="supporting" as="p" textWrap="pretty">
+                    Skills exist at student program level — a cross-cutting entity above courses, placements and evaluations.
+                    Student initiates assessment when ready; totals aggregate across all placements automatically; the
+                    graduation clearance dashboard flags at-risk students weeks before the deadline.
+                  </Text>
+                </VStack>
+              </Card>
+            </Grid>
+          </SpecSection>
+          <SpecSection
+            title='"Just the reds" — the confirmed procedure-tracker decision'
+            sub="Dr. T, Touro PA · Mar 11 · session 92bef6ba. A toggle that shows ONLY deficient students (threshold: 3 per procedure), defaulting to reds-only on load — an action view, not an overview. Cell color bands: below threshold / near (3–5) / well above (6+)."
+          >
+            <Blockquote cite="Dr. T · Touro PA program · session 92bef6ba">
+              I just want the reds. Just the students missing their procedure minimums.
+            </Blockquote>
+            <Card variant="muted" padding={3}>
+              <Text type="supporting" as="p" textWrap="pretty">
+                Edge case, same session: "We need a space where if a student comes back and says I never did an IV on all my
+                clinicals." The checklist must support an overflow/culminating rotation slot (rotation 10 at Touro) where
+                missed procedures are logged retroactively — a known scenario, not a theoretical one.
+              </Text>
+            </Card>
+          </SpecSection>
+          <SpecSection
+            title="Transcript-grounded gaps"
+            sub="Day 4 Marriott (5890b614 · Mar 5): skills are program-scoped goals, NOT placement-scoped — any skill can be satisfied in any placement; PA uses a procedure-based passport model while higher-degree programs track confidence and competency — both models must be supported; and students trigger their own evaluation when they feel ready — fundamentally different from faculty-initiated evaluation."
+          >
+            <HStack gap={2} wrap="wrap">
+              <Badge variant="error" label="critical · program-scoped, not placement-scoped" />
+              <Badge variant="warning" label="high · passport AND competency models" />
+              <Badge variant="warning" label="high · student-initiated trigger" />
+            </HStack>
+          </SpecSection>
+        </VStack>
+      )}
+
+      {section === 'architecture' && (
+        <VStack gap={6}>
+          <SpecSection title="Architecture decisions" sub="Not suggestions — the decided approach. Arun owns technical, Vishaka leads UX.">
+            <Grid columns={{ minWidth: 380, max: 2 }} gap={3}>
+              {ARCH_DECISIONS.map((d) => (
+                <DecisionCard key={d.title} {...d} />
               ))}
-            </Card>
-          </div>
-        )}
+            </Grid>
+          </SpecSection>
+          <SpecSection title="Trigger mechanism matrix" sub="All five trigger types must be supported per program.">
+            <Table<TriggerRow>
+              data={TRIGGERS}
+              idKey="id"
+              density="balanced"
+              columns={[
+                { key: 'trigger', header: 'Trigger', width: pixel(180), renderCell: (r) => <Text type="body" weight="semibold">{r.trigger}</Text> },
+                { key: 'desc', header: 'Behavior', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.desc}</Text> },
+                { key: 'programs', header: 'Used by', width: pixel(180), renderCell: (r) => <Text type="supporting">{r.programs}</Text> },
+              ]}
+            />
+          </SpecSection>
+        </VStack>
+      )}
 
-        {/* ── DOMAINS ── */}
-        {tab === 'domains' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Day 4 Marriott documented 5 distinct domain models — all must work on the same backend. This is the hardest design challenge: one architecture, five completely different UX surfaces." />
-            {domains.map((d, i) => (
-              <Card key={i}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <Badge variant="default">{d.name}</Badge>
-                  <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{d.ref}</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
-                  {[
-                    { label: 'Skills scope', val: d.skills },
-                    { label: 'Structure', val: d.structure },
-                    { label: 'Trigger', val: d.trigger },
-                    { label: 'Graduation link', val: d.graduation },
-                    { label: 'Primary evaluator', val: d.evaluator },
-                  ].map(row => (
-                    <div key={row.label}>
-                      <div style={{ fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 2 }}>{row.label}</div>
-                      <div style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{row.val}</div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#EF4444' }}>Design gap: </span>
-                  <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{d.gaps}</span>
-                </div>
-              </Card>
-            ))}
-            <Card>
-              <CardTitle sub="All 6 evaluation approaches must be configurable per program">Evaluation method registry</CardTitle>
-              {evaluationApproaches.map((e, i) => (
-                <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < evaluationApproaches.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{e.method}</div>
-                    <div style={{ fontSize: 13.5, color: 'var(--text-muted)', marginBottom: 2 }}>Used by: {e.programs}</div>
-                    <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{e.note}</div>
-                  </div>
-                </div>
-              ))}
-            </Card>
-          </div>
-        )}
-
-        {/* ── WORKFLOWS ── */}
-        {tab === 'workflows' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Clinical passport (PA), batch nursing evaluation, social work learning contract integration, and graduation clearance workflows. All from Day 4 Marriott and Dr. T Touro session." />
-            {[
-              {
-                title: 'Clinical passport (PA — USC model)',
-                steps: [
-                  'Student performs procedure at clinical site',
-                  'Student logs patient encounter in patient log module',
-                  'System detects eligible procedure — prompts skill evaluation request',
-                  'Student selects preceptor who supervised the procedure',
-                  'Preceptor receives mobile notification — opens form, verifies, signs',
-                  'Skill logged against clinical passport. Progress bar updates.',
-                  'DCE views graduation clearance dashboard — red flags for students under minimum counts',
-                ],
-              },
-              {
-                title: 'Nursing batch evaluation (faculty-led)',
-                steps: [
-                  'Faculty opens Skills Dashboard — rows = students, columns = skills',
-                  'Selects skill (e.g., hand washing) — batch assessment mode opens',
-                  'For each student: observed / not observed / needs repeat — checked in one pass',
-                  'Faculty submits batch — all 40 students updated simultaneously',
-                  'Program director sees cohort-level aggregate: "38/40 students achieved hand washing"',
-                  'At-risk students (not achieved by milestone) surfaced with intervention recommendation',
-                ],
-              },
-              {
-                title: 'Social work learning contract + evaluation',
-                steps: [
-                  'Pre-placement: student, preceptor, and faculty agree on learning contract (9 EPAS competencies)',
-                  'Student defines specific tasks/activities to achieve each competency area',
-                  'All parties sign — contract is now a living document',
-                  'Midterm: evaluation form opens side-by-side with learning contract commitments',
-                  'Site supervisor provides qualitative comments per competency',
-                  'Faculty coordinator provides official rating',
-                  'Final evaluation: same workflow. Contract closed when all competencies marked achieved.',
-                ],
-              },
-              {
-                title: 'Graduation clearance (program-level)',
-                steps: [
-                  'Program sets minimum counts per skill type (e.g., 3× venipuncture required)',
-                  'System tracks accumulation across ALL placements — not per rotation',
-                  'Dr. T Touro: "Red flag when students below 3-procedure threshold — filterable report showing only the reds"',
-                  'DCE receives alert 8 weeks before graduation deadline if students are at risk',
-                  'Student can complete missing procedures in 10th rotation or culminating space (Dr. T request)',
-                  'System generates accreditation-ready report: all students, all skills, all sign-offs',
-                ],
-              },
-            ].map((w, i) => (
-              <Card key={i}>
-                <CardTitle>{w.title}</CardTitle>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {w.steps.map((s, si) => (
-                    <div key={si} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{si + 1}</span>
-                      <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{s}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* ── ACCREDITATION ── */}
-        {tab === 'accreditation' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Each accreditor has different standard names but the same underlying need: prove students can perform clinical skills before graduation. All evidence must be program-level, not placement-level." />
-            {[
-              { body: 'CAPTE (PT/PTA)', standard: 'Clinical Performance Instrument (CPI)', detail: '18 performance criteria. Entry-level performance required by graduation. "Meets expectations" threshold. CPI Web is the digital form — Exxat must map to CPI taxonomy.', reportNeeded: 'All 18 criteria achieved per student + cohort aggregate' },
-              { body: 'ACOTE (OT)', standard: 'Fieldwork Performance Evaluation (FWPE)', detail: '27-item rating scale. Fieldwork supervisor completes. Faculty director reviews aggregates. Level II fieldwork = 24 weeks of full-time supervised practice before graduation.', reportNeeded: 'FWPE scores + hours log per student' },
-              { body: 'ARC-PA (PA)', standard: 'Program-defined competencies', detail: '9 competency areas mandated. Clinical passport for procedure minimums. Must demonstrate evidence that competencies were communicated to students AND assessed AND reported. Summative OSCE in last 4 months of program.', reportNeeded: 'Clinical passport completion + OSCE results + EOR z-scores (Ed Razenbach)' },
-              { body: 'CCNE (Nursing)', standard: 'QSEN competencies + program outcomes', detail: 'Patient safety, evidence-based practice, teamwork, informatics, quality improvement. All must be mapped to clinical and didactic activities. "Has every student demonstrated this competency at least once across the program?"', reportNeeded: 'Competency achievement by student by competency area' },
-              { body: 'CSWE (Social Work)', standard: 'EPAS 2022 — 9 competencies × 5 sub-areas', detail: '9 core competencies: professional identity, ethics, social justice, research, policy, engagement, assessment, intervention, evaluation. Each has knowledge/values/skills/cognitive/affective sub-areas = 45 trackable items minimum.', reportNeeded: 'All 9 competencies achieved per student. Learning contract closure for each placement.' },
-              { body: 'Dr. T (Touro) request', standard: 'Monster Grid', detail: 'Comprehensive data consolidation across all programs. Didactic + SPAC + clinical data in one view. PAEA export integration. ExamSoft integration for exam data. Bulk upload for external data sources.', reportNeeded: 'Excel export: all students × all data points × all placements — filterable by "show only deficient students"' },
-            ].map((a, i) => (
-              <Card key={i}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                  <Badge variant="default">{a.body}</Badge>
-                  <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{a.standard}</span>
-                </div>
-                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.6 }}>{a.detail}</p>
-                <div style={{ padding: '8px 12px', borderRadius: 8, background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>Report required: </span>
-                  <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{a.reportNeeded}</span>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* ── STORIES ── */}
-        {tab === 'stories' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Skills Checklist user stories — significantly higher confidence now after Day 4 Marriott (Mar 5) and Dr. T Touro (Mar 11). Multi-discipline coverage." />
-            {[
-              { id: 'SC-01', who: 'Student (PA)', what: 'Log a completed procedure and immediately request preceptor sign-off on my mobile device', why: 'Clinical sites are busy. Logging immediately after the procedure — while the preceptor is still present — is the only reliable workflow. Desktop-first breaks this.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'SC-02', who: 'Student (any)', what: 'See my complete skills progress dashboard across all placements in one view', why: 'Current system requires students to check each placement separately. Cannot answer "How many venipunctures have I done total?" without navigating 8 different forms.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'SC-03', who: 'Preceptor (mobile)', what: 'Verify a student skill with a single tap and signature without creating an account or navigating a complex interface', why: 'Preceptors see 5–10 students across multiple programs. Any friction in the verification workflow means students stop asking and the data becomes incomplete.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'SC-04', who: 'Faculty (Nursing)', what: 'Assess 40 students on a single skill in one batch session without opening 40 separate forms', why: '"Rows = students, columns = skills" is how nursing faculty think about batch competency evaluation. One-at-a-time forms waste 90 minutes per skill.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'SC-05', who: 'DCE', what: 'See which students are below minimum procedure count 8 weeks before graduation clearance — not the day before', why: 'Dr. T: "Red flag when students below 3-procedure threshold — show only the reds." Early warning enables intervention. Finding gaps the week before graduation is too late.', src: 'Dr. T Touro · Mar 11' },
-              { id: 'SC-06', who: 'Program Director', what: 'Generate an accreditation-ready competency report with one click — all students, all skills, all sign-offs, cohort format', why: 'Current: download separately, merge in Excel, format manually for each accreditation cycle. Should be automated to PDF/Excel by a single export action.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'SC-07', who: 'Social Work student', what: 'See my learning contract commitments side-by-side with my evaluation form when my preceptor is assessing me', why: 'Evaluation without reference to what was committed in the learning contract is disconnected. The contract defines what success looks like — the evaluation measures it.', src: 'Day 4 Marriott · Mar 5' },
-              { id: 'SC-08', who: 'Admin', what: 'Import an existing PDF skills checklist and have the system generate the skill hierarchy automatically', why: 'Programs have years of paper or PDF checklists. Asking them to rebuild from scratch is the primary adoption blocker. AI import reduces this to a review-and-confirm step.', src: 'Day 4 Marriott · Mar 5' },
-            ].map((s, i) => (
-              <Card key={i}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>{s.id}</span>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
-                      <strong>As a</strong> {s.who}, <strong>I need to</strong> {s.what}, <strong>so that</strong> {s.why}.
-                    </p>
-                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Source: {s.src}</span>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-
-        {/* ── PROCEDURE TRACKER — "Just the reds" ──────────────────────────────── */}
-        {/* Source: Dr. T Touro 92bef6ba: "I just want the reds. Just the students */}
-        {/* missing their procedure minimums." Confirmed UX decision — toggle not sort. */}
-        {tab === 'procedure-tracker' && (() => {
-          const [showOnlyReds, setShowOnlyReds] = (useState as Function)(true);
-          const PROCEDURES = [
-            'Venipuncture', 'IV placement', 'Urinary catheter', 'NG tube', 'Pelvic exam',
-            'Suturing', 'Injection (IM/SC)', 'Breast exam', 'Wound care', 'ABG collection',
-          ];
-          const STUDENTS = [
-            { name: 'Marcus T.', cohort: 'PA2', counts: [5,3,2,1,2,3,5,2,4,1], threshold: 3, risk: true },
-            { name: 'Sarah K.', cohort: 'PA3', counts: [8,5,4,3,3,5,7,4,6,3], threshold: 3, risk: false },
-            { name: 'Elena R.', cohort: 'PA2', counts: [3,2,1,0,1,2,3,1,2,0], threshold: 3, risk: true },
-            { name: 'James W.', cohort: 'PA3', counts: [9,6,5,4,4,6,8,5,7,4], threshold: 3, risk: false },
-            { name: 'Priya P.', cohort: 'PA2', counts: [2,1,0,0,1,1,2,0,1,0], threshold: 3, risk: true },
-            { name: 'David K.', cohort: 'PA3', counts: [7,4,4,3,3,5,6,4,5,3], threshold: 3, risk: false },
-            { name: 'Aisha W.', cohort: 'PA2', counts: [4,3,2,1,2,3,4,2,3,1], threshold: 3, risk: true },
-            { name: 'Chris P.', cohort: 'PA3', counts: [10,7,6,5,5,7,9,6,8,5], threshold: 3, risk: false },
-          ];
-          const displayed = showOnlyReds ? STUDENTS.filter(s => s.risk) : STUDENTS;
-
-          return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {/* The "just the reds" story */}
-              <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.2)', borderLeft: '4px solid #dc2626' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
-                  Dr. T, Touro PA Program · Mar 11, 2026 · session 92bef6ba
-                </div>
-                <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
-                  "I just want the reds. Just the students missing their procedure minimums."
-                </div>
-                <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
-                  This is a confirmed UX decision: the program director wants a toggle that shows <strong>only</strong> deficient students —
-                  not all students with a red indicator mixed in. The difference is intent: this is an action-oriented view,
-                  not an overview. Default to reds-only on load.
-                </div>
-              </div>
-
-              {/* Controls */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 10, background: '#fff', border: '1px solid var(--border)' }}>
-                <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)' }}>
-                  {showOnlyReds ? `${displayed.length} students below threshold` : `${STUDENTS.length} students total`}
-                </span>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', marginLeft: 'auto' }}>
-                  <span style={{ fontSize: 13.5, color: 'var(--text2)' }}>Show only reds</span>
-                  <div style={{ width: 36, height: 20, borderRadius: 10, background: showOnlyReds ? '#dc2626' : 'var(--border2)', position: 'relative', cursor: 'pointer', flexShrink: 0 }}
-                    onClick={() => setShowOnlyReds(!showOnlyReds)}>
-                    <div style={{ position: 'absolute', top: 3, width: 14, height: 14, borderRadius: '50%', background: '#fff', left: showOnlyReds ? 19 : 3, transition: 'left 0.12s' }} />
-                  </div>
-                </label>
-                <div style={{ fontSize: 13, padding: '4px 10px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', color: '#dc2626', fontWeight: 600 }}>
-                  Threshold: 3 per procedure
-                </div>
-              </div>
-
-              {/* Procedure matrix */}
-              <div style={{ overflowX: 'auto', borderRadius: 10, border: '1px solid var(--border)', background: '#fff' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800 }}>
-                  <thead>
-                    <tr style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--border)' }}>
-                      <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em', minWidth: 120 }}>Student</th>
-                      {PROCEDURES.map(p => (
-                        <th key={p} style={{ padding: '8px 6px', fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', minWidth: 72 }}>
-                          {p.split(' ')[0]}
-                        </th>
+      {section === 'domains' && (
+        <VStack gap={6}>
+          <SpecSection title="Five domain models, one backend" sub="The hardest design challenge: one architecture, five completely different UX surfaces. Day 4 Marriott · Mar 5.">
+            <VStack gap={3}>
+              {DOMAINS.map((d) => (
+                <Card key={d.id} padding={4}>
+                  <VStack gap={2}>
+                    <Text type="body" weight="semibold">
+                      {d.name}
+                    </Text>
+                    <Grid columns={{ minWidth: 260, max: 2 }} gap={2}>
+                      {[
+                        ['Skills scope', d.skills],
+                        ['Structure', d.structure],
+                        ['Trigger', d.trigger],
+                        ['Graduation link', d.graduation],
+                        ['Primary evaluator', d.evaluator],
+                      ].map(([label, val]) => (
+                        <VStack key={label} gap={0.5}>
+                          <Text type="label" color="secondary">
+                            {label}
+                          </Text>
+                          <Text type="supporting" as="p" textWrap="pretty">
+                            {val}
+                          </Text>
+                        </VStack>
                       ))}
-                      <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: 13, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gaps</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayed.map((s, si) => {
-                      const gaps = s.counts.filter(c => c < s.threshold).length;
-                      return (
-                        <tr key={s.name} style={{ borderBottom: si < displayed.length - 1 ? '1px solid var(--border)' : 'none', background: s.risk ? 'rgba(220,38,38,0.02)' : 'transparent' }}>
-                          <td style={{ padding: '10px 14px' }}>
-                            <div style={{ fontWeight: 600, fontSize: 14.5, color: 'var(--text)' }}>{s.name}</div>
-                            <div style={{ fontSize: 13, color: 'var(--text3)' }}>{s.cohort}</div>
-                          </td>
-                          {s.counts.map((count, pi) => {
-                            const isRed = count < s.threshold;
-                            return (
-                              <td key={pi} style={{ padding: '8px 6px', textAlign: 'center' }}>
-                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 28, borderRadius: 6, background: isRed ? 'rgba(220,38,38,0.1)' : count >= s.threshold * 2 ? 'rgba(16,163,74,0.08)' : 'rgba(217,119,6,0.08)', border: `1px solid ${isRed ? 'rgba(220,38,38,0.25)' : count >= s.threshold * 2 ? 'rgba(16,163,74,0.2)' : 'rgba(217,119,6,0.2)'}` }}>
-                                  <span style={{ fontSize: 13.5, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: isRed ? '#dc2626' : count >= s.threshold * 2 ? '#16a34a' : '#d97706' }}>{count}</span>
-                                </div>
-                              </td>
-                            );
-                          })}
-                          <td style={{ padding: '10px 14px', textAlign: 'center' }}>
-                            <span style={{ fontSize: 14.5, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: gaps > 0 ? '#dc2626' : '#16a34a' }}>
-                              {gaps > 0 ? `${gaps} gaps` : '✓'}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                    </Grid>
+                    <HStack gap={2} vAlign="center">
+                      <Badge variant="error" label="design gap" />
+                      <Text type="supporting" as="p" textWrap="pretty">
+                        {d.gap}
+                      </Text>
+                    </HStack>
+                  </VStack>
+                </Card>
+              ))}
+            </VStack>
+          </SpecSection>
+          <SpecSection title="Evaluation method registry" sub="All six approaches must be configurable per program.">
+            <Table<MethodRow>
+              data={METHODS}
+              idKey="id"
+              density="balanced"
+              columns={[
+                { key: 'method', header: 'Method', width: pixel(230), renderCell: (r) => <Text type="body">{r.method}</Text> },
+                { key: 'programs', header: 'Used by', width: pixel(190), renderCell: (r) => <Text type="supporting">{r.programs}</Text> },
+                { key: 'note', header: 'Notes', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.note}</Text> },
+              ]}
+            />
+          </SpecSection>
+        </VStack>
+      )}
 
-              {/* Legend + design note */}
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                {[['rgba(220,38,38,0.1)', '#dc2626', 'Below threshold (< 3)'], ['rgba(217,119,6,0.08)', '#d97706', 'Near threshold (3–5)'], ['rgba(16,163,74,0.08)', '#16a34a', 'Well above (6+)']].map(([bg, color, label]) => (
-                  <div key={label as string} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 24, height: 20, borderRadius: 5, background: bg as string, border: `1px solid ${color as string}40` }} />
-                    <span style={{ fontSize: 13, color: 'var(--text3)' }}>{label as string}</span>
-                  </div>
-                ))}
-                <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text3)' }}>Threshold per Dr. T: 3 per procedure · Source: session 92bef6ba</div>
-              </div>
+      {section === 'workflows' && (
+        <SpecSection title="Core workflows" sub="Clinical passport, nursing batch evaluation, social work contract integration, graduation clearance — Day 4 Marriott + Dr. T Touro.">
+          <Grid columns={{ minWidth: 380, max: 2 }} gap={3}>
+            {WORKFLOWS.map((w) => (
+              <Card key={w.title} padding={4}>
+                <VStack gap={1.5}>
+                  <Text type="body" weight="semibold">
+                    {w.title}
+                  </Text>
+                  {w.steps.map((s, i) => (
+                    <HStack key={i} gap={2} vAlign="center">
+                      <Badge variant="neutral" label={String(i + 1)} />
+                      <Text type="supporting" as="p" textWrap="pretty">
+                        {s}
+                      </Text>
+                    </HStack>
+                  ))}
+                </VStack>
+              </Card>
+            ))}
+          </Grid>
+        </SpecSection>
+      )}
 
-              {/* Overflow / culminating slot note */}
-              <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.15)', fontSize: 13.5, color: 'var(--text2)' }}>
-                <span style={{ fontWeight: 700, color: '#6d5ed4' }}>Edge case (Dr. T, session 92bef6ba):</span>{' '}
-                "We need a space where if a student comes back and says I never did an IV on all my clinicals."
-                Skills checklist must support an overflow/culminating rotation slot (rotation 10 at Touro) where students can log
-                missed procedures retroactively. This is not theoretical — it is a known scenario at Touro PA program.
-              </div>
-            </div>
-          );
-        })()}
+      {section === 'accreditation' && (
+        <SpecSection title="Accreditor requirements" sub="Different standard names, same underlying need: prove students can perform clinical skills before graduation. All evidence must be program-level, not placement-level.">
+          <Table<AccredRow>
+            data={ACCRED}
+            idKey="id"
+            density="balanced"
+            columns={[
+              { key: 'body', header: 'Body', width: pixel(150), renderCell: (r) => <Text type="body" weight="semibold">{r.body}</Text> },
+              { key: 'standard', header: 'Instrument', width: pixel(210), renderCell: (r) => <Text type="supporting">{r.standard}</Text> },
+              { key: 'detail', header: 'Detail', width: proportional(3), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.detail}</Text> },
+              { key: 'report', header: 'Report required', width: proportional(2), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.report}</Text> },
+            ]}
+          />
+        </SpecSection>
+      )}
 
-      </div>
-    </div>
+      {section === 'stories' && (
+        <SpecSection title="User stories" sub="High confidence after Day 4 Marriott (Mar 5) and Dr. T Touro (Mar 11); multi-discipline coverage.">
+          <StoryTable rows={STORIES} />
+        </SpecSection>
+      )}
+
+      <SpecFooter productId={PRODUCT_ID} />
+    </VStack>
   );
 }

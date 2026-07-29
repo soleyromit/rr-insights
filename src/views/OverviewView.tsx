@@ -65,7 +65,7 @@ export function OverviewView() {
       />
 
       <Grid columns={{ minWidth: 220, max: 4 }} gap={4}>
-        <ClickableCard onClick={() => navigate(hrefInsights({}))} padding={4}>
+        <ClickableCard label="Open the insight index" onClick={() => navigate(hrefInsights({}))} padding={4}>
           <VStack gap={1}>
             <Text type="label" color="secondary">
               Corpus
@@ -76,7 +76,7 @@ export function OverviewView() {
             <Text type="supporting">insights · open the index →</Text>
           </VStack>
         </ClickableCard>
-        <ClickableCard onClick={() => navigate(hrefInsights({ severity: 'critical', sort: 'score' }))} padding={4}>
+        <ClickableCard label="Open critical insights ranked by score" onClick={() => navigate(hrefInsights({ severity: 'critical', sort: 'score' }))} padding={4}>
           <VStack gap={1}>
             <HStack gap={2} vAlign="center">
               <StatusDot variant="error" label="critical" />
@@ -90,7 +90,7 @@ export function OverviewView() {
             <Text type="supporting">score-ranked list →</Text>
           </VStack>
         </ClickableCard>
-        <ClickableCard onClick={() => navigate(hrefRoadmap())} padding={4}>
+        <ClickableCard label="Open the roadmap" onClick={() => navigate(hrefRoadmap())} padding={4}>
           <VStack gap={1}>
             <Text type="label" color="secondary">
               Next hard deadline
@@ -103,7 +103,7 @@ export function OverviewView() {
             </Text>
           </VStack>
         </ClickableCard>
-        <ClickableCard onClick={() => navigate(hrefSignals())} padding={4}>
+        <ClickableCard label="Open the signal board" onClick={() => navigate(hrefSignals())} padding={4}>
           <VStack gap={1}>
             <Text type="label" color="secondary">
               Opportunity mass

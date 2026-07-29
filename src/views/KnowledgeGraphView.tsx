@@ -1,19 +1,27 @@
+// views/KnowledgeGraphView.tsx — Knowledge Graph (v18 restyle).
+// The hand-rolled force simulation and SVG rendering are kept intact; the
+// chrome (header, filters, legend, detail panel) moved to Astryx components
+// and all colors now come from the chart theme (categorical for node types,
+// semantic/structural for edge types). Nodes that map to a routable entity
+// navigate on click; everything else stays selection-only with outbound links
+// in the detail panel.
 import { useState, useEffect, useRef } from 'react';
-
-// ─── Knowledge Graph View ───────────────────────────────────────────────────
-// Visualizes connections between Granola sessions, project docs, insights,
-// and features using an interactive force-directed simulation.
-// Every edge has a type: source-of | confirms | contradicts | extends | blocks
-// Nodes are colored by product accent, sized by evidence density.
-
-
-const EDGE_COLORS: Record<string, string> = {
-  'source-of': '#6d5ed4',
-  confirms: '#0d9488',
-  contradicts: '#e8604a',
-  extends: '#d97706',
-  blocks: '#dc2626',
-};
+import { useNavigate } from 'react-router-dom';
+import { useChartColors } from '@astryxdesign/charts';
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Card } from '@astryxdesign/core/Card';
+import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@astryxdesign/core/Link';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@astryxdesign/core/Button';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { PageHeader } from '../components/ui/PageHeader';
+import { getProduct } from '../data/products';
+import { PERSONAS } from '../data/personas';
+import { insightById } from '../lib/selectors';
+import { hrefProduct, hrefPersona, hrefInsight } from '../lib/links';
 
 // ─── Static graph data built from SKILL.md Section 1 ─────────────────────
 // Every node = real information source. Every edge = real documented connection.
@@ -21,7 +29,6 @@ interface GNode {
   id: string; label: string; type: 'session' | 'doc' | 'insight' | 'feature' | 'persona' | 'pattern';
   product: string; confidence: 'high' | 'medium' | 'low';
   detail: string; speaker?: string; date?: string;
-  x?: number; y?: number; vx?: number; vy?: number;
 }
 
 interface GEdge {
@@ -136,19 +143,55 @@ const EDGES: GEdge[] = [
 type FilterType = 'all' | 'session' | 'doc' | 'insight' | 'feature' | 'pattern';
 type ProductFilter = 'all' | 'exam-management' | 'faas' | 'course-eval' | 'skills-checklist' | 'platform';
 
-const NODE_TYPE_COLORS: Record<string, string> = {
-  session: '#6d5ed4', doc: '#0d9488', insight: '#e8604a', feature: '#16a34a', pattern: '#d97706', persona: '#db2777',
-};
+const TYPE_FILTERS: { id: FilterType; label: string }[] = [
+  { id: 'all', label: 'All types' },
+  { id: 'session', label: 'Sessions' },
+  { id: 'doc', label: 'Docs' },
+  { id: 'insight', label: 'Insights' },
+  { id: 'feature', label: 'Features' },
+  { id: 'pattern', label: 'Patterns' },
+];
+
+const PROD_FILTERS: { id: ProductFilter; label: string }[] = [
+  { id: 'all', label: 'All products' },
+  { id: 'exam-management', label: 'Exam Mgmt' },
+  { id: 'faas', label: 'FaaS' },
+  { id: 'course-eval', label: 'Course Eval' },
+  { id: 'skills-checklist', label: 'Skills' },
+  { id: 'platform', label: 'Platform' },
+];
+
+const NODE_LETTER: Record<GNode['type'], string> = { session: 'S', doc: 'D', insight: 'I', feature: 'F', pattern: 'P', persona: 'U' };
+
+/** Canonical route for nodes that map to a routable entity; null = selection-only. */
+function routeForNode(n: GNode): string | null {
+  if (n.type === 'insight' && insightById(n.id)) return hrefInsight(n.id, 'graph');
+  if (n.type === 'persona' && PERSONAS.some((p) => p.id === n.id)) return hrefPersona(n.id);
+  return null;
+}
 
 export function KnowledgeGraphView() {
-  const svgRef = useRef<SVGSVGElement>(null);
+  const navigate = useNavigate();
+  const colors = useChartColors();
+  const cat = colors.categorical(5);
+  const NODE_TYPE_COLORS: Record<GNode['type'], string> = {
+    session: cat[0], doc: cat[1], insight: cat[2], feature: cat[3], pattern: cat[4], persona: cat[0],
+  };
+  const EDGE_COLORS: Record<GEdge['type'], string> = {
+    'source-of': colors.structural.axis,
+    confirms: colors.semantic.positive,
+    extends: colors.semantic.warning,
+    blocks: colors.semantic.negative,
+    contradicts: colors.semantic.negative,
+  };
+
   const [selectedNode, setSelectedNode] = useState<GNode | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [filterProduct, setFilterProduct] = useState<ProductFilter>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [positions, setPositions] = useState<Record<string, { x: number; y: number }>>({});
-  const animRef = useRef<number>();
+  const animRef = useRef<number | null>(null);
   const posRef = useRef<Record<string, { x: number; y: number; vx: number; vy: number }>>({});
   const W = 900; const H = 560;
 
@@ -251,246 +294,211 @@ export function KnowledgeGraphView() {
     return 0.3;
   };
 
-  const TYPE_FILTERS: { id: FilterType; label: string; color: string }[] = [
-    { id: 'all', label: 'All', color: '#6d5ed4' },
-    { id: 'session', label: 'Sessions', color: NODE_TYPE_COLORS.session },
-    { id: 'doc', label: 'Docs', color: NODE_TYPE_COLORS.doc },
-    { id: 'insight', label: 'Insights', color: NODE_TYPE_COLORS.insight },
-    { id: 'feature', label: 'Features', color: NODE_TYPE_COLORS.feature },
-    { id: 'pattern', label: 'Patterns', color: NODE_TYPE_COLORS.pattern },
-  ];
-
-  const PROD_FILTERS: { id: ProductFilter; label: string }[] = [
-    { id: 'all', label: 'All products' },
-    { id: 'exam-management', label: 'Exam Mgmt' },
-    { id: 'faas', label: 'FaaS' },
-    { id: 'course-eval', label: 'Course Eval' },
-    { id: 'skills-checklist', label: 'Skills' },
-    { id: 'platform', label: 'Platform' },
-  ];
-
   const nodeRadius = (n: GNode) => n.type === 'session' ? 11 : n.type === 'feature' ? 10 : 8;
 
+  const handleNodeClick = (n: GNode) => {
+    const route = routeForNode(n);
+    if (route) {
+      navigate(route);
+      return;
+    }
+    setSelectedNode(prev => (prev?.id === n.id ? null : n));
+  };
+
+  const selectedProduct = selectedNode ? getProduct(selectedNode.product) : undefined;
+
   return (
-    <div style={{ padding: 24, fontFamily: 'Inter, sans-serif', background: 'var(--bg)', minHeight: '100vh' }}>
-      {/* Header */}
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 4 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text)', margin: 0, fontFamily: 'DM Serif Display, Georgia, serif' }}>
-            Knowledge Graph
-          </h1>
-          <span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>
-            {NODES.length} nodes · {EDGES.length} edges
-          </span>
-        </div>
-        <p style={{ fontSize: 14.5, color: 'var(--text2)', margin: 0, maxWidth: 600 }}>
-          Every Granola session, project doc, insight, and feature — connected by evidence.
-          Click any node to trace its information lineage.
-        </p>
-      </div>
+    <VStack gap={5} padding={6}>
+      <PageHeader
+        title="Knowledge Graph"
+        lede="Every Granola session, project doc, insight, and feature — connected by evidence. Click any node to trace its information lineage."
+        meta={`${NODES.length} nodes · ${EDGES.length} edges · edge direction = information flow`}
+      />
 
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: 16, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-        <input
-          placeholder="Search nodes, speakers…"
+      <HStack gap={3} vAlign="center" wrap="wrap">
+        <TextInput
+          label="Search nodes"
+          isLabelHidden
           value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          style={{ fontSize: 13.5, padding: '5px 10px', borderRadius: 7, border: '1px solid var(--border)', background: '#fff', color: 'var(--text)', outline: 'none', width: 200 }}
+          onChange={(v) => setSearchQuery(v)}
+          placeholder="Search nodes, speakers…"
+          hasClear
         />
-        <div style={{ display: 'flex', gap: 4 }}>
-          {TYPE_FILTERS.map(f => (
-            <button key={f.id} onClick={() => setFilterType(f.id)}
-              style={{ fontSize: 13, fontWeight: 600, padding: '4px 10px', borderRadius: 20, border: `1px solid ${filterType === f.id ? f.color : 'var(--border)'}`, background: filterType === f.id ? `${f.color}15` : '#fff', color: filterType === f.id ? f.color : 'var(--text3)', cursor: 'pointer' }}>
-              {f.label}
-            </button>
+        <HStack gap={1.5} wrap="wrap">
+          {TYPE_FILTERS.map((f) => (
+            <Token key={f.id} label={f.label} color={filterType === f.id ? 'blue' : 'default'} onClick={() => setFilterType(f.id)} />
           ))}
-        </div>
-        <div style={{ display: 'flex', gap: 4 }}>
-          {PROD_FILTERS.map(f => (
-            <button key={f.id} onClick={() => setFilterProduct(f.id)}
-              style={{ fontSize: 13, fontWeight: 600, padding: '4px 10px', borderRadius: 20, border: `1px solid ${filterProduct === f.id ? '#6d5ed4' : 'var(--border)'}`, background: filterProduct === f.id ? '#6d5ed415' : '#fff', color: filterProduct === f.id ? '#6d5ed4' : 'var(--text3)', cursor: 'pointer' }}>
-              {f.label}
-            </button>
+        </HStack>
+        <HStack gap={1.5} wrap="wrap">
+          {PROD_FILTERS.map((f) => (
+            <Token key={f.id} label={f.label} color={filterProduct === f.id ? 'purple' : 'default'} onClick={() => setFilterProduct(f.id)} />
           ))}
-        </div>
-        {selectedNode && (
-          <button onClick={() => setSelectedNode(null)}
-            style={{ fontSize: 13, padding: '4px 10px', borderRadius: 20, border: '1px solid var(--border)', background: '#fff', color: 'var(--text3)', cursor: 'pointer' }}>
-            ✕ Clear selection
-          </button>
-        )}
-      </div>
+        </HStack>
+        {selectedNode && <Button label="Clear selection" variant="ghost" size="sm" onClick={() => setSelectedNode(null)} />}
+      </HStack>
 
-      <div style={{ display: 'flex', gap: 16 }}>
-        {/* Graph canvas */}
-        <div style={{ flex: 1 }}>
-          <div style={{ border: '1px solid var(--border)', borderRadius: 12, background: '#fafafa', overflow: 'hidden', position: 'relative' }}>
-            <svg ref={svgRef} width={W} height={H} style={{ display: 'block' }}>
-              <defs>
-                {Object.entries(EDGE_COLORS).map(([type, color]) => (
-                  <marker key={type} id={`arrow-${type}`} markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                    <path d="M0,0 L0,6 L6,3 z" fill={color} opacity={0.7} />
-                  </marker>
-                ))}
-              </defs>
+      <HStack gap={4} vAlign="start" wrap="wrap">
+        <VStack gap={2}>
+          <Card padding={2}>
+            {/* Style bridge: the force-directed canvas itself stays hand-rolled SVG. */}
+            <div style={{ overflowX: 'auto' }}>
+              <svg width={W} height={H} style={{ display: 'block' }} role="img" aria-label="Force-directed knowledge graph">
+                <defs>
+                  {(Object.entries(EDGE_COLORS) as [GEdge['type'], string][]).map(([type, color]) => (
+                    <marker key={type} id={`arrow-${type}`} markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                      <path d="M0,0 L0,6 L6,3 z" fill={color} opacity={0.7} />
+                    </marker>
+                  ))}
+                </defs>
 
-              {/* Edges */}
-              {EDGES.map((e, i) => {
-                const a = positions[e.source]; const b = positions[e.target];
-                if (!a || !b) return null;
-                const opacity = getEdgeOpacity(e);
-                const color = EDGE_COLORS[e.type] || '#94a3b8';
-                const mx = (a.x + b.x) / 2 + (b.y - a.y) * 0.08;
-                const my = (a.y + b.y) / 2 - (b.x - a.x) * 0.08;
-                return (
-                  <g key={i} opacity={opacity}>
-                    <path
-                      d={`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`}
-                      fill="none" stroke={color} strokeWidth={1.5}
-                      markerEnd={`url(#arrow-${e.type})`}
-                      strokeDasharray={e.type === 'contradicts' ? '4,3' : 'none'}
-                    />
-                    {opacity > 0.5 && (
-                      <text x={mx} y={my - 4} fontSize={9} fill={color} textAnchor="middle" fontFamily="JetBrains Mono, monospace"
-                        style={{ pointerEvents: 'none' }}>
-                        {e.label}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
-
-              {/* Nodes */}
-              {NODES.map(n => {
-                const pos = positions[n.id];
-                if (!pos) return null;
-                const opacity = getNodeOpacity(n.id);
-                const color = NODE_TYPE_COLORS[n.type] || '#94a3b8';
-                const r = nodeRadius(n);
-                const isSelected = selectedNode?.id === n.id;
-                return (
-                  <g key={n.id} transform={`translate(${pos.x},${pos.y})`} opacity={opacity}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setSelectedNode(prev => prev?.id === n.id ? null : n)}
-                    onMouseEnter={() => setHoveredNode(n.id)}
-                    onMouseLeave={() => setHoveredNode(null)}>
-                    <circle r={r + (isSelected ? 4 : 0)} fill={color}
-                      stroke={isSelected ? '#fff' : `${color}40`} strokeWidth={isSelected ? 2.5 : 1}
-                      opacity={0.85} />
-                    <text fontSize={10} fill="#fff" textAnchor="middle" dy={3}
-                      fontFamily="JetBrains Mono, monospace" fontWeight={700}
-                      style={{ pointerEvents: 'none' }}>
-                      {n.type === 'session' ? 'S' : n.type === 'doc' ? 'D' : n.type === 'insight' ? 'I' : n.type === 'feature' ? 'F' : 'P'}
-                    </text>
-                    {(isSelected || hoveredNode === n.id) && (
-                      <text fontSize={10} fill="var(--text)" textAnchor="middle" dy={r + 13}
-                        fontFamily="Inter, sans-serif" fontWeight={600}
-                        style={{ pointerEvents: 'none' }}>
-                        {n.label.length > 20 ? n.label.slice(0, 20) + '…' : n.label}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
-
-          {/* Legend */}
-          <div style={{ display: 'flex', gap: 16, marginTop: 10, flexWrap: 'wrap' }}>
-            {Object.entries(NODE_TYPE_COLORS).map(([type, color]) => (
-              <div key={type} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
-                <span style={{ fontSize: 13, color: 'var(--text3)', textTransform: 'capitalize' }}>{type}</span>
-              </div>
-            ))}
-            <div style={{ width: 1, background: 'var(--border)' }} />
-            {Object.entries(EDGE_COLORS).map(([type, color]) => (
-              <div key={type} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <div style={{ width: 18, height: 2, background: color, borderRadius: 1 }} />
-                <span style={{ fontSize: 13, color: 'var(--text3)' }}>{type.replace('-', ' ')}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Detail panel */}
-        <div style={{ width: 280, flexShrink: 0 }}>
-          {selectedNode ? (
-            <div style={{ border: `2px solid ${NODE_TYPE_COLORS[selectedNode.type]}30`, borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
-              <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)', background: `${NODE_TYPE_COLORS[selectedNode.type]}08` }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: NODE_TYPE_COLORS[selectedNode.type] }} />
-                  <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: NODE_TYPE_COLORS[selectedNode.type], fontWeight: 700, textTransform: 'uppercase' }}>
-                    {selectedNode.type}
-                  </span>
-                  <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginLeft: 'auto' }}>
-                    {selectedNode.confidence}
-                  </span>
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', lineHeight: 1.3 }}>{selectedNode.label}</div>
-                {selectedNode.speaker && (
-                  <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 3 }}>{selectedNode.speaker}{selectedNode.date && ` · ${selectedNode.date}`}</div>
-                )}
-              </div>
-              <div style={{ padding: '12px 14px' }}>
-                <p style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6, margin: 0 }}>{selectedNode.detail}</p>
-              </div>
-              {/* Connected nodes */}
-              <div style={{ padding: '0 14px 14px' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-                  Connected
-                </div>
-                {EDGES.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).map((e, i) => {
-                  const isOut = e.source === selectedNode.id;
-                  const otherId = isOut ? e.target : e.source;
-                  const other = NODES.find(n => n.id === otherId);
-                  if (!other) return null;
+                {/* Edges */}
+                {EDGES.map((e, i) => {
+                  const a = positions[e.source]; const b = positions[e.target];
+                  if (!a || !b) return null;
+                  const opacity = getEdgeOpacity(e);
                   const color = EDGE_COLORS[e.type];
+                  const mx = (a.x + b.x) / 2 + (b.y - a.y) * 0.08;
+                  const my = (a.y + b.y) / 2 - (b.x - a.x) * 0.08;
                   return (
-                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 6, cursor: 'pointer' }}
-                      onClick={() => setSelectedNode(other)}>
-                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: NODE_TYPE_COLORS[other.type], flexShrink: 0, marginTop: 4 }} />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 13, color: 'var(--text)', fontWeight: 500 }}>{other.label}</div>
-                        <div style={{ fontSize: 12, color, fontFamily: 'JetBrains Mono, monospace' }}>
-                          {isOut ? '→' : '←'} {e.label}
-                        </div>
-                      </div>
-                    </div>
+                    <g key={i} opacity={opacity}>
+                      <path
+                        d={`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`}
+                        fill="none" stroke={color} strokeWidth={1.5}
+                        markerEnd={`url(#arrow-${e.type})`}
+                        strokeDasharray={e.type === 'contradicts' ? '4,3' : 'none'}
+                      />
+                      {opacity > 0.5 && (
+                        <text x={mx} y={my - 4} fontSize={10} fill={colors.structural.label} textAnchor="middle" style={{ pointerEvents: 'none' }}>
+                          {e.label}
+                        </text>
+                      )}
+                    </g>
                   );
                 })}
-              </div>
+
+                {/* Nodes */}
+                {NODES.map(n => {
+                  const pos = positions[n.id];
+                  if (!pos) return null;
+                  const opacity = getNodeOpacity(n.id);
+                  const color = NODE_TYPE_COLORS[n.type];
+                  const r = nodeRadius(n);
+                  const isSelected = selectedNode?.id === n.id;
+                  return (
+                    <g key={n.id} transform={`translate(${pos.x},${pos.y})`} opacity={opacity}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleNodeClick(n)}
+                      onMouseEnter={() => setHoveredNode(n.id)}
+                      onMouseLeave={() => setHoveredNode(null)}>
+                      <circle r={r + (isSelected ? 4 : 0)} fill={color}
+                        stroke={isSelected ? '#ffffff' : colors.alpha(color, 0.35)} strokeWidth={isSelected ? 2.5 : 1}
+                        opacity={0.9} />
+                      <text fontSize={10} fill="#ffffff" textAnchor="middle" dy={3} fontWeight={700}
+                        style={{ pointerEvents: 'none' }}>
+                        {NODE_LETTER[n.type]}
+                      </text>
+                      {(isSelected || hoveredNode === n.id) && (
+                        <text fontSize={11} fill={colors.structural.label} textAnchor="middle" dy={r + 14} fontWeight={600}
+                          style={{ pointerEvents: 'none' }}>
+                          {n.label.length > 24 ? n.label.slice(0, 24) + '…' : n.label}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
+              </svg>
             </div>
+          </Card>
+
+          <HStack gap={3} wrap="wrap" vAlign="center">
+            {(Object.keys(NODE_LETTER) as GNode['type'][])
+              .filter((t) => t !== 'persona')
+              .map((type) => (
+                <HStack key={type} gap={1} vAlign="center">
+                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: NODE_TYPE_COLORS[type], display: 'inline-block' }} />
+                  <Text type="supporting">{type}</Text>
+                </HStack>
+              ))}
+            {(Object.entries(EDGE_COLORS) as [GEdge['type'], string][]).map(([type, color]) => (
+              <HStack key={type} gap={1} vAlign="center">
+                <span style={{ width: 18, height: 2, background: color, display: 'inline-block' }} />
+                <Text type="supporting">{type.replace('-', ' ')}</Text>
+              </HStack>
+            ))}
+          </HStack>
+        </VStack>
+
+        <VStack gap={3} maxWidth={300}>
+          {selectedNode ? (
+            <Card padding={4}>
+              <VStack gap={3}>
+                <VStack gap={1}>
+                  <HStack gap={2} vAlign="center" hAlign="between">
+                    <Badge label={selectedNode.type} />
+                    <Text type="supporting">{selectedNode.confidence} confidence</Text>
+                  </HStack>
+                  <Text type="body" weight="semibold" textWrap="balance">
+                    {selectedNode.label}
+                  </Text>
+                  {selectedNode.speaker && (
+                    <Text type="supporting">
+                      {selectedNode.speaker}
+                      {selectedNode.date ? ` · ${selectedNode.date}` : ''}
+                    </Text>
+                  )}
+                </VStack>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  {selectedNode.detail}
+                </Text>
+                {selectedProduct && (
+                  <Link href={hrefProduct(selectedProduct.id)} isStandalone>
+                    {selectedProduct.name} hub →
+                  </Link>
+                )}
+                <VStack gap={2}>
+                  <Text type="label" color="secondary">
+                    Connected
+                  </Text>
+                  {EDGES.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).map((e, i) => {
+                    const isOut = e.source === selectedNode.id;
+                    const otherId = isOut ? e.target : e.source;
+                    const other = NODES.find(n => n.id === otherId);
+                    if (!other) return null;
+                    return (
+                      <Button
+                        key={i}
+                        variant="ghost"
+                        size="sm"
+                        label={`${isOut ? '→' : '←'} ${e.label} · ${other.label}`}
+                        onClick={() => setSelectedNode(other)}
+                      />
+                    );
+                  })}
+                </VStack>
+              </VStack>
+            </Card>
           ) : (
-            <div style={{ border: '1px solid var(--border)', borderRadius: 12, padding: 16, background: '#fff' }}>
-              <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>How to read this graph</div>
-              <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.7 }}>
-                <div style={{ marginBottom: 6 }}><strong>S</strong> = Granola session (raw transcript)</div>
-                <div style={{ marginBottom: 6 }}><strong>D</strong> = Project document / attachment</div>
-                <div style={{ marginBottom: 6 }}><strong>I</strong> = Insight (synthesized finding)</div>
-                <div style={{ marginBottom: 6 }}><strong>F</strong> = Feature (design output)</div>
-                <div style={{ marginBottom: 12 }}><strong>P</strong> = Pattern (WCAG / anti-pattern)</div>
-                <div style={{ fontSize: 13, color: 'var(--text3)', borderTop: '1px solid var(--border)', paddingTop: 10 }}>
-                  Click any node to see its connections and trace the evidence chain from raw session to built feature.
-                  Edge direction = information flow.
-                </div>
-              </div>
-              {/* Quick stats */}
-              <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-                {Object.entries(NODE_TYPE_COLORS).map(([type, color]) => {
-                  const count = NODES.filter(n => n.type === type).length;
-                  return (
-                    <div key={type} style={{ padding: '8px 10px', borderRadius: 8, background: `${color}08`, border: `1px solid ${color}20` }}>
-                      <div style={{ fontSize: 16.5, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color }}>{count}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text3)', textTransform: 'capitalize' }}>{type}s</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <Card padding={4}>
+              <VStack gap={2}>
+                <Text type="body" weight="semibold">
+                  How to read this graph
+                </Text>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  S = Granola session (raw transcript) · D = project document · I = insight (synthesized finding) · F = feature (design output) · P = pattern (WCAG / anti-pattern).
+                </Text>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  Click any node to see its connections and trace the evidence chain from raw session to built feature. Edge direction is information flow; nodes that map to a routable entity open it directly.
+                </Text>
+                <HStack gap={1.5} wrap="wrap">
+                  {(['session', 'doc', 'insight', 'feature', 'pattern'] as GNode['type'][]).map((type) => (
+                    <Token key={type} label={`${NODES.filter((n) => n.type === type).length} ${type}s`} onClick={() => setFilterType(type as FilterType)} />
+                  ))}
+                </HStack>
+              </VStack>
+            </Card>
           )}
-        </div>
-      </div>
-    </div>
+        </VStack>
+      </HStack>
+    </VStack>
   );
 }

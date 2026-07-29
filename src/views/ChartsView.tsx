@@ -13,7 +13,7 @@ import { RankedList } from '../components/charts/RankedList';
 import { VolumeChart } from '../components/charts/VolumeChart';
 import { SeverityStackChart } from '../components/charts/SeverityStackChart';
 import { ALL_INSIGHTS } from '../data/insights';
-import { PRODUCTS, getProduct } from '../data/products';
+import { getProduct } from '../data/products';
 import { PERSONAS } from '../data/personas';
 import { dimensionCounts, monthlyVolume, severityMix } from '../lib/series';
 import { hrefInsights } from '../lib/links';

@@ -1,759 +1,477 @@
-// @ts-nocheck
-import { useState } from 'react';
-import { Card, CardTitle, MetricCard } from '../../components/ui/Card';
-import { AIStrip, InsightRow } from '../../components/ui/InsightRow';
-import { Badge } from '../../components/ui/Badge';
-import { getInsightsByProduct } from '../../data/insights';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
+// views/products/CourseEvalView.tsx — Course & Faculty Eval (PCE) spec archive
+// (v18 Astryx). URL-synced sections; the 24-question ledger collapses per
+// question; every block names its source document or session.
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Blockquote } from '@astryxdesign/core/Blockquote';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { Fig } from '../../components/charts/Fig';
+import { RankedList } from '../../components/charts/RankedList';
+import { SpecSection } from './spec/SpecSection';
+import { SectionTabs, useSection } from './spec/SectionTabs';
+import { SpecFooter } from './spec/SpecFooter';
+import { hrefCompetitive } from '../../lib/links';
+import { Link } from '@astryxdesign/core/Link';
 
-type TabId = 'insights' | 'overview' | 'instruments' | 'stakeholders' | 'gaps' | 'competitive' | 'open-questions' | 'north-star' | 'pce-arch' | 'pce-build';
-const TABS: { id: TabId; label: string; alert?: boolean }[] = [
-  { id: 'insights',       label: 'Insights' },
-  { id: 'overview',       label: 'Overview' },
-  { id: 'instruments',    label: 'Instruments' },
-  { id: 'stakeholders',   label: 'Stakeholder cascade' },
-  { id: 'gaps',           label: 'Design gaps', alert: true },
-  { id: 'competitive',    label: 'Competitive' },
-  { id: 'open-questions', label: 'Open questions — Answered ✓' },
-  { id: 'north-star', label: '★ North star' },
-  { id: 'pce-arch', label: 'PCE Architecture' },
-  { id: 'pce-build', label: '★ PCE Build Plan', alert: true },
+const PRODUCT_ID = 'course-eval';
+
+const SECTIONS = [
+  { id: 'overview', label: 'Overview + gaps' },
+  { id: 'instruments', label: 'Instruments' },
+  { id: 'stakeholders', label: 'Stakeholders' },
+  { id: 'questions', label: 'Open questions' },
+  { id: 'strategy', label: 'North star' },
+  { id: 'build', label: 'Build plan' },
 ];
 
-const ts = (tab: TabId, cur: TabId) => ({
-  padding: '10px 18px', fontSize: 14.5,
-  fontWeight: cur === tab ? 600 : 400,
-  color: cur === tab ? 'var(--brand)' : 'var(--text-secondary)',
-  borderBottom: `2px solid ${cur === tab ? 'var(--brand)' : 'transparent'}`,
-  marginBottom: -1, background: 'none', border: 'none',
-  cursor: 'pointer', whiteSpace: 'nowrap' as const,
-});
-
-const OPEN_QUESTIONS = [
-  { q: 'What is the minimum response rate threshold?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Show rate + count only. No automatic flagging. Schools interpret themselves. ARC-PA recommends 65% minimum (unconfirmed). VB: most programs have poor rates and take what they get.' },
-  { q: 'Can university-level question customization be done by program admins or does it require IT?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Finalized at program level due to discipline nuances — even if standardized at university level, actionable insights always at program level by curriculum/assessment committee. VB confirmed.' },
-  { q: 'Who sets up the course evaluation survey?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Program administrator or program director. Nursing/Pharmacy/Medical = associate dean or assessment dean. PT/OT/PA = program directors.' },
-  { q: 'Will course-related questions be same across all didactic and clinical courses?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Same questions within all didactic courses in a program. Same within all clinical courses. Different between didactic and clinical course types. Max 2 templates per program.' },
-  { q: 'Who decides and freezes the questions?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Program director or high-level administrator.' },
-  { q: 'Minimum responses before faculty can see results — prevent de-anonymization in small cohorts?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'PCE is given to entire cohort — not a small group like preceptor evals. Even 3/30 responses has no anonymity risk because which 3 is never disclosed. For clinical courses with small cohorts (3+), sharing feedback is fine. Exception: faculty who taught <3 hours may be excluded from evaluation.' },
-  { q: 'Does the two-section survey (course + faculty) always appear together?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Best practice = combined survey for higher response rates. Some programs do separate. Give flexibility. Default = combined but allow program-level toggle. VB confirmed.' },
-  { q: 'Notification channel for students?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Email at minimum. SMS recommended — students more likely to respond to phone. Both email + SMS capability is ideal for P1.' },
-  { q: 'Semester-over-semester comparison when course name or question set changes?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Post-course evals finalized by school for academic year. Don\'t change term-to-term. Minor name change = can still associate. Major content change = break the series. VB: don\'t worry about this in P1.' },
-  { q: 'Who creates and manages the survey schedule?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Surveys scheduled by director/associate dean beforehand. System should auto-populate from student registrations. Timing: students complete after finals, before grade deadline. Faculty see results only after final grades posted. Build flexibility for admins to set survey open/close/feedback-sharing dates — do not hard-code rules.' },
-  { q: 'What happens when student misses survey window?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Student loses access. Counted as non-responder. No late submission. No modification after submission. Admin can extend the window if response rate insufficient. Once closed, no one can go back — unless admin explicitly extends.' },
-  { q: 'What if grades received before survey closes?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Survey timing is designed so student survey closes before grades visible. Schools use early grade release as incentive for completing surveys. Make it hard for students to see grades before completing, but don\'t hard-code rules. Give admin flexibility.' },
-  { q: 'Migration from Watermark — import historical evaluation data?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Not a P1 blocker. Schools can download reports from incumbent for past years and start using Exxat going forward. Migration very hard unless systems are similar. VB confirmed.' },
-  { q: 'Can PD change questions after 2 years?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Allowing additional supplemental questions is simpler than allowing question changes. VB: changing questions breaks longitudinal tracking. Not frequent in practice. For P1: allow 1-5 supplemental questions, lock core questions. Don\'t complicate P1.' },
-  { q: 'Should Exxat create accreditation-mapped predefined questions?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Good long-term enhancement. Short-term: give ability to manually map survey questions to accreditation standards — high value and differentiator. Auto-tagging to stds is P2+. Most PCE questions map to curriculum/assessment standards regardless. VB confirmed.' },
-  { q: 'Feedback loop — do students know what changed because of their input?', priority: 'P2', source: 'Open Questions doc', answered: true, answer: 'Not a P1 requirement. Some faculty show students implemented changes. Students who gave feedback often don\'t see next iteration anyway. VB: course syllabus maps to stds, any enhancement gets reflected. Don\'t solve for P1.' },
-  { q: 'What metrics will faculty want?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Visualizations — pie charts and line graphs over time. How have my ratings changed? Qualitative summary so they can consume and implement. Year-over-year for same course. Comparing to department/university average is a good indicator. Views across all my courses.' },
-  { q: 'What metrics will Program Director want?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Course performance across faculty at course + program level. Same course year-over-year comparison. Qualitative comment review with ability to hide unprofessional comments (never modify). Score thresholds flagged in red for courses below average. AI sentiment analysis on qualitative. Today admins are allowed to modify scores in Exxat — this must be prevented.' },
-  { q: 'What metrics will Dean want?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'High-level view across all programs. Compare PT vs OT vs PA program ratings on standardized questions. Drill down to flag specific programs, courses, or faculty dragging scores down. How many programs responding and student satisfaction level. Department-level trends.' },
-  { q: 'For cases where Prism has no course offerings — what is the journey to run PCE?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Phase 1: requires course offerings in Prism. Phase 2 (pending monetization timeline): CSV upload for non-Prism course management schools. Integration also supports LMS/ExamSoft data import in future.' },
-  { q: 'ARC-PA 65% response rate — threshold monitoring?', priority: 'P0', source: 'Touro PA + Open Questions doc', answered: true, answer: 'Show rate + count. ARC-PA 65% minimum is unconfirmed but referenced. P1: display rate clearly, let schools interpret. Future: configurable threshold with amber/red alert when approaching close with low rate.' },
-  { q: 'Can admin publish PCE without course offering in Prism?', priority: 'P1', source: 'Open Questions doc', answered: true, answer: 'Phase 1: No. Requires course offering. Phase 2: CSV upload option. Admin should not be blocked if school is not using Prism course management — design Phase 2 fallback.' },
-  { q: 'What question types and answer formats?', priority: 'P0', source: 'Open Questions doc', answered: false, answer: 'Pending. Likely: 5-point and 7-point Likert, numeric input, free text. University vs program level configurations. Needs design decision before P1 begins.' },
-  { q: 'Can first implementation be at program level, not university level?', priority: 'P0', source: 'Open Questions doc', answered: true, answer: 'Yes. Program-level first. University-level standardization is Phase 2.' },
+const OPEN_QUESTIONS: { q: string; priority: 'P0' | 'P1' | 'P2'; answered: boolean; answer: string }[] = [
+  { q: 'What is the minimum response rate threshold?', priority: 'P0', answered: true, answer: 'Show rate + count only; no automatic flagging — schools interpret. ARC-PA recommends 65% minimum (unconfirmed). VB: most programs have poor rates and take what they get.' },
+  { q: 'Can question customization be done by program admins or does it require IT?', priority: 'P0', answered: true, answer: 'Finalized at program level due to discipline nuances — actionable insights always land at program level with the curriculum/assessment committee. VB confirmed.' },
+  { q: 'Who sets up the course evaluation survey?', priority: 'P0', answered: true, answer: 'Program administrator or program director. Nursing/Pharmacy/Medical = associate or assessment dean; PT/OT/PA = program directors.' },
+  { q: 'Are course questions the same across didactic and clinical courses?', priority: 'P1', answered: true, answer: 'Same within all didactic courses, same within all clinical courses, different between the two types. Max 2 templates per program.' },
+  { q: 'Who decides and freezes the questions?', priority: 'P0', answered: true, answer: 'Program director or high-level administrator.' },
+  { q: 'Minimum responses before faculty see results (de-anonymization risk)?', priority: 'P0', answered: true, answer: 'PCE goes to the entire cohort — even 3/30 responses carries no anonymity risk because which 3 is never disclosed. Exception: faculty who taught <3 hours may be excluded from evaluation.' },
+  { q: 'Do course + faculty sections always appear together?', priority: 'P1', answered: true, answer: 'Best practice = combined survey for higher response rates; some programs separate. Default combined with a program-level toggle. VB confirmed.' },
+  { q: 'Notification channel for students?', priority: 'P1', answered: true, answer: 'Email at minimum; SMS recommended — students respond more on phones. Both is the P1 ideal.' },
+  { q: 'Semester-over-semester comparison when course name or questions change?', priority: 'P1', answered: true, answer: 'Evals finalized per academic year, not per term. Minor name change = keep the series; major content change = break it. VB: not a P1 worry.' },
+  { q: 'Who creates and manages the survey schedule?', priority: 'P0', answered: true, answer: 'Director/associate dean schedules ahead; system auto-populates from registrations. Students complete after finals, before the grade deadline; faculty see results only after final grades post. Admin flexibility over open/close/share dates — no hard-coded rules.' },
+  { q: 'What happens when a student misses the survey window?', priority: 'P1', answered: true, answer: 'Loses access; counted as non-responder; no late submission, no modification after submit. Admin can extend the window if response rate is insufficient — otherwise closed is closed.' },
+  { q: 'What if grades arrive before the survey closes?', priority: 'P1', answered: true, answer: 'Timing is designed so the survey closes before grades are visible; schools use early grade release as a completion incentive. Make it hard, not hard-coded — admin keeps flexibility.' },
+  { q: 'Migration from Watermark — import historical data?', priority: 'P1', answered: true, answer: 'Not a P1 blocker. Schools download incumbent reports for past years and start fresh in Exxat. VB confirmed.' },
+  { q: 'Can the PD change questions after 2 years?', priority: 'P1', answered: true, answer: 'Allow 1–5 supplemental questions, lock core questions. Changing core questions breaks longitudinal tracking and is rare in practice.' },
+  { q: 'Should Exxat ship accreditation-mapped predefined questions?', priority: 'P0', answered: true, answer: 'Short-term: manual mapping of survey questions to accreditation standards — high value differentiator. Auto-tagging is P2+. VB confirmed.' },
+  { q: 'Do students learn what changed because of their feedback?', priority: 'P2', answered: true, answer: 'Not a P1 requirement. Some faculty show implemented changes; graduating cohorts rarely see the next iteration anyway.' },
+  { q: 'What metrics do faculty want?', priority: 'P0', answered: true, answer: 'Ratings over time, year-over-year for the same course, comparison to department/university average, views across all their courses, and a qualitative summary they can act on.' },
+  { q: 'What metrics does the Program Director want?', priority: 'P0', answered: true, answer: 'Course performance across faculty at course + program level; same-course year-over-year; comment review with the ability to hide (never modify) unprofessional comments; red-flag thresholds; AI sentiment on qualitative. Today admins can modify scores in Exxat — that must be prevented.' },
+  { q: 'What metrics does the Dean want?', priority: 'P0', answered: true, answer: 'High-level view across programs; PT vs OT vs PA on standardized questions; drill to programs/courses/faculty dragging scores down; response counts and satisfaction; department trends.' },
+  { q: 'Journey when Prism has no course offerings?', priority: 'P1', answered: true, answer: 'Phase 1 requires course offerings in Prism. Phase 2: CSV upload for non-Prism schools; future LMS/ExamSoft import.' },
+  { q: 'ARC-PA 65% response threshold monitoring?', priority: 'P0', answered: true, answer: 'P1: display rate clearly, let schools interpret. Future: configurable threshold with amber/red alerts as the close date nears on a low rate.' },
+  { q: 'Publish PCE without a course offering in Prism?', priority: 'P1', answered: true, answer: 'Phase 1 no; Phase 2 CSV fallback so non-Prism schools are not blocked.' },
+  { q: 'What question types and answer formats?', priority: 'P0', answered: false, answer: 'Pending. Likely 5-point and 7-point Likert, numeric, free text; university vs program level configuration. Needs a design decision before P1 begins.' },
+  { q: 'Can the first implementation be program-level, not university-level?', priority: 'P0', answered: true, answer: 'Yes. Program-level first; university-level standardization is Phase 2.' },
 ];
 
-const COMPETITORS = [
-  { name: 'Explorance Blue', strength: 'Market leader. Accreditation-aware. Strong anonymity controls.', weakness: 'No AI. Accreditation export is weak (1★). No feedback loop to students.', score: 3.5 },
-  { name: 'Watermark CES', strength: 'Dean-level fixed questions. Strong governance. Similar to Blue.', weakness: 'No AI. Limited longitudinal views. No feedback loop.', score: 3.5 },
-  { name: 'Anthology', strength: 'Best-in-class dean-level aggregate reporting (5★). Role-based views.', weakness: 'No AI. Same export weaknesses.', score: 4 },
-  { name: 'SurveyMonkey', strength: 'Best ease of survey creation. Highly customizable.', weakness: 'No accreditation alignment. No preset question banks. No role-based views.', score: 2.5 },
-  { name: 'Exxat target', strength: 'Bundled with Prism — zero additional cost. Accreditation-aligned questions. AI sentiment analysis. Feedback loop to students. 65% ARC-PA threshold monitoring.', weakness: 'Not built yet. Historical data migration needed for switchers.', score: 5 },
+interface GapRow extends Record<string, unknown> {
+  id: string;
+  area: string;
+  severity: string;
+  why: string;
+  fix: string;
+  src: string;
+}
+const DESIGN_GAPS: GapRow[] = [
+  { id: 'd1', area: 'Two-instrument architecture not designed', severity: 'critical', why: 'Post-course eval and faculty survey are different instruments: different respondents, routing and anonymity. Faculty surveys route ONLY to the PD; post-course evals route to Faculty + PD + Dean.', fix: 'Two separate flows with distinct routing rules, anonymity settings and result visibility.', src: 'PCE primer v2 + Open Questions doc' },
+  { id: 'd2', area: 'Anonymity + grade-timing controls absent', severity: 'critical', why: 'Students must not be identifiable to faculty until grades are locked; the grades-before-close conflict is a known risk with no controls today.', fix: 'Survey window gated on grade submission; faculty see aggregate only; minimum N for small-cohort visibility.', src: 'PCE primer v2' },
+  { id: 'd3', area: 'ARC-PA 65% response monitoring absent', severity: 'high', why: 'Touro site visit: below 65% is an accreditation risk; no threshold monitoring or PD alert exists.', fix: 'Response-rate badge per course; amber below 80% with time remaining; red on close below 65%; automated reminders.', src: 'Touro PA site visit (Vishaka, Mar 12)' },
+  { id: 'd4', area: 'Feedback loop to students absent', severity: 'high', why: 'No competitor closes the loop either; invisible outcomes depress future participation.', fix: '"Based on your feedback, we changed…" — PD publishes a 1–3 sentence response per course.', src: 'Open Questions + competitor analysis' },
+  { id: 'd5', area: 'Longitudinal / multi-term dashboard absent', severity: 'high', why: 'Curriculum drift is only detectable across 3+ semesters; current design shows one term at a time.', fix: 'Multi-term trend per course, cohort comparison, outlier detection.', src: 'PCE primer v2' },
+  { id: 'd6', area: 'Dean-level aggregate view absent', severity: 'medium', why: 'Deans need program roll-ups and exception reports, not raw survey data — essential for self-studies.', fix: 'Dean view: program-level roll-up, exception reports, annual review export.', src: 'PCE primer v2' },
+  { id: 'd7', area: 'Accreditation-aligned question bank absent', severity: 'medium', why: 'CAPTE/ACOTE/CCNE require documented evidence of collecting and acting on feedback; a pre-mapped bank beats all four competitors.', fix: 'Base bank mapped to CAPTE/ACOTE/CCNE; PDs customize but keep the mapped core.', src: 'Open Questions + PCE primer v2' },
 ];
 
-const TIMING_PHASES = [
-  { phase: 'End of course', timing: 'Final week / last class day', activity: 'Post-Course Evaluation opens', who: 'Students complete', color: '#E31C79' },
-  { phase: 'Post-course', timing: '1–2 weeks after course ends', activity: 'Faculty Survey opens (after PCE closes)', who: 'Faculty complete', color: '#7C3AED' },
-  { phase: 'Term review', timing: 'End of each term', activity: 'Program Director reviews both surveys', who: 'PD synthesizes → Dean reviews', color: '#0891B2' },
-  { phase: 'Annual review', timing: 'Yearly / Accreditation cycle', activity: 'Program-Level Evaluation Report', who: 'PD → Dean → Accreditor', color: '#059669' },
+interface CompRow extends Record<string, unknown> {
+  id: string;
+  name: string;
+  score: number;
+  strength: string;
+  weakness: string;
+}
+const COMPETITORS: CompRow[] = [
+  { id: 'blue', name: 'Explorance Blue', score: 3.5, strength: 'Market leader; accreditation-aware; strong anonymity controls.', weakness: 'No AI; weak accreditation export; no feedback loop to students.' },
+  { id: 'wm', name: 'Watermark CES', score: 3.5, strength: 'Dean-level fixed questions; strong governance.', weakness: 'No AI; limited longitudinal views; no feedback loop.' },
+  { id: 'anth', name: 'Anthology', score: 4, strength: 'Best dean-level aggregate reporting; role-based views.', weakness: 'No AI; same export weaknesses.' },
+  { id: 'sm', name: 'SurveyMonkey', score: 2.5, strength: 'Best ease of survey creation; highly customizable.', weakness: 'No accreditation alignment, preset banks, or role-based views.' },
+  { id: 'exxat', name: 'Exxat target', score: 5, strength: 'Bundled with Prism at zero marginal cost; accreditation-aligned questions; AI sentiment; feedback loop; 65% threshold monitoring.', weakness: 'Not built yet; switchers need historical data migration.' },
 ];
 
-const DESIGN_GAPS = [
-  { area: 'Two-instrument architecture not designed', severity: 'Critical', why: 'The current CourseEvalView treats post-course eval and faculty surveys as the same thing. The primer is explicit: they are different instruments, different respondents, different org reach, different routing. Faculty surveys route ONLY to Program Director — not deans. Post-course evals route to Faculty + PD + Dean. The design must reflect this separation.', fix: 'Two separate survey flows with different routing rules, anonymity settings, and result visibility configurations.', src: 'post_course_eval_primer_v2 + Open Questions doc' },
-  { area: '24 open questions unanswered — blocking design', severity: 'Critical', why: 'None of the 24 open questions from the product team have been answered. Multiple P0 blockers: Who sets up the survey? What is the minimum response threshold? Are questions the same across didactic and clinical? These answers determine the entire UX architecture.', fix: 'Answer all 24 before any Magic Patterns work on this product. Schedule a design workshop with David/Mohil.', src: 'Open_Questions_on_Course_Evaluations.docx' },
-  { area: 'Anonymity and grade-timing controls absent', severity: 'Critical', why: 'Students must not be identifiable to faculty until after grades are locked. Grade timing conflict (grades received before survey closes) is a known design risk. No controls exist in the current design for either.', fix: 'Survey open window gated on grade submission. Faculty see aggregate only, never individual responses. Minimum N for faculty visibility (prevent de-anonymization in small cohorts).', src: 'post_course_eval_primer_v2' },
-  { area: 'ARC-PA 65% response rate monitoring absent', severity: 'High', why: 'Touro site visit: ARC-PA requires 65% response rate. If a course falls below this, it is an accreditation risk. No threshold monitoring, no alerts, no PD notification exists in the current design.', fix: 'Response rate badge per course. Amber alert when below 80% with time remaining. Red alert when window closes below 65%. Automated reminder sequence.', src: 'Touro PA site visit notes (Vishaka, Mar 12)' },
-  { area: 'Feedback loop to students absent', severity: 'High', why: 'All four competitors (Blue, Watermark, Anthology, SurveyMonkey) get ★★ on feedback loop. Students have no visibility into what changed because of their feedback. This reduces future participation rates and is a program trust issue.', fix: '"Based on your feedback last semester, we made these changes" — a simple notification or dashboard element closing the loop. Program Director publishes a 1-3 sentence response per course.', src: 'Open Questions doc + competitor analysis' },
-  { area: 'Longitudinal / multi-term dashboard absent', severity: 'High', why: 'Program Directors need to see whether a course is trending better or worse over 3+ semesters. "Curriculum drift" is only detectable longitudinally. Current design shows one term at a time.', fix: 'Multi-term trend line per course. Cohort comparison. Outlier detection ("Course X dropped 0.8 points from last semester").', src: 'post_course_eval_primer_v2 + Open Questions doc' },
-  { area: 'Dean-level aggregate view absent', severity: 'Medium', why: 'Deans receive high-level trend summaries across programs — not raw survey data. No dean-level role or view exists. Essential for accreditation self-studies.', fix: 'Dean view: program-level roll-up, not course-level detail. Exception reports for significant drops. Annual program review export.', src: 'post_course_eval_primer_v2' },
-  { area: 'Accreditation-aligned question bank absent', severity: 'Medium', why: 'CAPTE, ACOTE, and CCNE require documented evidence that programs collect and act on student feedback. Pre-built question sets mapped to accreditation requirements would be a significant differentiator over all four competitors.', fix: 'Exxat provides a base question bank mapped to CAPTE/ACOTE/CCNE. Program Directors can customize but must keep the accreditation-mapped core.', src: 'Open Questions doc + post_course_eval_primer_v2' },
-];
+function Overview() {
+  return (
+    <VStack gap={6}>
+      <SpecSection
+        title="Design gaps"
+        sub="Identified from the primer, the Open Questions doc, the Touro site visit and competitor analysis. The two critical rows shaped the P1 architecture."
+      >
+        <Table<GapRow>
+          data={DESIGN_GAPS}
+          idKey="id"
+          density="balanced"
+          columns={[
+            { key: 'severity', header: 'Sev', width: pixel(90), renderCell: (r) => <Badge variant={r.severity === 'critical' ? 'error' : r.severity === 'high' ? 'warning' : 'info'} label={r.severity} /> },
+            { key: 'area', header: 'Gap', width: pixel(220), renderCell: (r) => <Text type="body" weight="semibold">{r.area}</Text> },
+            { key: 'why', header: 'Why it hurts', width: proportional(2), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.why}</Text> },
+            { key: 'fix', header: 'Fix', width: proportional(2), renderCell: (r) => <Text type="supporting" as="p" textWrap="pretty">{r.fix}</Text> },
+          ]}
+        />
+      </SpecSection>
+      <SpecSection
+        title="Competitive position"
+        sub="From the Open Questions doc. Programs pay ~$5K/yr for standalone tools; 0 of 4 competitors offer AI analysis; none close the feedback loop; LMSs do course eval poorly and without accreditation alignment."
+      >
+        <Fig title="Competitor scores" caption="Editorial 0–5 scoring from the competitor analysis; the Exxat row is the design target, not a shipped product.">
+          <RankedList
+            rows={COMPETITORS.map((c) => ({ key: c.id, label: c.name, value: c.score, hint: c.weakness }))}
+            format={(r) => `${r.value}/5`}
+          />
+        </Fig>
+        <Link href={hrefCompetitive(PRODUCT_ID)} isStandalone>
+          Full parity matrix →
+        </Link>
+      </SpecSection>
+      <SpecSection
+        title="Transcript-grounded architecture facts"
+        sub="Session bde86866 (Mar 24): PCE lives INSIDE the surveys module as a premium tile with two entry points (surveys tile for admins, per-course for faculty); Prism course offerings are the distribution prerequisite with a Phase-2 CSV fallback; faculty need an aggregate cross-course dashboard, not per-course tiles only; Marquette shows why clinical and didactic courses need separate question sets."
+      >
+        <Card variant="muted" padding={3}>
+          <Text type="supporting" as="p" textWrap="pretty">
+            Marquette pain (David, Mar 24): the university forced didactic-focused questions onto clinical placements —
+            students answered "Did this course expose you to diverse patient populations?" for classroom courses, forcing
+            artificially low ratings. Phase 1: separate clinical vs didactic question sets. Phase 2: tenant-level questions
+            with program-level override.
+          </Text>
+        </Card>
+      </SpecSection>
+    </VStack>
+  );
+}
 
+function Instruments() {
+  return (
+    <VStack gap={6}>
+      <SpecSection title="The two instruments — fundamentally different" sub="From post_course_eval_primer_v2, the authoritative product spec.">
+        <Grid columns={{ minWidth: 340, max: 2 }} gap={3}>
+          <Card padding={4}>
+            <VStack gap={1.5}>
+              <HStack gap={2} vAlign="center">
+                <Text type="body" weight="semibold">
+                  Post-Course Evaluation
+                </Text>
+                <Badge variant="error" label="PRIMARY" />
+              </HStack>
+              {[
+                'Respondents: students. Routes to Faculty + Program Director + Dean.',
+                'Timing: opens after the final grade-influencing activity, before grades lock.',
+                'Anonymity: anonymous to instructor until grades are locked; faculty see aggregate, never individuals.',
+                'Accreditation: CAPTE, ACOTE, CCNE require documented evidence of systematic collection and action.',
+              ].map((t, i) => (
+                <Text key={i} type="supporting" as="p" textWrap="pretty">
+                  {t}
+                </Text>
+              ))}
+            </VStack>
+          </Card>
+          <Card padding={4}>
+            <VStack gap={1.5}>
+              <HStack gap={2} vAlign="center">
+                <Text type="body" weight="semibold">
+                  Faculty Survey
+                </Text>
+                <Badge variant="neutral" label="SECONDARY" />
+              </HStack>
+              {[
+                'Respondents: faculty (self-reflection). Routes to the Program Director ONLY — never deans in raw form.',
+                'Timing: opens after the post-course eval closes (1–2 weeks after the course).',
+                'Anonymity: confidential to the PD; deans see aggregated summaries only. NOT a performance evaluation.',
+                'Supports the PD–faculty development relationship; not a primary accreditation instrument.',
+              ].map((t, i) => (
+                <Text key={i} type="supporting" as="p" textWrap="pretty">
+                  {t}
+                </Text>
+              ))}
+            </VStack>
+          </Card>
+        </Grid>
+      </SpecSection>
+      <SpecSection title="Survey timing cascade" sub="Timing is not arbitrary: end of course → PCE opens (students) · 1–2 weeks post-course → faculty survey opens · end of term → PD reviews both, dean reviews synthesis · annually → program-level evaluation report to the accreditor." >
+        <Card variant="muted" padding={3}>
+          <VStack gap={1.5}>
+            <Text type="label" color="secondary">
+              PCE structure (Post_course_evaluation_survey_tool.docx, MSU-PA June 2022)
+            </Text>
+            {[
+              'Section 1 — rate the course: design + content, flow and pacing, rigor, time allocation, assessment quality, overall rating.',
+              'Section 2 — rate the personnel: course coordinator/director, each teaching faculty individually, adjuncts/guest lecturers (even if outside Exxat). Threshold: faculty must have taught ≥N hours (program-configurable).',
+              'Setup requirements: define recipients and review objects, add guest lecturers by name, build structure + questions, set timeline with auto-reminders, configure result access.',
+            ].map((t, i) => (
+              <Text key={i} type="supporting" as="p" textWrap="pretty">
+                {t}
+              </Text>
+            ))}
+          </VStack>
+        </Card>
+        <Card variant="muted" padding={3}>
+          <VStack gap={1.5}>
+            <Text type="label" color="secondary">
+              Real result formats (Immunomicro PCOM 2018 · Marquette PT Spring 2025)
+            </Text>
+            {[
+              'Rating scales: 5-point (SD→SA) or 6-point (VP→E) — medical programs often use 6-point to avoid midpoint clustering.',
+              'Per-instructor comparison vs department and all-faculty averages with percentile rank (e.g. 4.7 vs 4.4 → 85th percentile).',
+              'Response-rate tracking: 81/89 (91.0%) Immunomicro; 53/67 (79.1%) Marquette PT; ARC-PA minimum 65%.',
+              'Free-text comments separated by question and respondent; the program decides which comments faculty see.',
+              'Longitudinal comparison absent from both samples — the gap vs Blue/Watermark.',
+            ].map((t, i) => (
+              <Text key={i} type="supporting" as="p" textWrap="pretty">
+                {t}
+              </Text>
+            ))}
+          </VStack>
+        </Card>
+      </SpecSection>
+    </VStack>
+  );
+}
 
-// Transcript gaps from PCE Context session (bde86866 Mar 24) + Monil session
-const PCE_TRANSCRIPT_GAPS = [
-  { src:'Vishaka (bde86866 Mar 24)', gap:'PCE lives INSIDE the surveys module as a premium tile — not a standalone product. Entry points: (1) surveys module tile (admin), (2) inside each course (faculty viewing their own results). Two entry points, one data layer.', severity:'High' },
-  { src:'David/Marquette (bde86866 Mar 24)', gap:'Real institutional pain: Marquette forces all programs to use university-level didactic questions for clinical placements too. Clinical programs have no relevant post-rotation questions. Need: separate question sets for didactic vs clinical.', severity:'High' },
-  { src:'Vishaka (bde86866 Mar 24)', gap:'PCE prerequisite: course offerings must exist in Prism for auto-population of student/faculty distribution lists. Programs without Prism course offerings need a CSV upload fallback — but this should be Phase 2.', severity:'Medium' },
-  { src:'David (bde86866 Mar 24)', gap:'Faculty persona needs aggregate view across all their courses — not per-course only. Year-over-year comparison for same course, cross-course rating view. This requires a faculty dashboard, not just per-course tiles.', severity:'High' },
-];
+function Stakeholders() {
+  const CASCADE = [
+    { role: 'Student', sees: 'Their own responses; optional aggregated prior-cohort trends; "what changed based on your feedback" notifications.', use: 'Complete the evaluation at course end. Their voice is the primary driver of course-level improvement — visible responses build trust and future participation.' },
+    { role: 'Faculty', sees: 'AGGREGATE results only, never individual responses, and only after grades lock. Department and all-faculty averages for comparison.', use: 'Understand the gap between teaching intent and student experience; adjust syllabi and delivery.' },
+    { role: 'Program Director', sees: 'Everything: anonymized individual comments, per-faculty scores, longitudinal trends, faculty surveys in full, response-rate monitoring.', use: 'Monitor course quality, flag outliers, initiate reviews, support faculty development; data-driven curriculum decisions.' },
+    { role: 'Dean / Academic Leadership', sees: 'Program-level roll-ups ONLY — no course-level data, no individual faculty survey responses. Exception alerts.', use: 'Program-wide quality, accreditation readiness, resource allocation, annual program review.' },
+  ];
+  return (
+    <VStack gap={6}>
+      <SpecSection title="Stakeholder cascade" sub="Information cascades student → faculty → PD → dean; each level has different visibility rights, decision context and UX needs.">
+        <Grid columns={{ minWidth: 340, max: 2 }} gap={3}>
+          {CASCADE.map((s) => (
+            <Card key={s.role} padding={4}>
+              <VStack gap={1.5}>
+                <Text type="body" weight="semibold">
+                  {s.role}
+                </Text>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  Sees: {s.sees}
+                </Text>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  Uses it to: {s.use}
+                </Text>
+              </VStack>
+            </Card>
+          ))}
+        </Grid>
+      </SpecSection>
+      <SpecSection title="Persona entry points" sub="Sessions c7a8d32e + bde86866.">
+        <Card variant="muted" padding={3}>
+          <VStack gap={1.5}>
+            {[
+              'Program Director / Admin: Survey section → PCE tile → program analytics (course leaderboard, faculty leaderboard, cohort trend).',
+              'Faculty: course page → results for that course (after admin publishes) AND a faculty dashboard aggregating all courses they teach.',
+              'Student: receives the survey at course end via email or LMS, configured per course by the admin.',
+            ].map((t, i) => (
+              <Text key={i} type="supporting" as="p" textWrap="pretty">
+                {t}
+              </Text>
+            ))}
+          </VStack>
+        </Card>
+      </SpecSection>
+    </VStack>
+  );
+}
+
+function Questions() {
+  const answered = OPEN_QUESTIONS.filter((q) => q.answered).length;
+  return (
+    <SpecSection
+      title="Open questions ledger"
+      sub={`${OPEN_QUESTIONS.length} product questions, ${answered} answered (Monil Mar 26 + Mohil/Vishaka/David Mar 24 + PCE Primer v2). One remains open: question types and answer formats. Design can proceed on P1 scope.`}
+    >
+      <VStack gap={2}>
+        {OPEN_QUESTIONS.map((q, i) => (
+          <Collapsible
+            key={i}
+            defaultIsOpen={false}
+            trigger={
+              <HStack gap={2} vAlign="center">
+                <Badge variant={q.priority === 'P0' ? 'error' : q.priority === 'P1' ? 'warning' : 'info'} label={q.priority} />
+                <Badge variant={q.answered ? 'success' : 'error'} label={q.answered ? 'answered' : 'OPEN'} />
+                <Text type="body">{q.q}</Text>
+              </HStack>
+            }
+          >
+            <Text type="supporting" as="p" textWrap="pretty">
+              {q.answer}
+            </Text>
+          </Collapsible>
+        ))}
+      </VStack>
+    </SpecSection>
+  );
+}
+
+function Strategy() {
+  return (
+    <VStack gap={6}>
+      <SpecSection title="The north star" sub="Aarti · PRISM Day 3 · Mar 4 (session c7a8d32e). The product is a program quality intelligence dashboard, not a form tool with a reporting tab.">
+        <Blockquote cite="Aarti · PRISM Day 3 · Mar 4, 2026">
+          Which courses are doing better? Which faculty are not doing better? How are my cohorts perceiving my curriculum, and
+          what changes do I need to make? I want AI insights embedded in the dashboard — not a button I click to get AI
+          insights. If I see a button that says click here to get AI insights, I am done.
+        </Blockquote>
+        <Grid columns={{ minWidth: 260, max: 3 }} gap={3}>
+          {[
+            { title: 'Course leaderboard', q: 'Which courses are doing best — and worst — this semester?', d: 'All courses ranked by average score, trending vs last semester, below-threshold courses flagged automatically. The leaderboard IS the AI insight.' },
+            { title: 'Faculty leaderboard', q: 'Which faculty need attention — who should be recognized?', d: 'Faculty ranked by student perception, year-over-year per faculty, new faculty auto-flagged for observation. "This is what keeps the dean up at night."' },
+            { title: 'Cohort trend', q: 'How does the class of 2026 perceive the curriculum vs 2025?', d: 'Cohort-level comparison signals curriculum drift and faculty turnover impact — the accreditation improvement story.' },
+          ].map((v) => (
+            <Card key={v.title} padding={3}>
+              <VStack gap={1}>
+                <Text type="body" weight="semibold">
+                  {v.title}
+                </Text>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  {v.q}
+                </Text>
+                <Text type="supporting" as="p" textWrap="pretty">
+                  {v.d}
+                </Text>
+              </VStack>
+            </Card>
+          ))}
+        </Grid>
+      </SpecSection>
+      <SpecSection title="Anti-patterns — Aarti verbatim" sub="Session c7a8d32e.">
+        <Card variant="muted" padding={3}>
+          <VStack gap={1.5}>
+            {[
+              '"Click here for AI insights" button — insights are embedded in the leaderboard layout; there is no separate AI panel.',
+              'Flat alphabetical course list → click → report — show the picture first; details are drill-downs, not the entry point.',
+              'No time dimension — directors always look at the previous semester; organize by term with trending indicators.',
+              'Collecting data without connecting it to decisions — Qualtrics collects too; the moat is connecting evaluations to curriculum changes, accreditation reports and faculty development.',
+            ].map((t, i) => (
+              <Text key={i} type="supporting" as="p" textWrap="pretty">
+                {t}
+              </Text>
+            ))}
+          </VStack>
+        </Card>
+      </SpecSection>
+      <SpecSection title="D2L gaps that become Exxat opportunities" sub="D2L BrightSpace demo · Mar 4 (c7a8d32e).">
+        <Card variant="muted" padding={3}>
+          <VStack gap={1.5}>
+            {[
+              'No in-document annotation feedback → let faculty annotate submitted PDFs (comments, highlights, ink) and publish to students.',
+              'No publish/draft state for grades → grade all, review, publish at once; every LMS has this, Exxat does not.',
+              'No auto-alert for inactive students → rule-based notifications D2L ships built-in.',
+              'ExamSoft being sold by Turnitin → the displacement window is open; take the clinical education slice LMSs cannot serve.',
+            ].map((t, i) => (
+              <Text key={i} type="supporting" as="p" textWrap="pretty">
+                {t}
+              </Text>
+            ))}
+          </VStack>
+        </Card>
+      </SpecSection>
+    </VStack>
+  );
+}
+
+function Build() {
+  const LAYERS = [
+    { n: '1', label: 'Template Setup', who: 'Admin / Program Director', items: ['Select program + course type (clinical / didactic)', 'Maximum 2 templates per program', 'Fixed structure: course section (5–6 Qs) + faculty section (5–6 Qs)', 'Templates saved at program level, reusable across offerings', 'Toggle course vs faculty sections independently', 'Add 1–3 supplemental questions beyond the base'] },
+    { n: '2', label: 'Distribution', who: 'Admin / PD (TBD)', items: ['Select template for program + course type', 'Choose the course offering (e.g. "ABC Spring 2026")', 'Auto-populate student + faculty lists from Prism', 'Faculty management: review/edit assignments, guest faculty', 'TAs and part-time faculty included for evaluation', 'Survey window: open/close dates'] },
+    { n: '3', label: 'Analytics & Reporting', who: 'PD + Faculty + Dean', items: ['Year-over-year faculty performance', 'Cross-faculty comparison within programs', 'Response-rate monitoring per course', 'Program-level benchmarking', 'AI sentiment: improvement vs compliment classification', 'AI SWOT visualization per course', 'AI cross-program complaint analysis', 'Top-category extraction from qualitative responses'] },
+  ];
+  return (
+    <VStack gap={6}>
+      <SpecSection
+        title="Milestones"
+        sub="Apr 10 leadership presentation (Vishaka · David · Aarti): draft journey visualizations, template creation workflow, distribution workflow — mockups in the Exxat DS, not a prototype. Requirement + design freeze end of April; engineering handoff May 2026. Strategic value: PCE is the sales entry point for non-Prism programs. Sources: Monil Mar 26 + Romit<>Monil PRD Mar 30."
+      >
+        <Fig title="PCE design readiness by module" caption="Sources: Granola Jul 20 + Jul 28. Multi-survey analytics is paused because its requirements are not frozen — the red bar is a decision queue, not a build queue.">
+          <RankedList
+            rows={[
+              { key: 'template', label: 'Template builder', value: 85, hint: 'role feedback incorporated; default toggle removed' },
+              { key: 'dist', label: 'Distribution workflow', value: 80, hint: 'single table with soft warnings — confirmed Jul 20' },
+              { key: 'single', label: 'Single survey analytics (View Results)', value: 75, hint: 'due engineering end of Jul 28 week' },
+              { key: 'comms', label: 'Communication settings', value: 70, hint: 'centralized, not per-survey — confirmed Jul 28' },
+              { key: 'multi', label: 'Multi-survey analytics', value: 30, hint: 'paused — requirements not frozen (Jul 28)' },
+              { key: 'ai', label: 'AI narrative synthesis', value: 5, hint: 'Q3 post-beta; not in Sep 15 scope' },
+            ]}
+            format={(r) => `${r.value}%`}
+            errorBelow={50}
+          />
+        </Fig>
+        <Card variant="muted" padding={3}>
+          <Text type="supporting" as="p" textWrap="pretty">
+            Launch timeline: Sep 15 2026 beta build-ready (5–10 programs, template + distribution live) → Sep Cohere demo
+            (analytics/leaderboard, not distribution) → Nov/Dec first beta usage (fall evaluations) → Jan 2027 GA
+            (self-checkout, monetized) → Q1 2027 100-program target with accreditation reporting.
+          </Text>
+        </Card>
+      </SpecSection>
+      <SpecSection title="3-layer architecture" sub="Confirmed by Monil (Mar 26).">
+        <Grid columns={{ minWidth: 280, max: 3 }} gap={3}>
+          {LAYERS.map((l) => (
+            <Card key={l.n} padding={3}>
+              <VStack gap={1.5}>
+                <HStack gap={2} vAlign="center">
+                  <Badge variant="neutral" label={l.n} />
+                  <Text type="body" weight="semibold">
+                    {l.label}
+                  </Text>
+                </HStack>
+                <Text type="supporting">{l.who}</Text>
+                {l.items.map((it, i) => (
+                  <Text key={i} type="supporting" as="p" textWrap="pretty">
+                    {it}
+                  </Text>
+                ))}
+              </VStack>
+            </Card>
+          ))}
+        </Grid>
+      </SpecSection>
+      <SpecSection
+        title="AI differentiation — without 'AI-powered' branding"
+        sub="Competitors provide basic math (median, mode, mean). Exxat surfaces integrated insights automatically: sentiment classification, SWOT visualization, cross-program complaint analysis, top-category extraction, comment filtering by signal type, faculty-vs-program auto-benchmarks. Monil directive: complete Watermark CES and Explorance Blue video walkthroughs before designing the analytics layer — their missing YoY/AI summaries are the gap."
+      >
+        <Card variant="muted" padding={3}>
+          <VStack gap={1.5}>
+            <Text type="label" color="secondary">
+              Open questions from Monil (Mar 26)
+            </Text>
+            {[
+              'P0 — Who distributes surveys: program director, course coordinator, or admin?',
+              'P0 — What is the user value hierarchy per persona?',
+              'P1 — Which response-rate tactics are in scope (incentives, gamification)?',
+              'P1 — How do free-text comment links to question categories work?',
+              'P1 — Cross-faculty comparison methodology and fairness?',
+              'P2 — Should a future question bank integrate with exam management banks?',
+            ].map((t, i) => (
+              <Text key={i} type="supporting" as="p" textWrap="pretty">
+                {t}
+              </Text>
+            ))}
+          </VStack>
+        </Card>
+      </SpecSection>
+    </VStack>
+  );
+}
 
 export function CourseEvalView() {
-  const [tab, setTab] = useState<TabId>('insights');
-  const insights = getInsightsByProduct('course-eval');
-  const criticalInsights = insights.filter(i => i.severity === 'critical');
-  const aiInsights = insights.filter(i => i.tags?.includes('ai'));
-  const newInsights = insights.filter(i => i.tags?.includes('new'));
-  const criticalGaps = DESIGN_GAPS.filter(g => g.severity === 'Critical').length;
-  const p0Questions = OPEN_QUESTIONS.filter(q => q.priority === 'P0').length;
-  const today = new Date();
-  const beta = new Date('2026-09-15');
-  const daysToBeta = Math.max(0, Math.ceil((beta.getTime() - today.getTime()) / (1000*60*60*24)));
-
+  const [section, setSection] = useSection(SECTIONS, 'overview');
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', background: 'var(--surface-primary)', flexShrink: 0, overflowX: 'auto' }}>
-        {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={ts(t.id, tab)}>
-            {t.label}
-            {t.alert && t.id === 'gaps' && criticalGaps > 0 && (
-              <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{criticalGaps}</span>
-            )}
-            {t.alert && t.id === 'open-questions' && (
-              <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 800, background: '#D97706', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{p0Questions} P0</span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-
-        {/* INSIGHTS — dynamic from insights.ts */}
-        {tab === 'insights' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text={`${insights.length} insights · ${criticalInsights.length} critical · ${aiInsights.length} AI opportunities. Sources: 18+ Granola sessions (May–Jul 2026), vault docs (PRD, open questions, PCE primer, Spring 2025 MOCES instrument, PCE roadmap CSV). Beta target Sep 15. 103 warm programs identified.`} />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-              <MetricCard label="Total insights" value={insights.length} delta={`${newInsights.length} tagged new`} deltaVariant="up" />
-              <MetricCard label="Critical findings" value={criticalInsights.length} delta="FAST integration, design ownership, analytics freeze" deltaVariant="down" />
-              <MetricCard label="AI opportunities" value={aiInsights.length} delta="Narrative synthesis, auto-survey, dedup detection" deltaVariant="up" />
-              <MetricCard label="Days to Sep 15 beta" value={daysToBeta} delta="103 target programs" deltaVariant="down" />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <Card>
-                <CardTitle sub={`${insights.length} sourced findings — filtered to course-eval`}>Insight feed</CardTitle>
-                {insights.map(i => <InsightRow key={i.id} insight={i} />)}
-              </Card>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <Card>
-                  <CardTitle sub="Source: Granola Jul 20 + Jul 28">PCE design readiness by module</CardTitle>
-                  {[
-                    { label: 'Template builder', sublabel: 'Role feedback incorporated; default toggle removed', value: 85 },
-                    { label: 'Distribution workflow (step 1+2 combined)', sublabel: 'Single table with soft warnings; confirmed Jul 20', value: 80 },
-                    { label: 'Single survey analytics (View Results)', sublabel: 'Due engineering end of Jul 28 week', value: 75 },
-                    { label: 'Multi-survey analytics (by Term/Faculty/Course)', sublabel: 'Paused — requirements not frozen (Jul 28)', value: 30 },
-                    { label: 'Communication settings', sublabel: 'Centralized (not per-survey) — confirmed Jul 28', value: 70 },
-                    { label: 'AI narrative synthesis', sublabel: 'Q3 post-beta; not in Sep 15 scope', value: 5 },
-                  ].map(b => (
-                    <div key={b.label} style={{ marginBottom: 12 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <span style={{ fontSize: 14.5, color: 'var(--text)' }}>{b.label}</span>
-                        <span style={{ fontSize: 13.5, fontWeight: 600, color: '#0d9488' }}>{b.value}%</span>
-                      </div>
-                      <div style={{ height: 6, background: 'var(--border)', borderRadius: 3, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${b.value}%`, background: b.value >= 75 ? '#0d9488' : b.value >= 50 ? '#f5a623' : '#e8604a', borderRadius: 3 }} />
-                      </div>
-                      <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 3 }}>{b.sublabel}</div>
-                    </div>
-                  ))}
-                </Card>
-                <Card>
-                  <CardTitle sub="Source: PCE roadmap CSV + Granola Jun 30">Launch timeline</CardTitle>
-                  {[
-                    { date: 'Sep 15 2026', label: 'Beta build-ready', detail: '5-10 programs, template + distribution live', done: false },
-                    { date: 'Sep 2026', label: 'Cohere conference', detail: 'Analytics/leaderboard demo (not distribution)', done: false },
-                    { date: 'Nov/Dec 2026', label: 'First beta usage', detail: 'Fall semester evaluations begin', done: false },
-                    { date: 'Jan 2027', label: 'General Availability', detail: 'Self-checkout, monetized, all users see tile', done: false },
-                    { date: 'Q1 2027', label: '100 programs target', detail: 'Full engine, accreditation reporting', done: false },
-                  ].map((t, i) => (
-                    <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 12 }}>
-                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: t.done ? '#0d9488' : '#6d5ed4', marginTop: 4, flexShrink: 0 }} />
-                      <div>
-                        <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)' }}>{t.date} — {t.label}</div>
-                        <div style={{ fontSize: 13.5, color: 'var(--text3)' }}>{t.detail}</div>
-                      </div>
-                    </div>
-                  ))}
-                </Card>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* OVERVIEW */}
-        {tab === 'overview' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Sources: post_course_eval_primer_v2 (Exxat internal design spec), Open Questions doc (24 unanswered product questions), Touro PA site visit (Vishaka, Mar 12), Mohil/Vishaka/David PCE context (Mar 24), NPS 2025 textual responses, competitor analysis (Blue/Watermark/Anthology/SurveyMonkey)." />
-            <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(227,28,121,0.05)', border: '1px solid rgba(227,28,121,0.2)' }}>
-              <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px' }}>⚠ Design status: NOT READY TO BUILD</p>
-              <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>24 open product questions are unanswered. 3 critical design gaps identified from the primer. This view documents what we know and what must be resolved before any Magic Patterns work begins on this product.</p>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
-              <MetricCard label="Open P0 questions" value={String(p0Questions)} delta="Must answer before building" deltaVariant="down" />
-              <MetricCard label="Critical design gaps" value={String(criticalGaps)} delta="Anonymity, instruments, ARC-PA" deltaVariant="down" />
-              <MetricCard label="Competitors analyzed" value="4" delta="Blue, Watermark, Anthology, SurveyMonkey" />
-              <MetricCard label="Market opportunity" value="~$5K/yr" delta="Per program, standalone vendors charge this" deltaVariant="up" />
-            </div>
-            <Card>
-              <CardTitle sub="From post_course_eval_primer_v2 — the authoritative product spec">The two instruments — fundamentally different</CardTitle>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {[
-                  { title: 'Post-Course Evaluation', sub: 'PRIMARY instrument', respondents: 'Students', routes: 'Faculty + Program Director + Dean', timing: 'Opens after final grade-influencing activity, before grades locked', anonymity: 'Anonymous to instructor until grades submitted and locked. Faculty see aggregate, never individual.', accreditation: 'CAPTE, ACOTE, CCNE require documented evidence of systematic collection and action.', color: '#E31C79', priority: 'Design this first' },
-                  { title: 'Faculty Survey', sub: 'SECONDARY instrument', respondents: 'Faculty (self-reflection)', routes: 'Program Director ONLY — not deans in raw form', timing: 'Opens after post-course eval closes (1–2 weeks after course)', anonymity: 'Confidential to PD. Deans see aggregated summaries only. NOT a performance evaluation.', accreditation: 'Not a primary accreditation instrument. Supports PD–faculty development relationship.', color: '#7C3AED', priority: 'Lightweight companion' },
-                ].map((inst, i) => (
-                  <div key={i} style={{ padding: '14px 16px', borderRadius: 12, background: `${inst.color}06`, border: `1px solid ${inst.color}25` }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: inst.color }}>{inst.title}</span>
-                      <Badge variant={i === 0 ? 'error' : 'default'}>{inst.sub}</Badge>
-                    </div>
-                    {[
-                      ['Respondents', inst.respondents],
-                      ['Routes to', inst.routes],
-                      ['Timing', inst.timing],
-                      ['Anonymity', inst.anonymity],
-                      ['Accreditation', inst.accreditation],
-                      ['Design priority', inst.priority],
-                    ].map(([label, val]) => (
-                      <div key={label} style={{ marginBottom: 6 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: inst.color, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}: </span>
-                        <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{val}</span>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </Card>
-            <Card>
-              <CardTitle sub="From post_course_eval_primer_v2">Survey timing — why timing is not arbitrary</CardTitle>
-              {TIMING_PHASES.map((p, i) => (
-                <div key={i} style={{ display: 'flex', gap: 16, padding: '10px 0', borderBottom: i < TIMING_PHASES.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color, flexShrink: 0, marginTop: 5 }} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 3 }}>
-                      <span style={{ fontSize: 13.5, fontWeight: 700, color: p.color }}>{p.phase}</span>
-                      <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{p.timing}</span>
-                    </div>
-                    <div style={{ fontSize: 14.5, color: 'var(--text-primary)', marginBottom: 2 }}>{p.activity}</div>
-                    <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{p.who}</div>
-                  </div>
-                </div>
-              ))}
-            </Card>
-          </div>
-        )}
-
-        {/* INSTRUMENTS */}
-        {tab === 'instruments' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Survey structure from Post_course_evaluation_survey_tool.docx (Exxat internal spec, MSU-PA June 2022). This defines what Exxat is building — the product spec, not the design." />
-            <Card>
-              <CardTitle sub="From Post_course_evaluation_survey_tool.docx">Post-Course Evaluation structure</CardTitle>
-              {[
-                { section: 'Section 1: Rate the course', items: ['Course design and content', 'Flow and pacing of topics', 'Rigor and level of challenge', 'Time allocation for topics', 'Assessment quality and alignment', 'Overall course rating'] },
-                { section: 'Section 2: Rate the personnel', items: ['Course coordinator / course director (manages logistics, grades, communication)', 'Faculty teaching in the course (each instructor gets their own section)', 'Adjunct faculty / guest lecturers (even if not in the Exxat system)', 'Threshold: faculty must have taught ≥N hours to be included (program-configurable)'] },
-                { section: 'Setup and customization requirements', items: ['Define recipients (students + which faculty/staff)', 'Define review objects (course + each instructor)', 'Add guest lecturers not in system by name', 'Build survey structure and questions', 'Set timeline (open date, deadline, auto-reminders)', 'Configure result access (who sees what)'] },
-              ].map((sec, i) => (
-                <div key={i} style={{ padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{sec.section}</div>
-                  {sec.items.map((item, j) => (
-                    <div key={j} style={{ display: 'flex', gap: 8, fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 3 }}>
-                      <span style={{ color: 'var(--brand)', flexShrink: 0 }}>•</span>{item}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </Card>
-            <Card>
-              <CardTitle sub="What results look like — grounded in real data from Immunomicro_1.pdf (PCOM 2018) and Spring_2025_MOCES_PHTH_7504_1.pdf (Marquette PT 2025)">Real survey result format</CardTitle>
-              {[
-                { label: 'Rating scales', desc: '5-point (1=SD to 5=SA) or 6-point (1=VP to 6=E). Medical programs often use 6-point to avoid midpoint clustering.' },
-                { label: 'Per-instructor comparison', desc: 'Individual vs department avg vs all-faculty avg. Percentile rank shown. Q9 (clear learning objectives): Dr. Bhave 4.7, PHARMACY avg 4.4, All Faculty 4.4 → 85th percentile.' },
-                { label: 'Response rate tracking', desc: 'Responses / Expected shown. 81/89 (91.01%) for Immunomicro. 53/67 (79.10%) for Marquette PT. ARC-PA minimum: 65%.' },
-                { label: 'Free-text comments', desc: 'Separated by question and by respondent. Program decides which comments are shown to faculty. Comments on course content vs comments on instructor are in different sections.' },
-                { label: 'Longitudinal comparison', desc: 'Multi-term tracking shows whether scores are improving or declining. Not present in either sample — a gap vs what Blue/Watermark offer.' },
-              ].map((row, i) => (
-                <div key={i} style={{ padding: '8px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
-                  <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-primary)' }}>{row.label}: </span>
-                  <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{row.desc}</span>
-                </div>
-              ))}
-            </Card>
-          </div>
-        )}
-
-        {/* STAKEHOLDER CASCADE */}
-        {tab === 'stakeholders' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Stakeholder cascade from post_course_eval_primer_v2. Post-course evaluations create a cascade of information from student → faculty → program director → dean. Each level has different visibility rights, different decision contexts, and different UX needs." />
-            {[
-              { role: 'Student', icon: '🎓', color: '#7C3AED', purpose: 'Provide candid feedback on course content, teaching quality, pacing, workload, learning environment', impact: 'Student voice is the primary driver of course-level improvement. Visible program responses build trust and increase future participation.', use: 'Complete evaluation at course end. Optionally view aggregated trends from prior cohorts to calibrate expectations.', sees: 'Their own responses. Aggregated prior cohort results (optional). "What changed based on your feedback" notifications.' },
-              { role: 'Faculty', icon: '📚', color: '#0891B2', purpose: 'Receive structured, anonymized insight into how their course was experienced', impact: 'Helps instructors understand gaps between teaching intent and student experience. Informs syllabi and delivery adjustments.', use: 'Review program-released aggregate results after grades are submitted.', sees: 'AGGREGATE results only — never individual responses. Results visible only after grades are locked. Department and all-faculty averages for comparison.' },
-              { role: 'Program Director', icon: '🏥', color: '#E31C79', purpose: 'Monitor course quality, identify patterns across instructors and cohorts, support faculty development', impact: 'Enables data-driven curriculum decisions. Surfaces early warning signs.', use: 'View dashboards by course, instructor, cohort. Flag outliers. Initiate course reviews. Review faculty surveys alongside student evals.', sees: 'All results: individual student comments (anonymized), per-faculty scores, longitudinal trends. Faculty surveys in full. Response rate monitoring.' },
-              { role: 'Dean / Academic Leadership', icon: '🏛️', color: '#D97706', purpose: 'Ensure program-wide academic quality, accreditation readiness, institutional accountability', impact: 'Evidence base for resource allocation, faculty appointments, program reviews. Essential for accreditation self-studies.', use: 'High-level trend summaries across programs. Exception reports for significant drops. Annual program review.', sees: 'Program-level roll-ups only — NOT course-level individual data. NOT individual faculty survey responses. Exception alerts only.' },
-            ].map((s, i) => (
-              <Card key={i}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 12, background: `${s.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>{s.icon}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: s.color, marginBottom: 10 }}>{s.role}</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                      {[['Purpose', s.purpose], ['Impact', s.impact], ['How they use it', s.use], ['What they see', s.sees]].map(([label, val]) => (
-                        <div key={label}>
-                          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: s.color, marginBottom: 3 }}>{label}</div>
-                          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{val}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* DESIGN GAPS */}
-        {tab === 'gaps' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <AIStrip text="All gaps identified from reading project documents. Sources: post_course_eval_primer_v2, Open Questions doc, Touro PA site visit, competitor analysis. These gaps must be resolved before Magic Patterns work begins." />
-            {['Critical', 'High', 'Medium'].map(sev => {
-              const items = DESIGN_GAPS.filter(g => g.severity === sev);
-              return (
-                <div key={sev}>
-                  <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', marginBottom: 8 }}>{sev} ({items.length})</div>
-                  {items.map((gap, i) => (
-                    <Card key={i}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', flexShrink: 0, marginTop: 4 }} />
-                        <div>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{gap.area}</div>
-                          <div style={{ marginBottom: 4 }}>
-                            <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444' }}>Why: </span>
-                            <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{gap.why}</span>
-                          </div>
-                          <div style={{ marginBottom: 4 }}>
-                            <span style={{ fontSize: 13, fontWeight: 700, color: '#10B981' }}>Fix: </span>
-                            <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{gap.fix}</span>
-                          </div>
-                          <div style={{ fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic' }}>Source: {gap.src}</div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* COMPETITIVE */}
-        {tab === 'competitive' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <AIStrip text="Competitor analysis from Open_Questions_on_Course_Evaluations__1_.docx. Analyzed Explorance Blue, Watermark CES, Anthology, SurveyMonkey. Market opportunity: programs pay ~$5K/year for standalone course eval tools. Exxat can bundle at zero marginal cost." />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
-              <MetricCard label="Standalone market" value="~$5K/yr" delta="Per program, Explorance Blue pricing" deltaVariant="up" />
-              <MetricCard label="LMS do course eval?" value="Yes, poorly" delta="Low adoption, not accreditation-aligned" deltaVariant="neutral" />
-              <MetricCard label="AI analysis" value="None" delta="0 of 4 competitors offer AI" deltaVariant="up" />
-              <MetricCard label="Feedback loop" value="★★ all 4" delta="No competitor closes the loop to students" deltaVariant="up" />
-            </div>
-            {COMPETITORS.map((comp, i) => (
-              <Card key={i}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                      <span style={{ fontSize: 15, fontWeight: 700, color: i === 4 ? 'var(--brand)' : 'var(--text-primary)' }}>{comp.name}</span>
-                      {i === 4 && <Badge variant="error">Our target</Badge>}
-                      <span style={{ fontSize: 13.5, color: 'var(--text-muted)', marginLeft: 'auto' }}>Score: {comp.score}/5</span>
-                    </div>
-                    <div style={{ marginBottom: 4 }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#10B981' }}>✓ </span>
-                      <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{comp.strength}</span>
-                    </div>
-                    <div>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444' }}>✗ </span>
-                      <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{comp.weakness}</span>
-                    </div>
-                  </div>
-                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: `${i === 4 ? 'var(--brand)' : '#94A3B8'}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontSize: 16.5, fontWeight: 800, color: i === 4 ? 'var(--brand)' : '#94A3B8' }}>{comp.score}</span>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* OPEN QUESTIONS */}
-        {tab === 'open-questions' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <AIStrip text="24 open questions — 23 answered. Source: Open_Questions_on_Course_Evaluations__2_.docx + Monil PCE session Mar 26 + Mohil/Vishaka/David PCE Context Mar 24 + PCE Primer v2. One question remains open: question types/formats (Likert scale variants). Design can now begin on P1 scope." />
-            <Card>
-              <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
-                {[
-                  ['Answered', OPEN_QUESTIONS.filter(q => q.answered).length, '#16a34a'],
-                  ['Still open', OPEN_QUESTIONS.filter(q => !q.answered).length, '#dc2626'],
-                  ['P0 blockers', OPEN_QUESTIONS.filter(q => q.priority === 'P0').length, '#b45309'],
-                ].map(([label, count, color]) => (
-                  <div key={String(label)} style={{ padding: '8px 14px', borderRadius: 8, background: `${color}12`, border: `1px solid ${color}25` }}>
-                    <div style={{ fontSize: 18.5, fontWeight: 800, color: String(color) }}>{String(count)}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{String(label)}</div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {OPEN_QUESTIONS.map((q, i) => (
-                <div key={i} style={{ padding: '12px 14px', borderRadius: 8, background: 'var(--surface-primary)', border: `1px solid ${q.answered ? 'var(--border)' : '#dc262640'}` }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, flexShrink: 0, marginTop: 2, padding: '2px 6px', borderRadius: 4, background: q.priority === 'P0' ? '#dc262615' : q.priority === 'P1' ? '#b4530915' : '#94a3b815', color: q.priority === 'P0' ? '#dc2626' : q.priority === 'P1' ? '#b45309' : '#94a3b8' }}>{q.priority}</span>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--text)', margin: '0 0 6px', lineHeight: 1.5 }}>{q.q}</p>
-                      {q.answered ? (
-                        <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.55, padding: '8px 10px', borderRadius: 6, background: 'rgba(22,163,74,0.06)', borderLeft: '2px solid #16a34a' }}>
-                          <span style={{ fontSize: 12, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 3 }}>Answered · {q.source}</span>
-                          {q.answer}
-                        </div>
-                      ) : (
-                        <div style={{ fontSize: 13, color: '#dc2626', padding: '6px 10px', borderRadius: 6, background: 'rgba(220,38,38,0.06)', borderLeft: '2px solid #dc2626' }}>
-                          <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 2 }}>Still open — needed before design</span>
-                          {q.answer}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-
-
-
-        {/* ─── NORTH STAR TAB ─────────────────────────────────────────────────────── */}
-        {/* Source: PRISM Day 3 (c7a8d32e) — Aarti's verbatim leadership questions */}
-        {/* "Which courses are doing better? Which faculty are not doing better?     */}
-        {/* How are my cohorts perceiving my curriculum?"                            */}
-        {/* Anti-pattern: "If I see a button that says click here to get AI         */}
-        {/* insights, I am done." AI must be embedded, not bolted on.               */}
-        {tab === 'north-star' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-            {/* Aarti verbatim */}
-            <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid var(--brand)' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--brand)', marginBottom: 8 }}>
-                Aarti · PRISM Day 3 · Mar 4, 2026 · session c7a8d32e
-              </div>
-              <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
-                "Which courses are doing better? Which faculty are not doing better? How are my cohorts perceiving my curriculum, and what changes do I need to make? I want AI insights embedded in the dashboard — not a button I click to get AI insights. If I see a button that says click here to get AI insights, I am done."
-              </div>
-              <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
-                This single statement defines the entire course evaluation north star. The product is not a form tool with a reporting tab. It is a <strong>program quality intelligence dashboard</strong> where the leadership questions are answered before the director clicks anything.
-              </div>
-            </div>
-
-            {/* Three leadership views */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-              {[
-                { title: 'Course leaderboard', question: 'Which courses are doing best — and worst — this semester?', content: 'All courses ranked by average score. Trending up ↑ or down ↓ vs last semester. Courses below threshold flagged automatically. New courses marked for closer monitoring.', aarti: 'The leaderboard IS the AI insight. Not a separate panel.', source: 'c7a8d32e Aarti PRISM Day 3' },
-                { title: 'Faculty leaderboard', question: 'Which faculty need attention — and who should be recognized?', content: 'All faculty ranked by student perception score. Year-over-year trend per faculty. New faculty automatically flagged for extra observation period. Score fed back into faculty development.', aarti: 'This is what keeps the dean up at night. Show it at the top.', source: 'c7a8d32e Aarti PRISM Day 3' },
-                { title: 'Cohort trend', question: 'How does the class of 2026 perceive the curriculum vs class of 2025?', content: 'Cohort-level comparison: how each graduating class rated courses and faculty. Signals curriculum drift, faculty turnover impact, or program improvement over time.', aarti: 'Cohort comparison is the accreditation story. Programs must show improvement.', source: 'c7a8d32e Aarti PRISM Day 3' },
-              ].map((v, i) => (
-                <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)', background: 'var(--bg2)' }}>
-                    <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)' }}>{v.title}</div>
-                    <div style={{ fontSize: 13, color: 'var(--brand)', marginTop: 2, fontStyle: 'italic' }}>{v.question}</div>
-                  </div>
-                  <div style={{ padding: '12px 14px', flex: 1 }}>
-                    <p style={{ fontSize: 13.5, color: 'var(--text2)', margin: '0 0 10px', lineHeight: 1.6 }}>{v.content}</p>
-                    <div style={{ padding: '8px 10px', borderRadius: 7, background: 'rgba(109,94,212,0.06)', border: '1px solid rgba(109,94,212,0.15)' }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', marginBottom: 2 }}>Aarti's framing</div>
-                      <div style={{ fontSize: 13, color: 'var(--text2)', fontStyle: 'italic' }}>{v.aarti}</div>
-                    </div>
-                  </div>
-                  <div style={{ padding: '6px 14px', borderTop: '1px solid var(--border)', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{v.source}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Anti-patterns */}
-            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Anti-patterns to avoid — Aarti verbatim</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {[
-                  { pattern: '"Click here to get AI insights" button', why: 'AI insights are embedded in the leaderboard layout itself. The leaderboard IS the insight. There is no separate AI panel.', source: 'c7a8d32e PRISM Day 3' },
-                  { pattern: 'Flat list of courses → click → course report', why: 'Director never wants to click into individual reports to understand program health. Show the picture first. Details are drill-downs, not the entry point.', source: 'c7a8d32e PRISM Day 3' },
-                  { pattern: 'No time dimension — courses sorted alphabetically', why: 'Evaluations happen at semester end. Directors always look at the previous semester. The UI must be organized by term. Sort by rating, filter by term, trending up/down are all required.', source: 'c7a8d32e PRISM Day 3' },
-                  { pattern: 'Collecting data without connecting it to decisions', why: 'Qualtrics and SurveyMonkey collect feedback too. Our differentiation is connecting evaluation data to curriculum changes, accreditation reports, and faculty development. Data without decision context has no moat.', source: 'c7a8d32e PRISM Day 3' },
-                ].map((ap, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 12px', borderRadius: 9, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.15)' }}>
-                    <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#dc2626', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✗</div>
-                    <div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>{ap.pattern}</div>
-                      <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{ap.why}</div>
-                      <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 4 }}>{ap.source}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* D2L gaps to fill */}
-            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>D2L gaps that become Exxat opportunities</div>
-              <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>Source: D2L BrightSpace demo Mar 4 · session c7a8d32e</div>
-              {[
-                { gap: 'No in-document annotation feedback', opp: 'Allow faculty to annotate submitted PDFs directly — comments, highlights, ink markup — and publish to students. Standard expectation from Canvas/D2L. Missing from Exxat.' },
-                { gap: 'No publish/draft state for grades', opp: 'Faculty grade all students first, review, then publish at once. Currently grades appear live as faculty grade. All LMS have this. Exxat does not.' },
-                { gap: 'No auto-alert for inactive students', opp: 'Faculty set rule: if student has not logged in for X days, notify me. D2L has this built in. Exxat has no equivalent.' },
-                { gap: 'ExamSoft being sold by Turnitin', opp: 'Displacement window is open. LMS platforms now doing what ExamSoft did. Exxat can take the clinical education slice that LMS cannot serve (preceptors, placements, accreditation-specific analytics).' },
-              ].map((r, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderBottom: i < 3 ? '1px solid var(--border)' : 'none', padding: '10px 0' }}>
-                  <div style={{ paddingRight: 14 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#dc2626', marginBottom: 2 }}>Gap</div>
-                    <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>{r.gap}</div>
-                  </div>
-                  <div style={{ paddingLeft: 14, borderLeft: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 2 }}>Exxat opportunity</div>
-                    <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>{r.opp}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-
-        {tab === 'pce-arch' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Vishaka + Mohil + David - Mar 24, 2026 - session bde86866</div>
-              <div style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.65 }}>
-                PCE is a special type of survey. Entry point must be the Survey section — not inside each course, not a standalone module. All feedback mechanisms in one place is the right UX for academia.
-              </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              {[
-                {
-                  title: 'Phase 1 scope', color: '#2ec4a0',
-                  items: [
-                    'Entry via Survey section — PCE is a survey tile/tab',
-                    'Program-level question sets (clinical vs didactic)',
-                    'Course offerings in Prism = prerequisite for full distribution',
-                    'CSV upload fallback for schools without Prism courses',
-                    'Faculty sees results per course AND aggregate dashboard',
-                    'Admin sees program-level analytics dashboard',
-                  ]
-                },
-                {
-                  title: 'Phase 2 additions', color: '#6d5ed4',
-                  items: [
-                    'Tenant-level (university) question sets — mandate questions for all programs',
-                    'Program override of university-mandated questions',
-                    'AI-assisted rationale generation per question/option',
-                    'Aggregate year-over-year faculty performance view',
-                    'Student cohort perception trend',
-                    'Cross-program discipline benchmarking',
-                  ]
-                },
-              ].map((col, i) => (
-                <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', borderLeft: '3px solid ' + col.color, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: col.color, marginBottom: 10 }}>{col.title}</div>
-                  {col.items.map((item, j) => (
-                    <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
-                      <span style={{ color: col.color, flexShrink: 0 }}>-</span>
-                      <span style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 18px' }}>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Marquette pain point - David (Mar 24)</div>
-              <div style={{ padding: '12px 14px', borderRadius: 9, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.15)', marginBottom: 10 }}>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#dc2626', marginBottom: 4 }}>University-level questions forced on clinical courses</div>
-                <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
-                  University set didactic-focused questions for all programs. Clinical placement students were forced to answer "Did this course expose you to diverse patient populations?" for classroom courses — forced artificially low ratings. This is a real pain point at programs where university mandates override clinical context.
-                </div>
-              </div>
-              <div style={{ padding: '10px 14px', borderRadius: 9, background: 'rgba(22,163,74,0.04)', border: '1px solid rgba(22,163,74,0.15)' }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 3 }}>Solution</div>
-                <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
-                  Phase 1: program directors create separate question sets for clinical vs didactic. Phase 2: tenant-level questions with program-level override capability.
-                </div>
-              </div>
-            </div>
-            <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 18px' }}>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Persona entry points</div>
-              {[
-                { persona: 'Program Director / Admin', entry: 'Survey section → PCE tile → program-level analytics dashboard (course leaderboard, faculty leaderboard, cohort trend)', source: 'c7a8d32e + bde86866' },
-                { persona: 'Faculty', entry: 'Course page → view survey results for this course (after admin publishes) AND faculty dashboard → aggregate view across all courses they teach', source: 'bde86866' },
-                { persona: 'Student', entry: 'Receives survey at course end via email or LMS. Survey is configured per course by admin.', source: 'bde86866' },
-              ].map((r, i) => (
-                <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#6d5ed4', width: 180, flexShrink: 0 }}>{r.persona}</div>
-                  <div>
-                    <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{r.entry}</div>
-                    <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 3 }}>{r.source}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── PCE BUILD PLAN — Monil Mar 26 ─────────────────────────────── */}
-        {tab === 'pce-build' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-            {/* Session banner */}
-            <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(237,100,80,0.06)', border: '1px solid rgba(237,100,80,0.3)', borderLeft: '4px solid #e8604a' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#e8604a', marginBottom: 4 }}>⚠ NEXT MILESTONE — Apr 10 Leadership Presentation (Vishaka · David · Aarti)</div>
-              <div style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.65 }}>
-                Deliverables: (1) Draft journey visualizations — not a prototype. (2) Setup template creation workflow. (3) Distribution workflow for course-specific surveys. Design mockups using Exxat DS where possible. Requirement freeze = end of April. Engineering handoff = May 2026.
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 8 }}>Sources: Monil — PCE Introduction · Mar 26 + Romit&lt;&gt;Monil PCE PRD · Mar 30, 2026</div>
-            </div>
-
-            {/* Deadline strip */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-              {[
-                { label: '⚠ Leadership demo', value: 'Apr 10', sub: 'Journey visualizations', color: '#e8604a' },
-                { label: 'Req + design freeze', value: 'Apr 30', sub: 'Full 3-layer scope', color: '#f59e0b' },
-                { label: 'Engineering handoff', value: 'May 2026', sub: 'Spec → dev', color: '#6d5ed4' },
-                { label: 'Strategic value', value: 'Sales entry', sub: 'Non-Prism programs', color: '#0d9488' },
-              ].map((m, i) => (
-                <div key={i} style={{ padding: '14px 16px', borderRadius: 10, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>{m.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 700, color: m.color, lineHeight: 1.1, marginBottom: 3 }}>{m.value}</div>
-                  <div style={{ fontSize: 13, color: 'var(--text3)' }}>{m.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* 3-layer architecture */}
-            <div style={{ borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)', padding: '18px 20px' }}>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>3-Layer Architecture — confirmed by Monil</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {[
-                  {
-                    n: '1', label: 'Template Setup', color: '#6d5ed4',
-                    who: 'Admin / Program Director',
-                    details: [
-                      'Select program + course type (clinical / didactic)',
-                      'Maximum 2 templates per program',
-                      'Fixed structure: course section (5–6 Qs) + faculty section (5–6 Qs)',
-                      'Templates saved at program level, reusable across offerings',
-                      'Toggle sections: enable/disable course vs faculty evaluation independently',
-                      'Add 1–3 supplemental questions beyond template base',
-                    ]
-                  },
-                  {
-                    n: '2', label: 'Distribution', color: '#e8604a',
-                    who: 'Admin / Program Director (TBD)',
-                    details: [
-                      'Select existing template for program + course type',
-                      'Choose specific course offering (e.g. "ABC Spring 2026")',
-                      'System auto-populates student and faculty lists from Prism',
-                      'Faculty management: review/edit assignments, handle guest faculty',
-                      'TA and part-time faculty included for performance evaluation',
-                      'Survey window configuration: open/close dates',
-                    ]
-                  },
-                  {
-                    n: '3', label: 'Analytics & Reporting', color: '#0d9488',
-                    who: 'Program Director + Faculty + Dean',
-                    details: [
-                      'Year-over-year faculty performance tracking',
-                      'Cross-faculty comparisons within programs',
-                      'Response rate monitoring per course',
-                      'Program-level performance benchmarking',
-                      'AI: sentiment classification of free-text (improvement vs compliment)',
-                      'AI: SWOT visualization from response data',
-                      'AI: cross-program common complaint analysis',
-                      'Top category rating extraction from qualitative responses',
-                    ]
-                  },
-                ].map((layer, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 16, padding: '14px 16px', borderRadius: 10, background: 'white', border: '1px solid var(--border)', borderLeft: `3px solid ${layer.color}` }}>
-                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: layer.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, flexShrink: 0 }}>{layer.n}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontSize: 14.5, fontWeight: 700, color: layer.color }}>{layer.label}</span>
-                        <span style={{ fontSize: 13, color: 'var(--text3)', background: 'var(--bg3)', padding: '2px 8px', borderRadius: 4 }}>{layer.who}</span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-                        {layer.details.map((d, j) => (
-                          <div key={j} style={{ display: 'flex', gap: 6, fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.4 }}>
-                            <span style={{ color: layer.color, flexShrink: 0, marginTop: 1 }}>›</span>
-                            <span>{d}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* AI differentiation */}
-            <div style={{ borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: '#6d5ed4', marginBottom: 4 }}>AI differentiation strategy — without explicit "AI-powered" branding</div>
-              <div style={{ fontSize: 13.5, color: 'var(--text2)', marginBottom: 12, lineHeight: 1.6 }}>
-                Competitors (Explorance Blue, Watermark) only provide basic mathematical reporting — median, mode, mean. Exxat differentiates through integrated AI insights that surface automatically.
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                {[
-                  { feature: 'Sentiment classification', desc: 'Free-text automatically tagged as improvement signal vs compliment signal', icon: '🏷' },
-                  { feature: 'SWOT visualization', desc: 'Responses auto-grouped into Strengths / Weaknesses / Opportunities / Threats per course', icon: '⊞' },
-                  { feature: 'Cross-program complaint analysis', desc: 'Identifies common issues appearing across multiple courses or programs', icon: '⟺' },
-                  { feature: 'Top category extraction', desc: 'Surfaces highest-rated and lowest-rated aspects from qualitative responses', icon: '↑' },
-                  { feature: 'Comment filtering by signal type', desc: 'PD can filter to see only improvement signals or only compliments', icon: '⊡' },
-                  { feature: 'Faculty vs program average comparison', desc: 'Auto-benchmarks each faculty member against program average without manual calculation', icon: '≈' },
-                ].map((f, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 10, padding: '10px 12px', borderRadius: 8, background: 'white', border: '1px solid var(--border)' }}>
-                    <span style={{ fontSize: 18.5, flexShrink: 0 }}>{f.icon}</span>
-                    <div>
-                      <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{f.feature}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text3)', lineHeight: 1.4 }}>{f.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Open questions from Monil */}
-            <div style={{ borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Open questions — Monil session (Mar 26)</div>
-              {[
-                { q: 'Who distributes surveys — program director, course coordinator, or admin?', priority: 'P0' },
-                { q: 'What is the user value hierarchy — what does each persona care about and why?', priority: 'P0' },
-                { q: 'Student engagement: what response rate improvement tactics are in scope (incentives, gamification)?', priority: 'P1' },
-                { q: 'How do free-text comment links to specific question categories work?', priority: 'P1' },
-                { q: 'Cross-faculty comparison methodology and fairness considerations?', priority: 'P1' },
-                { q: 'Should future question bank integrate with exam management question banks?', priority: 'P2' },
-              ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < 5 ? '1px solid var(--border)' : 'none' }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: item.priority === 'P0' ? 'rgba(220,38,38,0.08)' : item.priority === 'P1' ? 'rgba(217,119,6,0.08)' : 'rgba(107,114,128,0.08)', color: item.priority === 'P0' ? '#dc2626' : item.priority === 'P1' ? '#d97706' : '#6b7280', flexShrink: 0, height: 'fit-content', marginTop: 1 }}>{item.priority}</span>
-                  <span style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{item.q}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Competitors to analyze */}
-            <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(219,39,119,0.04)', border: '1px solid rgba(219,39,119,0.15)' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#db2777', marginBottom: 4 }}>Competitor walkthrough required (Monil directive)</div>
-              <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>
-                Before any Analytics layer design — complete walkthroughs of <strong>Watermark CES</strong> and <strong>Explorance Blue</strong> video demos.
-                Focus: how they handle YoY comparison, response rate monitoring, and AI/insight summaries (they don't have any — that's the gap).
-              </div>
-            </div>
-
-          </div>
-        )}
-
-      </div>
-    </div>
+    <VStack gap={5} padding={6} maxWidth={1160}>
+      <PageHeader
+        title="Course & Faculty Eval — spec archive"
+        lede="PCE: a premium survey tile inside the surveys module, built on FaaS — Sep 15 beta target, 103 warm programs."
+        meta="Two instruments (post-course eval + faculty survey) · 24-question ledger 23 answered · Apr 10 leadership demo · May 2026 engineering handoff"
+      />
+      <SectionTabs sections={SECTIONS} value={section} onChange={setSection} />
+      {section === 'overview' && <Overview />}
+      {section === 'instruments' && <Instruments />}
+      {section === 'stakeholders' && <Stakeholders />}
+      {section === 'questions' && <Questions />}
+      {section === 'strategy' && <Strategy />}
+      {section === 'build' && <Build />}
+      <SpecFooter productId={PRODUCT_ID} />
+    </VStack>
   );
 }

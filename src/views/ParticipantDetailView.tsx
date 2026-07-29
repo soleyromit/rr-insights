@@ -18,7 +18,7 @@ import { SevDot } from '../components/ui/sev';
 import { REAL_VOICES } from '../data/voices';
 import { getProduct } from '../data/products';
 import { insightsForVoice } from '../lib/selectors';
-import { hrefInsight, hrefParticipants, hrefProduct } from '../lib/links';
+import { hrefInsight, hrefParticipants } from '../lib/links';
 
 export function ParticipantDetailView() {
   const { voiceId } = useParams();

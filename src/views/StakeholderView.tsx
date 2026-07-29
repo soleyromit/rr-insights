@@ -1,90 +1,164 @@
-// @ts-nocheck
-// views/StakeholderView.tsx — Briefings (P5 rebuild, UX Audit v1)
-// One audience at a time, letter-format, copy-ready. Sections follow the skill's 3-part briefing.
+// views/StakeholderView.tsx — Briefings (v18 Astryx rebuild).
+// One audience at a time (synced to ?audience=), letter format, copy-ready.
 // Writing rules enforced on render and copy: no em dashes leave this page.
-import { useState } from 'react';
-import { CopyIcon, CheckIcon } from 'lucide-react';
+// Risk rows link to their signal case files; referenced products link to hubs.
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { Text } from '@astryxdesign/core/Text';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Link } from '@astryxdesign/core/Link';
+import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@astryxdesign/core/Button';
+import { Icon } from '@astryxdesign/core/Icon';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
+import { useToast } from '@astryxdesign/core/Toast';
 import { DECKS, SIGNAL_RISKS } from '../data/briefings';
 import { ALL_INSIGHTS } from '../data/insights';
+import { MILESTONES } from '../data/personas';
+import { PRODUCTS } from '../data/products';
 import { SESSIONS_SYNCED } from '../data/version';
-import { Masthead } from '../components/ui/Figure';
+import { allSignals } from '../lib/selectors';
+import { PageHeader } from '../components/ui/PageHeader';
+import { hrefSignal, hrefProduct } from '../lib/links';
 
-const clean = (t) => t.replace(/\s+—\s+/g, ', ').replace(/—/g, ', ');
+// Writing rule: no em dashes leave this page, on screen or on the clipboard.
+const clean = (t: string) => t.replace(/\s+—\s+/g, ', ').replace(/—/g, ', ');
+
 const SECTIONS = [
   { key: 'problem', label: 'The problem' },
   { key: 'findings', label: 'What we found' },
   { key: 'recommendation', label: 'Recommended direction' },
-];
+] as const;
+
+const slug = (audience: string) => audience.split(' ')[0].toLowerCase();
+
+const RISK_DOT: Record<string, 'error' | 'warning' | 'success'> = {
+  Risk: 'error',
+  Priority: 'warning',
+  Opportunity: 'success',
+};
+
+/** Resolve a risk-register row back to the entity it quotes. */
+function riskHref(text: string): string | undefined {
+  const sig = allSignals().find((s) => text.startsWith(s.def.title));
+  if (sig) return hrefSignal(sig.def.id);
+  const ms = MILESTONES.find((m) => text.startsWith(m.label));
+  if (ms?.productId) return hrefProduct(ms.productId);
+  if (/^AI opportunity/i.test(text)) return hrefSignal('ai-layer');
+  return undefined;
+}
 
 export function StakeholderView() {
-  const [active, setActive] = useState(0);
-  const [copied, setCopied] = useState(false);
-  const deck = DECKS[active];
+  const [params, setParams] = useSearchParams();
+  const toast = useToast();
+
+  const audience = params.get('audience') ?? slug(DECKS[0].audience);
+  const deck = DECKS.find((d) => slug(d.audience) === audience) ?? DECKS[0];
+
+  const setAudience = (v: string) =>
+    setParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        if (v === slug(DECKS[0].audience)) p.delete('audience');
+        else p.set('audience', v);
+        return p;
+      },
+      { replace: true }
+    );
+
+  const referencedProducts = useMemo(() => {
+    const text = SECTIONS.map((s) => deck[s.key]).join(' ');
+    return PRODUCTS.filter((p) => text.includes(p.name) || text.includes(p.shortName));
+  }, [deck]);
 
   const copyText = () => {
     const text = [
       `BRIEFING · ${deck.audience} (${deck.role}) · ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
-      ...SECTIONS.flatMap(s => ['', s.label.toUpperCase(), clean(deck[s.key])]),
+      ...SECTIONS.flatMap((s) => ['', s.label.toUpperCase(), clean(deck[s.key])]),
     ].join('\n');
     navigator.clipboard.writeText(text);
-    setCopied(true); setTimeout(() => setCopied(false), 2000);
+    toast({ body: 'Briefing copied, em dashes stripped', uniqueID: 'copy-briefing' });
   };
 
   return (
-    <div style={{ padding: '30px 34px 48px', maxWidth: 1080 }}>
-      <Masthead title="Briefings"
-        lede="The same research, three registers: evidence-grounded for Arun, business-outcome for Kunal, decision-only for Aarti. Pick the audience, copy the letter, send it."
-        byline={`${DECKS.length} audiences · computed live from ${ALL_INSIGHTS.length} insights across ${SESSIONS_SYNCED} synced sessions · copy strips em dashes per writing rules`} />
+    <VStack gap={5} padding={6} maxWidth={1080}>
+      <PageHeader
+        title="Briefings"
+        lede="The same research, three registers: evidence-grounded for Arun, business-outcome for Kunal, decision-only for Aarti — pick the audience, copy the letter, send it."
+        meta={`${DECKS.length} audiences · computed live from ${ALL_INSIGHTS.length} insights across ${SESSIONS_SYNCED} synced sessions · copy strips em dashes per writing rules`}
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.5fr) minmax(0,1fr)', gap: 16 }}>
-        <div>
-          <div className="flex gap-1.5 flex-wrap" style={{ marginBottom: 14 }} role="tablist" aria-label="Select audience">
-            {DECKS.map((d, i) => (
-              <button key={d.audience} role="tab" aria-selected={i === active} className="press" onClick={() => setActive(i)} style={{
-                fontSize: 13.5, fontWeight: 500, padding: '5px 14px', borderRadius: 14, cursor: 'pointer',
-                border: `1px solid ${i === active ? 'var(--accent)' : 'var(--border)'}`,
-                background: i === active ? 'var(--accent-bg)' : '#fff', color: i === active ? 'var(--accent)' : 'var(--text2)',
-              }}>{d.audience}<span className="mono" style={{ marginLeft: 7, fontSize: 12, opacity: 0.75 }}>{d.role}</span></button>
+      <SegmentedControl label="Audience" value={slug(deck.audience)} onChange={setAudience}>
+        {DECKS.map((d) => (
+          <SegmentedControlItem key={d.audience} value={slug(d.audience)} label={`${d.audience} · ${d.role}`} />
+        ))}
+      </SegmentedControl>
+
+      <Grid columns={{ minWidth: 380, max: 2 }} gap={4}>
+        <Card padding={5}>
+          <VStack gap={4}>
+            <HStack gap={3} vAlign="center" hAlign="between">
+              <VStack gap={0.5}>
+                <Heading level={2}>Briefing · {deck.audience}</Heading>
+                <Text type="supporting">
+                  {deck.role} · {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </Text>
+              </VStack>
+              <Button label="Copy briefing" variant="secondary" size="sm" icon={<Icon icon="copy" />} onClick={copyText} />
+            </HStack>
+
+            {SECTIONS.map((s) => (
+              <VStack key={s.key} gap={1}>
+                <Heading level={3}>{s.label}</Heading>
+                <Text type="body" as="p" textWrap="pretty">
+                  {clean(deck[s.key])}
+                </Text>
+              </VStack>
             ))}
-          </div>
 
-          {/* The letter */}
-          <article aria-label={`Briefing for ${deck.audience}`}
-            style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '26px 30px' }}>
-            <div className="flex items-baseline justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 12, marginBottom: 18 }}>
-              <div>
-                <div className="rr-serif" style={{ fontSize: 21, color: 'var(--text)' }}>Briefing · {deck.audience}</div>
-                <div className="mono" style={{ fontSize: 12, color: 'var(--text2)', marginTop: 2 }}>{deck.role} · {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
-              </div>
-              <button className="press flex items-center gap-1.5" onClick={copyText} aria-label="Copy briefing text" style={{
-                fontSize: 13.5, fontWeight: 500, padding: '6px 12px', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
-                border: `1px solid ${copied ? 'var(--accent)' : 'var(--border2)'}`,
-                background: copied ? 'var(--accent-bg)' : '#fff', color: copied ? 'var(--accent)' : 'var(--text2)',
-              }}>{copied ? <CheckIcon size={12} /> : <CopyIcon size={12} />}{copied ? 'Copied' : 'Copy briefing'}</button>
-            </div>
-            {SECTIONS.map(s => (
-              <section key={s.key} style={{ marginBottom: 18 }}>
-                <h2 className="rr-serif" style={{ fontSize: 16.5, color: 'var(--text)', marginBottom: 5 }}>{s.label}</h2>
-                <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.65, maxWidth: '68ch' }}>{clean(deck[s.key])}</p>
-              </section>
-            ))}
-          </article>
-        </div>
+            {referencedProducts.length > 0 && (
+              <HStack gap={1.5} vAlign="center" wrap="wrap">
+                <Text type="supporting">Referenced products:</Text>
+                {referencedProducts.map((p) => (
+                  <Token key={p.id} label={p.shortName} href={hrefProduct(p.id)} />
+                ))}
+              </HStack>
+            )}
+          </VStack>
+        </Card>
 
-        {/* Live risk register beside the letter */}
-        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', alignSelf: 'start' }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', padding: '11px 16px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-            Signal register, quoted in the briefings
-          </div>
-          {SIGNAL_RISKS.map((s, i) => (
-            <div key={i} className="flex items-start gap-2.5" style={{ padding: '11px 16px', borderBottom: '1px solid var(--bg3)' }}>
-              <span style={{ width: 7, height: 7, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: s.color }} aria-hidden />
-              <span style={{ flex: 1, fontSize: 14, color: 'var(--text)', lineHeight: 1.5 }}>{clean(s.signal)}</span>
-              <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: s.color, flexShrink: 0 }}>{s.type.toUpperCase()}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+        <Card padding={4}>
+          <VStack gap={3}>
+            <Text type="label" color="secondary">
+              Signal register, quoted in the briefings
+            </Text>
+            {SIGNAL_RISKS.map((r, i) => {
+              const href = riskHref(r.signal);
+              return (
+                <HStack key={i} gap={2}>
+                  <StatusDot variant={RISK_DOT[r.type] ?? 'neutral'} label={r.type} tooltip={r.type} />
+                  {href ? (
+                    <Link href={href}>
+                      <Text type="body" as="p" textWrap="pretty">
+                        {clean(r.signal)}
+                      </Text>
+                    </Link>
+                  ) : (
+                    <Text type="body" as="p" textWrap="pretty">
+                      {clean(r.signal)}
+                    </Text>
+                  )}
+                </HStack>
+              );
+            })}
+          </VStack>
+        </Card>
+      </Grid>
+    </VStack>
   );
 }

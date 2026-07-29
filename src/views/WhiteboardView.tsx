@@ -1,100 +1,170 @@
-// @ts-nocheck
-// views/WhiteboardView.tsx — Source Library (P5 rebuild, UX Audit v1)
-// Primary sources shown as primary sources: whiteboard artifacts as a filterable gallery,
-// each linked forward to the page that operationalized it. No transcription prose.
-import { useMemo, useState } from 'react';
-import { ArrowRightIcon } from 'lucide-react';
+// views/WhiteboardView.tsx — Source Library (v18 Astryx rebuild).
+// Primary sources shown as primary sources: whiteboard artifacts as a
+// filterable gallery (?category=), each linked forward to the page that
+// operationalized it. ?session= highlights the artifacts an insight cites.
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@astryxdesign/core/Link';
+import { Token } from '@astryxdesign/core/Token';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { WHITEBOARD_ARTIFACTS } from '../data/personas';
-import { Masthead } from '../components/ui/Figure';
+import { PageHeader } from '../components/ui/PageHeader';
+import { Fig } from '../components/charts/Fig';
+import { RankedList } from '../components/charts/RankedList';
+import { hrefPersonas, hrefCompetitive, hrefSignals, hrefRoadmap, hrefProduct, hrefSources } from '../lib/links';
 
-const CATEGORY_LABELS = {
-  'product-context': 'Product context', persona: 'Personas', competitor: 'Competitors',
-  strategic: 'Strategy', feature: 'Features', 'exam-intel': 'Exam intel',
-};
-// Where each whiteboard's thinking now lives in the app
-const BECAME = {
-  'product-context': { target: 'overview', label: 'Command Center' },
-  persona: { target: 'personas', label: 'Persona Atlas' },
-  competitor: { target: 'competitive', label: 'Competitive Parity' },
-  strategic: { target: 'signals', label: 'Signals' },
-  feature: { target: 'roadmap', label: 'Roadmap' },
-  'exam-intel': { target: 'exam-management', label: 'Exam Management' },
+const CATEGORY_LABELS: Record<string, string> = {
+  'product-context': 'Product context',
+  persona: 'Personas',
+  competitor: 'Competitors',
+  strategic: 'Strategy',
+  feature: 'Features',
+  'exam-intel': 'Exam intel',
 };
 
-export function WhiteboardView({ onNav }) {
-  const [category, setCategory] = useState('all');
-  const [expanded, setExpanded] = useState({});
+// Where each whiteboard's thinking now lives in the app.
+const BECAME: Record<string, { href: string; label: string }> = {
+  'product-context': { href: '/', label: 'Command Center' },
+  persona: { href: hrefPersonas(), label: 'Persona Atlas' },
+  competitor: { href: hrefCompetitive(), label: 'Competitive Parity' },
+  strategic: { href: hrefSignals(), label: 'Signals' },
+  feature: { href: hrefRoadmap(), label: 'Roadmap' },
+  'exam-intel': { href: hrefProduct('exam-management'), label: 'Exam Management' },
+};
+
+const ITEM_PREVIEW = 5;
+
+export function WhiteboardView() {
+  const [params, setParams] = useSearchParams();
+  const category = params.get('category') ?? undefined;
+  const session = params.get('session') ?? undefined;
+
+  const set = (key: string, value?: string) =>
+    setParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        if (value) p.set(key, value);
+        else p.delete(key);
+        return p;
+      },
+      { replace: true }
+    );
+
   const categories = useMemo(() => {
-    const counts = {};
-    for (const a of WHITEBOARD_ARTIFACTS) counts[a.category] = (counts[a.category] ?? 0) + 1;
-    return Object.entries(counts);
+    const counts = new Map<string, number>();
+    for (const a of WHITEBOARD_ARTIFACTS) counts.set(a.category, (counts.get(a.category) ?? 0) + 1);
+    return [...counts.entries()];
   }, []);
-  const shown = category === 'all' ? WHITEBOARD_ARTIFACTS : WHITEBOARD_ARTIFACTS.filter(a => a.category === category);
+
+  const shown = useMemo(() => {
+    let list = WHITEBOARD_ARTIFACTS;
+    if (category) list = list.filter((a) => a.category === category);
+    if (session) {
+      const q = session.toLowerCase();
+      list = list.filter((a) => a.source.toLowerCase().includes(q) || a.title.toLowerCase().includes(q));
+    }
+    return list;
+  }, [category, session]);
+
+  const heroRows = categories
+    .map(([cat, count]) => ({
+      key: cat,
+      label: CATEGORY_LABELS[cat] ?? cat,
+      value: WHITEBOARD_ARTIFACTS.filter((a) => a.category === cat).reduce((n, a) => n + a.items.length, 0),
+      hint: `${count} artifact${count === 1 ? '' : 's'}`,
+      href: hrefSources() + `?category=${cat}`,
+    }))
+    .sort((a, b) => b.value - a.value);
 
   return (
-    <div style={{ padding: '30px 34px 48px', maxWidth: 1080 }}>
-      <Masthead title="Source Library"
-        lede="The whiteboards that started everything, kept as artifacts rather than retyped as prose. Each one links forward to the page where its thinking now lives."
-        byline={`${WHITEBOARD_ARTIFACTS.length} whiteboard artifacts · Mar 20, 2026 sessions · ${WHITEBOARD_ARTIFACTS.reduce((n, a) => n + a.items.length, 0)} captured items`} />
+    <VStack gap={5} padding={6} maxWidth={1120}>
+      <PageHeader
+        title="Source Library"
+        lede="The whiteboards that started everything, kept as artifacts rather than retyped as prose — each one links forward to the page where its thinking now lives."
+        meta={`${WHITEBOARD_ARTIFACTS.length} whiteboard artifacts · Mar 20, 2026 sessions · ${WHITEBOARD_ARTIFACTS.reduce((n, a) => n + a.items.length, 0)} captured items`}
+      />
 
-      <div className="flex gap-1.5 flex-wrap" style={{ marginBottom: 16 }} role="tablist" aria-label="Filter by category">
-        <button role="tab" aria-selected={category === 'all'} className="press" onClick={() => setCategory('all')} style={chip(category === 'all')}>
-          All · {WHITEBOARD_ARTIFACTS.length}
-        </button>
+      <Fig
+        title="Captured items by category"
+        caption="Where the whiteboard thinking concentrated. The heaviest category names the research phase's center of gravity — each bar filters the gallery below."
+      >
+        <RankedList rows={heroRows} format={(r) => `${r.value} items`} />
+      </Fig>
+
+      <HStack gap={1.5} wrap="wrap" vAlign="center">
+        <Token label={`All · ${WHITEBOARD_ARTIFACTS.length}`} color={!category ? 'blue' : 'default'} onClick={() => set('category', undefined)} />
         {categories.map(([cat, count]) => (
-          <button key={cat} role="tab" aria-selected={category === cat} className="press" onClick={() => setCategory(cat === category ? 'all' : cat)} style={chip(category === cat)}>
-            {CATEGORY_LABELS[cat] ?? cat} · {count}
-          </button>
+          <Token
+            key={cat}
+            label={`${CATEGORY_LABELS[cat] ?? cat} · ${count}`}
+            color={category === cat ? 'blue' : 'default'}
+            onClick={() => set('category', category === cat ? undefined : cat)}
+          />
         ))}
-      </div>
+        {session && <Token label={`session: ${session}`} color="orange" onRemove={() => set('session', undefined)} />}
+      </HStack>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 14 }}>
-        {shown.map(a => {
-          const isOpen = !!expanded[a.id];
-          const items = isOpen ? a.items : a.items.slice(0, 5);
-          const became = BECAME[a.category];
-          return (
-            <article key={a.id} aria-label={a.title}
-              style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px 18px', display: 'flex', flexDirection: 'column' }}>
-              <div className="flex items-center gap-2" style={{ marginBottom: 2 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: a.color, flexShrink: 0 }} />
-                <span className="rr-serif" style={{ fontSize: 17, color: 'var(--text)', lineHeight: 1.25 }}>{a.title}</span>
-              </div>
-              <span className="mono" style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 10 }}>{a.source} · {CATEGORY_LABELS[a.category]}</span>
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0, flex: 1 }}>
-                {items.map((it, i) => (
-                  <li key={i} className="flex items-start gap-2" style={{ padding: '4px 0', fontSize: 13.5, color: 'var(--text)', lineHeight: 1.45 }}>
-                    <span style={{ width: 4, height: 4, borderRadius: '50%', marginTop: 7, flexShrink: 0, background: 'var(--border2)' }} />
-                    {it}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex items-center justify-between" style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bg3)' }}>
-                {a.items.length > 5 ? (
-                  <button className="press mono" onClick={() => setExpanded(e => ({ ...e, [a.id]: !isOpen }))}
-                    aria-expanded={isOpen} style={{ fontSize: 12.5, color: 'var(--text2)', cursor: 'pointer' }}>
-                    {isOpen ? 'show less' : `+${a.items.length - 5} more items`}
-                  </button>
-                ) : <span />}
-                {became && (
-                  <button className="press mono flex items-center gap-1" onClick={() => onNav?.(became.target)}
-                    style={{ fontSize: 12.5, color: 'var(--accent)', cursor: 'pointer' }}>
-                    became {became.label} <ArrowRightIcon size={11} />
-                  </button>
-                )}
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    </div>
+      {shown.length === 0 ? (
+        <EmptyState
+          title="No matching artifacts"
+          description={session ? `No whiteboard artifact matches "${session}". Clear the session filter to see the full library.` : 'No artifacts in this category.'}
+        />
+      ) : (
+        <Grid columns={{ minWidth: 340, max: 3 }} gap={4}>
+          {shown.map((a) => {
+            const became = BECAME[a.category];
+            return (
+              <Card key={a.id} padding={4}>
+                <VStack gap={2}>
+                  <VStack gap={0.5}>
+                    <Text type="body" weight="semibold" textWrap="balance">
+                      {a.title}
+                    </Text>
+                    <Text type="supporting">
+                      {a.source} · {CATEGORY_LABELS[a.category] ?? a.category}
+                    </Text>
+                  </VStack>
+                  <VStack gap={1}>
+                    {a.items.slice(0, ITEM_PREVIEW).map((it, i) => (
+                      <HStack key={i} gap={2}>
+                        <Text type="supporting">·</Text>
+                        <Text type="supporting" as="p" textWrap="pretty">
+                          {it}
+                        </Text>
+                      </HStack>
+                    ))}
+                  </VStack>
+                  {a.items.length > ITEM_PREVIEW && (
+                    <Collapsible trigger={<Text type="supporting">{`+${a.items.length - ITEM_PREVIEW} more items`}</Text>} defaultIsOpen={false}>
+                      <VStack gap={1}>
+                        {a.items.slice(ITEM_PREVIEW).map((it, i) => (
+                          <HStack key={i} gap={2}>
+                            <Text type="supporting">·</Text>
+                            <Text type="supporting" as="p" textWrap="pretty">
+                              {it}
+                            </Text>
+                          </HStack>
+                        ))}
+                      </VStack>
+                    </Collapsible>
+                  )}
+                  {became && (
+                    <Link href={became.href} isStandalone>
+                      became {became.label} →
+                    </Link>
+                  )}
+                </VStack>
+              </Card>
+            );
+          })}
+        </Grid>
+      )}
+    </VStack>
   );
-}
-
-function chip(active) {
-  return {
-    fontSize: 13.5, fontWeight: 500, padding: '5px 14px', borderRadius: 14, cursor: 'pointer',
-    border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
-    background: active ? 'var(--accent-bg)' : '#fff', color: active ? 'var(--accent)' : 'var(--text2)',
-  };
 }
