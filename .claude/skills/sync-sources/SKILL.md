@@ -74,8 +74,12 @@ deterministic: same inputs → same procedure → published update.
 
 ## Cadence
 
-Run when asked, or proactively when `corpusFacts().last7d` is 0 while Granola
-shows work meetings in the last week. For a standing cadence the user can say
-"/loop weekly /sync-sources" in a session where Granola MCP is connected —
-cloud/scheduled agents can't reach the local vault or the interactive Granola
-connector, so this skill must run in a local session.
+**Automated**: `com.romit.rr-insights-sync` LaunchAgent (installed from
+`scripts/launchd/`) runs this skill headless every Monday 9:37am, after the
+9:00 vault pull refreshes the Obsidian mirror. Headless runs are VAULT-ONLY
+(no interactive Granola connector) and skip the Chrome visual check — tsc +
+build are the gate. Logs: `/tmp/rr-insights-sync.log`.
+
+**Manual**: run `/sync-sources` in any local session — with Granola MCP
+connected you also get transcripts for verbatim quotes, which the headless
+run can't fetch; prefer a manual run after important Arun 1:1s.

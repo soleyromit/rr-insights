@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS launchd plist — weekly rr-insights sync from the Obsidian vault.
+
+  Install (one-time):
+    cp scripts/launchd/com.romit.rr-insights-sync.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.romit.rr-insights-sync.plist
+
+  Verify:   launchctl list | grep rr-insights-sync
+  Unload:   launchctl unload ~/Library/LaunchAgents/com.romit.rr-insights-sync.plist
+  Logs:     tail -f /tmp/rr-insights-sync.log
+
+  Cadence: Monday 9:37am local — after the 9:00 exxat-vault-pull (so the vault
+  is fresh) and offset from build-insights (8:47) per the no-collision pattern.
+  If the machine is asleep at fire time, launchd runs it on next wake.
+
+  What it does: runs Claude Code headless with /sync-sources in vault-only
+  mode — synthesizes new insights from vault notes newer than the corpus
+  anchor, refreshes the Performance Ledger, typechecks, builds, publishes.
+  Costs Claude API/plan usage on weeks where there is new material.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.romit.rr-insights-sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/romitsoley/rr-insights/scripts/launchd/weekly-rr-sync.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/romitsoley/rr-insights</string>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>1</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>37</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/rr-insights-sync.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/rr-insights-sync.err</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/romitsoley/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/romitsoley</string>
+    </dict>
+</dict>
+</plist>
