@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v16.1',
+    date: '2026-07-29',
+    summary: 'S2: opportunity scoring (inspectable formula) ranks signals and the design-next queue; Briefings fully computed from live data with the Cohere conflict as an explicit decision ask; highlight-span quotes; last generic bar charts converted to RankedBars. Zero static prose and zero recency-ranked queues remain. Full-tree gate: 0 findings.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/lib/opportunityScore.ts', 'src/views/StakeholderView.tsx', 'src/views/SignalsView.tsx', 'src/views/OverviewView.tsx', 'src/views/PortfolioView.tsx', 'src/views/PersonaMapView.tsx', 'src/components/drilldown/EvidencePanel.tsx'],
+  },
+  {
     version: 'v16.0',
     date: '2026-07-29',
     summary: 'P6/S1: Dovetail-pattern chart conversion. RankedBars + VolumeArea replace Highcharts stacks and dot timelines (Highcharts out of the bundle). Computed TODAY digests on nine pages. Clickable ranked bars and evidence-panel product chips restore cross-links. Matrix grids retained where a matrix is the true data shape. Gate: 0 findings.',

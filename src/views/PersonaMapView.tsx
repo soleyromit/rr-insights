@@ -9,6 +9,7 @@ import { getInsightsByPersona } from '../data/insights';
 import { PERSONA_PRODUCT_FRICTION } from '../data/personaFriction';
 import { Figure, Masthead } from '../components/ui/Figure';
 import { PlotFigure } from '../components/charts/PlotFigure';
+import { RankedBars } from '../components/charts/RankedBars';
 
 const MONO = "'JetBrains Mono', monospace";
 const SEV_NUM = { critical: 3, high: 2, medium: 1, na: 0 };
@@ -73,18 +74,11 @@ export function PersonaMapView() {
             ],
           })} />
         </Figure>
-        <Figure title="Fig. 2 · Research coverage" caption="Tagged insights per persona. Decision: where the evidence base is thin, the next research agenda goes — a short SCCE bar is a to-do, not a fact about SCCEs.">
-          <PlotFigure minHeight={4 * 44 + 40} deps={[coverage]} build={() => ({
-            height: 4 * 44 + 38,
-            marginLeft: 128, marginTop: 8, marginBottom: 26, marginRight: 40,
-            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
-            x: { label: 'insights', domain: [0, maxCoverage * 1.1], tickSize: 0 },
-            y: { label: null, domain: PERSONA_ORDER.map(personaName), tickSize: 0, padding: 0.35 },
-            marks: [
-              Plot.barX(coverage, { x: 'insights', y: 'persona', fill: '#8a8580', rx: 3 }),
-              Plot.text(coverage, { x: 'insights', y: 'persona', text: d => String(d.insights), dx: 14, fill: '#4a4844', fontSize: 12.5 }),
-            ],
-          })} />
+        <Figure title="Fig. 2 · Research coverage" caption="Tagged insights per persona, ranked. Decision: the shortest bar is the next research agenda; a thin SCCE bar is a to-do, not a fact about SCCEs. Click a persona to open their profile.">
+          <RankedBars onRowClick={(id) => setSelected(id)} rows={PERSONA_ORDER
+            .map(pid => ({ pid, c: coverage.find(cv => cv.persona === personaName(pid)) }))
+            .sort((a, b) => (b.c?.insights ?? 0) - (a.c?.insights ?? 0))
+            .map(({ pid, c }) => ({ key: pid, label: c?.persona ?? pid, total: c?.insights ?? 0 }))} />
         </Figure>
       </div>
 

@@ -1,10 +1,9 @@
 // @ts-nocheck
 // views/PortfolioView.tsx — Portfolio + Deliverables (P5 rebuild, UX Audit v1)
 // Staff-readiness as a chart, anchors as claims, case-study pipeline ranked by priority.
-import * as Plot from '@observablehq/plot';
 import { DIMENSIONS, ANCHORS, GAPS } from '../data/portfolio';
 import { Figure, Masthead } from '../components/ui/Figure';
-import { PlotFigure } from '../components/charts/PlotFigure';
+import { RankedBars } from '../components/charts/RankedBars';
 
 const MONO = "'JetBrains Mono', monospace";
 
@@ -17,20 +16,12 @@ export function PortfolioView() {
         byline={`${DIMENSIONS.length} positioning dimensions · ${ANCHORS.length} narrative anchors · ${GAPS.length} case studies in pipeline`} />
 
       <div style={{ marginBottom: 16 }}>
-        <Figure title="Fig. 1 · Staff-readiness by dimension" caption="Self-assessed against Staff Product Designer JDs; the 70 bar is a self-set target, not an external benchmark. Decision: measurable outcomes is the shortest bar, so the FaaS case study with before/after metrics is the highest-priority deliverable.">
-          <PlotFigure minHeight={DIMENSIONS.length * 32 + 50} deps={[sorted]} build={() => ({
-            height: DIMENSIONS.length * 32 + 46,
-            marginLeft: 190, marginTop: 8, marginBottom: 26, marginRight: 40,
-            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
-            x: { label: 'readiness', domain: [0, 100], tickSize: 0 },
-            y: { label: null, domain: sorted.map(d => d.label), tickSize: 0, padding: 0.3 },
-            marks: [
-              Plot.ruleX([70], { stroke: '#cdc8bf', strokeDasharray: '3 3' }),
-              Plot.text([70], { x: d => d, frameAnchor: 'bottom', text: () => 'self-set bar: 70', dy: 14, fill: '#6b6660', fontSize: 12 }),
-              Plot.barX(sorted, { x: 'value', y: 'label', fill: d => d.value < 70 ? '#e8604a' : '#8a8580', rx: 3, tip: true, title: d => d.note }),
-              Plot.text(sorted, { x: 'value', y: 'label', text: d => String(d.value), dx: 14, fill: '#4a4844', fontSize: 12.5 }),
-            ],
-          })} />
+        <Figure title="Fig. 1 · Staff-readiness by dimension" caption="Self-assessed against Staff Product Designer JDs; 70 is a self-set target, not an external benchmark. Bars below the target render red. Decision: the lowest bar is the writing assignment; measurable outcomes points at the FaaS before/after case study.">
+          <RankedBars maxHint={100} rows={sorted.map(d => ({
+            key: d.label, label: d.label, total: d.value,
+            barColor: d.value < 70 ? '#e8604a' : '#b8b2a8',
+            sub: `${d.value} / self-set target 70 · ${d.note}`,
+          }))} />
         </Figure>
       </div>
 

@@ -70,11 +70,10 @@ function InsightCardV2({ insight, expanded, onToggle, onNav }: {
       {expanded && (
         <div style={{ padding: '0 13px 13px 22px' }}>
           {insight.pullQuote && (
-            <blockquote style={{ position: 'relative', margin: '6px 0 12px', padding: '2px 0 0 22px' }}>
-              <span className="rr-serif" style={{ position: 'absolute', left: 0, top: -6, fontSize: 30, color: 'var(--border2)', lineHeight: 1 }}>“</span>
-              <span className="serif" style={{ fontSize: 15.5, color: 'var(--text)', lineHeight: 1.55, display: 'block' }}>{insight.pullQuote}</span>
-              <span className="mono" style={{ fontSize: 12, color: 'var(--text3)', marginTop: 5, display: 'block' }}>— {insight.pullQuoteSource ?? insight.source}</span>
-            </blockquote>
+            <p style={{ margin: '6px 0 12px', fontSize: 15, lineHeight: 1.7, color: 'var(--text)', maxWidth: '62ch' }}>
+              <span className="serif" style={{ background: 'rgba(109,94,212,0.13)', boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone', padding: '2px 4px', borderRadius: 3 }}>{insight.pullQuote}</span>
+              <span className="mono" style={{ display: 'block', fontSize: 12, color: 'var(--text2)', marginTop: 6 }}>— {insight.pullQuoteSource ?? insight.source}, verbatim</span>
+            </p>
           )}
           <div className="flex flex-wrap gap-1.5 items-center" style={{ marginBottom: 10 }}>
             <Chip color={EVIDENCE_COLORS[ec]}>{ec}</Chip>

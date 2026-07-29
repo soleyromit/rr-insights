@@ -11,6 +11,7 @@ import { RankedBars } from '../components/charts/RankedBars';
 import { VolumeArea } from '../components/charts/VolumeArea';
 import { useDrilldown } from '../hooks/useDrilldown';
 import { Figure, Masthead } from '../components/ui/Figure';
+import { signalScore, FORMULA } from '../lib/opportunityScore';
 import type { ComputedSignal } from '../data/signals';
 
 const SEV_COLORS: Record<string, string> = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0' };
@@ -27,9 +28,8 @@ const PERSONA_LABELS: Record<string, string> = {
 const PERSONA_ORDER = ['Student', 'DCE / Faculty', 'SCCE', 'Program Dir.', 'Cross-persona'];
 const MONO = "'JetBrains Mono', monospace";
 
-function SignalIndexRow({ signal, index, active, compact, onOpen }: {
-  signal: ComputedSignal; index: number; active: boolean; compact: boolean; onOpen: (id: string) => void;
-}) {
+function SignalIndexRow({ signal, index, active, compact, onOpen }) { /*
+*/
   const { def, insights, topSeverity, byProduct } = signal;
   return (
     <button onClick={() => onOpen(def.id)} className="press w-full text-left group" style={{
@@ -50,6 +50,7 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
           {Object.keys(byProduct).length} products<br />{insights.length} insights
         </span>
       )}
+      <span className="mono flex-shrink-0" title={FORMULA} style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', cursor: 'help' }}>{signal.score}</span>
       <span className="mono flex-shrink-0" style={{
         fontSize: 12, fontWeight: 600, padding: '2.5px 8px', borderRadius: 3,
         background: `${SEV_COLORS[topSeverity] ?? '#8a8580'}16`, color: SEV_COLORS[topSeverity] ?? '#8a8580',
@@ -60,7 +61,9 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
 }
 
 export function SignalsView({ onNav }) {
-  const signals = useMemo(() => computeAllSignals(), []);
+  const signals = useMemo(() => computeAllSignals()
+    .map(sig => ({ ...sig, score: signalScore(sig) }))
+    .sort((a, b) => b.score - a.score), []);
   const { state, apply } = useDrilldown();
   const active = signals.find(s => s.def.id === state.signal);
   const panelOpen = !!active;
@@ -69,7 +72,7 @@ export function SignalsView({ onNav }) {
     const top = signals[0];
     const newest = signals.flatMap(s => s.insights).sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))[0];
     const critTotal = signals.reduce((n, s) => n + (s.bySeverity.critical ?? 0), 0);
-    return `${SHORT[top.def.id]} leads with ${top.insights.length} insights (${top.bySeverity.critical ?? 0} of ${critTotal} platform criticals); newest evidence landed ${newest?.createdAt ?? 'n/a'} from ${newest?.source ?? ''}.`;
+    return `${SHORT[top.def.id]} leads at opportunity score ${top.score} with ${top.insights.length} insights (${top.bySeverity.critical ?? 0} of ${critTotal} platform criticals); newest evidence landed ${newest?.createdAt ?? 'n/a'} from ${newest?.source ?? ''}.`;
   }, [signals]);
 
   // ── Heatmap cells: signal × persona, severity-weighted ──
@@ -132,6 +135,7 @@ export function SignalsView({ onNav }) {
               <RankedBars onRowClick={(id) => apply({ signal: id })} rows={signals.map(s => ({
                 key: s.def.id, label: SHORT[s.def.id], color: s.def.color,
                 total: s.insights.length, critical: s.bySeverity.critical ?? 0,
+                sub: `opportunity score ${s.score}`,
               }))} />
             </Figure>
           </div>
@@ -148,7 +152,7 @@ export function SignalsView({ onNav }) {
         {/* ── Signal index ── */}
         <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
           <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-            Signal index, ranked by severity — open a row for its evidence
+            Signal index, ranked by opportunity score — open a row for its evidence
           </div>
           {signals.map((s, i) => (
             <SignalIndexRow key={s.def.id} signal={s} index={i} compact={panelOpen}

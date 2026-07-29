@@ -8,6 +8,7 @@ import { PRODUCTS } from '../data/products';
 import { ALL_INSIGHTS, getInsightsByProduct } from '../data/insights';
 import { MILESTONES } from '../data/personas';
 import { Figure, Masthead } from '../components/ui/Figure';
+import { insightScore, FORMULA } from '../lib/opportunityScore';
 import { RankedBars } from '../components/charts/RankedBars';
 
 const MONO = "'JetBrains Mono', monospace";
@@ -41,8 +42,9 @@ export function OverviewView({ onNav }) {
   }, [productRows, nextHard, daysLeft]);
 
   const designNext = useMemo(() => ALL_INSIGHTS
-    .filter(i => i.severity === 'critical' && i.soWhat)
-    .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
+    .filter(i => i.soWhat)
+    .map(i => ({ ...i, score: insightScore(i) }))
+    .sort((a, b) => b.score - a.score || (b.createdAt > a.createdAt ? 1 : -1))
     .slice(0, 5), []);
 
   return (
@@ -91,7 +93,7 @@ export function OverviewView({ onNav }) {
       {/* Design-next queue — critical findings that already name their response */}
       <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
         <div className="flex items-center justify-between" style={{ padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)' }}>Design next — latest critical findings with a named response</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)' }}>Design next — ranked by opportunity score, every row has a named response</span>
           <button className="press mono" onClick={() => onNav('signals')} style={{ fontSize: 12.5, color: 'var(--accent)', cursor: 'pointer' }}>all signals →</button>
         </div>
         {designNext.map(i => (
@@ -99,7 +101,8 @@ export function OverviewView({ onNav }) {
             style={{ padding: '13px 18px', borderBottom: '1px solid var(--bg3)', cursor: 'pointer', background: '#fff' }}
             onMouseEnter={e => e.currentTarget.style.background = 'var(--bg)'}
             onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: SEV_COLORS.critical }} />
+            <span className="mono" title={FORMULA} style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', flexShrink: 0, width: 30, cursor: 'help' }}>{i.score}</span>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: SEV_COLORS[i.severity] ?? SEV_COLORS.critical }} />
             <span style={{ flex: 1, minWidth: 0 }}>
               <span style={{ display: 'block', fontSize: 14.5, color: 'var(--text)', lineHeight: 1.5 }}>{i.soWhat}</span>
               <span className="mono" style={{ fontSize: 12, color: 'var(--text2)' }}>{i.productIds.join(' · ')} · {i.source}</span>
