@@ -55,7 +55,7 @@ export const ROUTES: RouteDef[] = [
   { path: '/portfolio', label: 'Portfolio', section: 'story', component: v(() => import('../views/PortfolioView'), 'PortfolioView') },
   { path: '/reports/nps-2025', label: 'NPS 2025', component: v(() => import('../views/NPSView'), 'NPSView') },
   { path: '/performance', label: 'Performance Ledger', component: v(() => import('../views/ArunPerformanceView'), 'ArunPerformanceView') },
-  { path: '/charts', label: 'Charts', section: 'explore', component: v(() => import('../views/AnalyticsView'), 'AnalyticsView') },
+  { path: '/charts', label: 'Charts', section: 'explore', component: v(() => import('../views/ChartsView'), 'ChartsView') },
 
   { path: '/sources', label: 'Source Library', section: 'library', component: v(() => import('../views/WhiteboardView'), 'WhiteboardView'), needsOnNav: true },
   { path: '/changelog', label: 'Changelog', section: 'library', component: v(() => import('../views/ChangelogView'), 'ChangelogView') },

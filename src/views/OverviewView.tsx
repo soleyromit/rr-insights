@@ -1,118 +1,229 @@
-// @ts-nocheck
-// views/OverviewView.tsx — Command Center (P3 rebuild, UX Audit v1)
-// The entry answers one question: what should be designed next, and why.
-// Product-state strip + severity mix + design-next queue; repo bookkeeping lives in Changelog.
+// views/OverviewView.tsx — Command Center (v18 Astryx rebuild).
+// One question: what should be designed next, and why. KPI tiles whose numbers
+// are queries, a products table where every row is a door, and the design-next
+// queue whose rows carry the clicked insight's identity (no more signals dump).
 import { useMemo } from 'react';
-import { ChevronRightIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
-import { PRODUCTS } from '../data/products';
-import { ALL_INSIGHTS, getInsightsByProduct } from '../data/insights';
+import { useNavigate } from 'react-router-dom';
+import { VStack } from '@astryxdesign/core/VStack';
+import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Card } from '@astryxdesign/core/Card';
+import { ClickableCard } from '@astryxdesign/core/ClickableCard';
+import { Text } from '@astryxdesign/core/Text';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Link } from '@astryxdesign/core/Link';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { PageHeader } from '../components/ui/PageHeader';
+import { Fig } from '../components/charts/Fig';
+import { VolumeChart } from '../components/charts/VolumeChart';
+import { SevDot } from '../components/ui/sev';
+import { ALL_INSIGHTS } from '../data/insights';
+import { PRODUCTS, getProductsByUrgency } from '../data/products';
 import { MILESTONES } from '../data/personas';
-import { Figure, Masthead } from '../components/ui/Figure';
-import { RankedBars } from '../components/charts/RankedBars';
-import { SEV_COLORS } from '../data/taxonomy';
-import { scoreInsight } from '../lib/score';
+import { insightsWhere } from '../lib/selectors';
+import { monthlyVolume } from '../lib/series';
+import { scoreInsight, sumScores } from '../lib/score';
+import { hrefInsight, hrefInsights, hrefProduct, hrefRoadmap, hrefSignals } from '../lib/links';
+import type { ProductMeta } from '../types';
 
-const MONO = "'JetBrains Mono', monospace";
-const SEVERITIES = ['critical', 'high', 'medium', 'low'];
-const URGENCY = { fire: { icon: FlameIcon, color: '#dc2626' }, warn: { icon: AlertTriangleIcon, color: '#b45309' }, ok: { icon: CheckCircleIcon, color: '#16a34a' } };
-
-function parseMs(str) {
-  const d = new Date(str);
-  return isNaN(d) ? new Date(str.replace(/^(\w+) (\d{4})$/, '$1 1, $2')) : d;
+interface ProductRow extends Record<string, unknown> {
+  id: string;
+  product: ProductMeta;
 }
 
-export function OverviewView({ onNav }) {
-  const today = new Date();
+const URGENCY_DOT: Record<string, 'error' | 'warning' | 'success'> = {
+  fire: 'error',
+  hot: 'error',
+  warn: 'warning',
+  watch: 'warning',
+  ok: 'success',
+};
 
-  const productRows = useMemo(() => PRODUCTS.map(p => {
-    const ins = getInsightsByProduct(p.id);
-    return { p, total: ins.length, critical: ins.filter(i => i.severity === 'critical').length };
-  }), []);
+export function OverviewView() {
+  const navigate = useNavigate();
+  const critical = useMemo(() => insightsWhere({ severity: 'critical' }), []);
+  const volume = useMemo(() => monthlyVolume(ALL_INSIGHTS), []);
+  const mass = useMemo(() => sumScores(ALL_INSIGHTS), []);
+  const queue = critical.slice(0, 5);
+  const products: ProductRow[] = getProductsByUrgency().map((p) => ({ id: p.id, product: p }));
 
-  const nextHard = useMemo(() => MILESTONES
-    .map(m => ({ ...m, d: parseMs(m.date) }))
-    .filter(m => m.isHardDeadline && m.d >= today)
-    .sort((a, b) => a.d - b.d)[0], []);
-  const daysLeft = nextHard ? Math.round((nextHard.d - today) / 86400000) : null;
-
-  const digest = useMemo(() => {
-    const worst = [...productRows].sort((a, b) => b.critical - a.critical)[0];
-    const fires = PRODUCTS.filter(p => p.urgencyLevel === 'fire').map(p => p.shortName);
-    return `${worst.p.shortName} carries the largest critical load (${worst.critical} of ${worst.total} insights); ${fires.length ? fires.join(' + ') + ' on fire watch; ' : ''}next hard deadline is ${nextHard?.label ?? 'unscheduled'} in ${daysLeft} days.`;
-  }, [productRows, nextHard, daysLeft]);
-
-  const designNext = useMemo(() => ALL_INSIGHTS
-    .filter(i => i.severity === 'critical' && i.soWhat)
-    .map(i => ({ insight: i, score: scoreInsight(i) }))
-    .sort((a, b) => b.score.total - a.score.total || (b.insight.createdAt > a.insight.createdAt ? 1 : -1))
-    .slice(0, 5), []);
+  const nextDeadline = useMemo(() => {
+    const parse = (d: string) => new Date(d).getTime();
+    return MILESTONES.filter((m) => m.isHardDeadline && !Number.isNaN(parse(m.date)) && parse(m.date) >= Date.now()).sort(
+      (a, b) => parse(a.date) - parse(b.date)
+    )[0];
+  }, []);
+  const daysTo = nextDeadline ? Math.ceil((new Date(nextDeadline.date).getTime() - Date.now()) / 86400000) : null;
 
   return (
-    <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
-      <Masthead title="Command Center"
-        lede="The state of five products in one view: deadline pressure, evidence mass, and the queue of critical findings that already name their design response. Everything links into its evidence."
-        byline={`${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products · next hard deadline: ${nextHard?.label ?? 'none scheduled'} in ${daysLeft} days (${nextHard?.date ?? ''})`} digest={digest} />
+    <VStack gap={5} padding={6}>
+      <PageHeader
+        title="Command Center"
+        lede="What should be designed next, and why — every number below is a query you can open."
+        meta={`${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products`}
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.2fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
-        {/* Product state — each row is a door, not a card */}
-        <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-            Products, ranked by deadline pressure — open a row for its deep dive
-          </div>
-          {productRows.map(({ p, total, critical }) => {
-            const U = URGENCY[p.urgencyLevel] ?? URGENCY.ok;
-            return (
-              <button key={p.id} className="press w-full text-left flex items-center gap-3" onClick={() => onNav(p.id)}
-                aria-label={`Open ${p.name}`}
-                style={{ padding: '13px 18px', borderBottom: '1px solid var(--bg3)', cursor: 'pointer', background: '#fff' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'var(--bg)'}
-                onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-                <U.icon size={13} style={{ color: U.color, flexShrink: 0 }} aria-label={p.urgencyLevel} />
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: p.accentColor, flexShrink: 0 }} />
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontSize: 15.5, fontWeight: 600, color: 'var(--text)' }}>{p.shortName}</span>
-                  <span className="mono" style={{ fontSize: 12, color: 'var(--text2)' }}>{p.status} · {p.userCount ?? 'n/a'}</span>
-                </span>
-                <span className="mono" style={{ fontSize: 12.5, color: 'var(--text2)', textAlign: 'right', lineHeight: 1.6, flexShrink: 0 }}>
-                  {total} insights<br /><span style={{ color: critical ? '#c24d3a' : 'var(--text3)' }}>{critical} critical</span>
-                </span>
-                {p.daysToDeadline && <span className="mono" title={`days to planned launch: ${p.launchDate ?? 'per product plan'}`} style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', width: 44, textAlign: 'right', flexShrink: 0 }}>{p.daysToDeadline}d</span>}
-                <ChevronRightIcon size={15} style={{ color: 'var(--text3)', flexShrink: 0, opacity: 0.5 }} />
-              </button>
-            );
-          })}
-        </div>
+      <Grid columns={{ minWidth: 220, max: 4 }} gap={4}>
+        <ClickableCard onClick={() => navigate(hrefInsights({}))} padding={4}>
+          <VStack gap={1}>
+            <Text type="label" color="secondary">
+              Corpus
+            </Text>
+            <Heading level={3} type="display-3">
+              {ALL_INSIGHTS.length}
+            </Heading>
+            <Text type="supporting">insights · open the index →</Text>
+          </VStack>
+        </ClickableCard>
+        <ClickableCard onClick={() => navigate(hrefInsights({ severity: 'critical', sort: 'score' }))} padding={4}>
+          <VStack gap={1}>
+            <HStack gap={2} vAlign="center">
+              <StatusDot variant="error" label="critical" />
+              <Text type="label" color="secondary">
+                Critical open
+              </Text>
+            </HStack>
+            <Heading level={3} type="display-3">
+              {critical.length}
+            </Heading>
+            <Text type="supporting">score-ranked list →</Text>
+          </VStack>
+        </ClickableCard>
+        <ClickableCard onClick={() => navigate(hrefRoadmap())} padding={4}>
+          <VStack gap={1}>
+            <Text type="label" color="secondary">
+              Next hard deadline
+            </Text>
+            <Heading level={3} type="display-3">
+              {daysTo !== null ? `${daysTo}d` : '—'}
+            </Heading>
+            <Text type="supporting" maxLines={1}>
+              {nextDeadline ? `${nextDeadline.label} · ${nextDeadline.date}` : 'nothing dated ahead'}
+            </Text>
+          </VStack>
+        </ClickableCard>
+        <ClickableCard onClick={() => navigate(hrefSignals())} padding={4}>
+          <VStack gap={1}>
+            <Text type="label" color="secondary">
+              Opportunity mass
+            </Text>
+            <Heading level={3} type="display-3">
+              {Math.round(mass)}
+            </Heading>
+            <Text type="supporting">summed scores · signal board →</Text>
+          </VStack>
+        </ClickableCard>
+      </Grid>
 
-        <Figure title="Fig. 1 — Evidence mass, ranked" caption="Products ranked by evidence, critical mass as the red segment with its count inline. Decision: red mass is design debt — the largest red segment outranks the longest bar. Click a bar to open the product.">
-          <RankedBars onRowClick={(id) => onNav(id)} rows={productRows
-            .slice().sort((a, b) => b.critical - a.critical || b.total - a.total)
-            .map(({ p, total, critical }) => ({ key: p.id, label: p.shortName, color: p.accentColor, total, critical }))} />
-        </Figure>
-      </div>
+      <Grid columns={{ minWidth: 420, max: 2 }} gap={4}>
+        <Fig
+          title="Products, ranked by deadline pressure"
+          caption="Open a row for its product hub. Critical counts are queries — the biggest red number outranks the longest backlog."
+        >
+          <Table<ProductRow>
+            data={products}
+            idKey="id"
+            density="compact"
+            hasHover
+            columns={[
+              {
+                key: 'urgency',
+                header: '',
+                width: pixel(32),
+                renderCell: (r: ProductRow) => (
+                  <StatusDot variant={URGENCY_DOT[r.product.urgencyLevel] ?? 'success'} label={String(r.product.urgencyLevel)} />
+                ),
+              },
+              {
+                key: 'name',
+                header: 'Product',
+                width: proportional(2),
+                renderCell: (r: ProductRow) => (
+                  <VStack gap={0}>
+                    <Link href={hrefProduct(r.product.id)}>{r.product.name}</Link>
+                    <Text type="supporting" maxLines={1}>
+                      {r.product.status}
+                      {r.product.nps !== undefined ? ` · NPS ${r.product.nps}` : ''}
+                    </Text>
+                  </VStack>
+                ),
+              },
+              {
+                key: 'insights',
+                header: 'Evidence',
+                width: pixel(130),
+                renderCell: (r: ProductRow) => (
+                  <Link href={hrefInsights({ product: r.product.id })}>
+                    {r.product.insightCount} insights
+                  </Link>
+                ),
+              },
+              {
+                key: 'critical',
+                header: 'Critical',
+                width: pixel(110),
+                renderCell: (r: ProductRow) => (
+                  <Link href={hrefInsights({ product: r.product.id, severity: 'critical' })}>
+                    <Text type="body" color="inherit" hasTabularNumbers>
+                      {r.product.criticalGaps}
+                    </Text>
+                  </Link>
+                ),
+              },
+              {
+                key: 'deadline',
+                header: 'Deadline',
+                width: pixel(90),
+                align: 'end',
+                renderCell: (r: ProductRow) => (
+                  <Text type="body" hasTabularNumbers>
+                    {r.product.daysToDeadline !== null ? `${r.product.daysToDeadline}d` : '—'}
+                  </Text>
+                ),
+              },
+            ]}
+          />
+        </Fig>
 
-      {/* Design-next queue — critical findings that already name their response */}
-      <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-        <div className="flex items-center justify-between" style={{ padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)' }}>Design next — critical findings ranked by opportunity score</span>
-          <span className="mono" style={{ fontSize: 12, color: 'var(--text3)' }}>score = severity × evidence × persona priority</span>
-          <button className="press mono" onClick={() => onNav('signals')} style={{ fontSize: 12.5, color: 'var(--accent)', cursor: 'pointer' }}>all signals →</button>
-        </div>
-        {designNext.map(({ insight: i, score }) => (
-          <button key={i.id} className="press w-full text-left flex items-start gap-3" onClick={() => onNav('signals')}
-            style={{ padding: '13px 18px', borderBottom: '1px solid var(--bg3)', cursor: 'pointer', background: '#fff' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg)'}
-            onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: SEV_COLORS.critical }} />
-            <span style={{ flex: 1, minWidth: 0 }}>
-              <span style={{ display: 'block', fontSize: 14.5, color: 'var(--text)', lineHeight: 1.5 }}>{i.soWhat}</span>
-              <span className="mono" style={{ fontSize: 12, color: 'var(--text2)' }}>{i.productIds.join(' · ')} · {i.source}</span>
-            </span>
-            <span className="mono" title="severity × evidence class × persona priority"
-              style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', flexShrink: 0, marginTop: 2 }}>{score.label}</span>
-            <ChevronRightIcon size={14} style={{ color: 'var(--text3)', flexShrink: 0, marginTop: 2, opacity: 0.5 }} />
-          </button>
-        ))}
-      </div>
-    </div>
+        <Fig
+          title="Evidence volume"
+          caption="Corpus growth by month; the red line is critical-only. A rising red line into a deadline is the escalation argument."
+        >
+          <VolumeChart data={volume} height={240} />
+        </Fig>
+      </Grid>
+
+      <Card padding={4}>
+        <VStack gap={3}>
+          <HStack hAlign="between" vAlign="center">
+            <VStack gap={0}>
+              <Text type="label" color="secondary">
+                Design next — critical findings ranked by opportunity score
+              </Text>
+              <Text type="supporting">score = severity × evidence × persona priority</Text>
+            </VStack>
+            <Link href={hrefInsights({ severity: 'critical', sort: 'score' })}>full queue →</Link>
+          </HStack>
+          <VStack gap={3}>
+            {queue.map((i) => (
+              <HStack key={i.id} gap={3} vAlign="center" hAlign="between">
+                <HStack gap={2} vAlign="center">
+                  <SevDot severity={i.severity} />
+                  <Link href={hrefInsight(i.id, 'overview')}>
+                    <Text type="body" maxLines={2} hasTruncateTooltip={false}>
+                      {i.text}
+                    </Text>
+                  </Link>
+                </HStack>
+                <Text type="supporting" hasTabularNumbers textWrap="nowrap">
+                  {scoreInsight(i).label}
+                </Text>
+              </HStack>
+            ))}
+          </VStack>
+        </VStack>
+      </Card>
+    </VStack>
   );
 }

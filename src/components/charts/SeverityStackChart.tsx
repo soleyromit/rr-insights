@@ -18,12 +18,13 @@ export interface SeverityStackChartProps {
 
 export function SeverityStackChart({ data, height = 240 }: SeverityStackChartProps) {
   const colors = useChartColors();
+  const yMax = Math.max(...data.map((d) => d.critical + d.high + d.medium + d.low), 1);
   return (
     <Chart
       data={data as unknown as Record<string, unknown>[]}
       xKey="category"
       height={height}
-      yBaseline="zero"
+      yDomain={[0, Math.ceil(yMax * 1.1)]}
       series={[
         bar('critical', { stack: 'sev', color: colors.semantic.negative, label: 'Critical' }),
         bar('high', { stack: 'sev', color: colors.semantic.warning, label: 'High' }),
