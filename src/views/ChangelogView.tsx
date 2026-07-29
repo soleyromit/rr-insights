@@ -27,8 +27,8 @@ export function ChangelogView() {
         <h1 className="serif text-[22px] font-medium mb-1" style={{ color: 'var(--text)' }}>
           Release history
         </h1>
-        <p className="text-[13px] mb-8" style={{ color: 'var(--text3)' }}>
-          Every version pushed to <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>soleyromit.github.io/rr-insights</span> by Claude.
+        <p className="text-[14.5px] mb-8" style={{ color: 'var(--text3)' }}>
+          Every version pushed to <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13 }}>soleyromit.github.io/rr-insights</span> by Claude.
         </p>
 
         {/* Timeline */}
@@ -61,15 +61,15 @@ export function ChangelogView() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4 }}>
                     <span style={{
-                      fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700,
+                      fontFamily: 'JetBrains Mono, monospace', fontSize: 14.5, fontWeight: 700,
                       color: i === 0 ? '#6d5ed4' : 'var(--text)',
                     }}>
                       {entry.version}
                     </span>
-                    <span style={{ fontSize: 12, color: 'var(--text3)' }}>{entry.date}</span>
+                    <span style={{ fontSize: 13.5, color: 'var(--text3)' }}>{entry.date}</span>
                     {i === 0 && (
                       <span style={{
-                        fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                        fontSize: 13, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
                         background: 'rgba(109,94,212,0.1)', color: '#6d5ed4',
                         padding: '2px 7px', borderRadius: 10,
                       }}>
@@ -78,17 +78,17 @@ export function ChangelogView() {
                     )}
                   </div>
 
-                  <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 10 }}>
+                  <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 10 }}>
                     {entry.summary}
                   </p>
 
                   {/* Stats row */}
                   <div style={{ display: 'flex', gap: 16, marginBottom: 10 }}>
-                    <span style={{ fontSize: 11, color: 'var(--text3)' }}>
+                    <span style={{ fontSize: 13, color: 'var(--text3)' }}>
                       <span style={{ fontWeight: 600, color: 'var(--text)' }}>{entry.insightCount}</span> insights
                     </span>
                     {entry.sessionsAdded > 0 && (
-                      <span style={{ fontSize: 11, color: 'var(--text3)' }}>
+                      <span style={{ fontSize: 13, color: 'var(--text3)' }}>
                         <span style={{ fontWeight: 600, color: 'var(--text)' }}>+{entry.sessionsAdded}</span> sessions
                       </span>
                     )}
@@ -98,7 +98,7 @@ export function ChangelogView() {
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                     {entry.changedFiles.map(f => (
                       <span key={f} style={{
-                        fontSize: 10, fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: 12, fontFamily: 'JetBrains Mono, monospace',
                         padding: '2px 8px', borderRadius: 4,
                         background: `${fileColor(f)}15`,
                         color: fileColor(f),
@@ -118,7 +118,7 @@ export function ChangelogView() {
         <div style={{
           marginTop: 40, padding: '14px 18px',
           background: 'var(--bg2)', border: '1px solid var(--border)',
-          borderRadius: 'var(--radius)', fontSize: 11, color: 'var(--text3)',
+          borderRadius: 'var(--radius)', fontSize: 13, color: 'var(--text3)',
         }}>
           Pushed directly by Claude via <span style={{ fontFamily: 'JetBrains Mono, monospace' }}>ghp_</span> PAT → GitHub Actions → GitHub Pages. Zero manual steps.
         </div>

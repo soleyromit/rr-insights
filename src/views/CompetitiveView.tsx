@@ -57,11 +57,11 @@ export function CompetitiveView() {
   const hcScores = useMemo(() => ({
     chart: { type: 'bar', backgroundColor: 'transparent', height: PLATFORMS.length * 40 + 70, spacing: [4, 4, 4, 0], style: { fontFamily: MONO } },
     title: { text: undefined }, credits: { enabled: false }, legend: { enabled: false },
-    xAxis: { categories: parityScores.map(s => s.platform), lineColor: '#e3ddd4', tickLength: 0, labels: { style: { fontSize: '10px', color: '#4a4844', fontFamily: MONO } } },
-    yAxis: { max: 100, title: { text: undefined }, gridLineColor: '#ede9e3', labels: { format: '{value}%', style: { fontSize: '9.5px', color: '#6b6660', fontFamily: MONO } } },
-    tooltip: { backgroundColor: '#1a1917', borderRadius: 8, borderWidth: 0, shadow: false, style: { color: '#faf9f7', fontSize: '11px', fontFamily: MONO }, pointFormat: '<b>{point.y}%</b> of 12 tracked features' },
+    xAxis: { categories: parityScores.map(s => s.platform), lineColor: '#e3ddd4', tickLength: 0, labels: { style: { fontSize: '12px', color: '#4a4844', fontFamily: MONO } } },
+    yAxis: { max: 100, title: { text: undefined }, gridLineColor: '#ede9e3', labels: { format: '{value}%', style: { fontSize: '12px', color: '#6b6660', fontFamily: MONO } } },
+    tooltip: { backgroundColor: '#1a1917', borderRadius: 8, borderWidth: 0, shadow: false, style: { color: '#faf9f7', fontSize: '13px', fontFamily: MONO }, pointFormat: '<b>{point.y}%</b> of 12 tracked features' },
     plotOptions: { series: { borderWidth: 0, pointPadding: 0.08, groupPadding: 0.1, animation: { duration: 500 },
-      dataLabels: { enabled: true, format: '{y}%', style: { fontSize: '10px', fontWeight: '600', color: '#4a4844', fontFamily: MONO, textOutline: 'none' } } } },
+      dataLabels: { enabled: true, format: '{y}%', style: { fontSize: '12px', fontWeight: '600', color: '#4a4844', fontFamily: MONO, textOutline: 'none' } } } },
     series: [{ type: 'bar', name: 'parity', data: parityScores.map(s => ({ y: s.pct, color: s.platform === 'Exxat' ? '#6d5ed4' : '#b8b2a8' })) }],
   }), [parityScores]);
 
@@ -76,13 +76,13 @@ export function CompetitiveView() {
           <PlotFigure minHeight={COMPETITOR_FEATURES.length * 26 + 60} deps={[cells]} build={() => ({
             height: COMPETITOR_FEATURES.length * 26 + 56,
             marginLeft: 172, marginTop: 26, marginBottom: 4, marginRight: 8,
-            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
             x: { axis: 'top', label: null, domain: PLATFORMS.map(p => p.label), tickSize: 0, padding: 0.1 },
             y: { label: null, domain: COMPETITOR_FEATURES.map(f => f.name), tickSize: 0, padding: 0.18 },
             color: { domain: ['yes', 'partial', 'no'], range: [STATUS_COLOR.yes, STATUS_COLOR.partial, STATUS_COLOR.no] },
             marks: [
               Plot.cell(cells, { x: 'platform', y: 'feature', fill: 'status', rx: 4, inset: 1.5 }),
-              Plot.text(cells, { x: 'platform', y: 'feature', text: d => STATUS_GLYPH[d.status], fill: '#fff', fontSize: 11, fontWeight: 700 }),
+              Plot.text(cells, { x: 'platform', y: 'feature', text: d => STATUS_GLYPH[d.status], fill: '#fff', fontSize: 13, fontWeight: 700 }),
             ],
           })} />
         </Figure>
@@ -95,8 +95,8 @@ export function CompetitiveView() {
               {differentiators.map(f => (
                 <div key={f.name} className="flex items-center gap-2.5" style={{ padding: '7px 0', borderBottom: '1px solid var(--bg3)' }}>
                   <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#6d5ed4', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: 'var(--text)' }}>{f.name}</span>
-                  <span className="mono" style={{ marginLeft: 'auto', fontSize: 9.5, color: f.exxat === true ? '#1d8a6e' : '#b45309' }}>{f.exxat === true ? 'shipped' : 'in design'}</span>
+                  <span style={{ fontSize: 14.5, color: 'var(--text)' }}>{f.name}</span>
+                  <span className="mono" style={{ marginLeft: 'auto', fontSize: 12, color: f.exxat === true ? '#1d8a6e' : '#b45309' }}>{f.exxat === true ? 'shipped' : 'in design'}</span>
                 </div>
               ))}
             </div>
@@ -105,19 +105,19 @@ export function CompetitiveView() {
       </div>
 
       <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px 22px' }}>
-        <div className="rr-serif" style={{ fontSize: 19, color: 'var(--text)', marginBottom: 2 }}>The three retention anchors</div>
-        <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5, maxWidth: 640, marginBottom: 16 }}>
+        <div className="rr-serif" style={{ fontSize: 19.5, color: 'var(--text)', marginBottom: 2 }}>The three retention anchors</div>
+        <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.5, maxWidth: 640, marginBottom: 16 }}>
           Programs stay on ExamSoft for exactly three reasons (School of Pharmacy session, Mar 20). Match or beat all three and there is, in Arun's words, no rational reason to stay. Readiness carries no percentage here on purpose: nothing is measured yet, so status is stated, not scored.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
           {ANCHORS.map((a, i) => (
             <div key={a.title} style={{ border: '1px solid var(--bg3)', borderRadius: 'var(--radius-sm)', padding: '14px 15px' }}>
               <div className="flex items-baseline justify-between" style={{ marginBottom: 6 }}>
-                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{i + 1}. {a.title}</span>
-                <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, color: a.state === 'partial' ? '#b45309' : '#6d5ed4' }}>{a.state.toUpperCase()}</span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)' }}>{i + 1}. {a.title}</span>
+                <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: a.state === 'partial' ? '#b45309' : '#6d5ed4' }}>{a.state.toUpperCase()}</span>
               </div>
-              <p style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>{a.response}</p>
-              <span className="mono" style={{ fontSize: 9.5, color: 'var(--text3)' }}>{a.evidence}</span>
+              <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 8 }}>{a.response}</p>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--text3)' }}>{a.evidence}</span>
             </div>
           ))}
         </div>

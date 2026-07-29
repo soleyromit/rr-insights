@@ -279,11 +279,11 @@ export function KnowledgeGraphView() {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text)', margin: 0, fontFamily: 'DM Serif Display, Georgia, serif' }}>
             Knowledge Graph
           </h1>
-          <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>
+          <span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>
             {NODES.length} nodes · {EDGES.length} edges
           </span>
         </div>
-        <p style={{ fontSize: 13, color: 'var(--text2)', margin: 0, maxWidth: 600 }}>
+        <p style={{ fontSize: 14.5, color: 'var(--text2)', margin: 0, maxWidth: 600 }}>
           Every Granola session, project doc, insight, and feature — connected by evidence.
           Click any node to trace its information lineage.
         </p>
@@ -295,12 +295,12 @@ export function KnowledgeGraphView() {
           placeholder="Search nodes, speakers…"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          style={{ fontSize: 12, padding: '5px 10px', borderRadius: 7, border: '1px solid var(--border)', background: '#fff', color: 'var(--text)', outline: 'none', width: 200 }}
+          style={{ fontSize: 13.5, padding: '5px 10px', borderRadius: 7, border: '1px solid var(--border)', background: '#fff', color: 'var(--text)', outline: 'none', width: 200 }}
         />
         <div style={{ display: 'flex', gap: 4 }}>
           {TYPE_FILTERS.map(f => (
             <button key={f.id} onClick={() => setFilterType(f.id)}
-              style={{ fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 20, border: `1px solid ${filterType === f.id ? f.color : 'var(--border)'}`, background: filterType === f.id ? `${f.color}15` : '#fff', color: filterType === f.id ? f.color : 'var(--text3)', cursor: 'pointer' }}>
+              style={{ fontSize: 13, fontWeight: 600, padding: '4px 10px', borderRadius: 20, border: `1px solid ${filterType === f.id ? f.color : 'var(--border)'}`, background: filterType === f.id ? `${f.color}15` : '#fff', color: filterType === f.id ? f.color : 'var(--text3)', cursor: 'pointer' }}>
               {f.label}
             </button>
           ))}
@@ -308,14 +308,14 @@ export function KnowledgeGraphView() {
         <div style={{ display: 'flex', gap: 4 }}>
           {PROD_FILTERS.map(f => (
             <button key={f.id} onClick={() => setFilterProduct(f.id)}
-              style={{ fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 20, border: `1px solid ${filterProduct === f.id ? '#6d5ed4' : 'var(--border)'}`, background: filterProduct === f.id ? '#6d5ed415' : '#fff', color: filterProduct === f.id ? '#6d5ed4' : 'var(--text3)', cursor: 'pointer' }}>
+              style={{ fontSize: 13, fontWeight: 600, padding: '4px 10px', borderRadius: 20, border: `1px solid ${filterProduct === f.id ? '#6d5ed4' : 'var(--border)'}`, background: filterProduct === f.id ? '#6d5ed415' : '#fff', color: filterProduct === f.id ? '#6d5ed4' : 'var(--text3)', cursor: 'pointer' }}>
               {f.label}
             </button>
           ))}
         </div>
         {selectedNode && (
           <button onClick={() => setSelectedNode(null)}
-            style={{ fontSize: 11, padding: '4px 10px', borderRadius: 20, border: '1px solid var(--border)', background: '#fff', color: 'var(--text3)', cursor: 'pointer' }}>
+            style={{ fontSize: 13, padding: '4px 10px', borderRadius: 20, border: '1px solid var(--border)', background: '#fff', color: 'var(--text3)', cursor: 'pointer' }}>
             ✕ Clear selection
           </button>
         )}
@@ -400,14 +400,14 @@ export function KnowledgeGraphView() {
             {Object.entries(NODE_TYPE_COLORS).map(([type, color]) => (
               <div key={type} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
-                <span style={{ fontSize: 11, color: 'var(--text3)', textTransform: 'capitalize' }}>{type}</span>
+                <span style={{ fontSize: 13, color: 'var(--text3)', textTransform: 'capitalize' }}>{type}</span>
               </div>
             ))}
             <div style={{ width: 1, background: 'var(--border)' }} />
             {Object.entries(EDGE_COLORS).map(([type, color]) => (
               <div key={type} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                 <div style={{ width: 18, height: 2, background: color, borderRadius: 1 }} />
-                <span style={{ fontSize: 11, color: 'var(--text3)' }}>{type.replace('-', ' ')}</span>
+                <span style={{ fontSize: 13, color: 'var(--text3)' }}>{type.replace('-', ' ')}</span>
               </div>
             ))}
           </div>
@@ -420,24 +420,24 @@ export function KnowledgeGraphView() {
               <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)', background: `${NODE_TYPE_COLORS[selectedNode.type]}08` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: NODE_TYPE_COLORS[selectedNode.type] }} />
-                  <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: NODE_TYPE_COLORS[selectedNode.type], fontWeight: 700, textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: NODE_TYPE_COLORS[selectedNode.type], fontWeight: 700, textTransform: 'uppercase' }}>
                     {selectedNode.type}
                   </span>
-                  <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginLeft: 'auto' }}>
+                  <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginLeft: 'auto' }}>
                     {selectedNode.confidence}
                   </span>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', lineHeight: 1.3 }}>{selectedNode.label}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', lineHeight: 1.3 }}>{selectedNode.label}</div>
                 {selectedNode.speaker && (
-                  <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 3 }}>{selectedNode.speaker}{selectedNode.date && ` · ${selectedNode.date}`}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 3 }}>{selectedNode.speaker}{selectedNode.date && ` · ${selectedNode.date}`}</div>
                 )}
               </div>
               <div style={{ padding: '12px 14px' }}>
-                <p style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6, margin: 0 }}>{selectedNode.detail}</p>
+                <p style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6, margin: 0 }}>{selectedNode.detail}</p>
               </div>
               {/* Connected nodes */}
               <div style={{ padding: '0 14px 14px' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
                   Connected
                 </div>
                 {EDGES.filter(e => e.source === selectedNode.id || e.target === selectedNode.id).map((e, i) => {
@@ -451,8 +451,8 @@ export function KnowledgeGraphView() {
                       onClick={() => setSelectedNode(other)}>
                       <div style={{ width: 6, height: 6, borderRadius: '50%', background: NODE_TYPE_COLORS[other.type], flexShrink: 0, marginTop: 4 }} />
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 11, color: 'var(--text)', fontWeight: 500 }}>{other.label}</div>
-                        <div style={{ fontSize: 10, color, fontFamily: 'JetBrains Mono, monospace' }}>
+                        <div style={{ fontSize: 13, color: 'var(--text)', fontWeight: 500 }}>{other.label}</div>
+                        <div style={{ fontSize: 12, color, fontFamily: 'JetBrains Mono, monospace' }}>
                           {isOut ? '→' : '←'} {e.label}
                         </div>
                       </div>
@@ -463,14 +463,14 @@ export function KnowledgeGraphView() {
             </div>
           ) : (
             <div style={{ border: '1px solid var(--border)', borderRadius: 12, padding: 16, background: '#fff' }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>How to read this graph</div>
-              <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.7 }}>
+              <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>How to read this graph</div>
+              <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.7 }}>
                 <div style={{ marginBottom: 6 }}><strong>S</strong> = Granola session (raw transcript)</div>
                 <div style={{ marginBottom: 6 }}><strong>D</strong> = Project document / attachment</div>
                 <div style={{ marginBottom: 6 }}><strong>I</strong> = Insight (synthesized finding)</div>
                 <div style={{ marginBottom: 6 }}><strong>F</strong> = Feature (design output)</div>
                 <div style={{ marginBottom: 12 }}><strong>P</strong> = Pattern (WCAG / anti-pattern)</div>
-                <div style={{ fontSize: 11, color: 'var(--text3)', borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+                <div style={{ fontSize: 13, color: 'var(--text3)', borderTop: '1px solid var(--border)', paddingTop: 10 }}>
                   Click any node to see its connections and trace the evidence chain from raw session to built feature.
                   Edge direction = information flow.
                 </div>
@@ -481,8 +481,8 @@ export function KnowledgeGraphView() {
                   const count = NODES.filter(n => n.type === type).length;
                   return (
                     <div key={type} style={{ padding: '8px 10px', borderRadius: 8, background: `${color}08`, border: `1px solid ${color}20` }}>
-                      <div style={{ fontSize: 16, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color }}>{count}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text3)', textTransform: 'capitalize' }}>{type}s</div>
+                      <div style={{ fontSize: 16.5, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color }}>{count}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text3)', textTransform: 'capitalize' }}>{type}s</div>
                     </div>
                   );
                 })}

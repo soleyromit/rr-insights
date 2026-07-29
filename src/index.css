@@ -29,7 +29,7 @@
   --shadow:    0 4px 12px rgba(0,0,0,0.08);
 }
 
-html { font-size: 15px; }
+html { font-size: 16px; }
 
 body {
   font-family: 'Schibsted Grotesk', -apple-system, sans-serif;
@@ -47,7 +47,7 @@ body {
 .mono  { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.01em; }
 
 .eyebrow {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -79,7 +79,7 @@ body {
 .pull-quote {
   font-family: 'DM Serif Display', Georgia, serif;
   font-style: italic;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text2);
   line-height: 1.6;
   border-left: 2px solid var(--border2);
@@ -92,7 +92,7 @@ body {
   background: var(--accent-bg);
   border: 1px solid rgba(109, 94, 212, 0.15);
   border-radius: var(--radius);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text2);
   font-style: italic;
   line-height: 1.6;
@@ -126,7 +126,7 @@ body {
   border: 1px solid var(--border2);
   border-radius: 20px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text2);
 }
 
@@ -136,7 +136,7 @@ body {
   gap: 9px;
   padding: 8px 10px;
   border-radius: var(--radius-sm);
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 400;
   color: var(--text2);
   transition: all 0.12s;
@@ -154,13 +154,13 @@ body {
   border: 1px solid rgba(109, 94, 212, 0.15);
   border-radius: var(--radius);
   padding: 12px 16px;
-  font-size: 13.5px;
+  font-size: 15px;
   color: var(--text2);
   line-height: 1.6;
   margin-bottom: 20px;
 }
 
-.badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid transparent; }
+.badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid transparent; }
 .badge-gap      { background: rgba(232,96,74,0.1);   color: #c44b38; border-color: rgba(232,96,74,0.2); }
 .badge-theme    { background: rgba(109,94,212,0.1);  color: #5548b0; border-color: rgba(109,94,212,0.2); }
 .badge-opp      { background: rgba(13,148,136,0.1);  color: #0b7a72; border-color: rgba(13,148,136,0.2); }
@@ -173,7 +173,7 @@ body {
 
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line { stroke: var(--border) !important; }
-.recharts-text { fill: var(--text2) !important; font-size: 12px !important; font-family: 'Schibsted Grotesk', sans-serif !important; }
+.recharts-text { fill: var(--text2) !important; font-size: 13.5px !important; font-family: 'Schibsted Grotesk', sans-serif !important; }
 
 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-sm); }
 

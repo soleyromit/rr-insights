@@ -17,7 +17,7 @@ const TABS: { id: Tab; label: string; alert?: boolean }[] = [
 ];
 
 const ts = (tab: Tab, cur: Tab) => ({
-  padding: '10px 18px', fontSize: 13,
+  padding: '10px 18px', fontSize: 14.5,
   fontWeight: cur === tab ? 600 : 400,
   color: cur === tab ? 'var(--brand)' : 'var(--text-secondary)',
   borderBottom: `2px solid ${cur === tab ? 'var(--brand)' : 'transparent'}`,
@@ -165,7 +165,7 @@ export function NavIAView() {
         <h2 style={{ fontSize: 20, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>
           Navigation IA — Exam Management
         </h2>
-        <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 680 }}>
+        <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 680 }}>
           Synthesized Apr 1 2026 from 40 Granola sessions, ExamSoft screenshot analysis, and system hierarchy blueprint.
           Covers all admin-layer roles, nav merge decisions, and the dual meaning of "Sections".
         </p>
@@ -175,7 +175,7 @@ export function NavIAView() {
       <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 24, gap: 0, overflowX: 'auto' }}>
         {TABS.map(t => (
           <button key={t.id} style={ts(t.id, tab)} onClick={() => setTab(t.id)}>
-            {t.label}{t.alert && <span style={{ marginLeft: 4, fontSize: 9, color: '#E24B4A', fontWeight: 700 }}>●</span>}
+            {t.label}{t.alert && <span style={{ marginLeft: 4, fontSize: 12, color: '#E24B4A', fontWeight: 700 }}>●</span>}
           </button>
         ))}
       </div>
@@ -185,7 +185,7 @@ export function NavIAView() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Tier labels */}
           <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, alignItems: 'start' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
               Tier 1<br />Institution
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -196,7 +196,7 @@ export function NavIAView() {
           </div>
           <div style={{ marginLeft: 120, height: 1, background: 'var(--border)', marginBottom: 4 }} />
           <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, alignItems: 'start' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
               Tier 2<br />Program
             </div>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
@@ -207,7 +207,7 @@ export function NavIAView() {
           </div>
           <div style={{ marginLeft: 120, height: 1, background: 'var(--border)', marginBottom: 4 }} />
           <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, alignItems: 'start' }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', paddingTop: 16 }}>
               Tier 3<br />Scoped
             </div>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
@@ -217,7 +217,7 @@ export function NavIAView() {
             </div>
           </div>
           <Card style={{ marginTop: 8, background: 'var(--surface2)', border: '1px solid var(--border)' }}>
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
               <strong style={{ color: 'var(--text)' }}>Open question (confirm with Vishaka):</strong> Outcome Director — is this a standalone role or additional responsibility layered onto Dept Head? Apr 1 session flagged this. Confirm before building the nav state for this role.
             </p>
           </Card>
@@ -234,12 +234,12 @@ export function NavIAView() {
               { status: 'faculty-only', label: 'Faculty only', color: '#065F46', bg: '#D1FAE5' },
               { status: 'student-only', label: 'Student only', color: '#185FA5', bg: '#E6F1FB' },
             ].map(l => (
-              <span key={l.status} style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, background: l.bg, color: l.color }}>
+              <span key={l.status} style={{ fontSize: 13, fontWeight: 600, padding: '3px 10px', borderRadius: 20, background: l.bg, color: l.color }}>
                 {l.label}
               </span>
             ))}
           </div>
-          <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 12, lineHeight: 1.5 }}>
             Merge principle from Granola: unified interface, role controls data scope — not layout. Same screen renders differently based on role context. Three shared screens confirmed: Question Bank, Assessments, Rubrics (plus Analytics at different scopes).
           </p>
           {MERGE_ITEMS.map(item => {
@@ -251,12 +251,12 @@ export function NavIAView() {
             }[item.status] || { c: '#888', bg: '#eee' };
             return (
               <div key={item.label} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)' }}>
-                <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 12, background: colors.bg, color: colors.c, flexShrink: 0, marginTop: 1, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, padding: '2px 8px', borderRadius: 12, background: colors.bg, color: colors.c, flexShrink: 0, marginTop: 1, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   {item.status.replace('-', ' ')}
                 </span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text)', marginBottom: 2 }}>{item.label}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{item.note}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text)', marginBottom: 2 }}>{item.label}</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{item.note}</div>
                 </div>
               </div>
             );
@@ -267,7 +267,7 @@ export function NavIAView() {
       {/* What is Sections */}
       {tab === 'sections' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 680 }}>
+          <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 680 }}>
             "Sections" carries two distinct meanings in Exam Management. They live at different layers of the product and should never share a label. This is a P0 naming decision before April 17.
           </p>
           {SECTIONS_MEANINGS.map(m => (
@@ -275,20 +275,20 @@ export function NavIAView() {
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                 <div style={{ width: 4, minHeight: 80, borderRadius: 2, background: m.color, flexShrink: 0, marginTop: 2 }} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: m.color, marginBottom: 8 }}>{m.title}</div>
-                  <p style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65, marginBottom: 10 }}>{m.description}</p>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: m.color, marginBottom: 8 }}>{m.title}</div>
+                  <p style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.65, marginBottom: 10 }}>{m.description}</p>
                   <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
-                    <div style={{ fontSize: 11, color: m.color, fontWeight: 500 }}>
+                    <div style={{ fontSize: 13, color: m.color, fontWeight: 500 }}>
                       Where: <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{m.where}</span>
                     </div>
                   </div>
-                  <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-secondary)', fontStyle: 'italic' }}>
+                  <div style={{ marginTop: 8, fontSize: 13, color: 'var(--text-secondary)', fontStyle: 'italic' }}>
                     {m.granola}
                   </div>
                   {m.confusion && (
                     <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 6, background: '#FAEEDA', border: '1px solid #F0997B' }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: '#854F0B' }}>Action required: </span>
-                      <span style={{ fontSize: 12, color: '#854F0B' }}>Propose renaming "Sections" (admin nav) to "Cohorts" to Vishaka before April 17 demo. ExamSoft's naming confusion is a documented pain point — fix it before launch.</span>
+                      <span style={{ fontSize: 13.5, fontWeight: 600, color: '#854F0B' }}>Action required: </span>
+                      <span style={{ fontSize: 13.5, color: '#854F0B' }}>Propose renaming "Sections" (admin nav) to "Cohorts" to Vishaka before April 17 demo. ExamSoft's naming confusion is a documented pain point — fix it before launch.</span>
                     </div>
                   )}
                 </div>
@@ -301,13 +301,13 @@ export function NavIAView() {
       {/* Access matrix */}
       {tab === 'matrix' && (
         <div style={{ overflowX: 'auto' }}>
-          <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16, lineHeight: 1.5 }}>
-            Access key: <span style={{ background: '#E1F5EE', color: '#0F6E56', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 11 }}>full</span> = create/edit/delete &nbsp;
-            <span style={{ background: '#E6F1FB', color: '#185FA5', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 11 }}>read</span> = view only &nbsp;
-            <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 11 }}>add</span> = create only &nbsp;
-            <span style={{ background: '#EEEDFE', color: '#534AB7', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 11 }}>scoped</span> = within assigned scope only
+          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 16, lineHeight: 1.5 }}>
+            Access key: <span style={{ background: '#E1F5EE', color: '#0F6E56', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>full</span> = create/edit/delete &nbsp;
+            <span style={{ background: '#E6F1FB', color: '#185FA5', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>read</span> = view only &nbsp;
+            <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>add</span> = create only &nbsp;
+            <span style={{ background: '#EEEDFE', color: '#534AB7', padding: '1px 6px', borderRadius: 4, fontWeight: 600, fontSize: 13 }}>scoped</span> = within assigned scope only
           </p>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
             <thead>
               <tr style={{ background: 'var(--surface2)' }}>
                 <th style={{ textAlign: 'left', padding: '10px 12px', fontWeight: 600, color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)', minWidth: 180 }}>Nav item</th>
@@ -323,9 +323,9 @@ export function NavIAView() {
                   {[row.instAdmin, row.progDir, row.hod, row.outcomeDr, row.contributor, row.reviewer, row.dce].map((val, vi) => (
                     <td key={vi} style={{ textAlign: 'center', padding: '9px 8px' }}>
                       {val !== '—' ? (
-                        <span style={{ background: ACCESS_BG[val] || 'transparent', color: ACCESS_COLORS[val] || '#888', padding: '2px 8px', borderRadius: 10, fontWeight: 600, fontSize: 11 }}>{val}</span>
+                        <span style={{ background: ACCESS_BG[val] || 'transparent', color: ACCESS_COLORS[val] || '#888', padding: '2px 8px', borderRadius: 10, fontWeight: 600, fontSize: 13 }}>{val}</span>
                       ) : (
-                        <span style={{ color: 'var(--border)', fontSize: 13 }}>—</span>
+                        <span style={{ color: 'var(--border)', fontSize: 14.5 }}>—</span>
                       )}
                     </td>
                   ))}
@@ -348,22 +348,22 @@ function RoleCard({ role }: { role: typeof ROLES[0] }) {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
         <div style={{ width: 8, height: 8, borderRadius: '50%', background: role.color, flexShrink: 0 }} />
-        <span style={{ fontSize: 13, fontWeight: 600, color: role.color }}>{role.label}</span>
-        {role.openQuestion && <span style={{ fontSize: 9, color: '#E24B4A', fontWeight: 700, marginLeft: 2 }}>CONFIRM</span>}
+        <span style={{ fontSize: 14.5, fontWeight: 600, color: role.color }}>{role.label}</span>
+        {role.openQuestion && <span style={{ fontSize: 12, color: '#E24B4A', fontWeight: 700, marginLeft: 2 }}>CONFIRM</span>}
       </div>
-      <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0, marginBottom: 8 }}>{role.desc}</p>
+      <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0, marginBottom: 8 }}>{role.desc}</p>
       {open && (
         <div style={{ marginTop: 8, borderTop: `1px solid ${role.color}22`, paddingTop: 8 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: role.color, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nav items</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: role.color, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nav items</div>
           {role.nav.map(n => (
-            <div key={n} style={{ fontSize: 11, color: 'var(--text-secondary)', padding: '2px 0', display: 'flex', gap: 6, alignItems: 'center' }}>
-              <span style={{ color: role.color, fontSize: 9 }}>›</span> {n}
+            <div key={n} style={{ fontSize: 13, color: 'var(--text-secondary)', padding: '2px 0', display: 'flex', gap: 6, alignItems: 'center' }}>
+              <span style={{ color: role.color, fontSize: 12 }}>›</span> {n}
             </div>
           ))}
-          <div style={{ marginTop: 8, fontSize: 10, color: role.color, fontStyle: 'italic', lineHeight: 1.4 }}>{role.granola}</div>
+          <div style={{ marginTop: 8, fontSize: 12, color: role.color, fontStyle: 'italic', lineHeight: 1.4 }}>{role.granola}</div>
         </div>
       )}
-      <div style={{ fontSize: 10, color: role.color, opacity: 0.6 }}>{open ? 'click to collapse' : 'click for nav items'}</div>
+      <div style={{ fontSize: 12, color: role.color, opacity: 0.6 }}>{open ? 'click to collapse' : 'click for nav items'}</div>
     </div>
   );
 }

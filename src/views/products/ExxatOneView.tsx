@@ -18,7 +18,7 @@ const TABS: { id: TabId; label: string }[] = [
 ];
 
 const tabStyle = (tab: TabId, id: TabId) => ({
-  padding: '10px 18px', fontSize: 13,
+  padding: '10px 18px', fontSize: 14.5,
   fontWeight: tab === id ? 600 : 400,
   color: tab === id ? 'var(--brand)' : 'var(--text-secondary)',
   borderBottom: `2px solid ${tab === id ? 'var(--brand)' : 'transparent'}`,
@@ -70,8 +70,8 @@ export function ExxatOneView() {
                 ].map((row, i) => (
                   <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 14px', borderRadius: 8, background: 'var(--surface-secondary)', borderLeft: `3px solid ${row.color}` }}>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: row.color, marginBottom: 3 }}>{row.era}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{row.desc}</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: row.color, marginBottom: 3 }}>{row.era}</div>
+                      <div style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{row.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -87,7 +87,7 @@ export function ExxatOneView() {
               ].map((point, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
                   <span style={{ color: 'var(--brand)', fontWeight: 700, flexShrink: 0 }}>→</span>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{point}</p>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{point}</p>
                 </div>
               ))}
             </Card>
@@ -102,15 +102,15 @@ export function ExxatOneView() {
               <CardTitle sub="Aarti (Feb 25) — the critical design failure in current UI">The revenue hierarchy problem</CardTitle>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div style={{ padding: '12px 14px', borderRadius: 10, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 8 }}>Current (broken)</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#EF4444', marginBottom: 8 }}>Current (broken)</div>
                   {['Payment buried in left panel', 'Equal visual weight to all features', 'Student can browse/create without paying', 'Revenue-critical action hidden from view'].map((item, i) => (
-                    <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>× {item}</div>
+                    <div key={i} style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 4 }}>× {item}</div>
                   ))}
                 </div>
                 <div style={{ padding: '12px 14px', borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#10B981', marginBottom: 8 }}>Target (Airbnb/Uber model)</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#10B981', marginBottom: 8 }}>Target (Airbnb/Uber model)</div>
                   {['Payment as full-screen primary CTA', 'Pay early (Sep placement → pay today) OR closer to start', 'Payment status as top dashboard indicator', 'All other features secondary to payment completion'].map((item, i) => (
-                    <div key={i} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>✓ {item}</div>
+                    <div key={i} style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 4 }}>✓ {item}</div>
                   ))}
                 </div>
               </div>
@@ -121,10 +121,10 @@ export function ExxatOneView() {
                 <div key={i} style={{ padding: '12px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                     <Badge variant={phase.priority === 'P0' ? 'error' : phase.priority === 'P2' ? 'default' : 'info'}>{phase.priority}</Badge>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{phase.phase}</span>
+                    <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text-primary)' }}>{phase.phase}</span>
                   </div>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 4px' }}>{phase.actions}</p>
-                  <p style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', margin: 0 }}>{phase.blocker}</p>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 4px' }}>{phase.actions}</p>
+                  <p style={{ fontSize: 13.5, fontStyle: 'italic', color: 'var(--text-muted)', margin: 0 }}>{phase.blocker}</p>
                 </div>
               ))}
             </Card>
@@ -137,8 +137,8 @@ export function ExxatOneView() {
                 { dec: 'Wish list with ranking', why: 'Student indicates preferences. System supports ranking + filtering. Direct add-to-wishlist from browse view. Final submission communicates preferences to school.' },
               ].map((d, i) => (
                 <div key={i} style={{ padding: '10px 0', borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 3 }}>{d.dec}</div>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{d.why}</p>
+                  <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 3 }}>{d.dec}</div>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>{d.why}</p>
                 </div>
               ))}
             </Card>
@@ -155,14 +155,14 @@ export function ExxatOneView() {
                 {pipelineStages.map((s, i) => (
                   <div key={i} style={{ padding: '12px 14px', borderRadius: 10, background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{i+1}</span>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{s.stage}</span>
+                      <span style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{i+1}</span>
+                      <span style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text-primary)' }}>{s.stage}</span>
                       <Badge variant={s.status === 'Existing' ? 'success' : s.status === 'Redesign' ? 'warning' : 'info'}>{s.status}</Badge>
                     </div>
                     {s.actions.map((a, j) => (
-                      <div key={j} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>• {a}</div>
+                      <div key={j} style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 3 }}>• {a}</div>
                     ))}
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>Owner: {s.owner}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>Owner: {s.owner}</div>
                   </div>
                 ))}
               </div>
@@ -176,9 +176,9 @@ export function ExxatOneView() {
                 { issue: 'Onboarding guide inside rotation context', fix: 'Move to separate pre-work section. Same guide applies across all rotations — should not be rotation-specific.', src: 'Aarti Feb 25' },
               ].map((row, i) => (
                 <div key={i} style={{ padding: '10px 0', borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 12, color: '#EF4444', marginBottom: 3, fontWeight: 600 }}>Issue: {row.issue}</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 2 }}>Fix: {row.fix}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{row.src}</div>
+                  <div style={{ fontSize: 13.5, color: '#EF4444', marginBottom: 3, fontWeight: 600 }}>Issue: {row.issue}</div>
+                  <div style={{ fontSize: 14.5, color: 'var(--text-secondary)', marginBottom: 2 }}>Fix: {row.fix}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{row.src}</div>
                 </div>
               ))}
             </Card>
@@ -205,9 +205,9 @@ export function ExxatOneView() {
                 { action: 'Hospital employee self-attests', rev: false, note: 'Hospital pays on their behalf — reduces student friction' },
               ].map((row, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: i < 5 ? '1px solid var(--border)' : 'none' }}>
-                  <span style={{ color: row.rev ? '#10B981' : '#EF4444', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{row.rev ? '✓' : '×'}</span>
-                  <span style={{ fontSize: 13, fontWeight: row.rev ? 600 : 400, color: row.rev ? 'var(--text-primary)' : 'var(--text-secondary)', flex: 1 }}>{row.action}</span>
-                  <span style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'right' }}>{row.note}</span>
+                  <span style={{ color: row.rev ? '#10B981' : '#EF4444', fontWeight: 700, fontSize: 16.5, flexShrink: 0 }}>{row.rev ? '✓' : '×'}</span>
+                  <span style={{ fontSize: 14.5, fontWeight: row.rev ? 600 : 400, color: row.rev ? 'var(--text-primary)' : 'var(--text-secondary)', flex: 1 }}>{row.action}</span>
+                  <span style={{ fontSize: 13.5, color: 'var(--text-muted)', textAlign: 'right' }}>{row.note}</span>
                 </div>
               ))}
             </Card>
@@ -222,8 +222,8 @@ export function ExxatOneView() {
                 <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
                   <Badge variant={row.status === 'Live' ? 'success' : row.status.includes('Apr') ? 'warning' : 'default'}>{row.status}</Badge>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{row.module}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{row.desc}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{row.module}</div>
+                    <div style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{row.desc}</div>
                   </div>
                 </div>
               ))}
@@ -245,12 +245,12 @@ export function ExxatOneView() {
             ].map((s, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>{s.id}</span>
+                  <span style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>{s.id}</span>
                   <div>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
+                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
                       <strong>As a</strong> {s.who}, <strong>I need to</strong> {s.what}, <strong>so that</strong> {s.why}.
                     </p>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Source: {s.src}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Source: {s.src}</span>
                   </div>
                 </div>
               </Card>

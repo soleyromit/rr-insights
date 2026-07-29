@@ -57,7 +57,7 @@ export function OverviewView({ onNav }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.2fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
         {/* Product state — each row is a door, not a card */}
         <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
             Products, ranked by deadline pressure — open a row for its deep dive
           </div>
           {productRows.map(({ p, total, critical }) => {
@@ -71,13 +71,13 @@ export function OverviewView({ onNav }) {
                 <U.icon size={13} style={{ color: U.color, flexShrink: 0 }} aria-label={p.urgencyLevel} />
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: p.accentColor, flexShrink: 0 }} />
                 <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontSize: 14.5, fontWeight: 600, color: 'var(--text)' }}>{p.shortName}</span>
-                  <span className="mono" style={{ fontSize: 10, color: 'var(--text2)' }}>{p.status} · {p.userCount ?? 'n/a'}</span>
+                  <span style={{ display: 'block', fontSize: 15.5, fontWeight: 600, color: 'var(--text)' }}>{p.shortName}</span>
+                  <span className="mono" style={{ fontSize: 12, color: 'var(--text2)' }}>{p.status} · {p.userCount ?? 'n/a'}</span>
                 </span>
-                <span className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', textAlign: 'right', lineHeight: 1.6, flexShrink: 0 }}>
+                <span className="mono" style={{ fontSize: 12.5, color: 'var(--text2)', textAlign: 'right', lineHeight: 1.6, flexShrink: 0 }}>
                   {total} insights<br /><span style={{ color: critical ? '#c24d3a' : 'var(--text3)' }}>{critical} critical</span>
                 </span>
-                {p.daysToDeadline && <span className="mono" title={`days to planned launch: ${p.launchDate ?? 'per product plan'}`} style={{ fontSize: 10.5, fontWeight: 600, color: 'var(--text2)', width: 44, textAlign: 'right', flexShrink: 0 }}>{p.daysToDeadline}d</span>}
+                {p.daysToDeadline && <span className="mono" title={`days to planned launch: ${p.launchDate ?? 'per product plan'}`} style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', width: 44, textAlign: 'right', flexShrink: 0 }}>{p.daysToDeadline}d</span>}
                 <ChevronRightIcon size={15} style={{ color: 'var(--text3)', flexShrink: 0, opacity: 0.5 }} />
               </button>
             );
@@ -88,7 +88,7 @@ export function OverviewView({ onNav }) {
           <PlotFigure minHeight={PRODUCTS.length * 42 + 60} deps={[sevMix]} build={() => ({
             height: PRODUCTS.length * 42 + 56,
             marginLeft: 90, marginTop: 8, marginBottom: 28, marginRight: 16,
-            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
             x: { label: 'insights', tickSize: 0 },
             y: { label: null, domain: PRODUCTS.map(p => p.shortName), tickSize: 0, padding: 0.3 },
             color: { domain: SEVERITIES, range: SEVERITIES.map(s => SEV_COLORS[s]), legend: true },
@@ -100,8 +100,8 @@ export function OverviewView({ onNav }) {
       {/* Design-next queue — critical findings that already name their response */}
       <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
         <div className="flex items-center justify-between" style={{ padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-          <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)' }}>Design next — latest critical findings with a named response</span>
-          <button className="press mono" onClick={() => onNav('signals')} style={{ fontSize: 10.5, color: 'var(--accent)', cursor: 'pointer' }}>all signals →</button>
+          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)' }}>Design next — latest critical findings with a named response</span>
+          <button className="press mono" onClick={() => onNav('signals')} style={{ fontSize: 12.5, color: 'var(--accent)', cursor: 'pointer' }}>all signals →</button>
         </div>
         {designNext.map(i => (
           <button key={i.id} className="press w-full text-left flex items-start gap-3" onClick={() => onNav('signals')}
@@ -110,8 +110,8 @@ export function OverviewView({ onNav }) {
             onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: SEV_COLORS.critical }} />
             <span style={{ flex: 1, minWidth: 0 }}>
-              <span style={{ display: 'block', fontSize: 13, color: 'var(--text)', lineHeight: 1.5 }}>{i.soWhat}</span>
-              <span className="mono" style={{ fontSize: 10, color: 'var(--text2)' }}>{i.productIds.join(' · ')} · {i.source}</span>
+              <span style={{ display: 'block', fontSize: 14.5, color: 'var(--text)', lineHeight: 1.5 }}>{i.soWhat}</span>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--text2)' }}>{i.productIds.join(' · ')} · {i.source}</span>
             </span>
             <ChevronRightIcon size={14} style={{ color: 'var(--text3)', flexShrink: 0, marginTop: 2, opacity: 0.5 }} />
           </button>

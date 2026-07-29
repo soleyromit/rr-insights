@@ -29,8 +29,8 @@ export function NarrativeView({ onNav }) {
               <span className="rr-serif" style={{ fontSize: 25, color: 'var(--text)', lineHeight: 1 }}>{s.stat}</span>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: s.color }} />
             </span>
-            <span className="mono" style={{ display: 'block', fontSize: 10, color: 'var(--text2)', marginTop: 4 }}>{s.statLabel}</span>
-            <span className="mono" style={{ display: 'block', fontSize: 9.5, color: 'var(--text3)', marginTop: 1 }}>arg {s.number}</span>
+            <span className="mono" style={{ display: 'block', fontSize: 12, color: 'var(--text2)', marginTop: 4 }}>{s.statLabel}</span>
+            <span className="mono" style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginTop: 1 }}>arg {s.number}</span>
           </button>
         ))}
       </div>
@@ -42,8 +42,8 @@ export function NarrativeView({ onNav }) {
             style={{ padding: '12px 18px', borderBottom: '1px solid var(--bg3)', cursor: 'pointer', background: '#fff' }}
             onMouseEnter={e => e.currentTarget.style.background = 'var(--bg)'}
             onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-            <span className="mono" style={{ fontSize: 11, fontWeight: 700, color: a.color, width: 22, flexShrink: 0 }}>{a.number}</span>
-            <span className="rr-serif" style={{ flex: 1, fontSize: 15.5, color: 'var(--text)', lineHeight: 1.3 }}>{a.claim}</span>
+            <span className="mono" style={{ fontSize: 13, fontWeight: 700, color: a.color, width: 22, flexShrink: 0 }}>{a.number}</span>
+            <span className="rr-serif" style={{ flex: 1, fontSize: 16.5, color: 'var(--text)', lineHeight: 1.3 }}>{a.claim}</span>
             <ArrowRightIcon size={14} style={{ color: 'var(--text3)', flexShrink: 0, opacity: 0.5 }} />
           </button>
         ))}
@@ -54,10 +54,10 @@ export function NarrativeView({ onNav }) {
         <section key={a.id} ref={el => refs.current[a.id] = el} aria-labelledby={`${a.id}-claim`}
           style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '22px 24px', marginBottom: 18, scrollMarginTop: 16 }}>
           <div className="flex items-start gap-4" style={{ marginBottom: 8 }}>
-            <span className="mono" style={{ fontSize: 12, fontWeight: 700, color: a.color, paddingTop: 7 }}>{a.number}</span>
+            <span className="mono" style={{ fontSize: 13.5, fontWeight: 700, color: a.color, paddingTop: 7 }}>{a.number}</span>
             <div>
               <h2 id={`${a.id}-claim`} className="rr-serif" style={{ fontSize: 22, color: 'var(--text)', lineHeight: 1.2, marginBottom: 6 }}>{a.claim}</h2>
-              <p className="serif" style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.55, maxWidth: 680 }}>{a.subclaim}</p>
+              <p className="serif" style={{ fontSize: 15, color: 'var(--text2)', lineHeight: 1.55, maxWidth: 680 }}>{a.subclaim}</p>
             </div>
           </div>
 
@@ -65,8 +65,8 @@ export function NarrativeView({ onNav }) {
             {a.sources.map((s, i) => (
               <div key={i} style={{ background: 'var(--bg)', padding: '12px 14px' }}>
                 <span className="rr-serif" style={{ fontSize: 24, color: 'var(--text)', lineHeight: 1 }}>{s.stat}</span>
-                <span className="mono" style={{ display: 'block', fontSize: 10, color: 'var(--text2)', margin: '4px 0 6px' }}>{s.statLabel} · {s.label}</span>
-                <span style={{ display: 'block', fontSize: 11.5, color: 'var(--text2)', lineHeight: 1.45 }}>{s.context}</span>
+                <span className="mono" style={{ display: 'block', fontSize: 12, color: 'var(--text2)', margin: '4px 0 6px' }}>{s.statLabel} · {s.label}</span>
+                <span style={{ display: 'block', fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.45 }}>{s.context}</span>
               </div>
             ))}
           </div>
@@ -75,24 +75,24 @@ export function NarrativeView({ onNav }) {
             {a.evidence.map((e, i) => (
               <div key={i} className="flex items-start gap-2.5" style={{ padding: '6px 0', borderBottom: i < a.evidence.length - 1 ? '1px solid var(--bg3)' : 'none' }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', marginTop: 6, flexShrink: 0, background: a.color }} />
-                <span style={{ fontSize: 12.5, color: 'var(--text)', lineHeight: 1.5 }}>{e}</span>
+                <span style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.5 }}>{e}</span>
               </div>
             ))}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
             <div>
-              <div className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--text2)', marginBottom: 4 }}>IMPLICATION</div>
-              <p style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.55 }}>{a.implication}</p>
+              <div className="mono" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--text2)', marginBottom: 4 }}>IMPLICATION</div>
+              <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.55 }}>{a.implication}</p>
             </div>
             <div>
-              <div className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: a.color, marginBottom: 4 }}>DESIGN RESPONSE</div>
-              <p style={{ fontSize: 12.5, color: 'var(--text)', lineHeight: 1.55 }}>{a.designResponse}</p>
+              <div className="mono" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', color: a.color, marginBottom: 4 }}>DESIGN RESPONSE</div>
+              <p style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.55 }}>{a.designResponse}</p>
             </div>
           </div>
 
           <button className="press mono flex items-center gap-1.5" onClick={() => onNav(a.navTarget)}
-            style={{ marginTop: 14, fontSize: 11, fontWeight: 500, padding: '6px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border2)', background: '#fff', color: 'var(--text2)', cursor: 'pointer' }}>
+            style={{ marginTop: 14, fontSize: 13, fontWeight: 500, padding: '6px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border2)', background: '#fff', color: 'var(--text2)', cursor: 'pointer' }}>
             {a.navLabel} <ArrowRightIcon size={12} />
           </button>
         </section>

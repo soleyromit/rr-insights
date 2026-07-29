@@ -112,7 +112,7 @@ export function FaaSView() {
       <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', background: 'var(--surface-primary)', flexShrink: 0, overflowX: 'auto' }}>
         {TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ padding: '10px 18px', fontSize: 13, fontWeight: tab === t.id ? 600 : 400, color: tab === t.id ? 'var(--brand)' : 'var(--text-secondary)', borderBottom: `2px solid ${tab === t.id ? 'var(--brand)' : 'transparent'}`, marginBottom: -1, background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            style={{ padding: '10px 18px', fontSize: 14.5, fontWeight: tab === t.id ? 600 : 400, color: tab === t.id ? 'var(--brand)' : 'var(--text-secondary)', borderBottom: `2px solid ${tab === t.id ? 'var(--brand)' : 'transparent'}`, marginBottom: -1, background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             {t.label}
           </button>
         ))}
@@ -139,8 +139,8 @@ export function FaaSView() {
               <ResponsiveContainer width="100%" height={160}>
                 <LineChart data={ticketTrendData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
+                  <XAxis dataKey="month" tick={{ fontSize: 13 }} />
+                  <YAxis tick={{ fontSize: 13 }} />
                   <Tooltip />
                   <Line type="monotone" dataKey="tickets" stroke="#E31C79" strokeWidth={2} dot={false} />
                 </LineChart>
@@ -151,13 +151,13 @@ export function FaaSView() {
               <CardTitle sub="Usage by clinical discipline + complexity (Prasanjit Mar 25)">Domain usage breakdown</CardTitle>
               {usageBreakdown.map((d, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: i < usageBreakdown.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                  <span style={{ width: 140, fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', flexShrink: 0 }}>{d.domain}</span>
+                  <span style={{ width: 140, fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)', flexShrink: 0 }}>{d.domain}</span>
                   <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'var(--surface-secondary)', overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${d.pct}%`, background: '#E31C79', borderRadius: 3 }} />
                   </div>
-                  <span style={{ width: 30, fontSize: 12, fontFamily: 'monospace', color: 'var(--text-secondary)', textAlign: 'right', flexShrink: 0 }}>{d.pct}%</span>
+                  <span style={{ width: 30, fontSize: 13.5, fontFamily: 'monospace', color: 'var(--text-secondary)', textAlign: 'right', flexShrink: 0 }}>{d.pct}%</span>
                   <Badge variant={d.complexity === 'Very High' || d.complexity === 'Critical' ? 'error' : d.complexity === 'High' ? 'warning' : 'default'}>{d.complexity}</Badge>
-                  <span style={{ fontSize: 12, color: 'var(--text-muted)', flex: 1 }}>{d.note}</span>
+                  <span style={{ fontSize: 13.5, color: 'var(--text-muted)', flex: 1 }}>{d.note}</span>
                 </div>
               ))}
             </Card>
@@ -179,7 +179,7 @@ export function FaaSView() {
               ].map((s, i) => (
                 <div key={i} style={{ padding: '12px 16px', borderRadius: 10, background: 'var(--surface-primary)', border: '1px solid var(--border)' }}>
                   <div style={{ fontSize: 22, fontWeight: 700, fontFamily: 'monospace', color: s.color }}>{s.val}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{s.label}</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -189,17 +189,17 @@ export function FaaSView() {
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--border)' }}>
                     {['Control type', 'Category', 'Status', 'Known issue'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '8px 12px', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)' }}>{h}</th>
+                      <th key={h} style={{ textAlign: 'left', padding: '8px 12px', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {controlTypes.map((c, i) => (
                     <tr key={i} style={{ borderBottom: i < controlTypes.length - 1 ? '1px solid var(--border)' : 'none', background: c.status === 'Critical' ? 'rgba(239,68,68,0.03)' : 'transparent' }}>
-                      <td style={{ padding: '10px 12px', fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{c.type}</td>
+                      <td style={{ padding: '10px 12px', fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)' }}>{c.type}</td>
                       <td style={{ padding: '10px 12px' }}><Badge variant="default">{c.category}</Badge></td>
                       <td style={{ padding: '10px 12px' }}><StatusBadge status={c.status} /></td>
-                      <td style={{ padding: '10px 12px', fontSize: 12, color: 'var(--text-secondary)' }}>{c.issues}</td>
+                      <td style={{ padding: '10px 12px', fontSize: 13.5, color: 'var(--text-secondary)' }}>{c.issues}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -218,11 +218,11 @@ export function FaaSView() {
                   <SeverityDot severity={gap.severity} />
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{gap.area}</span>
+                      <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{gap.area}</span>
                       <Badge variant={gap.severity === 'Critical' ? 'error' : gap.severity === 'High' ? 'warning' : 'info'}>{gap.severity}</Badge>
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{gap.who}</span>
+                      <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{gap.who}</span>
                     </div>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{gap.detail}</p>
+                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{gap.detail}</p>
                   </div>
                 </div>
               </Card>
@@ -241,8 +241,8 @@ export function FaaSView() {
               ].map((s, i) => (
                 <div key={i} style={{ padding: '14px 16px', borderRadius: 10, background: 'var(--surface-primary)', border: '1px solid var(--border)' }}>
                   <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--brand)', fontFamily: 'monospace' }}>{s.val}</div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginTop: 2 }}>{s.label}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.sub}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)', marginTop: 2 }}>{s.label}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{s.sub}</div>
                 </div>
               ))}
             </div>
@@ -251,11 +251,11 @@ export function FaaSView() {
               {q2Scope.map((item, i) => (
                 <div key={i} style={{ padding: '12px 0', borderBottom: i < q2Scope.length - 1 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{item.feature}</span>
+                    <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text-primary)' }}>{item.feature}</span>
                     <Badge variant={item.timeline === 'Q2 2026' ? 'warning' : 'default'}>{item.timeline}</Badge>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.target}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{item.target}</span>
                   </div>
-                  <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>{item.detail}</p>
+                  <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', margin: 0 }}>{item.detail}</p>
                 </div>
               ))}
             </Card>
@@ -268,10 +268,10 @@ export function FaaSView() {
                   { rank: 3, option: 'Build from scratch', pct: '2–3%', note: 'Power users only — accessible but not default' },
                 ].map((row, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 8, background: i === 0 ? 'rgba(227,28,121,0.06)' : 'var(--surface-secondary)', border: `1px solid ${i === 0 ? 'rgba(227,28,121,0.15)' : 'var(--border)'}` }}>
-                    <span style={{ fontSize: 18, fontWeight: 700, fontFamily: 'monospace', color: i === 0 ? 'var(--brand)' : 'var(--text-muted)', width: 24 }}>{row.rank}</span>
-                    <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', flex: 1 }}>{row.option}</span>
-                    <span style={{ fontSize: 13, fontFamily: 'monospace', color: 'var(--text-secondary)', width: 60, textAlign: 'right' }}>{row.pct}</span>
-                    <span style={{ fontSize: 12, color: 'var(--text-muted)', flex: 1 }}>{row.note}</span>
+                    <span style={{ fontSize: 18.5, fontWeight: 700, fontFamily: 'monospace', color: i === 0 ? 'var(--brand)' : 'var(--text-muted)', width: 24 }}>{row.rank}</span>
+                    <span style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)', flex: 1 }}>{row.option}</span>
+                    <span style={{ fontSize: 14.5, fontFamily: 'monospace', color: 'var(--text-secondary)', width: 60, textAlign: 'right' }}>{row.pct}</span>
+                    <span style={{ fontSize: 13.5, color: 'var(--text-muted)', flex: 1 }}>{row.note}</span>
                   </div>
                 ))}
               </div>
@@ -295,12 +295,12 @@ export function FaaSView() {
             ].map((s, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>{s.id}</span>
+                  <span style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>{s.id}</span>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
+                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
                       <strong>As a</strong> {s.who}, <strong>I need to</strong> {s.what}, <strong>so that</strong> {s.why}.
                     </p>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Source: {s.src}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Source: {s.src}</span>
                   </div>
                 </div>
               </Card>
@@ -323,8 +323,8 @@ export function FaaSView() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {[{ label: 'Decision', text: d.d, color: '#3B82F6' }, { label: 'Rationale', text: d.r, color: '#10B981' }, { label: 'Tradeoff', text: d.t, color: '#F59E0B' }].map(row => (
                     <div key={row.label} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: row.color, width: 64, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{row.text}</p>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: row.color, width: 64, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
+                      <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{row.text}</p>
                     </div>
                   ))}
                 </div>
@@ -345,9 +345,9 @@ export function FaaSView() {
                   { label: 'What cannot change (without Anand sign-off)', items: ['Core form data model', 'Existing form template structures', 'Module API contracts', 'Client-facing form instances (80k+ patient logs)'], color: '#EF4444' },
                 ].map((col, i) => (
                   <div key={i} style={{ padding: '12px 14px', borderRadius: 10, background: i === 0 ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)', border: `1px solid ${i === 0 ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}` }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: col.color, marginBottom: 8 }}>{col.label}</div>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: col.color, marginBottom: 8 }}>{col.label}</div>
                     {col.items.map((item, j) => (
-                      <div key={j} style={{ display: 'flex', gap: 6, fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                      <div key={j} style={{ display: 'flex', gap: 6, fontSize: 14.5, color: 'var(--text-secondary)', marginBottom: 4 }}>
                         <span style={{ color: col.color, flexShrink: 0 }}>{i === 0 ? '✓' : '×'}</span>{item}
                       </div>
                     ))}
@@ -368,7 +368,7 @@ export function FaaSView() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <Badge variant="default">{row.module}</Badge>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 12 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 13.5 }}>
                     <div><span style={{ color: 'var(--text-muted)' }}>Module adds: </span><span style={{ color: 'var(--text-secondary)' }}>{row.adds}</span></div>
                     <div><span style={{ color: 'var(--text-muted)' }}>FaaS provides: </span><span style={{ color: 'var(--text-secondary)' }}>{row.fastProvides}</span></div>
                   </div>
@@ -385,13 +385,13 @@ export function FaaSView() {
                 <div key={i} style={{ padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <Badge variant={i === 1 ? 'error' : 'default'}>{row.system}</Badge>
-                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{row.role}</span>
+                    <span style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>{row.role}</span>
                   </div>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{row.pain}</p>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>{row.pain}</p>
                 </div>
               ))}
               <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)' }}>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>
+                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>
                   <strong style={{ color: 'var(--text-primary)' }}>Day 5 resolution (Mar 6):</strong> Migrate to unified CAS. Centralized intelligence for expiration dates, completion validation, universal integrations. Maintain existing UI initially — backend transition first. Timeline: April compliance migration meeting.
                 </p>
               </div>
@@ -407,8 +407,8 @@ export function FaaSView() {
                   { label: 'Q1–Q4 phases', val: 'Q1–Q2: Simple forms no scoring → Simple forms with scoring → Complex forms with active components. Q4: PTSCs, CITs, PT Max (custom rendering).' },
                 ].map((row, i) => (
                   <div key={i} style={{ display: 'flex', gap: 10 }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', width: 64, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{row.val}</p>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)', width: 64, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
+                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{row.val}</p>
                   </div>
                 ))}
               </div>
@@ -430,13 +430,13 @@ export function FaaSView() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {/* The story */}
               <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(232,96,74,0.04)', border: '1px solid rgba(232,96,74,0.2)', borderLeft: '4px solid #e8604a' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: '#e8604a', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#e8604a', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
                   Prasanjit · FaaS Patient Log · Mar 25, 2026 · session 13352a23
                 </div>
-                <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
+                <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
                   "Mandatory field errors only appear on submit, not during input. Numeric limits only validated at submission. Students don't get immediate feedback when entering invalid data."
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7 }}>
+                <div style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.7 }}>
                   A student enters 150 minutes into a procedure duration field. The form accepts it silently.
                   They complete 20 more fields. They hit submit. Then: a red error banner at the top of the page.
                   They must scroll back up, find the field, fix it, and resubmit. This is the submit-only validation
@@ -447,18 +447,18 @@ export function FaaSView() {
               {/* Live demo */}
               <div style={{ padding: '16px 20px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Interactive demo — feel the difference</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)' }}>Interactive demo — feel the difference</div>
                   <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
                     {([true, false] as const).map(mode => (
                       <button key={String(mode)} onClick={() => { setInlineMode(mode); setSubmitted(false); setDemoVal(''); }}
-                        style={{ fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 20, border: `1px solid ${inlineMode === mode ? (mode ? '#0d9488' : '#e8604a') : 'var(--border)'}`, background: inlineMode === mode ? (mode ? 'rgba(13,148,136,0.08)' : 'rgba(232,96,74,0.08)') : '#fff', color: inlineMode === mode ? (mode ? '#0d9488' : '#e8604a') : 'var(--text3)', cursor: 'pointer' }}>
+                        style={{ fontSize: 13, fontWeight: 600, padding: '4px 12px', borderRadius: 20, border: `1px solid ${inlineMode === mode ? (mode ? '#0d9488' : '#e8604a') : 'var(--border)'}`, background: inlineMode === mode ? (mode ? 'rgba(13,148,136,0.08)' : 'rgba(232,96,74,0.08)') : '#fff', color: inlineMode === mode ? (mode ? '#0d9488' : '#e8604a') : 'var(--text3)', cursor: 'pointer' }}>
                         {mode ? '✓ Inline validation (fixed)' : '✗ Submit-only (current)'}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div style={{ maxWidth: 360 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                  <label style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
                     Procedure duration (0–99 minutes)
                     <span style={{ color: '#e8604a', marginLeft: 3 }}>*</span>
                   </label>
@@ -466,39 +466,39 @@ export function FaaSView() {
                     <input
                       type="number" value={demoVal} placeholder="Enter minutes"
                       onChange={e => { setDemoVal(e.target.value); setSubmitted(false); }}
-                      style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1.5px solid ${showError ? '#e8604a' : 'var(--border)'}`, fontSize: 13, outline: 'none', background: showError ? 'rgba(232,96,74,0.04)' : '#fff', boxSizing: 'border-box' }}
+                      style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: `1.5px solid ${showError ? '#e8604a' : 'var(--border)'}`, fontSize: 14.5, outline: 'none', background: showError ? 'rgba(232,96,74,0.04)' : '#fff', boxSizing: 'border-box' }}
                     />
                     {!inlineMode && (
-                      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 10, color: 'var(--text3)' }}>max 99</span>
+                      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 12, color: 'var(--text3)' }}>max 99</span>
                     )}
                     {inlineMode && demoVal !== '' && (
-                      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 10, color: isInvalid ? '#e8604a' : '#0d9488', fontWeight: 700 }}>
+                      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 12, color: isInvalid ? '#e8604a' : '#0d9488', fontWeight: 700 }}>
                         {isInvalid ? '✗' : '✓'}
                       </span>
                     )}
                   </div>
                   {showError && (
-                    <div style={{ marginTop: 5, fontSize: 12, color: '#e8604a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <div style={{ marginTop: 5, fontSize: 13.5, color: '#e8604a', display: 'flex', alignItems: 'center', gap: 4 }}>
                       ⚠ Please enter a number between 0 and 99
                     </div>
                   )}
                   {!showError && demoVal !== '' && !isInvalid && inlineMode && (
-                    <div style={{ marginTop: 5, fontSize: 12, color: '#0d9488' }}>✓ Valid duration</div>
+                    <div style={{ marginTop: 5, fontSize: 13.5, color: '#0d9488' }}>✓ Valid duration</div>
                   )}
                   {!inlineMode && (
-                    <button onClick={() => setSubmitted(true)} style={{ marginTop: 12, padding: '8px 16px', borderRadius: 8, background: '#6d5ed4', color: '#fff', border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                    <button onClick={() => setSubmitted(true)} style={{ marginTop: 12, padding: '8px 16px', borderRadius: 8, background: '#6d5ed4', color: '#fff', border: 'none', fontSize: 14.5, fontWeight: 600, cursor: 'pointer' }}>
                       Submit form
                     </button>
                   )}
                   {!inlineMode && submitted && !isInvalid && demoVal !== '' && (
-                    <div style={{ marginTop: 8, fontSize: 12, color: '#0d9488' }}>✓ Submitted successfully</div>
+                    <div style={{ marginTop: 8, fontSize: 13.5, color: '#0d9488' }}>✓ Submitted successfully</div>
                   )}
                 </div>
               </div>
 
               {/* Information connection graph */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>
                   Information connection — how one observation becomes a design decision
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -511,14 +511,14 @@ export function FaaSView() {
                   ].map((n, i, arr) => (
                     <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 24 }}>
-                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, color: '#fff' }}>{n.type}</div>
+                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: n.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: '#fff' }}>{n.type}</div>
                         {i < arr.length - 1 && <div style={{ width: 2, flex: 1, background: 'var(--border)', minHeight: 24, marginTop: 2 }} />}
                       </div>
                       <div style={{ paddingBottom: i < arr.length - 1 ? 16 : 0 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: n.color, marginBottom: 2 }}>{n.node}</div>
-                        <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5 }}>{n.desc}</div>
+                        <div style={{ fontSize: 13.5, fontWeight: 700, color: n.color, marginBottom: 2 }}>{n.node}</div>
+                        <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{n.desc}</div>
                         {n.edge && (
-                          <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 2 }}>→ {n.edge}</div>
+                          <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 2 }}>→ {n.edge}</div>
                         )}
                       </div>
                     </div>
@@ -535,10 +535,10 @@ export function FaaSView() {
                 ].map((f, i) => (
                   <div key={i} style={{ padding: '12px 14px', borderRadius: 10, background: '#fff', border: `1px solid ${f.severity === 'critical' ? 'rgba(220,38,38,0.25)' : 'var(--border)'}`, borderLeft: `3px solid ${f.severity === 'critical' ? '#dc2626' : '#d97706'}` }}>
                     <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: f.severity === 'critical' ? '#dc2626' : '#d97706' }}>{f.title}</span>
-                      <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 8, background: 'rgba(109,94,212,0.08)', color: '#6d5ed4', fontFamily: 'JetBrains Mono, monospace' }}>WCAG {f.wcag}</span>
+                      <span style={{ fontSize: 13.5, fontWeight: 700, color: f.severity === 'critical' ? '#dc2626' : '#d97706' }}>{f.title}</span>
+                      <span style={{ fontSize: 12, padding: '1px 6px', borderRadius: 8, background: 'rgba(109,94,212,0.08)', color: '#6d5ed4', fontFamily: 'JetBrains Mono, monospace' }}>WCAG {f.wcag}</span>
                     </div>
-                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{f.fix}</p>
+                    <p style={{ fontSize: 13.5, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{f.fix}</p>
                   </div>
                 ))}
               </div>
@@ -553,20 +553,20 @@ export function FaaSView() {
 
             {/* Story */}
             <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(13,148,136,0.04)', border: '1px solid rgba(13,148,136,0.2)', borderLeft: '4px solid #0d9488' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#0d9488', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
                 Pratiksha · FaaS Site Assessment · Mar 18, 2026 · session 1a0cd25e
               </div>
-              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+              <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
                 "They need to present the site assessment to accreditation bodies. For that they need one PDF. But step 1 and step 3 are outside FaaS. So we cannot give them one PDF. That is the problem."
               </div>
-              <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7 }}>
+              <div style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.7 }}>
                 A program director visits a clinical site. She records the assessment across 3 steps — site details (step 1), assessment questions (step 2 via FaaS), and form metadata (step 3). When her accreditor asks for documentation, she needs one unified PDF. Exxat gives her an Excel export of step 2 only. She manually stitches steps 1–3 together in Word. Every cycle.
               </div>
             </div>
 
             {/* 3-step visual */}
             <div style={{ padding: '16px 20px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Site assessment: 3-step lifecycle</div>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Site assessment: 3-step lifecycle</div>
               <div style={{ display: 'flex', gap: 0, alignItems: 'stretch' }}>
                 {[
                   { step: 'Step 1', label: 'Site details', location: 'Site module (hardcoded)', status: 'outside-faas', desc: 'Site name, address, accreditation type, capacity. Not configurable by FaaS.' },
@@ -574,14 +574,14 @@ export function FaaSView() {
                   { step: 'Step 3', label: 'Form metadata', location: 'Site module (hardcoded)', status: 'outside-faas', desc: 'Completion date, reviewer name, submission status. Not configurable by FaaS.' },
                 ].map((s, i) => (
                   <div key={i} style={{ flex: 1, padding: '12px 14px', background: s.status === 'in-faas' ? 'rgba(13,148,136,0.06)' : 'rgba(232,96,74,0.05)', border: `1px solid ${s.status === 'in-faas' ? 'rgba(13,148,136,0.25)' : 'rgba(232,96,74,0.25)'}`, borderRadius: i === 0 ? '10px 0 0 10px' : i === 2 ? '0 10px 10px 0' : 0, borderLeft: i > 0 ? 'none' : undefined }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: s.status === 'in-faas' ? '#0d9488' : '#e8604a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{s.step}</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{s.label}</div>
-                    <div style={{ fontSize: 10, padding: '2px 6px', borderRadius: 6, display: 'inline-block', background: s.status === 'in-faas' ? 'rgba(13,148,136,0.12)' : 'rgba(232,96,74,0.12)', color: s.status === 'in-faas' ? '#0d9488' : '#e8604a', marginBottom: 6, fontFamily: 'JetBrains Mono, monospace' }}>{s.location}</div>
-                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{s.desc}</p>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: s.status === 'in-faas' ? '#0d9488' : '#e8604a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{s.step}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{s.label}</div>
+                    <div style={{ fontSize: 12, padding: '2px 6px', borderRadius: 6, display: 'inline-block', background: s.status === 'in-faas' ? 'rgba(13,148,136,0.12)' : 'rgba(232,96,74,0.12)', color: s.status === 'in-faas' ? '#0d9488' : '#e8604a', marginBottom: 6, fontFamily: 'JetBrains Mono, monospace' }}>{s.location}</div>
+                    <p style={{ fontSize: 13.5, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{s.desc}</p>
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', fontSize: 12, color: 'var(--text2)' }}>
+              <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', fontSize: 13.5, color: 'var(--text2)' }}>
                 <strong style={{ color: '#dc2626' }}>Accreditation blocker:</strong> FaaS PDF download exports step 2 only. Accreditors need steps 1+2+3 as one document. Clients manually stitch in Word or Excel every accreditation cycle.
               </div>
             </div>
@@ -589,25 +589,25 @@ export function FaaSView() {
             {/* Key asks + PIF */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
               <div style={{ padding: '14px 16px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Top client asks (confirmed by Pendo + Pratiksha)</div>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Top client asks (confirmed by Pendo + Pratiksha)</div>
                 {[
                   { ask: 'Download form responses as PDF', priority: 'P0', detail: 'Not Excel. The accreditation audience reads PDFs, not spreadsheets. Must include all 3 steps as unified document.' },
                   { ask: 'Unpublish form without deleting', priority: 'P1', detail: 'Clients need to take a form offline temporarily (seasonal sites, under review) without losing the configuration.' },
                   { ask: 'No requests for more control types', priority: 'Note', detail: 'Current control set (single/multi choice, short/long answer, dropdown, date, signature) is sufficient for assessment use case.' },
                 ].map((a, i) => (
                   <div key={i} style={{ display: 'flex', gap: 10, paddingBottom: i < 2 ? 10 : 0, marginBottom: i < 2 ? 10 : 0, borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
-                    <span style={{ fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: a.priority === 'P0' ? 'rgba(220,38,38,0.1)' : a.priority === 'P1' ? 'rgba(217,119,6,0.1)' : 'rgba(148,163,184,0.1)', color: a.priority === 'P0' ? '#dc2626' : a.priority === 'P1' ? '#d97706' : '#94a3b8', flexShrink: 0, height: 'fit-content', marginTop: 1 }}>{a.priority}</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, padding: '2px 6px', borderRadius: 6, background: a.priority === 'P0' ? 'rgba(220,38,38,0.1)' : a.priority === 'P1' ? 'rgba(217,119,6,0.1)' : 'rgba(148,163,184,0.1)', color: a.priority === 'P0' ? '#dc2626' : a.priority === 'P1' ? '#d97706' : '#94a3b8', flexShrink: 0, height: 'fit-content', marginTop: 1 }}>{a.priority}</span>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{a.ask}</div>
-                      <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{a.detail}</p>
+                      <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{a.ask}</div>
+                      <p style={{ fontSize: 13.5, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{a.detail}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
               <div style={{ padding: '14px 16px', borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Preceptor Intake Form (PIF) — new FaaS surface</div>
-                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.7, marginBottom: 10 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Preceptor Intake Form (PIF) — new FaaS surface</div>
+                <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.7, marginBottom: 10 }}>
                   FaaS powers a new global preceptor profile system. A preceptor fills the form once — their credentials, license, certifications sync to every school that uses them.
                 </div>
                 {[
@@ -617,8 +617,8 @@ export function FaaSView() {
                   { label: 'Design implication', val: 'Two-section form: standardized (read-only field labels) + custom (editable). Visual distinction required.' },
                 ].map((r, i) => (
                   <div key={i} style={{ display: 'flex', gap: 8, paddingBottom: i < 3 ? 8 : 0, marginBottom: i < 3 ? 8 : 0, borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#0d9488', width: 120, flexShrink: 0, marginTop: 1 }}>{r.label}</span>
-                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{r.val}</p>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#0d9488', width: 120, flexShrink: 0, marginTop: 1 }}>{r.label}</span>
+                    <p style={{ fontSize: 13.5, color: 'var(--text2)', margin: 0, lineHeight: 1.5 }}>{r.val}</p>
                   </div>
                 ))}
               </div>

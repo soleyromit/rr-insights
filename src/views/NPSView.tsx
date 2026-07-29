@@ -65,15 +65,15 @@ const DESIGN_LEVERAGE = [
   { subject: 'Login',      before: 40, after: 70 },
 ];
 
-const CS = { fontSize: 10, fill: '#6b7280' };
+const CS = { fontSize: 12, fill: '#6b7280' };
 const SEV_COLOR: Record<string, string> = { critical: '#dc2626', high: '#d97706', medium: '#6d5ed4' };
 
 function MetricCard({ label, value, sub, color }: { label: string; value: string; sub: string; color: string }) {
   return (
     <div className="p-4 rounded-xl border text-center" style={{ background: 'var(--bg2)', borderColor: 'var(--border)' }}>
-      <div className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>{label}</div>
+      <div className="text-[12px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>{label}</div>
       <div className="text-[32px] font-bold leading-none mb-1" style={{ color }}>{value}</div>
-      <div className="text-[11px]" style={{ color: 'var(--text3)' }}>{sub}</div>
+      <div className="text-[13px]" style={{ color: 'var(--text3)' }}>{sub}</div>
     </div>
   );
 }
@@ -85,7 +85,7 @@ export function NPSView() {
         <div className="text-[22px] font-semibold mb-1" style={{ fontFamily: 'DM Serif Display, serif', color: 'var(--text)' }}>
           NPS Intelligence — 2025
         </div>
-        <p className="text-[13px]" style={{ color: 'var(--text3)' }}>
+        <p className="text-[14.5px]" style={{ color: 'var(--text3)' }}>
           1,494 responses across Exxat Prism (student, admin, faculty), Exxat One Sites, and Approve. Textual analysis of 1,275 student qualitative responses. This is the attitudinal baseline for all design work.
         </p>
       </div>
@@ -102,14 +102,14 @@ export function NPSView() {
       {/* Score distribution + segments */}
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border" style={{ background: 'var(--bg2)', borderColor: 'var(--border)' }}>
-          <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Student score distribution (n=1,282)</div>
-          <div className="text-[11px] mb-3" style={{ color: 'var(--text3)' }}>Bimodal: mass at 0–3 and 5–6. Almost no 4s or 8–9s. Pattern = hate or tolerate. Near zero delight.</div>
+          <div className="text-[13px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Student score distribution (n=1,282)</div>
+          <div className="text-[13px] mb-3" style={{ color: 'var(--text3)' }}>Bimodal: mass at 0–3 and 5–6. Almost no 4s or 8–9s. Pattern = hate or tolerate. Near zero delight.</div>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={STUDENT_DIST} margin={{ left: -10 }}>
               <CartesianGrid vertical={false} stroke="var(--border)" />
               <XAxis dataKey="score" tick={CS} label={{ value: 'NPS Score', position: 'insideBottom', offset: -2, style: CS }} />
               <YAxis tick={CS} />
-              <Tooltip contentStyle={{ fontSize: 11, background: 'var(--bg2)', border: '1px solid var(--border)' }} />
+              <Tooltip contentStyle={{ fontSize: 13, background: 'var(--bg2)', border: '1px solid var(--border)' }} />
               <Bar dataKey="count" radius={[2, 2, 0, 0]}>
                 {STUDENT_DIST.map((d) => (
                   <Cell key={d.score} fill={+d.score <= 6 ? '#dc2626' : +d.score <= 8 ? '#d97706' : '#16a34a'} opacity={0.8} />
@@ -119,19 +119,19 @@ export function NPSView() {
           </ResponsiveContainer>
         </div>
         <div className="p-4 rounded-xl border" style={{ background: 'var(--bg2)', borderColor: 'var(--border)' }}>
-          <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Segment breakdown</div>
-          <div className="text-[11px] mb-2" style={{ color: 'var(--text3)' }}>NPS = % Promoters − % Detractors = 18 − 65 = -47</div>
+          <div className="text-[13px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Segment breakdown</div>
+          <div className="text-[13px] mb-2" style={{ color: 'var(--text3)' }}>NPS = % Promoters − % Detractors = 18 − 65 = -47</div>
           <ResponsiveContainer width="100%" height={130}>
             <PieChart>
               <Pie data={SEGMENT_DATA} dataKey="value" cx="50%" cy="50%" outerRadius={55} label={({ name, pct }) => `${pct}%`} labelLine={false} fontSize={10}>
                 {SEGMENT_DATA.map(s => <Cell key={s.name} fill={s.color} />)}
               </Pie>
-              <Legend iconSize={8} wrapperStyle={{ fontSize: 10 }} />
+              <Legend iconSize={8} wrapperStyle={{ fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
           <div className="mt-2 space-y-1">
             {SEGMENT_DATA.map(s => (
-              <div key={s.name} className="flex justify-between text-[11px]">
+              <div key={s.name} className="flex justify-between text-[13px]">
                 <span style={{ color: 'var(--text2)' }}>{s.name}</span>
                 <span className="mono" style={{ color: s.color }}>{s.value} ({s.pct}%)</span>
               </div>
@@ -142,14 +142,14 @@ export function NPSView() {
 
       {/* Persona comparison */}
       <div className="p-4 rounded-xl border" style={{ background: 'var(--bg2)', borderColor: 'var(--border)' }}>
-        <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>NPS by persona — the design priority signal</div>
-        <div className="text-[11px] mb-3" style={{ color: 'var(--text3)' }}>Admin surfaces are adequate. Student and faculty are near-equivalent in dissatisfaction. These two personas are the design priority for 2026–2027.</div>
+        <div className="text-[13px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>NPS by persona — the design priority signal</div>
+        <div className="text-[13px] mb-3" style={{ color: 'var(--text3)' }}>Admin surfaces are adequate. Student and faculty are near-equivalent in dissatisfaction. These two personas are the design priority for 2026–2027.</div>
         <div className="flex gap-3 flex-wrap">
           {PERSONA_NPS.map(p => (
             <div key={p.persona} className="flex-1 min-w-[140px] p-3 rounded-lg border" style={{ background: 'var(--bg)', borderColor: 'var(--border)' }}>
-              <div className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>{p.persona}</div>
+              <div className="text-[12px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>{p.persona}</div>
               <div className="text-[26px] font-bold leading-none" style={{ color: p.color }}>{p.nps > 0 ? '+' : ''}{p.nps}</div>
-              <div className="text-[10px] mono mt-1" style={{ color: 'var(--text3)' }}>n={p.n}</div>
+              <div className="text-[12px] mono mt-1" style={{ color: 'var(--text3)' }}>n={p.n}</div>
             </div>
           ))}
         </div>
@@ -157,14 +157,14 @@ export function NPSView() {
 
       {/* Domain breakdown */}
       <div className="p-4 rounded-xl border" style={{ background: 'var(--bg2)', borderColor: 'var(--border)' }}>
-        <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Student NPS by discipline — design leverage by domain</div>
-        <div className="text-[11px] mb-3" style={{ color: 'var(--text3)' }}>Nursing = 608 responses (47% of total). Nursing improvements move the overall metric most.</div>
+        <div className="text-[13px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Student NPS by discipline — design leverage by domain</div>
+        <div className="text-[13px] mb-3" style={{ color: 'var(--text3)' }}>Nursing = 608 responses (47% of total). Nursing improvements move the overall metric most.</div>
         <ResponsiveContainer width="100%" height={160}>
           <BarChart data={DOMAIN_NPS} layout="vertical" margin={{ left: 120, right: 40 }}>
             <CartesianGrid horizontal={false} stroke="var(--border)" />
             <XAxis type="number" domain={[-60, 0]} tick={CS} />
-            <YAxis type="category" dataKey="domain" tick={{ fontSize: 10, fill: '#6b7280' }} width={120} />
-            <Tooltip contentStyle={{ fontSize: 11, background: 'var(--bg2)', border: '1px solid var(--border)' }}
+            <YAxis type="category" dataKey="domain" tick={{ fontSize: 12, fill: '#6b7280' }} width={120} />
+            <Tooltip contentStyle={{ fontSize: 13, background: 'var(--bg2)', border: '1px solid var(--border)' }}
               formatter={(v, n, p) => [`NPS: ${v} (n=${p.payload.n})`, p.payload.domain]} />
             <Bar dataKey="nps" radius={[0, 3, 3, 0]}>
               {DOMAIN_NPS.map(d => <Cell key={d.domain} fill="#dc2626" opacity={0.6 + (d.n / 1000)} />)}
@@ -175,22 +175,22 @@ export function NPSView() {
 
       {/* Top themes */}
       <div className="p-4 rounded-xl border" style={{ background: 'var(--bg2)', borderColor: 'var(--border)' }}>
-        <div className="text-[11px] uppercase tracking-widest mb-3" style={{ color: 'var(--text3)' }}>Detractor themes — ranked by frequency (n=835 negative responses analyzed)</div>
+        <div className="text-[13px] uppercase tracking-widest mb-3" style={{ color: 'var(--text3)' }}>Detractor themes — ranked by frequency (n=835 negative responses analyzed)</div>
         <div className="space-y-2">
           {THEMES.map((t, i) => (
             <div key={t.theme} className="flex gap-3 p-3 rounded-lg border" style={{ background: 'var(--bg)', borderColor: 'var(--border)' }}>
-              <div className="text-[11px] font-semibold mono w-4 text-right flex-shrink-0 pt-0.5" style={{ color: 'var(--text3)' }}>{i + 1}</div>
+              <div className="text-[13px] font-semibold mono w-4 text-right flex-shrink-0 pt-0.5" style={{ color: 'var(--text3)' }}>{i + 1}</div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[13px] font-medium" style={{ color: 'var(--text)' }}>{t.theme}</span>
-                  <span className="text-[9px] mono px-1.5 py-0.5 rounded" style={{ background: `${SEV_COLOR[t.severity]}18`, color: SEV_COLOR[t.severity] }}>{t.severity}</span>
-                  <span className="text-[9px] mono" style={{ color: 'var(--text3)' }}>{t.product}</span>
+                  <span className="text-[14.5px] font-medium" style={{ color: 'var(--text)' }}>{t.theme}</span>
+                  <span className="text-[12px] mono px-1.5 py-0.5 rounded" style={{ background: `${SEV_COLOR[t.severity]}18`, color: SEV_COLOR[t.severity] }}>{t.severity}</span>
+                  <span className="text-[12px] mono" style={{ color: 'var(--text3)' }}>{t.product}</span>
                 </div>
-                <div className="text-[11px] italic" style={{ color: 'var(--text3)' }}>"{t.quote}"</div>
+                <div className="text-[13px] italic" style={{ color: 'var(--text3)' }}>"{t.quote}"</div>
               </div>
               <div className="text-center flex-shrink-0">
-                <div className="text-[18px] font-bold" style={{ color: SEV_COLOR[t.severity] }}>{t.count}</div>
-                <div className="text-[9px] mono" style={{ color: 'var(--text3)' }}>mentions</div>
+                <div className="text-[18.5px] font-bold" style={{ color: SEV_COLOR[t.severity] }}>{t.count}</div>
+                <div className="text-[12px] mono" style={{ color: 'var(--text3)' }}>mentions</div>
               </div>
             </div>
           ))}
@@ -200,28 +200,28 @@ export function NPSView() {
       {/* Approve benchmark */}
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border" style={{ background: 'rgba(22,163,74,0.03)', borderColor: 'rgba(22,163,74,0.2)' }}>
-          <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: '#16a34a' }}>Approve — the highest NPS product (+87.5)</div>
-          <div className="text-[11px] mb-3" style={{ color: 'var(--text3)' }}>Managed service model. Human expertise + fast response wins where self-service fails. Every FaaS feature should ask: can this match what Approve does manually?</div>
+          <div className="text-[13px] uppercase tracking-widest mb-1" style={{ color: '#16a34a' }}>Approve — the highest NPS product (+87.5)</div>
+          <div className="text-[13px] mb-3" style={{ color: 'var(--text3)' }}>Managed service model. Human expertise + fast response wins where self-service fails. Every FaaS feature should ask: can this match what Approve does manually?</div>
           <ResponsiveContainer width="100%" height={130}>
             <BarChart data={APPROVE_ATTRS} layout="vertical" margin={{ left: 130 }}>
               <CartesianGrid horizontal={false} stroke="var(--border)" />
               <XAxis type="number" tick={CS} />
-              <YAxis type="category" dataKey="attr" tick={{ fontSize: 9, fill: '#6b7280' }} width={130} />
-              <Tooltip contentStyle={{ fontSize: 11 }} />
+              <YAxis type="category" dataKey="attr" tick={{ fontSize: 12, fill: '#6b7280' }} width={130} />
+              <Tooltip contentStyle={{ fontSize: 13 }} />
               <Bar dataKey="value" fill="#16a34a" fillOpacity={0.7} radius={[0, 3, 3, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
         <div className="p-4 rounded-xl border" style={{ background: 'var(--bg2)', borderColor: 'var(--border)' }}>
-          <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Projected NPS lift — design intervention impact</div>
-          <div className="text-[11px] mb-3" style={{ color: 'var(--text3)' }}>Estimated satisfaction score (0–10) per theme before and after design fix. Model-based, not measured.</div>
+          <div className="text-[13px] uppercase tracking-widest mb-1" style={{ color: 'var(--text3)' }}>Projected NPS lift — design intervention impact</div>
+          <div className="text-[13px] mb-3" style={{ color: 'var(--text3)' }}>Estimated satisfaction score (0–10) per theme before and after design fix. Model-based, not measured.</div>
           <ResponsiveContainer width="100%" height={130}>
             <RadarChart data={DESIGN_LEVERAGE}>
               <PolarGrid stroke="var(--border)" />
-              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9, fill: '#6b7280' }} />
+              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12, fill: '#6b7280' }} />
               <Radar name="Current" dataKey="before" stroke="#dc2626" fill="#dc2626" fillOpacity={0.15} />
               <Radar name="After fix" dataKey="after" stroke="#16a34a" fill="#16a34a" fillOpacity={0.15} />
-              <Legend iconSize={8} wrapperStyle={{ fontSize: 10 }} />
+              <Legend iconSize={8} wrapperStyle={{ fontSize: 12 }} />
             </RadarChart>
           </ResponsiveContainer>
         </div>
@@ -229,15 +229,15 @@ export function NPSView() {
 
       {/* Design mandate */}
       <div className="p-4 rounded-xl border" style={{ background: 'rgba(109,94,212,0.04)', borderColor: 'rgba(109,94,212,0.2)' }}>
-        <div className="text-[11px] uppercase tracking-widest mb-2" style={{ color: '#6d5ed4' }}>Design mandate from NPS data</div>
-        <div className="grid grid-cols-3 gap-4 text-[12px]" style={{ color: 'var(--text2)' }}>
+        <div className="text-[13px] uppercase tracking-widest mb-2" style={{ color: '#6d5ed4' }}>Design mandate from NPS data</div>
+        <div className="grid grid-cols-3 gap-4 text-[13.5px]" style={{ color: 'var(--text2)' }}>
           <div><strong style={{ color: 'var(--text)' }}>Fix navigation first.</strong> 218 mentions. Cannot find hour tracking. Features in unexpected locations. Every product home screen must answer: what do I do right now?</div>
           <div><strong style={{ color: 'var(--text)' }}>Mobile is not optional.</strong> 167 mentions from clinical students. Check-in must be one tap. If it takes more than 2 steps it will be abandoned. Mobile-first is the mandate for Skills and LC.</div>
           <div><strong style={{ color: 'var(--text)' }}>Nursing-first design has highest NPS leverage.</strong> 47% of total volume. Fix Nursing pains (compliance false positives, mobile time entry, preceptor form length) and overall NPS moves most.</div>
         </div>
       </div>
 
-      <div className="text-[11px] mono text-center pb-4" style={{ color: 'var(--text3)' }}>
+      <div className="text-[13px] mono text-center pb-4" style={{ color: 'var(--text3)' }}>
         rr-insights · NPS Intelligence 2025 · 1,494 responses · Exxat Prism + One Sites + Approve · Mar 28, 2026
       </div>
     </div>

@@ -1,7 +1,7 @@
-// Auto-updated by Claude — 2026-07-28 (v15.1)
-export const VERSION = '15.1.0';
+// Auto-updated by Claude — 2026-07-28 (v15.2)
+export const VERSION = '15.2.0';
 export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v15.1: data-integrity pass after misinterpretation review. Removed all fabricated state: roadmap phase done/active was assigned by array position (Exam showed Jan 2027 MVP as done) — now derived from dates parsed out of phase names, undated phases render dashed and claim nothing, passed phases strike through. Removed invented readiness percentages from ExamSoft retention anchors (status stated, not scored, with an explicit no-measurement note). Cohere date conflict (Aug per milestones vs Sep per product plan) now surfaced in the Competitive byline with a confirm-with-Arun flag instead of a silently hardcoded Aug 15. Signal keyword matching moved to word-boundary regex and over-broad keys dropped. daysToDeadline labeled as days to planned launch (Jan 20 2027), not next hard deadline; Command Center byline names which deadline it counts. Portfolio 70 bar labeled self-set. Data-integrity rules added to PRODUCT.md.)';
+export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v15.2: Research Repository Benchmark v1 delivered (RESEARCH_REPO_BENCHMARK_v1.html) — competitor landscape (Dovetail, Marvin, Condens, Looppanel, Notably, Aurelius, EnjoyHQ, TheyDo, Notion/Airtable), 7-group enterprise feature spec graded against v15.1, Mobbin pattern study of Dovetail and TheyDo production screens yielding six design directives, chart-language conversion spec, P6-P9 build order. P6 first slice shipped: type scale raised across all 35 source files with a hard 12px floor — body 15-16, metadata and mono 12.5+, captions 13+, chart axes 12+. Standing rule created: every page owns its context via computed digest lines and decision captions; no static context pages.)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
 export const SESSIONS_SYNCED = 73;

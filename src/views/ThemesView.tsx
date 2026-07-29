@@ -87,7 +87,7 @@ const radarData = [
 { dim: 'Competitive risk', overload: 60, ai: 95, reporting: 80, multicampus: 90 }];
 
 
-const CHART_STYLE = { fontSize: 11, fill: '#5c5a57' };
+const CHART_STYLE = { fontSize: 13, fill: '#5c5a57' };
 
 export function ThemesView() {
   const platformInsights = INSIGHTS.filter((i) => i.tags.includes('platform'));
@@ -95,7 +95,7 @@ export function ThemesView() {
   return (
     <div className="p-5 overflow-y-auto flex-1">
       <h1 className="rr-serif text-[24px] tracking-tight text-[var(--text)] mb-1">Theme Clusters</h1>
-      <p className="text-[11px] text-[var(--text3)] mb-4">
+      <p className="text-[13px] text-[var(--text3)] mb-4">
         Synthesised from 39 Granola sessions + project documents · 6 platform-level patterns · March 2026
       </p>
 
@@ -116,25 +116,25 @@ export function ThemesView() {
           return (
             <Card key={theme.id}>
               <div className="flex items-start justify-between mb-2">
-                <div className="text-[13px] font-medium leading-tight" style={{ color: theme.color }}>
+                <div className="text-[14.5px] font-medium leading-tight" style={{ color: theme.color }}>
                   {theme.title}
                 </div>
                 <span
-                  className="text-[11px] px-1.5 py-0.5 rounded font-mono ml-2 flex-shrink-0"
+                  className="text-[13px] px-1.5 py-0.5 rounded font-mono ml-2 flex-shrink-0"
                   style={{ background: `${theme.color}18`, color: theme.color }}>
                   
                   {theme.products.length} products
                 </span>
               </div>
 
-              <div className="text-[11px] text-[var(--text3)] font-mono mb-2">
+              <div className="text-[13px] text-[var(--text3)] font-mono mb-2">
                 {productNames} {'\u00b7'} {theme.persona}
               </div>
 
-              <p className="text-[11px] text-[var(--text2)] leading-[1.55] mb-3">{theme.description}</p>
+              <p className="text-[13px] text-[var(--text2)] leading-[1.55] mb-3">{theme.description}</p>
 
               <div
-                className="text-[10px] leading-[1.5] p-2.5 rounded-lg mb-3"
+                className="text-[12px] leading-[1.5] p-2.5 rounded-lg mb-3"
                 style={{ background: `${theme.color}10`, color: theme.color }}>
                 
                 <span className="font-medium">Design implication: </span>
@@ -143,7 +143,7 @@ export function ThemesView() {
 
               {relatedInsights.length > 0 &&
               <div>
-                  <div className="text-[11px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold mb-1.5">
+                  <div className="text-[13px] uppercase tracking-[0.07em] text-[var(--text3)] font-semibold mb-1.5">
                     Evidence
                   </div>
                   {relatedInsights.slice(0, 2).map((i) =>
@@ -169,7 +169,7 @@ export function ThemesView() {
                 <Radar name="AI layer" dataKey="ai" stroke="#2ec4a0" fill="rgba(46,196,160,0.1)" strokeWidth={1.5} />
                 <Radar name="Overload" dataKey="overload" stroke="#8b7ff5" fill="rgba(139,127,245,0.08)" strokeWidth={1.5} />
                 <Radar name="Reporting" dataKey="reporting" stroke="#e8604a" fill="transparent" strokeDasharray="4 3" strokeWidth={1.5} />
-                <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 10 }} />
+                <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
               </RadarChart>
             </ResponsiveContainer>
           </div>

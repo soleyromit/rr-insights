@@ -62,7 +62,7 @@ export function App() {
     if (activeView === 'course-eval-spec') return <CourseEvalView />;
     if (activeView === 'skills-spec')      return <SkillsChecklistView />;
     if (activeView === 'lc-spec')          return <LearningContractsView />;
-    return <div style={{color:'var(--text3)',fontSize:14,display:'flex',flex:1,alignItems:'center',justifyContent:'center'}}>View not found.</div>;
+    return <div style={{color:'var(--text3)',fontSize: 15,display:'flex',flex:1,alignItems:'center',justifyContent:'center'}}>View not found.</div>;
   }
   return (
     <div className="flex h-screen overflow-hidden" style={{background:'var(--bg)'}}>

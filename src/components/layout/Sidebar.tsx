@@ -33,7 +33,7 @@ function NavItem({ id, label, icon: Icon, active, badge, badgeColor, onNav, urge
       <span className="flex-1 truncate">{label}</span>
       {UrgencyIcon && urgency && <UrgencyIcon size={10} style={{ color: URGENCY_COLOR[urgency], flexShrink: 0 }} />}
       {badge && !urgency && (
-        <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 mono"
+        <span className="text-[12px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 mono"
           style={{ background: badgeColor ? `${badgeColor}15` : 'var(--bg3)', color: badgeColor ?? 'var(--text3)' }}>
           {badge}
         </span>
@@ -46,7 +46,7 @@ function Section({ label, sub }: { label: string; sub?: string }) {
   return (
     <div className="px-3 pt-5 pb-1.5">
       <div className="eyebrow">{label}</div>
-      {sub && <div style={{ fontSize: 9.5, color: 'var(--text3)', marginTop: 1 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 1 }}>{sub}</div>}
     </div>
   );
 }
@@ -71,10 +71,10 @@ export function Sidebar({ activeView, onNav }: Props) {
     <div className="w-[220px] min-w-[220px] flex flex-col overflow-y-auto border-r" style={{ background: '#fff', borderColor: 'var(--border)' }}>
       <div className="px-4 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
         <div className="flex items-center gap-2.5 mb-2.5">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[11px] font-semibold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>✦</div>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[13px] font-semibold flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>✦</div>
           <div>
-            <div className="text-[15px] font-semibold" style={{ color: 'var(--text)', letterSpacing: '-0.01em' }}>Insight Hub</div>
-            <div className="text-[10px] mono" style={{ color: 'var(--text3)' }}>rr-insights</div>
+            <div className="text-[16px] font-semibold" style={{ color: 'var(--text)', letterSpacing: '-0.01em' }}>Insight Hub</div>
+            <div className="text-[12px] mono" style={{ color: 'var(--text3)' }}>rr-insights</div>
           </div>
         </div>
         <span className="version-badge"><span style={{ color: '#6d5ed4' }}>●</span>{v.version} · {v.date}</span>
@@ -120,14 +120,14 @@ export function Sidebar({ activeView, onNav }: Props) {
       <div className="p-3 border-t" style={{ borderColor: 'var(--border)' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>RS</div>
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-semibold text-white flex-shrink-0" style={{ background: 'linear-gradient(135deg, #6d5ed4, #0d9488)' }}>RS</div>
             <div>
-              <div className="text-[13px] font-medium" style={{ color: 'var(--text)' }}>Romit Soley</div>
-              <div className="text-[10px]" style={{ color: 'var(--text3)' }}>Designer II · Exxat</div>
+              <div className="text-[14.5px] font-medium" style={{ color: 'var(--text)' }}>Romit Soley</div>
+              <div className="text-[12px]" style={{ color: 'var(--text3)' }}>Designer II · Exxat</div>
             </div>
           </div>
           <button onClick={() => onNav('changelog')} className="mono" title="Changelog"
-            style={{ fontSize: 9.5, color: activeView === 'changelog' ? 'var(--accent)' : 'var(--text3)', cursor: 'pointer' }}>
+            style={{ fontSize: 12, color: activeView === 'changelog' ? 'var(--accent)' : 'var(--text3)', cursor: 'pointer' }}>
             {v.version}
           </button>
         </div>

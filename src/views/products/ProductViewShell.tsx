@@ -26,12 +26,12 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'decisions',   label: 'Design Decisions' },
 ];
 
-const CS = { fontSize: 12, fill: '#8a8580' };
+const CS = { fontSize: 13.5, fill: '#8a8580' };
 
 function BPRow({ lane, cells, isGap }: { lane: string; cells: string[]; isGap?: boolean }) {
   return (
-    <div style={{ display: 'flex', fontSize: 12, borderBottom: '1px solid var(--border)' }}>
-      <div style={{ width: 100, minWidth: 100, padding: '10px 8px', background: 'var(--bg3)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, color: 'var(--text3)', borderRight: '1px solid var(--border)', flexShrink: 0 }}>{lane}</div>
+    <div style={{ display: 'flex', fontSize: 13.5, borderBottom: '1px solid var(--border)' }}>
+      <div style={{ width: 100, minWidth: 100, padding: '10px 8px', background: 'var(--bg3)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600, color: 'var(--text3)', borderRight: '1px solid var(--border)', flexShrink: 0 }}>{lane}</div>
       {cells.map((c, i) => (
         <div key={i} style={{ flex: 1, padding: '10px 10px', borderRight: '1px solid var(--border)', lineHeight: 1.5, color: isGap ? 'var(--coral)' : 'var(--text2)' }}>{c}</div>
       ))}
@@ -42,8 +42,8 @@ function BPRow({ lane, cells, isGap }: { lane: string; cells: string[]; isGap?: 
 function FeatureBox({ title, desc, color }: { title: string; desc: string; color: string }) {
   return (
     <div style={{ padding: '12px 14px', borderRadius: 'var(--radius)', border: `1px solid ${color}25`, background: `${color}06`, marginBottom: 8 }}>
-      <div style={{ fontSize: 13, fontWeight: 600, color, marginBottom: 4 }}>{title}</div>
-      <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.55 }}>{desc}</div>
+      <div style={{ fontSize: 14.5, fontWeight: 600, color, marginBottom: 4 }}>{title}</div>
+      <div style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.55 }}>{desc}</div>
     </div>
   );
 }
@@ -51,14 +51,14 @@ function FeatureBox({ title, desc, color }: { title: string; desc: string; color
 function DecisionCard({ title, decision, rationale, tradeoff, source }: { title: string; decision: string; rationale: string; tradeoff: string; source: string }) {
   return (
     <div className="card" style={{ marginBottom: 0 }}>
-      <h4 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 12 }}>{title}</h4>
+      <h4 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', marginBottom: 12 }}>{title}</h4>
       {[{ label: 'Decision', text: decision, color: 'var(--accent)' }, { label: 'Rationale', text: rationale, color: 'var(--teal)' }, { label: 'Tradeoff', text: tradeoff, color: 'var(--coral)' }].map(item => (
         <div key={item.label} style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'flex-start' }}>
-          <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: item.color, flexShrink: 0, marginTop: 2, width: 60 }}>{item.label}</span>
-          <span style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.55 }}>{item.text}</span>
+          <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: item.color, flexShrink: 0, marginTop: 2, width: 60 }}>{item.label}</span>
+          <span style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.55 }}>{item.text}</span>
         </div>
       ))}
-      <div style={{ fontSize: 11, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace', marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)' }}>{source}</div>
+      <div style={{ fontSize: 13, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace', marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)' }}>{source}</div>
     </div>
   );
 }
@@ -270,7 +270,7 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="month" tick={CS} />
                 <YAxis tick={CS} />
-                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
                 <Area type="monotone" dataKey="tickets" stroke="#e8604a" fill="rgba(232,96,74,0.1)" strokeWidth={2} name="Support tickets" />
               </AreaChart>
             </ResponsiveContainer>
@@ -284,7 +284,7 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis type="number" tick={CS} />
                 <YAxis dataKey="name" type="category" tick={CS} width={90} />
-                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
                 <Bar dataKey="value" radius={3} name="% of tickets">
                   {gapData.map((d, i) => <Cell key={i} fill={d.fill} />)}
                 </Bar>
@@ -300,7 +300,7 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis type="number" domain={[0, 100]} tick={CS} />
                 <YAxis dataKey="name" type="category" tick={CS} width={110} />
-                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
                 <Bar dataKey="pct" fill="rgba(109,94,212,0.6)" radius={3} name="% of sessions" />
               </BarChart>
             </ResponsiveContainer>
@@ -310,13 +310,13 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
           <CardTitle sub="Why: shows accreditation compliance gap vs. target">FaaS NPS trajectory (target: 3/5 in 6 months)</CardTitle>
           <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 }}>
             <div style={{ fontSize: 64, fontFamily: 'DM Serif Display, serif', color: '#e8604a', lineHeight: 1 }}>2/5</div>
-            <div style={{ fontSize: 13, color: 'var(--text3)' }}>Current NPS · 95,000+ annual tickets</div>
+            <div style={{ fontSize: 14.5, color: 'var(--text3)' }}>Current NPS · 95,000+ annual tickets</div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               {[1,2,3,4,5].map(n => (
-                <div key={n} style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 600, background: n <= 2 ? '#e8604a' : n === 3 ? 'rgba(109,94,212,0.15)' : 'var(--bg3)', color: n <= 2 ? 'white' : n === 3 ? '#6d5ed4' : 'var(--text3)', border: n === 3 ? '2px dashed #6d5ed4' : 'none' }}>{n}</div>
+                <div key={n} style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 600, background: n <= 2 ? '#e8604a' : n === 3 ? 'rgba(109,94,212,0.15)' : 'var(--bg3)', color: n <= 2 ? 'white' : n === 3 ? '#6d5ed4' : 'var(--text3)', border: n === 3 ? '2px dashed #6d5ed4' : 'none' }}>{n}</div>
               ))}
             </div>
-            <div style={{ fontSize: 11, color: '#6d5ed4', fontWeight: 600 }}>Target: 3/5 after tag validation + form simulator ship</div>
+            <div style={{ fontSize: 13, color: '#6d5ed4', fontWeight: 600 }}>Target: 3/5 after tag validation + form simulator ship</div>
           </div>
         </Card>
       </div>
@@ -346,8 +346,8 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis type="number" domain={[0, 1]} tick={CS} tickFormatter={(v) => v === 0 ? 'Missing' : 'Exists'} />
                 <YAxis dataKey="name" type="category" tick={CS} width={110} />
-                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
+                <Legend wrapperStyle={{ fontSize: 13.5 }} />
                 <Bar dataKey="inExxat" fill="rgba(109,94,212,0.6)" radius={3} name="In Exxat today" />
                 <Bar dataKey="atTouro" fill="rgba(13,148,136,0.4)" radius={3} name="Touro uses" />
               </BarChart>
@@ -362,7 +362,7 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="week" tick={CS} />
                 <YAxis domain={[0, 100]} tick={CS} />
-                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
                 <Line type="monotone" dataKey="rate" stroke="#6d5ed4" strokeWidth={2.5} dot={{ fill: '#6d5ed4', r: 4 }} name="Completion %" />
               </LineChart>
             </ResponsiveContainer>
@@ -397,7 +397,7 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis type="number" domain={[0, 14]} tick={CS} />
                 <YAxis dataKey="student" type="category" tick={CS} width={68} />
-                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
                 <Bar dataKey="required" fill="rgba(232,96,74,0.15)" radius={3} name="Required" />
                 <Bar dataKey="done" radius={3} name="Completed">
                   {deficiencyData.map((d, i) => <Cell key={i} fill={d.done < d.required ? '#e8604a' : '#16a34a'} />)}
@@ -414,7 +414,7 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
                 <Pie data={trackingData} cx="50%" cy="50%" outerRadius={80} dataKey="pct" label={({ name, pct }) => `${name}: ${pct}%`} labelLine={false} fontSize={11}>
                   {trackingData.map((d, i) => <Cell key={i} fill={d.fill} />)}
                 </Pie>
-                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -435,9 +435,9 @@ const PRODUCT_CHARTS: Record<string, React.FC> = {
           <ResponsiveContainer>
             <BarChart data={lcStatusData}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="phase" tick={{ ...CS, fontSize: 10 }} />
+              <XAxis dataKey="phase" tick={{ ...CS, fontSize: 12 }} />
               <YAxis tick={CS} />
-              <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+              <Tooltip contentStyle={{ background: 'white', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13.5 }} />
               <Bar dataKey="students" radius={3} name="Students">
                 {lcStatusData.map((d, i) => <Cell key={i} fill={d.phase === 'Contract restarted' ? '#e8604a' : d.phase === 'Preceptor changed' ? '#d97706' : 'rgba(109,94,212,0.6)'} />)}
               </Bar>
@@ -468,7 +468,7 @@ export function ProductViewShell({ productId }: Props) {
       <div style={{ margin: '20px 20px 0', background: 'var(--bg2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px 24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20 }}>
         <div style={{ flex: 1 }}>
           <h1 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, color: 'var(--text)', letterSpacing: '-0.02em', marginBottom: 6 }}>{product.name}</h1>
-          <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.6, maxWidth: 540, marginBottom: 12 }}>{product.description}</p>
+          <p style={{ fontSize: 15, color: 'var(--text2)', lineHeight: 1.6, maxWidth: 540, marginBottom: 12 }}>{product.description}</p>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {product.primaryPersonas.map(p => <Badge key={p} variant="persona">{p}</Badge>)}
             <Badge variant="theme">{product.competitors.slice(0, 2).join(' · ')}</Badge>
@@ -478,9 +478,9 @@ export function ProductViewShell({ productId }: Props) {
           <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 700, color: product.urgencyLevel === 'fire' ? 'var(--coral)' : 'var(--text)', lineHeight: 1 }}>
             {product.criticalGaps}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 8 }}>critical gaps</div>
+          <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 8 }}>critical gaps</div>
           <div style={{ fontSize: 22, fontFamily: 'DM Serif Display, serif', color: 'var(--text)' }}>{insights.length}</div>
-          <div style={{ fontSize: 11, color: 'var(--text3)' }}>insights</div>
+          <div style={{ fontSize: 13, color: 'var(--text3)' }}>insights</div>
         </div>
       </div>
 
@@ -488,7 +488,7 @@ export function ProductViewShell({ productId }: Props) {
       <div style={{ margin: '16px 20px 0', display: 'flex', gap: 2, borderBottom: '1px solid var(--border)', overflowX: 'auto' }}>
         {TABS.map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)}
-            style={{ padding: '10px 16px', fontSize: 13.5, fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? 'var(--accent)' : 'var(--text2)', border: 'none', borderBottom: `2px solid ${activeTab === t.id ? 'var(--accent)' : 'transparent'}`, background: 'transparent', cursor: 'pointer', transition: 'all .15s', whiteSpace: 'nowrap', marginBottom: -1 }}>
+            style={{ padding: '10px 16px', fontSize: 15, fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? 'var(--accent)' : 'var(--text2)', border: 'none', borderBottom: `2px solid ${activeTab === t.id ? 'var(--accent)' : 'transparent'}`, background: 'transparent', cursor: 'pointer', transition: 'all .15s', whiteSpace: 'nowrap', marginBottom: -1 }}>
             {t.label}
           </button>
         ))}
@@ -531,9 +531,9 @@ export function ProductViewShell({ productId }: Props) {
                   <CardTitle>Roadmap phases</CardTitle>
                   {product.roadmapPhases.map((phase, i) => (
                     <div key={i} style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', marginBottom: 6, fontFamily: 'JetBrains Mono, monospace' }}>{phase.phase}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)', marginBottom: 6, fontFamily: 'JetBrains Mono, monospace' }}>{phase.phase}</div>
                       {phase.items.map((item, j) => (
-                        <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 13, color: 'var(--text2)' }}>
+                        <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 14.5, color: 'var(--text2)' }}>
                           <span style={{ color: 'var(--border2)', flexShrink: 0 }}>–</span>{item}
                         </div>
                       ))}
@@ -560,13 +560,13 @@ export function ProductViewShell({ productId }: Props) {
             <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               <Card>
                 <CardTitle>Day in the life — {product.primaryPersonas[0]}</CardTitle>
-                <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
+                <p style={{ fontSize: 15, color: 'var(--text2)', lineHeight: 1.7 }}>
                   {product.dayInLife[product.primaryPersonas[0] as keyof typeof product.dayInLife] || 'Day in life data not yet synced for this persona.'}
                 </p>
               </Card>
               <Card>
                 <CardTitle>Happy path (target state)</CardTitle>
-                <p style={{ fontSize: 14, color: 'var(--teal)', lineHeight: 1.7 }}>{product.happyPath}</p>
+                <p style={{ fontSize: 15, color: 'var(--teal)', lineHeight: 1.7 }}>{product.happyPath}</p>
               </Card>
             </div>
           </div>
@@ -606,7 +606,7 @@ export function ProductViewShell({ productId }: Props) {
               <MetricCard label="Granola sessions" value={product.granolaSessions} delta="All synced" deltaVariant="up" />
             </div>
             {ChartComponent ? <ChartComponent /> : (
-              <Card><CardTitle sub="Charts pending data availability">Analytics</CardTitle><p style={{ fontSize: 14, color: 'var(--text3)' }}>Charts will be added as Pendo analytics data becomes available for this product.</p></Card>
+              <Card><CardTitle sub="Charts pending data availability">Analytics</CardTitle><p style={{ fontSize: 15, color: 'var(--text3)' }}>Charts will be added as Pendo analytics data becomes available for this product.</p></Card>
             )}
           </div>
         )}
@@ -619,13 +619,13 @@ export function ProductViewShell({ productId }: Props) {
               <div style={{ borderRadius: 'var(--radius)', overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px', gap: 1, background: 'var(--border)' }}>
                   {['Feature', 'Current status', 'Priority'].map(h => (
-                    <div key={h} style={{ padding: '10px 14px', background: 'var(--bg3)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)' }}>{h}</div>
+                    <div key={h} style={{ padding: '10px 14px', background: 'var(--bg3)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)' }}>{h}</div>
                   ))}
                   {data.a11yFeatures.map((f, i) => (
                     <>
-                      <div key={`f${i}`} style={{ padding: '11px 14px', background: 'white', fontSize: 13, color: 'var(--text)', fontWeight: 500 }}>{f.feature}</div>
-                      <div key={`s${i}`} style={{ padding: '11px 14px', background: 'white', fontSize: 13, color: 'var(--text2)', lineHeight: 1.45 }}>{f.status}</div>
-                      <div key={`p${i}`} style={{ padding: '11px 14px', background: 'white', fontSize: 11, fontWeight: 700, color: f.priority === 'CRITICAL' ? 'var(--coral)' : f.priority === 'HIGH' ? 'var(--amber)' : 'var(--teal)' }}>{f.priority}</div>
+                      <div key={`f${i}`} style={{ padding: '11px 14px', background: 'white', fontSize: 14.5, color: 'var(--text)', fontWeight: 500 }}>{f.feature}</div>
+                      <div key={`s${i}`} style={{ padding: '11px 14px', background: 'white', fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.45 }}>{f.status}</div>
+                      <div key={`p${i}`} style={{ padding: '11px 14px', background: 'white', fontSize: 13, fontWeight: 700, color: f.priority === 'CRITICAL' ? 'var(--coral)' : f.priority === 'HIGH' ? 'var(--amber)' : 'var(--teal)' }}>{f.priority}</div>
                     </>
                   ))}
                 </div>
@@ -642,8 +642,8 @@ export function ProductViewShell({ productId }: Props) {
                 { criterion: '3.3.1 Error identification', req: 'Error messages specific and actionable. Never "This field is required" — always why and how to fix.' },
               ].map(item => (
                 <div key={item.criterion} style={{ display: 'flex', gap: 14, marginBottom: 12, paddingBottom: 12, borderBottom: '1px solid var(--border)' }}>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'var(--accent)', flexShrink: 0, marginTop: 1, width: 130 }}>{item.criterion}</span>
-                  <span style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{item.req}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: 'var(--accent)', flexShrink: 0, marginTop: 1, width: 130 }}>{item.criterion}</span>
+                  <span style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.5 }}>{item.req}</span>
                 </div>
               ))}
             </Card>
@@ -660,14 +660,14 @@ export function ProductViewShell({ productId }: Props) {
               <Card key={i}>
                 <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>{c.name}</h4>
+                    <h4 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>{c.name}</h4>
                     <div style={{ display: 'flex', gap: 10, marginBottom: 6 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--coral)', flexShrink: 0, marginTop: 2, width: 40 }}>Gap</span>
-                      <span style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{c.gap}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--coral)', flexShrink: 0, marginTop: 2, width: 40 }}>Gap</span>
+                      <span style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.5 }}>{c.gap}</span>
                     </div>
                     <div style={{ display: 'flex', gap: 10 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--teal)', flexShrink: 0, marginTop: 2, width: 40 }}>Win</span>
-                      <span style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{c.win}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--teal)', flexShrink: 0, marginTop: 2, width: 40 }}>Win</span>
+                      <span style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.5 }}>{c.win}</span>
                     </div>
                   </div>
                 </div>
@@ -677,7 +677,7 @@ export function ProductViewShell({ productId }: Props) {
               <CardTitle>Indirect competitor comparison</CardTitle>
               <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 1fr', gap: 1, background: 'var(--border)', borderRadius: 8, overflow: 'hidden' }}>
                 {['Feature', 'Competitor offers', 'Exxat advantage'].map(h => (
-                  <div key={h} style={{ padding: '10px 14px', background: 'var(--bg3)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)' }}>{h}</div>
+                  <div key={h} style={{ padding: '10px 14px', background: 'var(--bg3)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)' }}>{h}</div>
                 ))}
                 {[
                   { feature: 'Self-service', comp: 'Google Forms, Typeform — zero friction', exxat: 'Clinical domain vocabulary, compliance enforcement, ARC-PA/CAPTE fields' },
@@ -685,9 +685,9 @@ export function ProductViewShell({ productId }: Props) {
                   { feature: 'AI features', comp: 'Typeform AI, Qualtrics iQ', exxat: 'AI built into clinical lifecycle — not generic survey AI' },
                 ].map((row, i) => (
                   <>
-                    <div key={`r${i}0`} style={{ padding: '10px 14px', background: 'white', fontSize: 13, fontWeight: 500, color: 'var(--text)' }}>{row.feature}</div>
-                    <div key={`r${i}1`} style={{ padding: '10px 14px', background: 'white', fontSize: 13, color: 'var(--text2)', lineHeight: 1.45 }}>{row.comp}</div>
-                    <div key={`r${i}2`} style={{ padding: '10px 14px', background: 'white', fontSize: 13, color: 'var(--teal)', lineHeight: 1.45 }}>{row.exxat}</div>
+                    <div key={`r${i}0`} style={{ padding: '10px 14px', background: 'white', fontSize: 14.5, fontWeight: 500, color: 'var(--text)' }}>{row.feature}</div>
+                    <div key={`r${i}1`} style={{ padding: '10px 14px', background: 'white', fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.45 }}>{row.comp}</div>
+                    <div key={`r${i}2`} style={{ padding: '10px 14px', background: 'white', fontSize: 14.5, color: 'var(--teal)', lineHeight: 1.45 }}>{row.exxat}</div>
                   </>
                 ))}
               </div>
@@ -703,9 +703,9 @@ export function ProductViewShell({ productId }: Props) {
               <CardTitle>Gaps by discipline</CardTitle>
               {Object.entries(product.gapsByDiscipline).map(([disc, gaps]) => (
                 <div key={disc} style={{ marginBottom: 14 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: disc === 'dev' ? '#3b82f6' : disc === 'ux' ? '#6d5ed4' : disc === 'ui' ? '#db2777' : '#d97706', marginBottom: 6 }}>{disc}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: disc === 'dev' ? '#3b82f6' : disc === 'ux' ? '#6d5ed4' : disc === 'ui' ? '#db2777' : '#d97706', marginBottom: 6 }}>{disc}</div>
                   {gaps.map((g: string, i: number) => (
-                    <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 5, fontSize: 13, color: 'var(--text2)' }}>
+                    <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 5, fontSize: 14.5, color: 'var(--text2)' }}>
                       <span style={{ color: 'var(--border2)' }}>–</span>{g}
                     </div>
                   ))}

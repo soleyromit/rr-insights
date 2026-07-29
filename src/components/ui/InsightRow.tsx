@@ -41,17 +41,17 @@ export function InsightRow({ insight, showSoWhat = false }: InsightRowProps) {
             <span key={tag} className={cfg.cls}>{cfg.label}</span>
           ) : null;
         })}
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>
+        <span style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>
           {insight.source?.split('·')[0]?.trim()}
         </span>
       </div>
 
       {/* Pull quote */}
       {insight.pullQuote && (
-        <div className="pull-quote" style={{ fontSize: 14, marginBottom: 8 }}>
+        <div className="pull-quote" style={{ fontSize: 15, marginBottom: 8 }}>
           "{insight.pullQuote}"
           {insight.pullQuoteSource && (
-            <div style={{ fontSize: 11, color: 'var(--text3)', fontStyle: 'normal', marginTop: 4 }}>
+            <div style={{ fontSize: 13, color: 'var(--text3)', fontStyle: 'normal', marginTop: 4 }}>
               — {insight.pullQuoteSource}
             </div>
           )}
@@ -59,13 +59,13 @@ export function InsightRow({ insight, showSoWhat = false }: InsightRowProps) {
       )}
 
       {/* Insight text */}
-      <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.6 }}>{insight.text}</p>
+      <p style={{ fontSize: 15, color: 'var(--text2)', lineHeight: 1.6 }}>{insight.text}</p>
 
       {/* So what */}
       {showSoWhat && insight.soWhat && (
         <div style={{
           marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--border)',
-          fontSize: 13, color: 'var(--accent)', lineHeight: 1.5,
+          fontSize: 14.5, color: 'var(--accent)', lineHeight: 1.5,
         }}>
           <span style={{ fontWeight: 600 }}>So what: </span>{insight.soWhat}
         </div>
@@ -78,7 +78,7 @@ export function InsightRow({ insight, showSoWhat = false }: InsightRowProps) {
 export function AIStrip({ children, text }: { children?: React.ReactNode; text?: string }) {
   return (
     <div className="ai-strip">
-      <span style={{ marginRight: 8, fontSize: 14 }}>✦</span>
+      <span style={{ marginRight: 8, fontSize: 15 }}>✦</span>
       {text ?? children}
     </div>
   );
@@ -98,10 +98,10 @@ export function ProgressBar({ label, sublabel, value, color = 'var(--accent)', v
     <div style={{ marginBottom: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 5 }}>
         <div>
-          <span style={{ fontSize: 13.5, color: 'var(--text)', fontWeight: 500 }}>{label}</span>
-          {sublabel && <span style={{ fontSize: 11, color: 'var(--text3)', marginLeft: 8 }}>{sublabel}</span>}
+          <span style={{ fontSize: 15, color: 'var(--text)', fontWeight: 500 }}>{label}</span>
+          {sublabel && <span style={{ fontSize: 13, color: 'var(--text3)', marginLeft: 8 }}>{sublabel}</span>}
         </div>
-        <span style={{ fontSize: 12, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>
+        <span style={{ fontSize: 13.5, color: 'var(--text3)', fontFamily: 'JetBrains Mono, monospace' }}>
           {valueLabel || `${value}%`}
         </span>
       </div>
@@ -131,11 +131,11 @@ export function TimelineItemRow({ item }: { item: TimelineItem }) {
       <div style={{ width: 8, height: 8, borderRadius: '50%', background: colors[item.status], flexShrink: 0, marginTop: 5 }} />
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: colors[item.status], fontWeight: 600 }}>{item.date}</span>
+          <span style={{ fontSize: 13.5, fontFamily: 'JetBrains Mono, monospace', color: colors[item.status], fontWeight: 600 }}>{item.date}</span>
           <span>{item.label ?? item.title ?? ""}</span>
-          {item.isHardDeadline && <span className="badge badge-gap" style={{ fontSize: 10 }}>Hard deadline</span>}
+          {item.isHardDeadline && <span className="badge badge-gap" style={{ fontSize: 12 }}>Hard deadline</span>}
         </div>
-        {item.description && <p style={{ fontSize: 12, color: 'var(--text3)', marginTop: 3, lineHeight: 1.4 }}>{item.description}</p>}
+        {item.description && <p style={{ fontSize: 13.5, color: 'var(--text3)', marginTop: 3, lineHeight: 1.4 }}>{item.description}</p>}
       </div>
     </div>
   );

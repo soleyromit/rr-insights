@@ -55,10 +55,10 @@ export function RoadmapView() {
           <div key={m.label} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px 18px' }}>
             <div className="flex items-baseline gap-2">
               <span className="rr-serif" style={{ fontSize: 34, color: 'var(--text)', lineHeight: 1 }}>{dLeft(m.date)}</span>
-              <span className="mono" style={{ fontSize: 10.5, color: 'var(--text2)' }}>days</span>
+              <span className="mono" style={{ fontSize: 12.5, color: 'var(--text2)' }}>days</span>
             </div>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)', margin: '6px 0 2px' }}>{m.label}</div>
-            <div className="mono" style={{ fontSize: 10, color: 'var(--text2)' }}>{m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {m.lane}</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', margin: '6px 0 2px' }}>{m.label}</div>
+            <div className="mono" style={{ fontSize: 12, color: 'var(--text2)' }}>{m.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {m.lane}</div>
           </div>
         ))}
       </div>
@@ -68,16 +68,16 @@ export function RoadmapView() {
           <PlotFigure minHeight={lanes.length * 44 + 80} deps={[rows]} build={() => ({
             height: lanes.length * 44 + 76,
             marginLeft: 96, marginTop: 10, marginBottom: 30, marginRight: 24,
-            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
             x: { type: 'time', label: null },
             y: { label: null, domain: lanes, tickSize: 0, padding: 0.5 },
             marks: [
               Plot.ruleY(lanes, { y: d => d, stroke: '#ede9e3' }),
               Plot.ruleX([today], { stroke: '#1a1917', strokeWidth: 1.25, strokeDasharray: '3 3' }),
-              Plot.text([today], { x: d => d, frameAnchor: 'top', text: () => 'today', dy: -2, dx: 18, fill: '#1a1917', fontSize: 10, fontWeight: 600 }),
+              Plot.text([today], { x: d => d, frameAnchor: 'top', text: () => 'today', dy: -2, dx: 18, fill: '#1a1917', fontSize: 12, fontWeight: 600 }),
               Plot.dot(rows.filter(r => !r.hard), { x: 'date', y: 'lane', r: 4.5, fill: d => d.passed ? '#fff' : d.color, stroke: d => d.color, strokeWidth: 1.4, tip: true, title: d => `${d.label}\n${d.description}` }),
               Plot.dot(rows.filter(r => r.hard), { x: 'date', y: 'lane', r: 6.5, symbol: 'diamond', fill: d => d.passed ? '#fff' : d.color, stroke: d => d.color, strokeWidth: 1.6, tip: true, title: d => `HARD DEADLINE · ${d.label}\n${d.description}` }),
-              Plot.text(rows.filter(r => r.hard && !r.passed), { x: 'date', y: 'lane', text: 'label', dy: -15, fill: '#1a1917', fontSize: 10, fontWeight: 600 }),
+              Plot.text(rows.filter(r => r.hard && !r.passed), { x: 'date', y: 'lane', text: 'label', dy: -15, fill: '#1a1917', fontSize: 12, fontWeight: 600 }),
             ],
           })} />
         </Figure>
@@ -87,13 +87,13 @@ export function RoadmapView() {
         <div style={{ display: 'grid', gap: 12 }}>
           {PRODUCTS.map(p => (
             <div key={p.id} className="flex items-center gap-3">
-              <span className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', width: 86, flexShrink: 0 }}>{p.shortName}</span>
+              <span className="mono" style={{ fontSize: 12.5, color: 'var(--text2)', width: 86, flexShrink: 0 }}>{p.shortName}</span>
               <div className="flex flex-1 gap-1" role="list" aria-label={`${p.name} phases (state derived from dates)`}>
                 {(() => { const states = computePhaseStates(p.roadmapPhases.map(ph => ph.phase)); return p.roadmapPhases.map((ph, i) => {
                   const st = states[i].state;
                   return (
                     <div key={ph.phase} role="listitem" title={`${st === 'unscheduled' ? 'No parseable date. ' : ''}${ph.phase}: ${ph.items.slice(0, 3).join(' · ')}`} style={{
-                      flex: 1, padding: '6px 10px', borderRadius: 4, fontSize: 11,
+                      flex: 1, padding: '6px 10px', borderRadius: 4, fontSize: 13,
                       background: st === 'next' ? p.accentColor : 'var(--bg2)',
                       border: st === 'unscheduled' ? '1px dashed var(--border2)' : '1px solid transparent',
                       color: st === 'next' ? '#fff' : st === 'passed' ? 'var(--text3)' : 'var(--text2)',

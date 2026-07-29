@@ -38,7 +38,7 @@ function briefFor(insight: Insight): string {
 function Chip({ children, color }: { children: React.ReactNode; color?: string }) {
   return (
     <span className="mono" style={{
-      fontSize: 9.5, fontWeight: color ? 600 : 400, padding: '2px 8px', borderRadius: 3,
+      fontSize: 12, fontWeight: color ? 600 : 400, padding: '2px 8px', borderRadius: 3,
       background: color ? `${color}14` : 'var(--bg2)', color: color ?? 'var(--text2)',
       border: color ? 'none' : '1px solid var(--bg3)',
     }}>{children}</span>
@@ -61,7 +61,7 @@ function InsightCardV2({ insight, expanded, onToggle }: {
     }}>
       <button onClick={onToggle} className="w-full text-left flex items-start gap-2.5" style={{ padding: '11px 13px', cursor: 'pointer' }}>
         <span style={{ width: 7, height: 7, borderRadius: '50%', marginTop: 6, flexShrink: 0, background: SEV_COLORS[insight.severity ?? 'na'] }} />
-        <span className="flex-1" style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.5 }}>
+        <span className="flex-1" style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.5 }}>
           {expanded ? insight.text : `${insight.text.slice(0, 110)}${insight.text.length > 110 ? '…' : ''}`}
         </span>
         <ChevronRightIcon size={14} style={{ color: 'var(--text3)', flexShrink: 0, marginTop: 3, transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform 160ms' }} />
@@ -72,8 +72,8 @@ function InsightCardV2({ insight, expanded, onToggle }: {
           {insight.pullQuote && (
             <blockquote style={{ position: 'relative', margin: '6px 0 12px', padding: '2px 0 0 22px' }}>
               <span className="rr-serif" style={{ position: 'absolute', left: 0, top: -6, fontSize: 30, color: 'var(--border2)', lineHeight: 1 }}>“</span>
-              <span className="serif" style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.55, display: 'block' }}>{insight.pullQuote}</span>
-              <span className="mono" style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, display: 'block' }}>— {insight.pullQuoteSource ?? insight.source}</span>
+              <span className="serif" style={{ fontSize: 15.5, color: 'var(--text)', lineHeight: 1.55, display: 'block' }}>{insight.pullQuote}</span>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--text3)', marginTop: 5, display: 'block' }}>— {insight.pullQuoteSource ?? insight.source}</span>
             </blockquote>
           )}
           <div className="flex flex-wrap gap-1.5 items-center" style={{ marginBottom: 10 }}>
@@ -81,11 +81,11 @@ function InsightCardV2({ insight, expanded, onToggle }: {
             {insight.confidence && <Chip>confidence: {insight.confidence}</Chip>}
             {insight.productIds.map(p => <Chip key={p}>{getProduct(p)?.shortName ?? p}</Chip>)}
           </div>
-          <div className="mono" style={{ fontSize: 10, color: 'var(--text3)', marginBottom: insight.soWhat ? 10 : 12 }}>{insight.source} · {insight.createdAt}</div>
+          <div className="mono" style={{ fontSize: 12, color: 'var(--text3)', marginBottom: insight.soWhat ? 10 : 12 }}>{insight.source} · {insight.createdAt}</div>
           {insight.soWhat && (
             <div style={{ padding: '2px 0', marginBottom: 12 }}>
-              <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--accent)', display: 'block', marginBottom: 3 }}>SO WHAT</span>
-              <span style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.55 }}>{insight.soWhat}</span>
+              <span className="mono" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', color: 'var(--accent)', display: 'block', marginBottom: 3 }}>SO WHAT</span>
+              <span style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.55 }}>{insight.soWhat}</span>
             </div>
           )}
           {/* L3 — actions. No dead-end reading. */}
@@ -111,7 +111,7 @@ function InsightCardV2({ insight, expanded, onToggle }: {
 
 function actionStyle(active: boolean): React.CSSProperties {
   return {
-    fontSize: 11.5, fontWeight: 500, padding: '5px 11px', borderRadius: 'var(--radius-sm)',
+    fontSize: 13.5, fontWeight: 500, padding: '5px 11px', borderRadius: 'var(--radius-sm)',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--border2)'}`,
     background: active ? 'var(--accent-bg)' : '#fff',
     color: active ? 'var(--accent)' : 'var(--text2)', cursor: 'pointer', textDecoration: 'none',
@@ -147,9 +147,9 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
           <div style={{ minWidth: 0 }}>
             <div className="flex items-center gap-2" style={{ marginBottom: 4 }}>
               <span style={{ width: 9, height: 9, borderRadius: '50%', background: def.color, flexShrink: 0 }} />
-              <span className="rr-serif" style={{ fontSize: 19, color: 'var(--text)', lineHeight: 1.2 }}>{def.title}</span>
+              <span className="rr-serif" style={{ fontSize: 19.5, color: 'var(--text)', lineHeight: 1.2 }}>{def.title}</span>
             </div>
-            <div className="serif" style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.45 }}>{def.question}</div>
+            <div className="serif" style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.45 }}>{def.question}</div>
           </div>
           <button onClick={onClose} style={{ color: 'var(--text3)', cursor: 'pointer', padding: 2, flexShrink: 0 }}><XIcon size={16} /></button>
         </div>
@@ -165,14 +165,14 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
             <span className="mono" style={crumbStyle(true)}>{activeInsight}</span>
           </>)}
           <div className="flex-1" />
-          <span className="mono" style={{ fontSize: 9.5, color: 'var(--text3)' }}>Esc walks back</span>
+          <span className="mono" style={{ fontSize: 12, color: 'var(--text3)' }}>Esc walks back</span>
         </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '15px 18px' }}>
         <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '10px 12px', marginBottom: 16 }}>
-          <span className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '0.08em', color: def.color, display: 'block', marginBottom: 3 }}>DESIGN RESPONSE</span>
-          <span style={{ fontSize: 12.5, color: 'var(--text2)', lineHeight: 1.55 }}>{def.designResponse}</span>
+          <span className="mono" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', color: def.color, display: 'block', marginBottom: 3 }}>DESIGN RESPONSE</span>
+          <span style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.55 }}>{def.designResponse}</span>
         </div>
 
         {/* Persona filter chips */}
@@ -189,8 +189,8 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
           <div key={g.id} style={{ marginBottom: 18 }}>
             {!activePersona && (
               <div className="flex items-baseline gap-2" style={{ marginBottom: 7 }}>
-                <span className="rr-serif" style={{ fontSize: 14.5, color: 'var(--text)' }}>{g.label}</span>
-                <span className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{g.items.length}</span>
+                <span className="rr-serif" style={{ fontSize: 15.5, color: 'var(--text)' }}>{g.label}</span>
+                <span className="mono" style={{ fontSize: 12, color: 'var(--text3)' }}>{g.items.length}</span>
                 <span style={{ flex: 1, borderBottom: '1px solid var(--bg4)', transform: 'translateY(-3px)' }} />
               </div>
             )}
@@ -206,11 +206,11 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
 }
 
 function crumbStyle(active: boolean): React.CSSProperties {
-  return { fontSize: 10, fontWeight: active ? 600 : 400, color: active ? 'var(--text)' : 'var(--text3)', cursor: 'pointer', maxWidth: 170, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+  return { fontSize: 12, fontWeight: active ? 600 : 400, color: active ? 'var(--text)' : 'var(--text3)', cursor: 'pointer', maxWidth: 170, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
 }
 function chipStyle(active: boolean): React.CSSProperties {
   return {
-    fontSize: 11, fontWeight: 500, padding: '3.5px 11px', borderRadius: 12, cursor: 'pointer',
+    fontSize: 13, fontWeight: 500, padding: '3.5px 11px', borderRadius: 12, cursor: 'pointer',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
     background: active ? 'var(--accent-bg)' : '#fff', color: active ? 'var(--accent)' : 'var(--text2)',
   };

@@ -227,7 +227,7 @@ export function AnalyticsView() {
         <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
           Intelligence Analytics
         </h1>
-        <p style={{ fontSize: 13, color: 'var(--text2)', margin: 0 }}>
+        <p style={{ fontSize: 14.5, color: 'var(--text2)', margin: 0 }}>
           Data visualized across {totalInsights} insights · {PRODUCTS.length} products · 4 personas
         </p>
       </div>
@@ -243,8 +243,8 @@ export function AnalyticsView() {
         ].map(k => (
           <div key={k.label} style={{ padding: '12px 14px', borderRadius: 10, background: '#fff', border: '1px solid var(--border)' }}>
             <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: k.color }}>{k.val}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginTop: 1 }}>{k.label}</div>
-            <div style={{ fontSize: 11, color: 'var(--text3)' }}>{k.sub}</div>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)', marginTop: 1 }}>{k.label}</div>
+            <div style={{ fontSize: 13, color: 'var(--text3)' }}>{k.sub}</div>
           </div>
         ))}
       </div>
@@ -258,7 +258,7 @@ export function AnalyticsView() {
           { id: 'coverage', label: 'Persona coverage' },
         ] as { id: TabId; label: string }[]).map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            style={{ padding: '10px 18px', fontSize: 13, fontWeight: tab === t.id ? 600 : 400, color: tab === t.id ? 'var(--brand)' : 'var(--text3)', background: 'none', border: 'none', borderBottom: `2px solid ${tab === t.id ? 'var(--brand)' : 'transparent'}`, marginBottom: -1, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            style={{ padding: '10px 18px', fontSize: 14.5, fontWeight: tab === t.id ? 600 : 400, color: tab === t.id ? 'var(--brand)' : 'var(--text3)', background: 'none', border: 'none', borderBottom: `2px solid ${tab === t.id ? 'var(--brand)' : 'transparent'}`, marginBottom: -1, cursor: 'pointer', whiteSpace: 'nowrap' }}>
             {t.label}
           </button>
         ))}
@@ -270,8 +270,8 @@ export function AnalyticsView() {
 
           {/* Bubble chart — insights per product */}
           <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Insight density by product</div>
-            <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 14 }}>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Insight density by product</div>
+            <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
               Bubble size = total insights. Red badge = critical gaps. D3 bubble chart.
             </div>
             <BubbleChart />
@@ -279,14 +279,14 @@ export function AnalyticsView() {
 
           {/* Severity × Product heatmap */}
           <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Severity breakdown by product</div>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Severity breakdown by product</div>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={productData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'var(--text3)' }} />
-                <YAxis tick={{ fontSize: 10, fill: 'var(--text3)' }} />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                <YAxis tick={{ fontSize: 12, fill: 'var(--text3)' }} />
                 <Tooltip
-                  contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid var(--border)' }}
+                  contentStyle={{ fontSize: 13.5, borderRadius: 8, border: '1px solid var(--border)' }}
                   itemStyle={{ color: 'var(--text)' }}
                 />
                 <Bar dataKey="critical" name="Critical" stackId="a" fill="#e8604a" radius={[0, 0, 0, 0]} />
@@ -298,7 +298,7 @@ export function AnalyticsView() {
           {/* Tag pie */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Insight type mix</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Insight type mix</div>
               <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
                   <Pie data={tagDist.slice(0, 6)} dataKey="count" nameKey="tag" cx="50%" cy="50%" outerRadius={70} label={({ tag, percent }) => `${tag} ${Math.round(percent * 100)}%`} labelLine={false}>
@@ -306,19 +306,19 @@ export function AnalyticsView() {
                       <Cell key={i} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                  <Tooltip contentStyle={{ fontSize: 13, borderRadius: 8 }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
 
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Persona radar</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Persona radar</div>
               <ResponsiveContainer width="100%" height={180}>
                 <RadarChart data={personaCoverage}>
                   <PolarGrid stroke="var(--border)" />
-                  <PolarAngleAxis dataKey="persona" tick={{ fontSize: 10, fill: 'var(--text3)' }} />
+                  <PolarAngleAxis dataKey="persona" tick={{ fontSize: 12, fill: 'var(--text3)' }} />
                   <Radar name="Insights" dataKey="count" stroke="#6d5ed4" fill="#6d5ed4" fillOpacity={0.25} />
-                  <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                  <Tooltip contentStyle={{ fontSize: 13, borderRadius: 8 }} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -330,19 +330,19 @@ export function AnalyticsView() {
       {tab === 'distribution' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>All insight tags</div>
-            <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 14 }}>Every insight carries one or more tags. Multi-tag insights are counted once per tag.</div>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>All insight tags</div>
+            <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>Every insight carries one or more tags. Multi-tag insights are counted once per tag.</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {tagDist.map(d => {
                 const pct = Math.round((d.count / totalInsights) * 100);
                 return (
                   <div key={d.tag} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ width: 100, fontSize: 12, fontWeight: 600, color: d.color, textTransform: 'capitalize', flexShrink: 0 }}>{d.tag}</div>
+                    <div style={{ width: 100, fontSize: 13.5, fontWeight: 600, color: d.color, textTransform: 'capitalize', flexShrink: 0 }}>{d.tag}</div>
                     <div style={{ flex: 1, height: 20, background: 'var(--bg2)', borderRadius: 4, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${Math.max(4, pct)}%`, background: d.color, borderRadius: 4, opacity: 0.75, transition: 'width 0.5s ease' }} />
                     </div>
-                    <div style={{ width: 36, fontSize: 13, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', textAlign: 'right', flexShrink: 0 }}>{d.count}</div>
-                    <div style={{ width: 30, fontSize: 10, color: 'var(--text3)', flexShrink: 0 }}>{pct}%</div>
+                    <div style={{ width: 36, fontSize: 14.5, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', textAlign: 'right', flexShrink: 0 }}>{d.count}</div>
+                    <div style={{ width: 30, fontSize: 12, color: 'var(--text3)', flexShrink: 0 }}>{pct}%</div>
                   </div>
                 );
               })}
@@ -351,12 +351,12 @@ export function AnalyticsView() {
 
           {/* Severity breakdown */}
           <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Severity distribution</div>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Severity distribution</div>
             <div style={{ display: 'flex', gap: 10 }}>
               {severityData.map(s => (
                 <div key={s.severity} style={{ flex: 1, padding: '12px 14px', borderRadius: 10, background: `${s.color}08`, border: `1px solid ${s.color}30`, textAlign: 'center' }}>
                   <div style={{ fontSize: 28, fontWeight: 800, color: s.color, fontFamily: 'JetBrains Mono, monospace' }}>{s.count}</div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: s.color, textTransform: 'capitalize', marginTop: 2 }}>{s.severity}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: s.color, textTransform: 'capitalize', marginTop: 2 }}>{s.severity}</div>
                 </div>
               ))}
             </div>
@@ -368,29 +368,29 @@ export function AnalyticsView() {
       {tab === 'velocity' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Cumulative insight growth</div>
-            <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 14 }}>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Cumulative insight growth</div>
+            <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14 }}>
               Each Granola session adds a cluster of insights. Steep segments = high-signal sessions (Touro, PRISM Day 1, D2L demo).
             </div>
             <ResponsiveContainer width="100%" height={240}>
               <LineChart data={velocity} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text3)' }} />
-                <YAxis tick={{ fontSize: 10, fill: 'var(--text3)' }} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid var(--border)' }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                <YAxis tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                <Tooltip contentStyle={{ fontSize: 13.5, borderRadius: 8, border: '1px solid var(--border)' }} />
                 <Line type="monotone" dataKey="cumulative" stroke="#6d5ed4" strokeWidth={2.5} dot={{ r: 3, fill: '#6d5ed4' }} name="Total insights" />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
           <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Daily insight additions</div>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Daily insight additions</div>
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={velocity} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--text3)' }} />
-                <YAxis tick={{ fontSize: 10, fill: 'var(--text3)' }} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid var(--border)' }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                <YAxis tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                <Tooltip contentStyle={{ fontSize: 13.5, borderRadius: 8, border: '1px solid var(--border)' }} />
                 <Bar dataKey="daily" name="Insights added" fill="#e8604a" radius={[3, 3, 0, 0]} opacity={0.8} />
               </BarChart>
             </ResponsiveContainer>
@@ -404,17 +404,17 @@ export function AnalyticsView() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
             {/* Persona coverage */}
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Persona coverage</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Persona coverage</div>
               {personaCoverage.map((p, i) => {
                 const pct = Math.round((p.count / totalInsights) * 100);
                 const colors2 = ['#6d5ed4', '#e8604a', '#2ec4a0', '#f5a623'];
                 return (
                   <div key={p.persona} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                    <div style={{ width: 110, fontSize: 12, color: 'var(--text2)', flexShrink: 0 }}>{p.persona}</div>
+                    <div style={{ width: 110, fontSize: 13.5, color: 'var(--text2)', flexShrink: 0 }}>{p.persona}</div>
                     <div style={{ flex: 1, height: 18, background: 'var(--bg2)', borderRadius: 4, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${Math.max(4, pct)}%`, background: colors2[i % 4], borderRadius: 4, opacity: 0.75 }} />
                     </div>
-                    <div style={{ width: 28, fontSize: 12, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', textAlign: 'right', flexShrink: 0 }}>{p.count}</div>
+                    <div style={{ width: 28, fontSize: 13.5, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', textAlign: 'right', flexShrink: 0 }}>{p.count}</div>
                   </div>
                 );
               })}
@@ -422,17 +422,17 @@ export function AnalyticsView() {
 
             {/* Product coverage matrix */}
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 20px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Product coverage</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Product coverage</div>
               {productData.map((p, i) => {
                 const pct = Math.round((p.count / totalInsights) * 100);
                 const colors3 = ['#6d5ed4', '#e8604a', '#2ec4a0', '#f5a623', '#78aaf5'];
                 return (
                   <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                    <div style={{ width: 80, fontSize: 11, color: 'var(--text2)', flexShrink: 0 }}>{p.name.split(' ')[0]}</div>
+                    <div style={{ width: 80, fontSize: 13, color: 'var(--text2)', flexShrink: 0 }}>{p.name.split(' ')[0]}</div>
                     <div style={{ flex: 1, height: 18, background: 'var(--bg2)', borderRadius: 4, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${Math.max(4, pct)}%`, background: colors3[i % 5], borderRadius: 4, opacity: 0.75 }} />
                     </div>
-                    <div style={{ width: 28, fontSize: 12, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', textAlign: 'right', flexShrink: 0 }}>{p.count}</div>
+                    <div style={{ width: 28, fontSize: 13.5, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', textAlign: 'right', flexShrink: 0 }}>{p.count}</div>
                   </div>
                 );
               })}
@@ -441,16 +441,16 @@ export function AnalyticsView() {
 
           {/* Platform signals callout */}
           <div style={{ borderRadius: 12, background: 'rgba(245,166,35,0.04)', border: '1px solid rgba(245,166,35,0.25)', borderLeft: '4px solid #f5a623', padding: '14px 18px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#d97706', marginBottom: 6 }}>
+            <div style={{ fontSize: 14.5, fontWeight: 700, color: '#d97706', marginBottom: 6 }}>
               {platformSignals} platform-level signals detected
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+            <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
               Insights tagged to 3+ products simultaneously indicate cross-cutting architectural patterns that require platform-level design decisions, not product-specific fixes.
               These are the highest-priority insights for systems-level thinking.
             </div>
             <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {INSIGHTS.filter(i => (i.productIds?.length || 0) >= 3).slice(0, 6).map(i => (
-                <div key={i.id} style={{ fontSize: 11, padding: '3px 8px', borderRadius: 5, background: 'rgba(245,166,35,0.1)', color: '#92400e', fontFamily: 'JetBrains Mono, monospace' }}>
+                <div key={i.id} style={{ fontSize: 13, padding: '3px 8px', borderRadius: 5, background: 'rgba(245,166,35,0.1)', color: '#92400e', fontFamily: 'JetBrains Mono, monospace' }}>
                   {i.id}
                 </div>
               ))}

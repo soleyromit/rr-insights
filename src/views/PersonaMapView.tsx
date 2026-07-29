@@ -57,13 +57,13 @@ export function PersonaMapView() {
           <PlotFigure minHeight={4 * 44 + 60} deps={[heatCells]} build={() => ({
             height: 4 * 44 + 58,
             marginLeft: 128, marginTop: 26, marginBottom: 4, marginRight: 8,
-            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
             x: { axis: 'top', label: null, domain: PRODUCTS.map(p => p.shortName), tickSize: 0, padding: 0.08 },
             y: { label: null, domain: PERSONA_ORDER.map(personaName), tickSize: 0, padding: 0.14 },
             color: { domain: ['critical', 'high', 'medium', 'na'], range: [SEV_COLORS.critical, SEV_COLORS.high, SEV_COLORS.medium, SEV_COLORS.na], legend: true },
             marks: [
               Plot.cell(heatCells, { x: 'product', y: 'persona', fill: 'severity', rx: 4, inset: 2, tip: true, title: d => d.cross ? `${d.severity.toUpperCase()} · platform signal: ${d.cross}` : d.severity.toUpperCase() }),
-              Plot.text(heatCells.filter(d => d.cross), { x: 'product', y: 'persona', text: () => '◆', fill: '#fff', fontSize: 8, dy: 0 }),
+              Plot.text(heatCells.filter(d => d.cross), { x: 'product', y: 'persona', text: () => '◆', fill: '#fff', fontSize: 12, dy: 0 }),
             ],
           })} />
         </Figure>
@@ -71,12 +71,12 @@ export function PersonaMapView() {
           <PlotFigure minHeight={4 * 44 + 40} deps={[coverage]} build={() => ({
             height: 4 * 44 + 38,
             marginLeft: 128, marginTop: 8, marginBottom: 26, marginRight: 40,
-            style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
             x: { label: 'insights', domain: [0, maxCoverage * 1.1], tickSize: 0 },
             y: { label: null, domain: PERSONA_ORDER.map(personaName), tickSize: 0, padding: 0.35 },
             marks: [
               Plot.barX(coverage, { x: 'insights', y: 'persona', fill: '#8a8580', rx: 3 }),
-              Plot.text(coverage, { x: 'insights', y: 'persona', text: d => String(d.insights), dx: 14, fill: '#4a4844', fontSize: 10.5 }),
+              Plot.text(coverage, { x: 'insights', y: 'persona', text: d => String(d.insights), dx: 14, fill: '#4a4844', fontSize: 12.5 }),
             ],
           })} />
         </Figure>
@@ -89,10 +89,10 @@ export function PersonaMapView() {
           const active = pid === selected;
           return (
             <button key={pid} role="tab" aria-selected={active} className="press" onClick={() => setSelected(pid)} style={{
-              fontSize: 12, fontWeight: 500, padding: '5px 14px', borderRadius: 14, cursor: 'pointer',
+              fontSize: 13.5, fontWeight: 500, padding: '5px 14px', borderRadius: 14, cursor: 'pointer',
               border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
               background: active ? 'var(--accent-bg)' : '#fff', color: active ? 'var(--accent)' : 'var(--text2)',
-            }}>{p?.name}<span className="mono" style={{ marginLeft: 7, fontSize: 10, opacity: 0.75 }}>{p?.priority}</span></button>
+            }}>{p?.name}<span className="mono" style={{ marginLeft: 7, fontSize: 12, opacity: 0.75 }}>{p?.priority}</span></button>
           );
         })}
       </div>
@@ -101,22 +101,22 @@ export function PersonaMapView() {
         <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '20px 22px' }}>
           <div className="flex items-baseline gap-3 flex-wrap" style={{ marginBottom: 4 }}>
             <span className="rr-serif" style={{ fontSize: 22, color: 'var(--text)' }}>{persona.name}</span>
-            <span style={{ fontSize: 13, color: 'var(--text2)' }}>{persona.role}</span>
+            <span style={{ fontSize: 14.5, color: 'var(--text2)' }}>{persona.role}</span>
           </div>
-          <p className="serif" style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.55, maxWidth: 640, marginBottom: 16 }}>{persona.povStatement}</p>
+          <p className="serif" style={{ fontSize: 15, color: 'var(--text2)', lineHeight: 1.55, maxWidth: 640, marginBottom: 16 }}>{persona.povStatement}</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
             <div style={{ borderTop: `2px solid #2ec4a0`, paddingTop: 10 }}>
-              <div className="mono" style={{ fontSize: 10, fontWeight: 600, color: '#1d8a6e', marginBottom: 4 }}>A GREAT DAY</div>
-              <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.55 }}>{persona.greatDay}</p>
+              <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: '#1d8a6e', marginBottom: 4 }}>A GREAT DAY</div>
+              <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.55 }}>{persona.greatDay}</p>
             </div>
             <div style={{ borderTop: `2px solid #e8604a`, paddingTop: 10 }}>
-              <div className="mono" style={{ fontSize: 10, fontWeight: 600, color: '#c24d3a', marginBottom: 4 }}>A POOR DAY</div>
-              <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.55 }}>{persona.poorDay}</p>
+              <div className="mono" style={{ fontSize: 12, fontWeight: 600, color: '#c24d3a', marginBottom: 4 }}>A POOR DAY</div>
+              <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.55 }}>{persona.poorDay}</p>
             </div>
           </div>
 
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', marginBottom: 8 }}>Open frictions by product, ranked by severity</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', marginBottom: 8 }}>Open frictions by product, ranked by severity</div>
           <div>
             {PRODUCTS
               .map(prod => ({ prod, cell: friction[prod.id] }))
@@ -125,11 +125,11 @@ export function PersonaMapView() {
               .map(({ prod, cell }) => (
                 <div key={prod.id} className="flex items-start gap-3" style={{ padding: '9px 0', borderBottom: '1px solid var(--bg3)' }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0, background: SEV_COLORS[cell.severity] }} aria-label={cell.severity} />
-                  <span className="mono" style={{ fontSize: 10.5, color: 'var(--text2)', width: 86, flexShrink: 0, paddingTop: 1 }}>{prod.shortName}</span>
-                  <span style={{ flex: 1, fontSize: 13, color: 'var(--text)', lineHeight: 1.5 }}>{cell.text}</span>
+                  <span className="mono" style={{ fontSize: 12.5, color: 'var(--text2)', width: 86, flexShrink: 0, paddingTop: 1 }}>{prod.shortName}</span>
+                  <span style={{ flex: 1, fontSize: 14.5, color: 'var(--text)', lineHeight: 1.5 }}>{cell.text}</span>
                   <span className="flex gap-1.5 flex-shrink-0">
-                    {cell.cross && <span className="mono" style={{ fontSize: 9.5, padding: '2px 8px', borderRadius: 3, background: 'var(--bg2)', color: 'var(--text2)' }}>◆ {cell.cross}</span>}
-                    {cell.ai && <span className="mono" style={{ fontSize: 9.5, padding: '2px 8px', borderRadius: 3, background: 'rgba(13,148,136,0.10)', color: '#0d7a6e' }}>{cell.ai}</span>}
+                    {cell.cross && <span className="mono" style={{ fontSize: 12, padding: '2px 8px', borderRadius: 3, background: 'var(--bg2)', color: 'var(--text2)' }}>◆ {cell.cross}</span>}
+                    {cell.ai && <span className="mono" style={{ fontSize: 12, padding: '2px 8px', borderRadius: 3, background: 'rgba(13,148,136,0.10)', color: '#0d7a6e' }}>{cell.ai}</span>}
                   </span>
                 </div>
               ))}

@@ -21,7 +21,7 @@ const TABS: { id: TabId; label: string; alert?: boolean }[] = [
 ];
 
 const ts = (tab: TabId, cur: TabId) => ({
-  padding: '10px 18px', fontSize: 13,
+  padding: '10px 18px', fontSize: 14.5,
   fontWeight: cur === tab ? 600 : 400,
   color: cur === tab ? 'var(--brand)' : 'var(--text-secondary)',
   borderBottom: `2px solid ${cur === tab ? 'var(--brand)' : 'transparent'}`,
@@ -110,10 +110,10 @@ export function CourseEvalView() {
           <button key={t.id} onClick={() => setTab(t.id)} style={ts(t.id, tab)}>
             {t.label}
             {t.alert && t.id === 'gaps' && criticalGaps > 0 && (
-              <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{criticalGaps}</span>
+              <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{criticalGaps}</span>
             )}
             {t.alert && t.id === 'open-questions' && (
-              <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 800, background: '#D97706', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{p0Questions} P0</span>
+              <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 800, background: '#D97706', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{p0Questions} P0</span>
             )}
           </button>
         ))}
@@ -149,13 +149,13 @@ export function CourseEvalView() {
                   ].map(b => (
                     <div key={b.label} style={{ marginBottom: 12 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <span style={{ fontSize: 13, color: 'var(--text)' }}>{b.label}</span>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: '#0d9488' }}>{b.value}%</span>
+                        <span style={{ fontSize: 14.5, color: 'var(--text)' }}>{b.label}</span>
+                        <span style={{ fontSize: 13.5, fontWeight: 600, color: '#0d9488' }}>{b.value}%</span>
                       </div>
                       <div style={{ height: 6, background: 'var(--border)', borderRadius: 3, overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${b.value}%`, background: b.value >= 75 ? '#0d9488' : b.value >= 50 ? '#f5a623' : '#e8604a', borderRadius: 3 }} />
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 3 }}>{b.sublabel}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 3 }}>{b.sublabel}</div>
                     </div>
                   ))}
                 </Card>
@@ -171,8 +171,8 @@ export function CourseEvalView() {
                     <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 12 }}>
                       <div style={{ width: 8, height: 8, borderRadius: '50%', background: t.done ? '#0d9488' : '#6d5ed4', marginTop: 4, flexShrink: 0 }} />
                       <div>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{t.date} — {t.label}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text3)' }}>{t.detail}</div>
+                        <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)' }}>{t.date} — {t.label}</div>
+                        <div style={{ fontSize: 13.5, color: 'var(--text3)' }}>{t.detail}</div>
                       </div>
                     </div>
                   ))}
@@ -187,8 +187,8 @@ export function CourseEvalView() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <AIStrip text="Sources: post_course_eval_primer_v2 (Exxat internal design spec), Open Questions doc (24 unanswered product questions), Touro PA site visit (Vishaka, Mar 12), Mohil/Vishaka/David PCE context (Mar 24), NPS 2025 textual responses, competitor analysis (Blue/Watermark/Anthology/SurveyMonkey)." />
             <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(227,28,121,0.05)', border: '1px solid rgba(227,28,121,0.2)' }}>
-              <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px' }}>⚠ Design status: NOT READY TO BUILD</p>
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>24 open product questions are unanswered. 3 critical design gaps identified from the primer. This view documents what we know and what must be resolved before any Magic Patterns work begins on this product.</p>
+              <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px' }}>⚠ Design status: NOT READY TO BUILD</p>
+              <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>24 open product questions are unanswered. 3 critical design gaps identified from the primer. This view documents what we know and what must be resolved before any Magic Patterns work begins on this product.</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
               <MetricCard label="Open P0 questions" value={String(p0Questions)} delta="Must answer before building" deltaVariant="down" />
@@ -205,7 +205,7 @@ export function CourseEvalView() {
                 ].map((inst, i) => (
                   <div key={i} style={{ padding: '14px 16px', borderRadius: 12, background: `${inst.color}06`, border: `1px solid ${inst.color}25` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: inst.color }}>{inst.title}</span>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: inst.color }}>{inst.title}</span>
                       <Badge variant={i === 0 ? 'error' : 'default'}>{inst.sub}</Badge>
                     </div>
                     {[
@@ -217,8 +217,8 @@ export function CourseEvalView() {
                       ['Design priority', inst.priority],
                     ].map(([label, val]) => (
                       <div key={label} style={{ marginBottom: 6 }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: inst.color, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}: </span>
-                        <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{val}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: inst.color, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}: </span>
+                        <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{val}</span>
                       </div>
                     ))}
                   </div>
@@ -232,11 +232,11 @@ export function CourseEvalView() {
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color, flexShrink: 0, marginTop: 5 }} />
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 3 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: p.color }}>{p.phase}</span>
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{p.timing}</span>
+                      <span style={{ fontSize: 13.5, fontWeight: 700, color: p.color }}>{p.phase}</span>
+                      <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{p.timing}</span>
                     </div>
-                    <div style={{ fontSize: 13, color: 'var(--text-primary)', marginBottom: 2 }}>{p.activity}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{p.who}</div>
+                    <div style={{ fontSize: 14.5, color: 'var(--text-primary)', marginBottom: 2 }}>{p.activity}</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{p.who}</div>
                   </div>
                 </div>
               ))}
@@ -256,9 +256,9 @@ export function CourseEvalView() {
                 { section: 'Setup and customization requirements', items: ['Define recipients (students + which faculty/staff)', 'Define review objects (course + each instructor)', 'Add guest lecturers not in system by name', 'Build survey structure and questions', 'Set timeline (open date, deadline, auto-reminders)', 'Configure result access (who sees what)'] },
               ].map((sec, i) => (
                 <div key={i} style={{ padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{sec.section}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{sec.section}</div>
                   {sec.items.map((item, j) => (
-                    <div key={j} style={{ display: 'flex', gap: 8, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>
+                    <div key={j} style={{ display: 'flex', gap: 8, fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 3 }}>
                       <span style={{ color: 'var(--brand)', flexShrink: 0 }}>•</span>{item}
                     </div>
                   ))}
@@ -275,8 +275,8 @@ export function CourseEvalView() {
                 { label: 'Longitudinal comparison', desc: 'Multi-term tracking shows whether scores are improving or declining. Not present in either sample — a gap vs what Blue/Watermark offer.' },
               ].map((row, i) => (
                 <div key={i} style={{ padding: '8px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>{row.label}: </span>
-                  <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{row.desc}</span>
+                  <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-primary)' }}>{row.label}: </span>
+                  <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{row.desc}</span>
                 </div>
               ))}
             </Card>
@@ -297,12 +297,12 @@ export function CourseEvalView() {
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
                   <div style={{ width: 40, height: 40, borderRadius: 12, background: `${s.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>{s.icon}</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: s.color, marginBottom: 10 }}>{s.role}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: s.color, marginBottom: 10 }}>{s.role}</div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                       {[['Purpose', s.purpose], ['Impact', s.impact], ['How they use it', s.use], ['What they see', s.sees]].map(([label, val]) => (
                         <div key={label}>
-                          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: s.color, marginBottom: 3 }}>{label}</div>
-                          <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{val}</p>
+                          <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: s.color, marginBottom: 3 }}>{label}</div>
+                          <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{val}</p>
                         </div>
                       ))}
                     </div>
@@ -321,22 +321,22 @@ export function CourseEvalView() {
               const items = DESIGN_GAPS.filter(g => g.severity === sev);
               return (
                 <div key={sev}>
-                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', marginBottom: 8 }}>{sev} ({items.length})</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', marginBottom: 8 }}>{sev} ({items.length})</div>
                   {items.map((gap, i) => (
                     <Card key={i}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                         <div style={{ width: 8, height: 8, borderRadius: '50%', background: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', flexShrink: 0, marginTop: 4 }} />
                         <div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{gap.area}</div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{gap.area}</div>
                           <div style={{ marginBottom: 4 }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#EF4444' }}>Why: </span>
-                            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{gap.why}</span>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444' }}>Why: </span>
+                            <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{gap.why}</span>
                           </div>
                           <div style={{ marginBottom: 4 }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#10B981' }}>Fix: </span>
-                            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{gap.fix}</span>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: '#10B981' }}>Fix: </span>
+                            <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{gap.fix}</span>
                           </div>
-                          <div style={{ fontSize: 11, color: 'var(--text-muted)', fontStyle: 'italic' }}>Source: {gap.src}</div>
+                          <div style={{ fontSize: 13, color: 'var(--text-muted)', fontStyle: 'italic' }}>Source: {gap.src}</div>
                         </div>
                       </div>
                     </Card>
@@ -362,21 +362,21 @@ export function CourseEvalView() {
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: i === 4 ? 'var(--brand)' : 'var(--text-primary)' }}>{comp.name}</span>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: i === 4 ? 'var(--brand)' : 'var(--text-primary)' }}>{comp.name}</span>
                       {i === 4 && <Badge variant="error">Our target</Badge>}
-                      <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 'auto' }}>Score: {comp.score}/5</span>
+                      <span style={{ fontSize: 13.5, color: 'var(--text-muted)', marginLeft: 'auto' }}>Score: {comp.score}/5</span>
                     </div>
                     <div style={{ marginBottom: 4 }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#10B981' }}>✓ </span>
-                      <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{comp.strength}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#10B981' }}>✓ </span>
+                      <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{comp.strength}</span>
                     </div>
                     <div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#EF4444' }}>✗ </span>
-                      <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{comp.weakness}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444' }}>✗ </span>
+                      <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{comp.weakness}</span>
                     </div>
                   </div>
                   <div style={{ width: 48, height: 48, borderRadius: '50%', background: `${i === 4 ? 'var(--brand)' : '#94A3B8'}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontSize: 16, fontWeight: 800, color: i === 4 ? 'var(--brand)' : '#94A3B8' }}>{comp.score}</span>
+                    <span style={{ fontSize: 16.5, fontWeight: 800, color: i === 4 ? 'var(--brand)' : '#94A3B8' }}>{comp.score}</span>
                   </div>
                 </div>
               </Card>
@@ -396,8 +396,8 @@ export function CourseEvalView() {
                   ['P0 blockers', OPEN_QUESTIONS.filter(q => q.priority === 'P0').length, '#b45309'],
                 ].map(([label, count, color]) => (
                   <div key={String(label)} style={{ padding: '8px 14px', borderRadius: 8, background: `${color}12`, border: `1px solid ${color}25` }}>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: String(color) }}>{String(count)}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{String(label)}</div>
+                    <div style={{ fontSize: 18.5, fontWeight: 800, color: String(color) }}>{String(count)}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{String(label)}</div>
                   </div>
                 ))}
               </div>
@@ -406,17 +406,17 @@ export function CourseEvalView() {
               {OPEN_QUESTIONS.map((q, i) => (
                 <div key={i} style={{ padding: '12px 14px', borderRadius: 8, background: 'var(--surface-primary)', border: `1px solid ${q.answered ? 'var(--border)' : '#dc262640'}` }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, flexShrink: 0, marginTop: 2, padding: '2px 6px', borderRadius: 4, background: q.priority === 'P0' ? '#dc262615' : q.priority === 'P1' ? '#b4530915' : '#94a3b815', color: q.priority === 'P0' ? '#dc2626' : q.priority === 'P1' ? '#b45309' : '#94a3b8' }}>{q.priority}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, flexShrink: 0, marginTop: 2, padding: '2px 6px', borderRadius: 4, background: q.priority === 'P0' ? '#dc262615' : q.priority === 'P1' ? '#b4530915' : '#94a3b815', color: q.priority === 'P0' ? '#dc2626' : q.priority === 'P1' ? '#b45309' : '#94a3b8' }}>{q.priority}</span>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)', margin: '0 0 6px', lineHeight: 1.5 }}>{q.q}</p>
+                      <p style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--text)', margin: '0 0 6px', lineHeight: 1.5 }}>{q.q}</p>
                       {q.answered ? (
-                        <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.55, padding: '8px 10px', borderRadius: 6, background: 'rgba(22,163,74,0.06)', borderLeft: '2px solid #16a34a' }}>
-                          <span style={{ fontSize: 9, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 3 }}>Answered · {q.source}</span>
+                        <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.55, padding: '8px 10px', borderRadius: 6, background: 'rgba(22,163,74,0.06)', borderLeft: '2px solid #16a34a' }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 3 }}>Answered · {q.source}</span>
                           {q.answer}
                         </div>
                       ) : (
-                        <div style={{ fontSize: 11, color: '#dc2626', padding: '6px 10px', borderRadius: 6, background: 'rgba(220,38,38,0.06)', borderLeft: '2px solid #dc2626' }}>
-                          <span style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 2 }}>Still open — needed before design</span>
+                        <div style={{ fontSize: 13, color: '#dc2626', padding: '6px 10px', borderRadius: 6, background: 'rgba(220,38,38,0.06)', borderLeft: '2px solid #dc2626' }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: 2 }}>Still open — needed before design</span>
                           {q.answer}
                         </div>
                       )}
@@ -442,13 +442,13 @@ export function CourseEvalView() {
 
             {/* Aarti verbatim */}
             <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid var(--brand)' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--brand)', marginBottom: 8 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--brand)', marginBottom: 8 }}>
                 Aarti · PRISM Day 3 · Mar 4, 2026 · session c7a8d32e
               </div>
-              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
+              <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
                 "Which courses are doing better? Which faculty are not doing better? How are my cohorts perceiving my curriculum, and what changes do I need to make? I want AI insights embedded in the dashboard — not a button I click to get AI insights. If I see a button that says click here to get AI insights, I am done."
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+              <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
                 This single statement defines the entire course evaluation north star. The product is not a form tool with a reporting tab. It is a <strong>program quality intelligence dashboard</strong> where the leadership questions are answered before the director clicks anything.
               </div>
             </div>
@@ -462,24 +462,24 @@ export function CourseEvalView() {
               ].map((v, i) => (
                 <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)', background: 'var(--bg2)' }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{v.title}</div>
-                    <div style={{ fontSize: 11, color: 'var(--brand)', marginTop: 2, fontStyle: 'italic' }}>{v.question}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)' }}>{v.title}</div>
+                    <div style={{ fontSize: 13, color: 'var(--brand)', marginTop: 2, fontStyle: 'italic' }}>{v.question}</div>
                   </div>
                   <div style={{ padding: '12px 14px', flex: 1 }}>
-                    <p style={{ fontSize: 12, color: 'var(--text2)', margin: '0 0 10px', lineHeight: 1.6 }}>{v.content}</p>
+                    <p style={{ fontSize: 13.5, color: 'var(--text2)', margin: '0 0 10px', lineHeight: 1.6 }}>{v.content}</p>
                     <div style={{ padding: '8px 10px', borderRadius: 7, background: 'rgba(109,94,212,0.06)', border: '1px solid rgba(109,94,212,0.15)' }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--brand)', marginBottom: 2 }}>Aarti's framing</div>
-                      <div style={{ fontSize: 11, color: 'var(--text2)', fontStyle: 'italic' }}>{v.aarti}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', marginBottom: 2 }}>Aarti's framing</div>
+                      <div style={{ fontSize: 13, color: 'var(--text2)', fontStyle: 'italic' }}>{v.aarti}</div>
                     </div>
                   </div>
-                  <div style={{ padding: '6px 14px', borderTop: '1px solid var(--border)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{v.source}</div>
+                  <div style={{ padding: '6px 14px', borderTop: '1px solid var(--border)', fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{v.source}</div>
                 </div>
               ))}
             </div>
 
             {/* Anti-patterns */}
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Anti-patterns to avoid — Aarti verbatim</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 14 }}>Anti-patterns to avoid — Aarti verbatim</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
                   { pattern: '"Click here to get AI insights" button', why: 'AI insights are embedded in the leaderboard layout itself. The leaderboard IS the insight. There is no separate AI panel.', source: 'c7a8d32e PRISM Day 3' },
@@ -488,11 +488,11 @@ export function CourseEvalView() {
                   { pattern: 'Collecting data without connecting it to decisions', why: 'Qualtrics and SurveyMonkey collect feedback too. Our differentiation is connecting evaluation data to curriculum changes, accreditation reports, and faculty development. Data without decision context has no moat.', source: 'c7a8d32e PRISM Day 3' },
                 ].map((ap, i) => (
                   <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 12px', borderRadius: 9, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.15)' }}>
-                    <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#dc2626', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✗</div>
+                    <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#dc2626', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✗</div>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>{ap.pattern}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{ap.why}</div>
-                      <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 4 }}>{ap.source}</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>{ap.pattern}</div>
+                      <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{ap.why}</div>
+                      <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 4 }}>{ap.source}</div>
                     </div>
                   </div>
                 ))}
@@ -501,8 +501,8 @@ export function CourseEvalView() {
 
             {/* D2L gaps to fill */}
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>D2L gaps that become Exxat opportunities</div>
-              <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>Source: D2L BrightSpace demo Mar 4 · session c7a8d32e</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>D2L gaps that become Exxat opportunities</div>
+              <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>Source: D2L BrightSpace demo Mar 4 · session c7a8d32e</div>
               {[
                 { gap: 'No in-document annotation feedback', opp: 'Allow faculty to annotate submitted PDFs directly — comments, highlights, ink markup — and publish to students. Standard expectation from Canvas/D2L. Missing from Exxat.' },
                 { gap: 'No publish/draft state for grades', opp: 'Faculty grade all students first, review, then publish at once. Currently grades appear live as faculty grade. All LMS have this. Exxat does not.' },
@@ -511,12 +511,12 @@ export function CourseEvalView() {
               ].map((r, i) => (
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, borderBottom: i < 3 ? '1px solid var(--border)' : 'none', padding: '10px 0' }}>
                   <div style={{ paddingRight: 14 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#dc2626', marginBottom: 2 }}>Gap</div>
-                    <div style={{ fontSize: 12, color: 'var(--text2)' }}>{r.gap}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#dc2626', marginBottom: 2 }}>Gap</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>{r.gap}</div>
                   </div>
                   <div style={{ paddingLeft: 14, borderLeft: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', marginBottom: 2 }}>Exxat opportunity</div>
-                    <div style={{ fontSize: 12, color: 'var(--text2)' }}>{r.opp}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 2 }}>Exxat opportunity</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>{r.opp}</div>
                   </div>
                 </div>
               ))}
@@ -528,8 +528,8 @@ export function CourseEvalView() {
         {tab === 'pce-arch' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Vishaka + Mohil + David - Mar 24, 2026 - session bde86866</div>
-              <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Vishaka + Mohil + David - Mar 24, 2026 - session bde86866</div>
+              <div style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.65 }}>
                 PCE is a special type of survey. Entry point must be the Survey section — not inside each course, not a standalone module. All feedback mechanisms in one place is the right UX for academia.
               </div>
             </div>
@@ -559,43 +559,43 @@ export function CourseEvalView() {
                 },
               ].map((col, i) => (
                 <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', borderLeft: '3px solid ' + col.color, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: col.color, marginBottom: 10 }}>{col.title}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: col.color, marginBottom: 10 }}>{col.title}</div>
                   {col.items.map((item, j) => (
                     <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
                       <span style={{ color: col.color, flexShrink: 0 }}>-</span>
-                      <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
+                      <span style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
                     </div>
                   ))}
                 </div>
               ))}
             </div>
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 18px' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Marquette pain point - David (Mar 24)</div>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Marquette pain point - David (Mar 24)</div>
               <div style={{ padding: '12px 14px', borderRadius: 9, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.15)', marginBottom: 10 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 4 }}>University-level questions forced on clinical courses</div>
-                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#dc2626', marginBottom: 4 }}>University-level questions forced on clinical courses</div>
+                <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
                   University set didactic-focused questions for all programs. Clinical placement students were forced to answer "Did this course expose you to diverse patient populations?" for classroom courses — forced artificially low ratings. This is a real pain point at programs where university mandates override clinical context.
                 </div>
               </div>
               <div style={{ padding: '10px 14px', borderRadius: 9, background: 'rgba(22,163,74,0.04)', border: '1px solid rgba(22,163,74,0.15)' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#16a34a', marginBottom: 3 }}>Solution</div>
-                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#16a34a', marginBottom: 3 }}>Solution</div>
+                <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
                   Phase 1: program directors create separate question sets for clinical vs didactic. Phase 2: tenant-level questions with program-level override capability.
                 </div>
               </div>
             </div>
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 18px' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Persona entry points</div>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Persona entry points</div>
               {[
                 { persona: 'Program Director / Admin', entry: 'Survey section → PCE tile → program-level analytics dashboard (course leaderboard, faculty leaderboard, cohort trend)', source: 'c7a8d32e + bde86866' },
                 { persona: 'Faculty', entry: 'Course page → view survey results for this course (after admin publishes) AND faculty dashboard → aggregate view across all courses they teach', source: 'bde86866' },
                 { persona: 'Student', entry: 'Receives survey at course end via email or LMS. Survey is configured per course by admin.', source: 'bde86866' },
               ].map((r, i) => (
                 <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#6d5ed4', width: 180, flexShrink: 0 }}>{r.persona}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#6d5ed4', width: 180, flexShrink: 0 }}>{r.persona}</div>
                   <div>
-                    <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{r.entry}</div>
-                    <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 3 }}>{r.source}</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{r.entry}</div>
+                    <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 3 }}>{r.source}</div>
                   </div>
                 </div>
               ))}
@@ -609,11 +609,11 @@ export function CourseEvalView() {
 
             {/* Session banner */}
             <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(237,100,80,0.06)', border: '1px solid rgba(237,100,80,0.3)', borderLeft: '4px solid #e8604a' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#e8604a', marginBottom: 4 }}>⚠ NEXT MILESTONE — Apr 10 Leadership Presentation (Vishaka · David · Aarti)</div>
-              <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#e8604a', marginBottom: 4 }}>⚠ NEXT MILESTONE — Apr 10 Leadership Presentation (Vishaka · David · Aarti)</div>
+              <div style={{ fontSize: 14.5, color: 'var(--text)', lineHeight: 1.65 }}>
                 Deliverables: (1) Draft journey visualizations — not a prototype. (2) Setup template creation workflow. (3) Distribution workflow for course-specific surveys. Design mockups using Exxat DS where possible. Requirement freeze = end of April. Engineering handoff = May 2026.
               </div>
-              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 8 }}>Sources: Monil — PCE Introduction · Mar 26 + Romit&lt;&gt;Monil PCE PRD · Mar 30, 2026</div>
+              <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 8 }}>Sources: Monil — PCE Introduction · Mar 26 + Romit&lt;&gt;Monil PCE PRD · Mar 30, 2026</div>
             </div>
 
             {/* Deadline strip */}
@@ -625,16 +625,16 @@ export function CourseEvalView() {
                 { label: 'Strategic value', value: 'Sales entry', sub: 'Non-Prism programs', color: '#0d9488' },
               ].map((m, i) => (
                 <div key={i} style={{ padding: '14px 16px', borderRadius: 10, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>{m.label}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>{m.label}</div>
                   <div style={{ fontSize: 24, fontWeight: 700, color: m.color, lineHeight: 1.1, marginBottom: 3 }}>{m.value}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text3)' }}>{m.sub}</div>
+                  <div style={{ fontSize: 13, color: 'var(--text3)' }}>{m.sub}</div>
                 </div>
               ))}
             </div>
 
             {/* 3-layer architecture */}
             <div style={{ borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)', padding: '18px 20px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>3-Layer Architecture — confirmed by Monil</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>3-Layer Architecture — confirmed by Monil</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 {[
                   {
@@ -677,15 +677,15 @@ export function CourseEvalView() {
                   },
                 ].map((layer, i) => (
                   <div key={i} style={{ display: 'flex', gap: 16, padding: '14px 16px', borderRadius: 10, background: 'white', border: '1px solid var(--border)', borderLeft: `3px solid ${layer.color}` }}>
-                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: layer.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, flexShrink: 0 }}>{layer.n}</div>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: layer.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, flexShrink: 0 }}>{layer.n}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: layer.color }}>{layer.label}</span>
-                        <span style={{ fontSize: 11, color: 'var(--text3)', background: 'var(--bg3)', padding: '2px 8px', borderRadius: 4 }}>{layer.who}</span>
+                        <span style={{ fontSize: 14.5, fontWeight: 700, color: layer.color }}>{layer.label}</span>
+                        <span style={{ fontSize: 13, color: 'var(--text3)', background: 'var(--bg3)', padding: '2px 8px', borderRadius: 4 }}>{layer.who}</span>
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
                         {layer.details.map((d, j) => (
-                          <div key={j} style={{ display: 'flex', gap: 6, fontSize: 12, color: 'var(--text2)', lineHeight: 1.4 }}>
+                          <div key={j} style={{ display: 'flex', gap: 6, fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.4 }}>
                             <span style={{ color: layer.color, flexShrink: 0, marginTop: 1 }}>›</span>
                             <span>{d}</span>
                           </div>
@@ -699,8 +699,8 @@ export function CourseEvalView() {
 
             {/* AI differentiation */}
             <div style={{ borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#6d5ed4', marginBottom: 4 }}>AI differentiation strategy — without explicit "AI-powered" branding</div>
-              <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 12, lineHeight: 1.6 }}>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: '#6d5ed4', marginBottom: 4 }}>AI differentiation strategy — without explicit "AI-powered" branding</div>
+              <div style={{ fontSize: 13.5, color: 'var(--text2)', marginBottom: 12, lineHeight: 1.6 }}>
                 Competitors (Explorance Blue, Watermark) only provide basic mathematical reporting — median, mode, mean. Exxat differentiates through integrated AI insights that surface automatically.
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -713,10 +713,10 @@ export function CourseEvalView() {
                   { feature: 'Faculty vs program average comparison', desc: 'Auto-benchmarks each faculty member against program average without manual calculation', icon: '≈' },
                 ].map((f, i) => (
                   <div key={i} style={{ display: 'flex', gap: 10, padding: '10px 12px', borderRadius: 8, background: 'white', border: '1px solid var(--border)' }}>
-                    <span style={{ fontSize: 18, flexShrink: 0 }}>{f.icon}</span>
+                    <span style={{ fontSize: 18.5, flexShrink: 0 }}>{f.icon}</span>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{f.feature}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text3)', lineHeight: 1.4 }}>{f.desc}</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{f.feature}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text3)', lineHeight: 1.4 }}>{f.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -725,7 +725,7 @@ export function CourseEvalView() {
 
             {/* Open questions from Monil */}
             <div style={{ borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)', padding: '16px 18px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Open questions — Monil session (Mar 26)</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Open questions — Monil session (Mar 26)</div>
               {[
                 { q: 'Who distributes surveys — program director, course coordinator, or admin?', priority: 'P0' },
                 { q: 'What is the user value hierarchy — what does each persona care about and why?', priority: 'P0' },
@@ -735,16 +735,16 @@ export function CourseEvalView() {
                 { q: 'Should future question bank integrate with exam management question banks?', priority: 'P2' },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < 5 ? '1px solid var(--border)' : 'none' }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: item.priority === 'P0' ? 'rgba(220,38,38,0.08)' : item.priority === 'P1' ? 'rgba(217,119,6,0.08)' : 'rgba(107,114,128,0.08)', color: item.priority === 'P0' ? '#dc2626' : item.priority === 'P1' ? '#d97706' : '#6b7280', flexShrink: 0, height: 'fit-content', marginTop: 1 }}>{item.priority}</span>
-                  <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item.q}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: item.priority === 'P0' ? 'rgba(220,38,38,0.08)' : item.priority === 'P1' ? 'rgba(217,119,6,0.08)' : 'rgba(107,114,128,0.08)', color: item.priority === 'P0' ? '#dc2626' : item.priority === 'P1' ? '#d97706' : '#6b7280', flexShrink: 0, height: 'fit-content', marginTop: 1 }}>{item.priority}</span>
+                  <span style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{item.q}</span>
                 </div>
               ))}
             </div>
 
             {/* Competitors to analyze */}
             <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(219,39,119,0.04)', border: '1px solid rgba(219,39,119,0.15)' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#db2777', marginBottom: 4 }}>Competitor walkthrough required (Monil directive)</div>
-              <div style={{ fontSize: 12, color: 'var(--text2)' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#db2777', marginBottom: 4 }}>Competitor walkthrough required (Monil directive)</div>
+              <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>
                 Before any Analytics layer design — complete walkthroughs of <strong>Watermark CES</strong> and <strong>Explorance Blue</strong> video demos.
                 Focus: how they handle YoY comparison, response rate monitoring, and AI/insight summaries (they don't have any — that's the gap).
               </div>

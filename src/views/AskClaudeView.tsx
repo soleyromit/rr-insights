@@ -91,13 +91,13 @@ function renderMarkdown(text: string): React.ReactNode[] {
     const line = lines[i];
 
     if (line.startsWith('## ')) {
-      nodes.push(<h2 key={i} style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', margin: '16px 0 6px', borderBottom: '1px solid var(--border)', paddingBottom: 4 }}>{line.slice(3)}</h2>);
+      nodes.push(<h2 key={i} style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', margin: '16px 0 6px', borderBottom: '1px solid var(--border)', paddingBottom: 4 }}>{line.slice(3)}</h2>);
     } else if (line.startsWith('### ')) {
-      nodes.push(<h3 key={i} style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', margin: '12px 0 4px' }}>{line.slice(4)}</h3>);
+      nodes.push(<h3 key={i} style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', margin: '12px 0 4px' }}>{line.slice(4)}</h3>);
     } else if (line.startsWith('> ')) {
       nodes.push(
         <blockquote key={i} style={{ margin: '8px 0', paddingLeft: 12, borderLeft: '3px solid var(--brand)', background: 'rgba(227,28,121,0.05)', borderRadius: '0 6px 6px 0', padding: '8px 12px' }}>
-          <span style={{ fontSize: 13, color: 'var(--text2)', fontStyle: 'italic' }}>{line.slice(2)}</span>
+          <span style={{ fontSize: 14.5, color: 'var(--text2)', fontStyle: 'italic' }}>{line.slice(2)}</span>
         </blockquote>
       );
     } else if (line.startsWith('- ') || line.startsWith('* ')) {
@@ -109,7 +109,7 @@ function renderMarkdown(text: string): React.ReactNode[] {
       nodes.push(
         <ul key={`ul-${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none' }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 8, fontSize: 13, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 3 }}>
+            <li key={j} style={{ display: 'flex', gap: 8, fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 3 }}>
               <span style={{ color: 'var(--brand)', flexShrink: 0, marginTop: 2 }}>•</span>
               <span dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--text)">$1</strong>') }} />
             </li>
@@ -126,7 +126,7 @@ function renderMarkdown(text: string): React.ReactNode[] {
       nodes.push(
         <ol key={`ol-${i}`} style={{ margin: '6px 0', paddingLeft: 0, listStyle: 'none' }}>
           {items.map((item, j) => (
-            <li key={j} style={{ display: 'flex', gap: 8, fontSize: 13, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 3 }}>
+            <li key={j} style={{ display: 'flex', gap: 8, fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.6, marginBottom: 3 }}>
               <span style={{ color: 'var(--brand)', flexShrink: 0, fontWeight: 700, fontFamily: 'monospace', minWidth: 16 }}>{j + 1}.</span>
               <span dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--text)">$1</strong>') }} />
             </li>
@@ -138,8 +138,8 @@ function renderMarkdown(text: string): React.ReactNode[] {
       nodes.push(<div key={i} style={{ height: 6 }} />);
     } else if (line.trim()) {
       nodes.push(
-        <p key={i} style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7, margin: '4px 0' }}
-          dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--text)">$1</strong>').replace(/`(.+?)`/g, '<code style="font-family:monospace;background:var(--surface3);padding:1px 4px;border-radius:3px;font-size:12px;color:var(--text)">$1</code>') }} />
+        <p key={i} style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.7, margin: '4px 0' }}
+          dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--text)">$1</strong>').replace(/`(.+?)`/g, '<code style="font-family:monospace;background:var(--surface3);padding:1px 4px;border-radius:3px;font-size: 13.5px;color:var(--text)">$1</code>') }} />
       );
     }
     i++;
@@ -224,7 +224,7 @@ export function AskClaudeView() {
               <Sparkles style={{ width: 18, height: 18, color: 'var(--brand)' }} />
               <h1 className="rr-serif" style={{ fontSize: 22, color: 'var(--text)', letterSpacing: '-0.02em' }}>Ask Claude</h1>
             </div>
-            <p style={{ fontSize: 13, color: 'var(--text3)', lineHeight: 1.5 }}>
+            <p style={{ fontSize: 14.5, color: 'var(--text3)', lineHeight: 1.5 }}>
               Ask anything about your research — stakeholder quotes, product gaps, competitive positioning, design decisions. Answers are grounded in your Granola sessions.
             </p>
           </div>
@@ -235,7 +235,7 @@ export function AskClaudeView() {
               onClick={() => setScopeOpen(o => !o)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px',
-                borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                borderRadius: 8, fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
                 background: `${currentScope.color}12`,
                 color: currentScope.color,
                 border: `1px solid ${currentScope.color}30`,
@@ -256,7 +256,7 @@ export function AskClaudeView() {
                   <button key={s.id} onClick={() => { setScope(s.id); setScopeOpen(false); }}
                     style={{
                       width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '9px 14px', fontSize: 13, cursor: 'pointer', textAlign: 'left',
+                      padding: '9px 14px', fontSize: 14.5, cursor: 'pointer', textAlign: 'left',
                       background: scope === s.id ? `${s.color}10` : 'transparent',
                       color: scope === s.id ? s.color : 'var(--text2)',
                       border: 'none', fontWeight: scope === s.id ? 600 : 400,
@@ -276,7 +276,7 @@ export function AskClaudeView() {
           <div style={{
             padding: '10px 16px', marginBottom: 12, borderRadius: 10,
             background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)',
-            fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6,
+            fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6,
           }}>
             <strong style={{ color: '#D97706' }}>Setup required for Ask Claude:</strong>
             {' '}Deploy to <strong>Cloudflare Pages</strong> and set{' '}
@@ -303,7 +303,7 @@ export function AskClaudeView() {
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--surface)'; }}
               >
                 <Sparkles style={{ width: 13, height: 13, color: 'var(--brand)', marginTop: 1, flexShrink: 0 }} />
-                <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{s.label}</span>
+                <span style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{s.label}</span>
               </button>
             ))}
           </div>
@@ -322,7 +322,7 @@ export function AskClaudeView() {
               width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
               background: msg.role === 'user' ? 'var(--brand)' : 'var(--surface)',
               border: msg.role === 'assistant' ? '1px solid var(--border)' : 'none',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700,
               color: msg.role === 'user' ? 'white' : 'var(--brand)',
             }}>
               {msg.role === 'user' ? 'R' : '✦'}
@@ -337,7 +337,7 @@ export function AskClaudeView() {
               padding: '12px 16px',
             }}>
               {msg.role === 'user'
-                ? <p style={{ fontSize: 13, color: 'white', margin: 0, lineHeight: 1.6 }}>{msg.content}</p>
+                ? <p style={{ fontSize: 14.5, color: 'white', margin: 0, lineHeight: 1.6 }}>{msg.content}</p>
                 : <div>{renderMarkdown(msg.content)}</div>}
             </div>
           </div>
@@ -345,7 +345,7 @@ export function AskClaudeView() {
 
         {loading && (
           <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-            <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: 'var(--brand)' }}>✦</div>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--surface)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--brand)' }}>✦</div>
             <div style={{ padding: '12px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px 14px 14px 14px' }}>
               <div style={{ display: 'flex', gap: 4, alignItems: 'center', height: 20 }}>
                 {[0, 1, 2].map(j => (
@@ -366,7 +366,7 @@ export function AskClaudeView() {
       <div style={{ padding: '12px 28px 20px', flexShrink: 0, borderTop: '1px solid var(--border)' }}>
         {messages.length > 0 && (
           <button onClick={() => setMessages([])}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--text3)', background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--text3)', background: 'none', border: 'none', cursor: 'pointer', marginBottom: 10, padding: 0 }}>
             <RotateCcw style={{ width: 11, height: 11 }} /> New conversation
           </button>
         )}
@@ -385,7 +385,7 @@ export function AskClaudeView() {
             rows={1}
             style={{
               flex: 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none',
-              fontSize: 13, color: 'var(--text)', lineHeight: 1.6,
+              fontSize: 14.5, color: 'var(--text)', lineHeight: 1.6,
               maxHeight: 120, overflowY: 'auto', fontFamily: 'inherit',
             }}
             onInput={e => {
@@ -407,7 +407,7 @@ export function AskClaudeView() {
             <Send style={{ width: 14, height: 14, color: 'white' }} />
           </button>
         </div>
-        <p style={{ fontSize: 11, color: 'var(--text3)', marginTop: 8, textAlign: 'center' }}>
+        <p style={{ fontSize: 13, color: 'var(--text3)', marginTop: 8, textAlign: 'center' }}>
           Powered by Claude Sonnet · Context: your Granola sessions + product knowledge base
         </p>
       </div>

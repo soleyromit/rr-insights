@@ -14,7 +14,7 @@ const TABS: { id: TabId; label: string; alert?: boolean }[] = [
 ];
 
 const ts = (tab: TabId, cur: TabId) => ({
-  padding: '10px 18px', fontSize: 13,
+  padding: '10px 18px', fontSize: 14.5,
   fontWeight: cur === tab ? 600 : 400,
   color: cur === tab ? 'var(--brand)' : 'var(--text-secondary)',
   borderBottom: `2px solid ${cur === tab ? 'var(--brand)' : 'transparent'}`,
@@ -268,7 +268,7 @@ export function ExamAdminAuditView() {
           <button key={t.id} onClick={() => setTab(t.id)} style={ts(t.id, tab)}>
             {t.label}
             {t.alert && criticalGaps > 0 && (
-              <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{criticalGaps}</span>
+              <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{criticalGaps}</span>
             )}
           </button>
         ))}
@@ -303,8 +303,8 @@ export function ExamAdminAuditView() {
                 <div key={i} style={{ display: 'flex', gap: 12, padding: '8px 0', borderBottom: i < 7 ? '1px solid var(--border)' : 'none' }}>
                   <span style={{ color: '#10B981', fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{s.item}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{s.why}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 2 }}>{s.item}</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{s.why}</div>
                   </div>
                 </div>
               ))}
@@ -320,9 +320,9 @@ export function ExamAdminAuditView() {
                 <div key={i} style={{ padding: '12px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <Badge variant="error">{item.priority}</Badge>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{item.title}</span>
+                    <span style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text-primary)' }}>{item.title}</span>
                   </div>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{item.desc}</p>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>{item.desc}</p>
                 </div>
               ))}
             </Card>
@@ -336,7 +336,7 @@ export function ExamAdminAuditView() {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {ROLES.map(r => (
                 <button key={r.id} onClick={() => setSelectedRole(r.id)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 10, fontSize: 12, fontWeight: 600, cursor: 'pointer', background: selectedRole === r.id ? `${r.color}15` : 'var(--surface-primary)', color: selectedRole === r.id ? r.color : 'var(--text-secondary)', border: `1px solid ${selectedRole === r.id ? `${r.color}40` : 'var(--border)'}` }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 10, fontSize: 13.5, fontWeight: 600, cursor: 'pointer', background: selectedRole === r.id ? `${r.color}15` : 'var(--surface-primary)', color: selectedRole === r.id ? r.color : 'var(--text-secondary)', border: `1px solid ${selectedRole === r.id ? `${r.color}40` : 'var(--border)'}` }}>
                   <span>{r.icon}</span>{r.label}
                 </button>
               ))}
@@ -346,29 +346,29 @@ export function ExamAdminAuditView() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                 <span style={{ fontSize: 24 }}>{currentRole.icon}</span>
                 <div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: currentRole.color }}>{currentRole.label}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{currentRole.frequency}</div>
+                  <div style={{ fontSize: 16.5, fontWeight: 700, color: currentRole.color }}>{currentRole.label}</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text-muted)' }}>{currentRole.frequency}</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
                 <div style={{ padding: '12px 14px', borderRadius: 10, background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 6 }}>Mental model</div>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{currentRole.mentalModel}</p>
+                  <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 6 }}>Mental model</div>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>{currentRole.mentalModel}</p>
                 </div>
                 <div style={{ padding: '12px 14px', borderRadius: 10, background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 6 }}>Key questions on open</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 6 }}>Key questions on open</div>
                   {currentRole.keyQuestions.map((q, i) => (
-                    <div key={i} style={{ display: 'flex', gap: 6, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 3 }}>
+                    <div key={i} style={{ display: 'flex', gap: 6, fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 3 }}>
                       <span style={{ color: currentRole.color, flexShrink: 0 }}>?</span>{q}
                     </div>
                   ))}
                 </div>
               </div>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 10 }}>Frustrations</div>
+              <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 10 }}>Frustrations</div>
               {currentRole.topFrustrations.map((f, i) => (
                 <div key={i} style={{ display: 'flex', gap: 8, padding: '6px 0', borderBottom: i < currentRole.topFrustrations.length - 1 ? '1px solid var(--border)' : 'none' }}>
                   <span style={{ color: '#EF4444', flexShrink: 0 }}>×</span>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>{f}</p>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>{f}</p>
                 </div>
               ))}
             </Card>
@@ -377,14 +377,14 @@ export function ExamAdminAuditView() {
               <CardTitle sub={`Step-by-step journey for ${currentRole.label}`}>Journey map</CardTitle>
               {currentRole.journey.map((step, i) => (
                 <div key={i} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: i < currentRole.journey.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: step.pain.includes('NOT') || step.pain.includes('not designed') ? '#EF4444' : step.pain.includes('Works') ? '#10B981' : '#F59E0B', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: step.pain.includes('NOT') || step.pain.includes('not designed') ? '#EF4444' : step.pain.includes('Works') ? '#10B981' : '#F59E0B', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 3 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: currentRole.color }}>{step.step}</span>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{step.action}</span>
+                      <span style={{ fontSize: 13.5, fontWeight: 700, color: currentRole.color }}>{step.step}</span>
+                      <span style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)' }}>{step.action}</span>
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 3 }}>Screen: {step.screen}</div>
-                    <div style={{ fontSize: 12, color: step.pain.includes('NOT') || step.pain.includes('not designed') ? '#EF4444' : step.pain.includes('Works') ? '#10B981' : '#D97706', fontStyle: 'italic' }}>{step.pain}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 3 }}>Screen: {step.screen}</div>
+                    <div style={{ fontSize: 13.5, color: step.pain.includes('NOT') || step.pain.includes('not designed') ? '#EF4444' : step.pain.includes('Works') ? '#10B981' : '#D97706', fontStyle: 'italic' }}>{step.pain}</div>
                   </div>
                 </div>
               ))}
@@ -404,13 +404,13 @@ export function ExamAdminAuditView() {
                   {stories.map((s, i) => (
                     <div key={s.id} style={{ padding: '10px 0', borderBottom: i < stories.length - 1 ? '1px solid var(--border)' : 'none', opacity: s.built ? 0.7 : 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        <span style={{ fontSize: 10, fontFamily: 'monospace', fontWeight: 700, color: s.type === 'AI' ? '#D97706' : s.type === 'Interaction' ? '#059669' : s.type === 'Functional' ? '#0891B2' : 'var(--brand)', background: s.type === 'AI' ? 'rgba(217,119,6,0.1)' : s.type === 'Interaction' ? 'rgba(5,150,105,0.1)' : s.type === 'Functional' ? 'rgba(8,145,178,0.1)' : 'rgba(227,28,121,0.1)', padding: '1px 5px', borderRadius: 4 }}>{s.id}</span>
+                        <span style={{ fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: s.type === 'AI' ? '#D97706' : s.type === 'Interaction' ? '#059669' : s.type === 'Functional' ? '#0891B2' : 'var(--brand)', background: s.type === 'AI' ? 'rgba(217,119,6,0.1)' : s.type === 'Interaction' ? 'rgba(5,150,105,0.1)' : s.type === 'Functional' ? 'rgba(8,145,178,0.1)' : 'rgba(227,28,121,0.1)', padding: '1px 5px', borderRadius: 4 }}>{s.id}</span>
                         <Badge variant={s.priority === 'P0' ? 'error' : s.priority === 'P1' ? 'warning' : 'info'}>{s.priority}</Badge>
-                        <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{s.type} · {s.role}</span>
-                        {s.built && <span style={{ fontSize: 9, fontWeight: 700, color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '1px 5px', borderRadius: 4 }}>BUILT</span>}
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.type} · {s.role}</span>
+                        {s.built && <span style={{ fontSize: 12, fontWeight: 700, color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '1px 5px', borderRadius: 4 }}>BUILT</span>}
                       </div>
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 3px', lineHeight: 1.6 }}>{s.story}</p>
-                      <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0, fontStyle: 'italic' }}>{s.src}</p>
+                      <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 3px', lineHeight: 1.6 }}>{s.story}</p>
+                      <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, fontStyle: 'italic' }}>{s.src}</p>
                     </div>
                   ))}
                 </Card>
@@ -428,23 +428,23 @@ export function ExamAdminAuditView() {
               if (!items.length) return null;
               return (
                 <div key={sev}>
-                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : 'var(--text-muted)', marginBottom: 8 }}>{sev} ({items.length})</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : 'var(--text-muted)', marginBottom: 8 }}>{sev} ({items.length})</div>
                   {items.map((gap, i) => (
                     <Card key={i}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                         <div style={{ width: 8, height: 8, borderRadius: '50%', background: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', flexShrink: 0, marginTop: 5 }} />
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{gap.area}</span>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{gap.area}</span>
                             <Badge variant="default">{gap.effort} effort</Badge>
                           </div>
                           <div style={{ marginBottom: 6 }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#EF4444', marginRight: 6 }}>Why this hurts:</span>
-                            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{gap.why}</span>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444', marginRight: 6 }}>Why this hurts:</span>
+                            <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{gap.why}</span>
                           </div>
                           <div>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: '#10B981', marginRight: 6 }}>Fix:</span>
-                            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{gap.fix}</span>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: '#10B981', marginRight: 6 }}>Fix:</span>
+                            <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{gap.fix}</span>
                           </div>
                         </div>
                       </div>
@@ -463,13 +463,13 @@ export function ExamAdminAuditView() {
             {UX_STANDARDS.map((std, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{ fontSize: 18, flexShrink: 0 }}>{std.status === 'Missing' ? '❌' : std.status === 'Partial' ? '⚠️' : std.status === 'Review needed' ? '🔍' : '✅'}</span>
+                  <span style={{ fontSize: 18.5, flexShrink: 0 }}>{std.status === 'Missing' ? '❌' : std.status === 'Partial' ? '⚠️' : std.status === 'Review needed' ? '🔍' : '✅'}</span>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{std.standard}</span>
+                      <span style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text-primary)' }}>{std.standard}</span>
                       <Badge variant={std.status === 'Missing' ? 'error' : std.status === 'Partial' ? 'warning' : 'default'}>{std.status}</Badge>
                     </div>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{std.detail}</p>
+                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{std.detail}</p>
                   </div>
                 </div>
               </Card>
@@ -484,19 +484,19 @@ export function ExamAdminAuditView() {
             <Card>
               <CardTitle sub="Arun 3-year vision — the AI design principle">Non-negotiable constraint</CardTitle>
               <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(217,119,6,0.06)', border: '1px solid rgba(217,119,6,0.2)' }}>
-                <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px' }}>"Everywhere it helps, never in the way"</p>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>AI should be present throughout faculty/admin workflows but users must be able to do everything manually at any time. AI should augment and accelerate, not block or force a new path. Core AI success metric: "How much faculty time did we save?"</p>
+                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 6px' }}>"Everywhere it helps, never in the way"</p>
+                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>AI should be present throughout faculty/admin workflows but users must be able to do everything manually at any time. AI should augment and accelerate, not block or force a new path. Core AI success metric: "How much faculty time did we save?"</p>
               </div>
             </Card>
             {ALL_STORIES.filter(s => s.type === 'AI').map((s, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                  <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: '#D97706', background: 'rgba(217,119,6,0.1)', padding: '2px 6px', borderRadius: 4 }}>{s.id}</span>
+                  <span style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: '#D97706', background: 'rgba(217,119,6,0.1)', padding: '2px 6px', borderRadius: 4 }}>{s.id}</span>
                   <Badge variant={s.priority === 'P1' ? 'warning' : 'info'}>{s.priority}</Badge>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Role: {s.role}</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Role: {s.role}</span>
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 6px', lineHeight: 1.6 }}>{s.story}</p>
-                <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0, fontStyle: 'italic' }}>{s.src}</p>
+                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 6px', lineHeight: 1.6 }}>{s.story}</p>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, fontStyle: 'italic' }}>{s.src}</p>
               </Card>
             ))}
             <Card>
@@ -510,16 +510,16 @@ export function ExamAdminAuditView() {
               ].map((row, i) => (
                 <div key={i} style={{ padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#D97706', background: 'rgba(217,119,6,0.1)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>WHERE</span>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>{row.where}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#D97706', background: 'rgba(217,119,6,0.1)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>WHERE</span>
+                    <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{row.where}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 4 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#0891B2', background: 'rgba(8,145,178,0.1)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>WHAT</span>
-                    <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{row.what}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#0891B2', background: 'rgba(8,145,178,0.1)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>WHAT</span>
+                    <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{row.what}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginTop: 4 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: '#059669', background: 'rgba(5,150,105,0.1)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>WHEN</span>
-                    <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{row.when}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#059669', background: 'rgba(5,150,105,0.1)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>WHEN</span>
+                    <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{row.when}</span>
                   </div>
                 </div>
               ))}

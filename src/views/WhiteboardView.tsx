@@ -58,12 +58,12 @@ export function WhiteboardView({ onNav }) {
               style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px 18px', display: 'flex', flexDirection: 'column' }}>
               <div className="flex items-center gap-2" style={{ marginBottom: 2 }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: a.color, flexShrink: 0 }} />
-                <span className="rr-serif" style={{ fontSize: 16.5, color: 'var(--text)', lineHeight: 1.25 }}>{a.title}</span>
+                <span className="rr-serif" style={{ fontSize: 17, color: 'var(--text)', lineHeight: 1.25 }}>{a.title}</span>
               </div>
-              <span className="mono" style={{ fontSize: 9.5, color: 'var(--text2)', marginBottom: 10 }}>{a.source} · {CATEGORY_LABELS[a.category]}</span>
+              <span className="mono" style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 10 }}>{a.source} · {CATEGORY_LABELS[a.category]}</span>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, flex: 1 }}>
                 {items.map((it, i) => (
-                  <li key={i} className="flex items-start gap-2" style={{ padding: '4px 0', fontSize: 12, color: 'var(--text)', lineHeight: 1.45 }}>
+                  <li key={i} className="flex items-start gap-2" style={{ padding: '4px 0', fontSize: 13.5, color: 'var(--text)', lineHeight: 1.45 }}>
                     <span style={{ width: 4, height: 4, borderRadius: '50%', marginTop: 7, flexShrink: 0, background: 'var(--border2)' }} />
                     {it}
                   </li>
@@ -72,13 +72,13 @@ export function WhiteboardView({ onNav }) {
               <div className="flex items-center justify-between" style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bg3)' }}>
                 {a.items.length > 5 ? (
                   <button className="press mono" onClick={() => setExpanded(e => ({ ...e, [a.id]: !isOpen }))}
-                    aria-expanded={isOpen} style={{ fontSize: 10.5, color: 'var(--text2)', cursor: 'pointer' }}>
+                    aria-expanded={isOpen} style={{ fontSize: 12.5, color: 'var(--text2)', cursor: 'pointer' }}>
                     {isOpen ? 'show less' : `+${a.items.length - 5} more items`}
                   </button>
                 ) : <span />}
                 {became && (
                   <button className="press mono flex items-center gap-1" onClick={() => onNav?.(became.target)}
-                    style={{ fontSize: 10.5, color: 'var(--accent)', cursor: 'pointer' }}>
+                    style={{ fontSize: 12.5, color: 'var(--accent)', cursor: 'pointer' }}>
                     became {became.label} <ArrowRightIcon size={11} />
                   </button>
                 )}
@@ -93,7 +93,7 @@ export function WhiteboardView({ onNav }) {
 
 function chip(active) {
   return {
-    fontSize: 12, fontWeight: 500, padding: '5px 14px', borderRadius: 14, cursor: 'pointer',
+    fontSize: 13.5, fontWeight: 500, padding: '5px 14px', borderRadius: 14, cursor: 'pointer',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
     background: active ? 'var(--accent-bg)' : '#fff', color: active ? 'var(--accent)' : 'var(--text2)',
   };

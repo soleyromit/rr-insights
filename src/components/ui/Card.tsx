@@ -22,11 +22,11 @@ interface CardTitleProps {
 export function CardTitle({ children, sub }: CardTitleProps) {
   return (
     <div style={{ marginBottom: 14 }}>
-      <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--text)', lineHeight: 1.3, marginBottom: sub ? 4 : 0 }}>
+      <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text)', lineHeight: 1.3, marginBottom: sub ? 4 : 0 }}>
         {children}
       </h3>
       {sub && (
-        <p style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.4 }}>{sub}</p>
+        <p style={{ fontSize: 13.5, color: 'var(--text3)', lineHeight: 1.4 }}>{sub}</p>
       )}
     </div>
   );
@@ -50,7 +50,7 @@ export function MetricCard({ label, value, delta, deltaVariant, deltaPositive, a
       <div className="eyebrow" style={{ marginBottom: 8 }}>{label}</div>
       <div className="metric-value" style={{ color: accent || 'var(--text)' }}>{value}</div>
       {delta && (
-        <div style={{ fontSize: 12, color: deltaColor, marginTop: 6, lineHeight: 1.3 }}>{delta}</div>
+        <div style={{ fontSize: 13.5, color: deltaColor, marginTop: 6, lineHeight: 1.3 }}>{delta}</div>
       )}
     </div>
   );

@@ -77,7 +77,7 @@ const bankGrowthData = [
   { month: 'Feb', total: 1780, approved: 1480 },
   { month: 'Mar', total: 1847, approved: 1530 },
 ];
-const CS = { fontSize: 10, fill: '#5c5a57' };
+const CS = { fontSize: 12, fill: '#5c5a57' };
 
 function FB({ title, desc, v }: { title: string; desc: string; v: string }) {
   const vs: Record<string, string> = {
@@ -91,16 +91,16 @@ function FB({ title, desc, v }: { title: string; desc: string; v: string }) {
   };
   return (
     <div className={`p-3 rounded-lg border ${vs[v] ?? vs.accent}`}>
-      <div className="text-[13px] font-semibold mb-1">{title}</div>
-      <div className="text-[13px] text-[var(--text3)] leading-[1.45]">{desc}</div>
+      <div className="text-[14.5px] font-semibold mb-1">{title}</div>
+      <div className="text-[14.5px] text-[var(--text3)] leading-[1.45]">{desc}</div>
     </div>
   );
 }
 
 function BPRow({ lane, cells, isGap }: { lane: string; cells: string[]; isGap?: boolean }) {
   return (
-    <div className="flex text-[13px] border-b border-[var(--border)] last:border-0">
-      <div className="w-[110px] min-w-[110px] px-2 py-2 bg-[var(--bg3)] text-[9px] uppercase tracking-[0.05em] font-medium text-[var(--text3)] border-r border-[var(--border)] flex-shrink-0">{lane}</div>
+    <div className="flex text-[14.5px] border-b border-[var(--border)] last:border-0">
+      <div className="w-[110px] min-w-[110px] px-2 py-2 bg-[var(--bg3)] text-[12px] uppercase tracking-[0.05em] font-medium text-[var(--text3)] border-r border-[var(--border)] flex-shrink-0">{lane}</div>
       {cells.map((c, i) => (
         <div key={i} className={`flex-1 px-2 py-2 border-r border-[var(--border)] last:border-0 leading-[1.4] ${isGap ? 'text-[#e8604a]' : 'text-[var(--text2)]'}`}>{c}</div>
       ))}
@@ -123,12 +123,12 @@ function AR({ feature, adm, stu, wcag, p }: { feature: string; adm: string; stu:
   const col = { critical: 'text-[#e8604a]', high: 'text-[#f5a623]', new: 'text-[#2ec4a0]' };
   const lbl = { critical: 'CRITICAL', high: 'HIGH', new: 'NEW' };
   return (
-    <div className="grid grid-cols-[140px_1fr_1fr_80px_60px] gap-2 text-[13px] border-b border-[var(--border)] py-2.5 last:border-0">
+    <div className="grid grid-cols-[140px_1fr_1fr_80px_60px] gap-2 text-[14.5px] border-b border-[var(--border)] py-2.5 last:border-0">
       <div className="font-medium text-[var(--text)]">{feature}</div>
       <div className="text-[var(--text3)] leading-[1.4]">{adm}</div>
       <div className="text-[var(--text3)] leading-[1.4]">{stu}</div>
-      <div className="text-[var(--text3)] font-mono text-[9px]">{wcag}</div>
-      <div className={`font-semibold text-[9px] ${col[p]}`}>{lbl[p]}</div>
+      <div className="text-[var(--text3)] font-mono text-[12px]">{wcag}</div>
+      <div className={`font-semibold text-[12px] ${col[p]}`}>{lbl[p]}</div>
     </div>
   );
 }
@@ -140,8 +140,8 @@ function CR({ feature, es, bb, cv, d2l, ex }: { feature: string; es: string; bb:
     ? 'text-[#e8604a]'
     : 'text-[#f5a623]';
   return (
-    <div className="grid grid-cols-[130px_1fr_1fr_1fr_1fr_1fr] gap-1 text-[9px] border-b border-[var(--border)] py-2 last:border-0">
-      <div className="text-[var(--text2)] font-medium text-[13px]">{feature}</div>
+    <div className="grid grid-cols-[130px_1fr_1fr_1fr_1fr_1fr] gap-1 text-[12px] border-b border-[var(--border)] py-2 last:border-0">
+      <div className="text-[var(--text2)] font-medium text-[14.5px]">{feature}</div>
       <div className={`leading-[1.4] ${gc(es)}`}>{es}</div>
       <div className={`leading-[1.4] ${gc(bb)}`}>{bb}</div>
       <div className={`leading-[1.4] ${gc(cv)}`}>{cv}</div>
@@ -162,34 +162,34 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
       <div className="mx-5 mt-5 mb-0 bg-[var(--bg2)] border border-[var(--border)] rounded-xl p-4 flex items-start justify-between gap-5">
         <div className="flex-1">
           <h1 className="rr-serif text-[22px] text-[var(--text)] tracking-tight mb-1">{product.name}</h1>
-          <p className="text-[13px] text-[var(--text3)] leading-[1.55] max-w-xl">{product.description}</p>
+          <p className="text-[14.5px] text-[var(--text3)] leading-[1.55] max-w-xl">{product.description}</p>
           <div className="flex gap-1.5 mt-3 flex-wrap">
             {['Student', 'DCE / Faculty', 'Admin', 'Program Director'].map(p => (
               <Badge key={p} variant="persona">{p}</Badge>
             ))}
             <Badge variant="theme">CAAHEP · CAPTE · ARC-PA</Badge>
             <a href="https://project-precious-cranberry-828.magicpatterns.app" target="_blank" rel="noreferrer"
-              className="px-2 py-0.5 rounded text-[13px] font-medium border border-[rgba(219,39,119,0.4)] text-[#ec4899] hover:bg-[rgba(219,39,119,0.08)] transition-colors">
+              className="px-2 py-0.5 rounded text-[14.5px] font-medium border border-[rgba(219,39,119,0.4)] text-[#ec4899] hover:bg-[rgba(219,39,119,0.08)] transition-colors">
               University UI
             </a>
             <a href="https://project-student-exam-accessibility.magicpatterns.app" target="_blank" rel="noreferrer"
-              className="px-2 py-0.5 rounded text-[13px] font-medium border border-[rgba(46,196,160,0.4)] text-[#2ec4a0] hover:bg-[rgba(46,196,160,0.08)] transition-colors">
+              className="px-2 py-0.5 rounded text-[14.5px] font-medium border border-[rgba(46,196,160,0.4)] text-[#2ec4a0] hover:bg-[rgba(46,196,160,0.08)] transition-colors">
               Student UI
             </a>
           </div>
         </div>
         <div className="text-right flex-shrink-0">
           <div className="font-mono text-[22px] font-medium text-[var(--text)]">Jan 20</div>
-          <div className="text-[13px] text-[var(--text3)]">MVP Target</div>
-          <div className="font-mono text-[18px] font-medium text-[var(--coral)] mt-2">Sep 2026</div>
-          <div className="text-[13px] text-[var(--text3)]">Cohere conference</div>
+          <div className="text-[14.5px] text-[var(--text3)]">MVP Target</div>
+          <div className="font-mono text-[18.5px] font-medium text-[var(--coral)] mt-2">Sep 2026</div>
+          <div className="text-[14.5px] text-[var(--text3)]">Cohere conference</div>
         </div>
       </div>
 
       <div className="mx-5 mt-4 flex gap-1 border-b border-[var(--border)] overflow-x-auto">
         {TABS.map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)}
-            className={`px-3.5 py-2 text-[13px] border-b-2 transition-all -mb-px whitespace-nowrap
+            className={`px-3.5 py-2 text-[14.5px] border-b-2 transition-all -mb-px whitespace-nowrap
               ${activeTab === t.id ? 'text-[var(--accent)] border-[var(--accent)] font-medium' : 'text-[var(--text3)] border-transparent hover:text-[var(--text2)]'}`}>
             {t.label}
           </button>
@@ -263,7 +263,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
             </Card>
             <Card>
               <CardTitle sub="Every admin control must have a corresponding student-side experience">Admin to Student accessibility connection</CardTitle>
-              <div className="grid grid-cols-[140px_1fr_1fr_80px_60px] gap-2 text-[9px] font-semibold uppercase tracking-wider text-[var(--text3)] border-b border-[var(--border)] pb-2 mb-1">
+              <div className="grid grid-cols-[140px_1fr_1fr_80px_60px] gap-2 text-[12px] font-semibold uppercase tracking-wider text-[var(--text3)] border-b border-[var(--border)] pb-2 mb-1">
                 <div>Feature</div><div>Admin control</div><div>Student experience</div><div>WCAG</div><div>Priority</div>
               </div>
               <AR feature="Text magnification" adm="Toggle per exam, default zoom, per-student override" stu="Toolbar slider 100-400%, persists session" wcag="1.4.4" p="critical" />
@@ -325,17 +325,17 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                     return (
                       <div key={lane.label} style={{ display: 'flex', background: lane.bg, borderBottom: '1px solid var(--border)', alignItems: 'stretch', minHeight: 80 }}>
                         <div style={{ width: 110, minWidth: 110, padding: '12px 10px', display: 'flex', alignItems: 'center', borderRight: '1px solid var(--border)' }}>
-                          <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: lane.color }}>{lane.label}</span>
+                          <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: lane.color }}>{lane.label}</span>
                         </div>
                         <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '10px 16px', gap: 8 }}>
                           {laneFlows.map((step, si) => step.label ? (
                             <div key={si} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                               <div style={{ padding: '8px 12px', background: 'white', border: `1.5px solid ${step.color}30`, borderRadius: 8, minWidth: 120 }}>
-                                <div style={{ fontSize: 12, fontWeight: 600, color: step.color, marginBottom: 2 }}>{step.label}</div>
-                                <div style={{ fontSize: 11, color: 'var(--text3)', lineHeight: 1.3 }}>{step.sub}</div>
+                                <div style={{ fontSize: 13.5, fontWeight: 600, color: step.color, marginBottom: 2 }}>{step.label}</div>
+                                <div style={{ fontSize: 13, color: 'var(--text3)', lineHeight: 1.3 }}>{step.sub}</div>
                               </div>
                               {si < laneFlows.length - 1 && laneFlows[si+1].label && (
-                                <span style={{ color: 'var(--text3)', fontSize: 16 }}>→</span>
+                                <span style={{ color: 'var(--text3)', fontSize: 16.5 }}>→</span>
                               )}
                             </div>
                           ) : null)}
@@ -345,7 +345,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   })}
                   {/* Analytics feedback */}
                   <div style={{ padding: '10px 16px', background: 'rgba(109,94,212,0.04)', borderTop: '1px dashed var(--border2)' }}>
-                    <span style={{ fontSize: 11, color: 'var(--text3)', fontStyle: 'italic' }}>↻ Analytics feedback loop: psychometrics flag poor questions, update difficulty, inform next exam — this is the competitive moat against ExamSoft</span>
+                    <span style={{ fontSize: 13, color: 'var(--text3)', fontStyle: 'italic' }}>↻ Analytics feedback loop: psychometrics flag poor questions, update difficulty, inform next exam — this is the competitive moat against ExamSoft</span>
                   </div>
                 </div>
               </div>
@@ -368,8 +368,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                       {i < 4 && <div style={{ width: 1, height: 24, background: 'var(--border)', marginTop: 4 }} />}
                     </div>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: s.color, marginBottom: 2 }}>{s.state}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{s.desc}</div>
+                      <div style={{ fontSize: 14.5, fontWeight: 600, color: s.color, marginBottom: 2 }}>{s.state}</div>
+                      <div style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.5 }}>{s.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -387,14 +387,14 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 ].map((r) => (
                   <div key={r.role} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
                     <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${r.color}20`, border: `1.5px solid ${r.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: r.color }}>{r.initial}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: r.color }}>{r.initial}</span>
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 2 }}>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{r.role}</span>
-                        <span className="badge badge-theme" style={{ fontSize: 10 }}>{r.access}</span>
+                        <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)' }}>{r.role}</span>
+                        <span className="badge badge-theme" style={{ fontSize: 12 }}>{r.access}</span>
                       </div>
-                      <span style={{ fontSize: 12, color: 'var(--text3)' }}>{r.desc}</span>
+                      <span style={{ fontSize: 13.5, color: 'var(--text3)' }}>{r.desc}</span>
                     </div>
                   </div>
                 ))}
@@ -416,12 +416,12 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 ].map((step, i) => (
                   <div key={step.step} style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
                     <div style={{ padding: '14px 16px', background: `${step.color}08`, border: `1.5px solid ${step.color}25`, borderRadius: 10, minWidth: 130, flexShrink: 0 }}>
-                      <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: step.color, fontWeight: 700, marginBottom: 6 }}>STEP {step.step}</div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>{step.screen}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 6 }}>{step.action}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text3)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{step.detail}</div>
+                      <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: step.color, fontWeight: 700, marginBottom: 6 }}>STEP {step.step}</div>
+                      <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)', marginBottom: 4 }}>{step.screen}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 6 }}>{step.action}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.5, whiteSpace: 'pre-line' }}>{step.detail}</div>
                     </div>
-                    {i < 6 && <div style={{ color: 'var(--text3)', fontSize: 18, padding: '0 6px', flexShrink: 0 }}>→</div>}
+                    {i < 6 && <div style={{ color: 'var(--text3)', fontSize: 18.5, padding: '0 6px', flexShrink: 0 }}>→</div>}
                   </div>
                 ))}
               </div>
@@ -444,10 +444,10 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 ].map(qt => (
                   <div key={qt.type} style={{ padding: '12px 14px', background: `${qt.color}06`, border: `1px solid ${qt.color}20`, borderRadius: 'var(--radius)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: qt.color }}>{qt.type}</span>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: qt.priority === 'P1' ? '#0d9488' : '#d97706', fontFamily: 'JetBrains Mono, monospace' }}>{qt.priority}</span>
+                      <span style={{ fontSize: 14.5, fontWeight: 600, color: qt.color }}>{qt.type}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: qt.priority === 'P1' ? '#0d9488' : '#d97706', fontFamily: 'JetBrains Mono, monospace' }}>{qt.priority}</span>
                     </div>
-                    <p style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.55 }}>{qt.detail}</p>
+                    <p style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.55 }}>{qt.detail}</p>
                   </div>
                 ))}
               </div>
@@ -530,8 +530,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                       <XAxis dataKey="range" tick={CS} />
                       <YAxis tick={CS} />
-                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 10 }} />
-                      <Legend wrapperStyle={{ fontSize: 10, color: '#5c5a57' }} />
+                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontSize: 12, color: '#5c5a57' }} />
                       <Bar dataKey="cohort" fill="rgba(139,127,245,0.7)" radius={3} name="This cohort" />
                       <Bar dataKey="national" fill="rgba(46,196,160,0.45)" radius={3} name="National avg" />
                     </BarChart>
@@ -546,8 +546,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                       <XAxis dataKey="name" tick={CS} />
                       <YAxis domain={[60, 90]} tick={CS} />
-                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 10 }} />
-                      <Legend wrapperStyle={{ fontSize: 10, color: '#5c5a57' }} />
+                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                      <Legend wrapperStyle={{ fontSize: 12, color: '#5c5a57' }} />
                       <Line type="monotone" dataKey="cohort" stroke="#8b7ff5" dot={{ fill: '#8b7ff5', r: 3 }} name="Cohort avg" strokeWidth={2} />
                       <Line type="monotone" dataKey="benchmark" stroke="rgba(232,96,74,0.6)" strokeDasharray="4 3" dot={false} name="Benchmark 77%" strokeWidth={1.5} />
                     </LineChart>
@@ -564,7 +564,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                       <XAxis type="number" domain={[0, 1]} tick={CS} />
                       <YAxis dataKey="level" type="category" tick={CS} width={70} />
-                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 10 }} />
+                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
                       <Bar dataKey="pval" fill="rgba(139,127,245,0.6)" radius={3} name="Avg p-value" />
                     </BarChart>
                   </ResponsiveContainer>
@@ -576,10 +576,10 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   <ResponsiveContainer>
                     <RadarChart data={nccpaData}>
                       <PolarGrid stroke="rgba(255,255,255,0.06)" />
-                      <PolarAngleAxis dataKey="subject" tick={{ ...CS, fontSize: 9 }} />
+                      <PolarAngleAxis dataKey="subject" tick={{ ...CS, fontSize: 12 }} />
                       <Radar name="Student" dataKey="A" stroke="#8b7ff5" fill="rgba(139,127,245,0.15)" strokeWidth={2} />
                       <Radar name="Blueprint" dataKey="B" stroke="rgba(46,196,160,0.5)" fill="transparent" strokeDasharray="4 3" strokeWidth={1.5} />
-                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 10 }} />
+                      <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
                     </RadarChart>
                   </ResponsiveContainer>
                 </div>
@@ -593,8 +593,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                     <XAxis dataKey="month" tick={CS} />
                     <YAxis tick={CS} />
-                    <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 10 }} />
-                    <Legend wrapperStyle={{ fontSize: 10, color: '#5c5a57' }} />
+                    <Tooltip contentStyle={{ background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                    <Legend wrapperStyle={{ fontSize: 12, color: '#5c5a57' }} />
                     <Area type="monotone" dataKey="total" stroke="#2ec4a0" fill="rgba(46,196,160,0.1)" name="Total questions" strokeWidth={2} />
                     <Area type="monotone" dataKey="approved" stroke="#8b7ff5" fill="rgba(139,127,245,0.08)" name="Approved" strokeWidth={2} />
                   </AreaChart>
@@ -619,7 +619,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
             </div>
             <Card>
               <CardTitle sub="SKILL.md Section 13.7 -- every admin control maps to a student experience. Source: accessibility session Mar 16">Accessibility feature map</CardTitle>
-              <div className="grid grid-cols-[140px_1fr_1fr_80px_60px] gap-2 text-[9px] font-semibold uppercase tracking-wider text-[var(--text3)] border-b border-[var(--border)] pb-2 mb-1">
+              <div className="grid grid-cols-[140px_1fr_1fr_80px_60px] gap-2 text-[12px] font-semibold uppercase tracking-wider text-[var(--text3)] border-b border-[var(--border)] pb-2 mb-1">
                 <div>Feature</div><div>Admin control</div><div>Student experience</div><div>WCAG</div><div>Priority</div>
               </div>
               <AR feature="Text magnification" adm="Toggle per exam, default zoom level, per-student override" stu="Toolbar slider 100-400%, persists per session" wcag="1.4.4" p="critical" />
@@ -649,8 +649,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   { title: 'Preview as accommodation', desc: 'Preview as accommodation button opens modal: pick specific student or pick profile. Opens student exam view in new tab with full accommodation stack applied. Confidence-builder for faculty before April 17 demo. No competitor has this feature.' },
                 ].map(item => (
                   <div key={item.title} className="p-3 rounded-lg bg-[var(--bg3)] border border-[var(--border)]">
-                    <div className="text-[13px] font-semibold text-[var(--text)] mb-1">{item.title}</div>
-                    <div className="text-[13px] text-[var(--text3)] leading-[1.5]">{item.desc}</div>
+                    <div className="text-[14.5px] font-semibold text-[var(--text)] mb-1">{item.title}</div>
+                    <div className="text-[14.5px] text-[var(--text3)] leading-[1.5]">{item.desc}</div>
                   </div>
                 ))}
               </div>
@@ -668,7 +668,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
             <Card className="overflow-x-auto">
               <CardTitle sub="Yes = Exxat wins or matches, orange = partial, No = gap. Source: SKILL.md Section 13.8">Feature parity matrix -- 12 features across 5 platforms</CardTitle>
               <div style={{ minWidth: 750 }}>
-                <div className="grid grid-cols-[130px_1fr_1fr_1fr_1fr_1fr] gap-1 text-[9px] font-semibold uppercase tracking-wider text-[var(--text3)] border-b border-[var(--border)] pb-2 mb-1">
+                <div className="grid grid-cols-[130px_1fr_1fr_1fr_1fr_1fr] gap-1 text-[12px] font-semibold uppercase tracking-wider text-[var(--text3)] border-b border-[var(--border)] pb-2 mb-1">
                   <div>Feature</div><div>ExamSoft</div><div>Blackboard Ultra</div><div>Canvas</div><div>D2L</div><div className="text-[#2ec4a0]">Exxat target</div>
                 </div>
                 <CR feature="Extended time per student" es="Yes" bb="Per-attempt only" cv="Yes" d2l="Manual, no bulk" ex="Bulk + profile template" />
@@ -761,10 +761,10 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 <div key={i} style={{ padding: '12px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.who}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{item.who}</span>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
-                  <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
+                  <div style={{ fontSize: 13.5, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
                 </div>
               ))}
             </Card>
@@ -778,10 +778,10 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 <div key={i} style={{ padding: '12px 0', borderBottom: i < 2 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.who}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{item.who}</span>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
-                  <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
+                  <div style={{ fontSize: 13.5, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
                 </div>
               ))}
             </Card>
@@ -800,8 +800,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
-                  <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>{item.gap}</div>
+                  <div style={{ fontSize: 13.5, fontStyle: 'italic', color: 'var(--text-muted)', borderLeft: '2px solid var(--border)', paddingLeft: 8 }}>{item.quote}</div>
                 </div>
               ))}
             </Card>
@@ -818,9 +818,9 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <Badge variant={item.p === 'P0' ? 'error' : item.p === 'P1' ? 'warning' : 'info'}>{item.p}</Badge>
                     {item.built && <Badge variant="success">Built</Badge>}
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{item.src}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{item.src}</span>
                   </div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item.gap}</div>
+                  <div style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item.gap}</div>
                 </div>
               ))}
             </Card>
@@ -836,8 +836,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 'Role switcher: Dept Head, Faculty, Contributor, Reviewer, Outcome Director, Inst Admin. Built.',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 0', borderBottom: i < 7 ? '1px solid var(--border)' : 'none' }}>
-                  <span style={{ color: '#10B981', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>✓</span>
-                  <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{item}</span>
+                  <span style={{ color: '#10B981', fontWeight: 700, fontSize: 14.5, flexShrink: 0 }}>✓</span>
+                  <span style={{ fontSize: 14.5, color: 'var(--text-secondary)' }}>{item}</span>
                 </div>
               ))}
             </Card>
@@ -889,13 +889,13 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 {epic.stories.map((s, si) => (
                   <div key={s.id} style={{ padding: '12px 0', borderBottom: si < epic.stories.length - 1 ? '1px solid var(--border)' : 'none' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                      <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-soft)', padding: '2px 6px', borderRadius: 4 }}>{s.id}</span>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{s.title}</span>
+                      <span style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'var(--brand-soft)', padding: '2px 6px', borderRadius: 4 }}>{s.id}</span>
+                      <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text-primary)' }}>{s.title}</span>
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                    <div style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 4 }}>
                       <strong>As a</strong> {s.who}, <strong>I need to</strong> {s.what}, <strong>so that</strong> {s.why}.
                     </div>
-                    <div style={{ display: 'flex', gap: 12, fontSize: 11, color: 'var(--text-muted)' }}>
+                    <div style={{ display: 'flex', gap: 12, fontSize: 13, color: 'var(--text-muted)' }}>
                       <span>Source: {s.src}</span>
                       <span>MP: {s.mp}</span>
                     </div>
@@ -929,17 +929,17 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   { name: 'EOC (End of Curriculum)', raw: 387, nat: 392, sd: 25, z: -0.20 },
                 ].map((row, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: i < 6 ? '1px solid var(--border)' : 'none' }}>
-                    <span style={{ width: 180, fontSize: 13, color: 'var(--text-primary)', flexShrink: 0 }}>{row.name}</span>
+                    <span style={{ width: 180, fontSize: 14.5, color: 'var(--text-primary)', flexShrink: 0 }}>{row.name}</span>
                     <div style={{ flex: 1, height: 8, borderRadius: 4, background: 'var(--surface-secondary)', position: 'relative', overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, 50 + row.z * 20))}%`, background: row.z >= 0 ? '#10B981' : row.z >= -1 ? '#F59E0B' : '#EF4444', borderRadius: 4 }} />
                       <div style={{ position: 'absolute', left: '50%', top: 0, width: 2, height: '100%', background: '#3B82F6', opacity: 0.6 }} />
                     </div>
-                    <span style={{ width: 60, fontSize: 12, fontFamily: 'monospace', fontWeight: 700, color: row.z >= 0 ? '#10B981' : row.z >= -1 ? '#F59E0B' : '#EF4444', textAlign: 'right' }}>{row.z >= 0 ? '+' : ''}{row.z.toFixed(2)} z</span>
-                    <span style={{ width: 50, fontSize: 11, color: 'var(--text-muted)', textAlign: 'right' }}>{row.raw} raw</span>
+                    <span style={{ width: 60, fontSize: 13.5, fontFamily: 'monospace', fontWeight: 700, color: row.z >= 0 ? '#10B981' : row.z >= -1 ? '#F59E0B' : '#EF4444', textAlign: 'right' }}>{row.z >= 0 ? '+' : ''}{row.z.toFixed(2)} z</span>
+                    <span style={{ width: 50, fontSize: 13, color: 'var(--text-muted)', textAlign: 'right' }}>{row.raw} raw</span>
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: 12, fontSize: 11, color: 'var(--text-muted)', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+              <div style={{ marginTop: 12, fontSize: 13, color: 'var(--text-muted)', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                 Blue line = national mean. Green = above. Amber = within 1 SD. Red = below 1 SD. Formula: (student score − national mean) ÷ national SD. Source: Ed Razenbach, Feb 26.
               </div>
             </Card>
@@ -985,10 +985,10 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Story metric — not a KPI card */}
               <div style={{ padding: 20, borderRadius: 12, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.18)', borderLeft: '4px solid #dc2626' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
                   Why: this class is showing the same pattern that caused 2 remediation cases last year
                 </div>
-                <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic' }}>
+                <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic' }}>
                   Your class of {cohortSize} students is 3 points below last semester on Neurology — the exact
                   competency gap that drove remediation in 2024–25. Three students are already at risk.
                   The question heatmap shows Q18 flagged by 44% of students. That is a design signal, not a knowledge signal.
@@ -1000,22 +1000,22 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 {/* Score distribution histogram — scales to 1000+ via bin aggregation */}
                 <Card>
                   <CardTitle sub="Why: is this cohort's distribution shifting left vs national mean?">Score distribution — {cohortSize} students</CardTitle>
-                  <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 10 }}>
+                  <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 10 }}>
                     At 1000+ students, individual bars aggregate into percentile bands automatically.
                   </div>
                   <ResponsiveContainer width="100%" height={160}>
                     <BarChart data={scoreData} margin={{ left: -20, right: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                      <XAxis dataKey="range" tick={{ fontSize: 9, fill: 'var(--text3)' }} />
-                      <YAxis tick={{ fontSize: 9, fill: 'var(--text3)' }} />
-                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid var(--border)' }} />
+                      <XAxis dataKey="range" tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                      <YAxis tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                      <Tooltip contentStyle={{ fontSize: 13, borderRadius: 8, border: '1px solid var(--border)' }} />
                       <Bar dataKey="nat" fill="#94a3b8" name="National" radius={[2,2,0,0]} />
                       <Bar dataKey="cohort" fill="#6d5ed4" name="This class" radius={[2,2,0,0]} />
                     </BarChart>
                   </ResponsiveContainer>
                   <div style={{ display: 'flex', gap: 12, marginTop: 6 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#6d5ed4' }} /><span style={{ fontSize: 10, color: 'var(--text3)' }}>This class (μ=74%)</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#94a3b8' }} /><span style={{ fontSize: 10, color: 'var(--text3)' }}>National mean (μ=77%)</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#6d5ed4' }} /><span style={{ fontSize: 12, color: 'var(--text3)' }}>This class (μ=74%)</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}><div style={{ width: 10, height: 10, borderRadius: 2, background: '#94a3b8' }} /><span style={{ fontSize: 12, color: 'var(--text3)' }}>National mean (μ=77%)</span></div>
                   </div>
                 </Card>
 
@@ -1025,8 +1025,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   {compMap.map((c, i) => (
                     <div key={i} style={{ marginBottom: 8 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                        <span style={{ fontSize: 12, color: 'var(--text)' }}>{c.area}</span>
-                        <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: c.gap < -8 ? '#dc2626' : c.gap < 0 ? '#d97706' : '#16a34a' }}>
+                        <span style={{ fontSize: 13.5, color: 'var(--text)' }}>{c.area}</span>
+                        <span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: c.gap < -8 ? '#dc2626' : c.gap < 0 ? '#d97706' : '#16a34a' }}>
                           {c.gap > 0 ? '+' : ''}{c.gap}% vs nat.
                         </span>
                       </div>
@@ -1035,8 +1035,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                         <div style={{ flex: 100 - c.class, height: 6, background: 'var(--bg3)', borderRadius: '0 3px 3px 0' }} />
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 1 }}>
-                        <span style={{ fontSize: 10, color: 'var(--text3)' }}>{c.class}% class</span>
-                        <span style={{ fontSize: 10, color: 'var(--text3)' }}>{c.nat}% national</span>
+                        <span style={{ fontSize: 12, color: 'var(--text3)' }}>{c.class}% class</span>
+                        <span style={{ fontSize: 12, color: 'var(--text3)' }}>{c.nat}% national</span>
                       </div>
                     </div>
                   ))}
@@ -1048,18 +1048,18 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   <ResponsiveContainer width="100%" height={180}>
                     <BarChart data={bloomPerf} layout="vertical" margin={{ left: 60, right: 30 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                      <XAxis type="number" domain={[0, 1]} tick={{ fontSize: 9, fill: 'var(--text3)' }} tickFormatter={v => v.toFixed(1)} />
-                      <YAxis type="category" dataKey="level" tick={{ fontSize: 10, fill: 'var(--text3)' }} />
-                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} formatter={(v: number) => [v.toFixed(2), 'p-value']} />
+                      <XAxis type="number" domain={[0, 1]} tick={{ fontSize: 12, fill: 'var(--text3)' }} tickFormatter={v => v.toFixed(1)} />
+                      <YAxis type="category" dataKey="level" tick={{ fontSize: 12, fill: 'var(--text3)' }} />
+                      <Tooltip contentStyle={{ fontSize: 13, borderRadius: 8 }} formatter={(v: number) => [v.toFixed(2), 'p-value']} />
                       <Bar dataKey="pval" radius={[0,4,4,0]}
-                        label={{ position: 'right', fontSize: 9, fill: 'var(--text3)', formatter: (v: number) => v.toFixed(2) }}>
+                        label={{ position: 'right', fontSize: 12, fill: 'var(--text3)', formatter: (v: number) => v.toFixed(2) }}>
                         {bloomPerf.map((b, i) => (
                           <rect key={i} fill={b.pval < 0.65 ? '#e8604a' : '#0d9488'} />
                         ))}
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 6 }}>
+                  <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 6 }}>
                     Red = p-value below 0.65 threshold (too hard for current cohort). Review question quality, not curriculum.
                   </div>
                 </Card>
@@ -1067,34 +1067,34 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 {/* Watch-list — the story, not a table */}
                 <Card style={{ borderLeft: '4px solid #dc2626' }}>
                   <CardTitle sub="Why: These 3 students need intervention now — not after PANCE.">At-risk watch-list — auto-flagged by threshold (Touro model)</CardTitle>
-                  <div style={{ fontSize: 11, color: 'var(--text2)', marginBottom: 12, lineHeight: 1.5, fontStyle: 'italic', fontFamily: 'DM Serif Display, Georgia, serif' }}>
+                  <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 12, lineHeight: 1.5, fontStyle: 'italic', fontFamily: 'DM Serif Display, Georgia, serif' }}>
                     Mary (Touro): "Wouldn't it be nice if you saw a highlight on a student because they weren't meeting criteria?"
                   </div>
                   {watchListStudents.map((s, i) => (
                     <div key={i} style={{ padding: '10px 0', borderBottom: i < watchListStudents.length - 1 ? '1px solid var(--border)' : 'none' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
-                        <div style={{ width: 28, height: 28, borderRadius: '50%', background: s.risk === 'High' ? 'rgba(220,38,38,0.12)' : 'rgba(217,119,6,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: s.risk === 'High' ? '#dc2626' : '#d97706', flexShrink: 0 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: '50%', background: s.risk === 'High' ? 'rgba(220,38,38,0.12)' : 'rgba(217,119,6,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: s.risk === 'High' ? '#dc2626' : '#d97706', flexShrink: 0 }}>
                           {s.name.slice(0, 2)}
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{s.name}</span>
-                            <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 8, background: s.risk === 'High' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.1)', color: s.risk === 'High' ? '#dc2626' : '#d97706' }}>{s.risk} risk</span>
+                            <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)' }}>{s.name}</span>
+                            <span style={{ fontSize: 12, fontWeight: 700, padding: '1px 6px', borderRadius: 8, background: s.risk === 'High' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.1)', color: s.risk === 'High' ? '#dc2626' : '#d97706' }}>{s.risk} risk</span>
                           </div>
                           <div style={{ display: 'flex', gap: 4, marginTop: 3, flexWrap: 'wrap' }}>
                             {s.flags.map((f, fi) => (
-                              <span key={fi} style={{ fontSize: 10, padding: '1px 6px', borderRadius: 8, background: 'var(--bg3)', color: 'var(--text3)' }}>{f}</span>
+                              <span key={fi} style={{ fontSize: 12, padding: '1px 6px', borderRadius: 8, background: 'var(--bg3)', color: 'var(--text3)' }}>{f}</span>
                             ))}
                           </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: 16, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: s.pancePredictor < 70 ? '#dc2626' : '#d97706' }}>{s.pancePredictor}</div>
-                          <div style={{ fontSize: 9, color: 'var(--text3)' }}>PANCE predictor</div>
+                          <div style={{ fontSize: 16.5, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: s.pancePredictor < 70 ? '#dc2626' : '#d97706' }}>{s.pancePredictor}</div>
+                          <div style={{ fontSize: 12, color: 'var(--text3)' }}>PANCE predictor</div>
                         </div>
                       </div>
                     </div>
                   ))}
-                  <div style={{ marginTop: 10, fontSize: 10, color: 'var(--text3)', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+                  <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text3)', borderTop: '1px solid var(--border)', paddingTop: 8 }}>
                     Threshold criteria: GPA &lt;2.67, 2+ EOR failures, 2+ makeup exams, conditional academic standing.
                     Auto-flagged — no manual input required.
                   </div>
@@ -1102,7 +1102,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
               </div>
 
               {/* Scalability note */}
-              <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.15)', fontSize: 12, color: 'var(--text2)' }}>
+              <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.15)', fontSize: 13.5, color: 'var(--text2)' }}>
                 <span style={{ fontWeight: 700, color: '#6d5ed4' }}>Scalability protocol (SKILL.md Section 8.2):</span>{' '}
                 At 1000+ students, score distribution becomes aggregated histogram (not individual bars),
                 watch-list table virtualizes (react-window renders only visible rows),
@@ -1122,10 +1122,10 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
             {/* The story principle banner */}
             <div style={{ padding: 20, borderRadius: 12, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#6d5ed4', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#6d5ed4', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
                 Claude design principle: story over metrics
               </div>
-              <p style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.7, margin: 0 }}>
+              <p style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.7, margin: 0 }}>
                 Every dashboard in rr-insights tells a story, not just displays metrics.
                 The admin does not want KPI cards. They want to know <em>what is happening</em>,
                 <em> why it matters</em>, and <em>what to do next</em>. The metrics serve the story.
@@ -1134,71 +1134,71 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
             {/* Story 1: The exam before the exam */}
             <div style={{ padding: 20, borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Story 1 — three days before the exam</div>
-              <h3 style={{ fontSize: 18, color: 'var(--text)', margin: '0 0 8px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Story 1 — three days before the exam</div>
+              <h3 style={{ fontSize: 18.5, color: 'var(--text)', margin: '0 0 8px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
                 "Two questions are blocking 87 students from taking their exam in 3 days."
               </h3>
-              <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7, margin: '0 0 14px' }}>
+              <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.7, margin: '0 0 14px' }}>
                 The CV Pharmacology Midterm publishes April 17. As of today, Q3 and Q32 are missing alt text —
                 which means screen readers and TTS cannot interpret them for students with disabilities.
                 ADA Title II goes into law April 24. This exam must be accessible before it is delivered.
               </p>
               <div style={{ display: 'flex', gap: 10 }}>
                 <div style={{ flex: 1, padding: '10px 12px', borderRadius: 9, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>Q3 — Hotspot</div>
-                  <div style={{ fontSize: 12, color: 'var(--text2)' }}>Receptor binding site diagram. No alt text. Blocks publish.</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>Q3 — Hotspot</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>Receptor binding site diagram. No alt text. Blocks publish.</div>
                 </div>
                 <div style={{ flex: 1, padding: '10px 12px', borderRadius: 9, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>Q32 — EKG strip</div>
-                  <div style={{ fontSize: 12, color: 'var(--text2)' }}>Cardiac rhythm image. No alt text. Blocks publish.</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', marginBottom: 3 }}>Q32 — EKG strip</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text2)' }}>Cardiac rhythm image. No alt text. Blocks publish.</div>
                 </div>
                 <div style={{ padding: '10px 14px', borderRadius: 9, background: '#6d5ed4', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>Fix now →</span>
+                  <span style={{ fontSize: 13.5, fontWeight: 700, color: '#fff' }}>Fix now →</span>
                 </div>
               </div>
             </div>
 
             {/* Story 2: The week after the exam */}
             <div style={{ padding: 20, borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Story 2 — post-exam</div>
-              <h3 style={{ fontSize: 18, color: 'var(--text)', margin: '0 0 8px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Story 2 — post-exam</div>
+              <h3 style={{ fontSize: 18.5, color: 'var(--text)', margin: '0 0 8px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
                 "74% average. But that number is hiding a Neurology problem that goes back 2 years."
               </h3>
-              <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7, margin: '0 0 14px' }}>
+              <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.7, margin: '0 0 14px' }}>
                 The class passed. But Neurology questions had a class average 14 points below national mean.
                 This is the same gap from the 2024 cohort. In that cohort, 2 students needed remediation.
                 In this cohort, 3 students are already on the watch-list with declining PACRAT z-scores.
               </p>
               <div style={{ padding: '12px 14px', borderRadius: 9, background: 'rgba(217,119,6,0.06)', border: '1px solid rgba(217,119,6,0.2)', marginBottom: 12 }}>
-                <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text)', fontFamily: 'DM Serif Display, Georgia, serif', lineHeight: 1.5 }}>
+                <div style={{ fontSize: 13.5, fontStyle: 'italic', color: 'var(--text)', fontFamily: 'DM Serif Display, Georgia, serif', lineHeight: 1.5 }}>
                   "I give it the PACRAT results by topic and it generates personalised questions for each student.
                   Two students failed family medicine but each got a completely different question set from me."
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5 }}>Ed Razenbach · DCE, Touro PA program · Feb 26, 2026</div>
+                <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 5 }}>Ed Razenbach · DCE, Touro PA program · Feb 26, 2026</div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <div style={{ flex: 1, padding: '8px 12px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)', textAlign: 'center' }}>
                   <div style={{ fontSize: 20, fontWeight: 800, color: '#dc2626', fontFamily: 'JetBrains Mono, monospace' }}>−14%</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>Neurology vs national</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)' }}>Neurology vs national</div>
                 </div>
                 <div style={{ flex: 1, padding: '8px 12px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)', textAlign: 'center' }}>
                   <div style={{ fontSize: 20, fontWeight: 800, color: '#dc2626', fontFamily: 'JetBrains Mono, monospace' }}>3</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>students watch-listed</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)' }}>students watch-listed</div>
                 </div>
                 <div style={{ flex: 1, padding: '8px 12px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)', textAlign: 'center' }}>
                   <div style={{ fontSize: 20, fontWeight: 800, color: '#d97706', fontFamily: 'JetBrains Mono, monospace' }}>Q18</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>flagged by 44% of class</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)' }}>flagged by 44% of class</div>
                 </div>
               </div>
             </div>
 
             {/* Story 3: The faculty question */}
             <div style={{ padding: 20, borderRadius: 12, background: '#fff', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Story 3 — question quality</div>
-              <h3 style={{ fontSize: 18, color: 'var(--text)', margin: '0 0 8px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Story 3 — question quality</div>
+              <h3 style={{ fontSize: 18.5, color: 'var(--text)', margin: '0 0 8px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
                 "Q18 was flagged by almost half the class. That is a question problem, not a student problem."
               </h3>
-              <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7, margin: '0 0 14px' }}>
+              <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.7, margin: '0 0 14px' }}>
                 High flag rates during an exam indicate ambiguous wording or an incorrect answer key —
                 not a gap in student knowledge. Q18 has a point-biserial of −0.09:
                 weaker students got it right more often than stronger students.
@@ -1206,22 +1206,22 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
               </p>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#dc2626' }}>Point-biserial: −0.09</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>Negative = weaker students scored higher</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#dc2626' }}>Point-biserial: −0.09</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)' }}>Negative = weaker students scored higher</div>
                 </div>
                 <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#dc2626' }}>44% flagged during exam</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>≥20% flag rate = design signal</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#dc2626' }}>44% flagged during exam</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)' }}>≥20% flag rate = design signal</div>
                 </div>
                 <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.2)' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#dc2626' }}>Correct %: 44%</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>Upper 27%: 38% vs Lower 27%: 51%</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#dc2626' }}>Correct %: 44%</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)' }}>Upper 27%: 38% vs Lower 27%: 51%</div>
                 </div>
               </div>
             </div>
 
             {/* Design principle note */}
-            <div style={{ padding: '12px 16px', borderRadius: 10, background: 'var(--bg2)', border: '1px solid var(--border)', fontSize: 12, color: 'var(--text2)' }}>
+            <div style={{ padding: '12px 16px', borderRadius: 10, background: 'var(--bg2)', border: '1px solid var(--border)', fontSize: 13.5, color: 'var(--text2)' }}>
               <span style={{ fontWeight: 700, color: 'var(--text)' }}>Applied to Magic Patterns:</span>{' '}
               Every PostExamPhase, ExamDashboard, and PADashboard component in Magic Patterns should
               surface the narrative before the numbers. The KPI cards are present but serve the story.
@@ -1280,8 +1280,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {/* Architecture summary */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Architecture decision — flat pool + scoped views · Source: Stakeholder Day 1+2 · Feb 2026 + Exam Standup Mar 26</div>
-                <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.65 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Architecture decision — flat pool + scoped views · Source: Stakeholder Day 1+2 · Feb 2026 + Exam Standup Mar 26</div>
+                <div style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.65 }}>
                   Every question lives in a single institution-wide flat pool. There are no separate course banks or department banks. Faculty see questions through <strong style={{ color: 'var(--text)' }}>Smart Views</strong> — saved filter queries that look like folders. Tags and permissions determine which "folder" shows which questions. This solves the ExamSoft silo problem without forcing rigid hierarchy.
                 </div>
               </div>
@@ -1289,26 +1289,26 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
               {/* Pool model visual */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>What Prof. Sharma sees</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>What Prof. Sharma sees</div>
                   {['My Questions (47)', 'Pharmacology Dept (312)', 'Cardiology Shared (28)', 'Recently Used (15)', 'Flagged for Review (6)'].map((v, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)', marginBottom: 4 }}>
-                      <span style={{ fontSize: 13 }}>📁</span>
-                      <span style={{ fontSize: 12, color: 'var(--text2)' }}>{v}</span>
-                      <span style={{ marginLeft: 'auto', fontSize: 9, color: '#6d5ed4', background: 'rgba(109,94,212,0.08)', padding: '2px 6px', borderRadius: 4 }}>Smart View</span>
+                      <span style={{ fontSize: 14.5 }}>📁</span>
+                      <span style={{ fontSize: 13.5, color: 'var(--text2)' }}>{v}</span>
+                      <span style={{ marginLeft: 'auto', fontSize: 12, color: '#6d5ed4', background: 'rgba(109,94,212,0.08)', padding: '2px 6px', borderRadius: 4 }}>Smart View</span>
                     </div>
                   ))}
-                  <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 8, fontStyle: 'italic' }}>Smart folders = saved search filters applied to the flat pool</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 8, fontStyle: 'italic' }}>Smart folders = saved search filters applied to the flat pool</div>
                 </div>
                 <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>What the system stores</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>What the system stores</div>
                   <div style={{ padding: '20px', borderRadius: 10, background: 'rgba(109,94,212,0.06)', border: '2px dashed rgba(109,94,212,0.3)', textAlign: 'center', marginBottom: 10 }}>
                     <div style={{ fontSize: 28, fontWeight: 700, color: '#6d5ed4' }}>1 pool</div>
-                    <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>All 2,847 questions</div>
-                    <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>Tags + permissions determine visibility</div>
+                    <div style={{ fontSize: 14.5, color: 'var(--text2)', marginTop: 4 }}>All 2,847 questions</div>
+                    <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 4 }}>Tags + permissions determine visibility</div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                     {['Question ID (dept-prefixed)', 'Original Author (never changes)', 'Version chain', 'Tags (7 category types)', 'Status lifecycle', 'Department ownership'].map((f, i) => (
-                      <div key={i} style={{ fontSize: 10, color: 'var(--text3)', padding: '4px 8px', borderRadius: 4, background: 'var(--bg)', border: '1px solid var(--border)' }}>{f}</div>
+                      <div key={i} style={{ fontSize: 12, color: 'var(--text3)', padding: '4px 8px', borderRadius: 4, background: 'var(--bg)', border: '1px solid var(--border)' }}>{f}</div>
                     ))}
                   </div>
                 </div>
@@ -1316,16 +1316,16 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Entry methods */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>How questions enter the bank</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>How questions enter the bank</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {entryMethods.map((m, i) => (
                     <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 14px', borderRadius: 8, background: 'var(--bg)', border: '1px solid var(--border)', alignItems: 'flex-start' }}>
                       <div style={{ width: 130, minWidth: 130 }}>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{m.method}</div>
-                        <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>{m.who}</div>
+                        <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)' }}>{m.method}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 2 }}>{m.who}</div>
                       </div>
-                      <div style={{ flex: 1, fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{m.desc}</div>
-                      {m.ai && <span style={{ fontSize: 9, background: 'rgba(109,94,212,0.1)', color: '#6d5ed4', padding: '3px 8px', borderRadius: 4, fontWeight: 700, flexShrink: 0 }}>AI</span>}
+                      <div style={{ flex: 1, fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{m.desc}</div>
+                      {m.ai && <span style={{ fontSize: 12, background: 'rgba(109,94,212,0.1)', color: '#6d5ed4', padding: '3px 8px', borderRadius: 4, fontWeight: 700, flexShrink: 0 }}>AI</span>}
                     </div>
                   ))}
                 </div>
@@ -1333,20 +1333,20 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Question status lifecycle */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Question status lifecycle</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Question status lifecycle</div>
                 <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 14, flexWrap: 'wrap' }}>
                   {statuses.filter(s => s.status !== 'Action Required').map((s, i, arr) => (
                     <div key={s.status} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ padding: '4px 10px', borderRadius: 20, background: `${s.color}18`, border: `1px solid ${s.color}`, fontSize: 11, fontWeight: 600, color: s.color }}>{s.status}</div>
-                      {i < arr.length - 1 && <span style={{ color: 'var(--text3)', fontSize: 12 }}>→</span>}
+                      <div style={{ padding: '4px 10px', borderRadius: 20, background: `${s.color}18`, border: `1px solid ${s.color}`, fontSize: 13, fontWeight: 600, color: s.color }}>{s.status}</div>
+                      {i < arr.length - 1 && <span style={{ color: 'var(--text3)', fontSize: 13.5 }}>→</span>}
                     </div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {statuses.map((s, i) => (
                     <div key={i} style={{ display: 'flex', gap: 12, padding: '8px 12px', borderRadius: 6, background: 'var(--bg)', borderLeft: `3px solid ${s.color}` }}>
-                      <div style={{ width: 120, minWidth: 120, fontSize: 11, fontWeight: 600, color: s.color }}>{s.status}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5 }}>{s.desc}</div>
+                      <div style={{ width: 120, minWidth: 120, fontSize: 13, fontWeight: 600, color: s.color }}>{s.status}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>{s.desc}</div>
                     </div>
                   ))}
                 </div>
@@ -1354,34 +1354,34 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Roles */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Roles and question bank access</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Roles and question bank access</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10 }}>
                   {roles.map((r, i) => (
                     <div key={i} style={{ padding: '12px 14px', borderRadius: 8, background: 'var(--bg)', border: '1px solid var(--border)', borderTop: `3px solid ${r.color}` }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: r.color }}>{r.role}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>Scope: {r.scope}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text2)', marginTop: 6 }}>{r.access}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4, lineHeight: 1.4 }}>{r.useCase}</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: r.color }}>{r.role}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 3 }}>Scope: {r.scope}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 6 }}>{r.access}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text3)', marginTop: 4, lineHeight: 1.4 }}>{r.useCase}</div>
                     </div>
                   ))}
                 </div>
                 <div style={{ marginTop: 10, padding: '10px 14px', borderRadius: 8, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.15)' }}>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: '#6d5ed4', marginBottom: 4 }}>Review Access (composable permission)</div>
-                  <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5 }}>Not a role — a permission layer granted on top of Faculty. Allows approve/reject + review comments within assigned scope. Granted by Dept Head. Scoped to specific course(s) or program. Dept Head has Review Access by default.</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#6d5ed4', marginBottom: 4 }}>Review Access (composable permission)</div>
+                  <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5 }}>Not a role — a permission layer granted on top of Faculty. Allows approve/reject + review comments within assigned scope. Granted by Dept Head. Scoped to specific course(s) or program. Dept Head has Review Access by default.</div>
                 </div>
               </div>
 
               {/* Tag categories */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Tag schema — 7 category types, ~20 tags per question</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Tag schema — 7 category types, ~20 tags per question</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   {tagCategories.map((t, i) => (
                     <div key={i} style={{ display: 'flex', gap: 12, padding: '8px 12px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)', alignItems: 'flex-start' }}>
                       <div style={{ width: 120, minWidth: 120 }}>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text)' }}>{t.cat}</div>
-                        <span style={{ fontSize: 9, background: t.system ? 'rgba(22,163,74,0.1)' : 'rgba(109,94,212,0.1)', color: t.system ? '#16a34a' : '#6d5ed4', padding: '1px 6px', borderRadius: 4 }}>{t.system ? 'System-built' : 'Custom'}</span>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{t.cat}</div>
+                        <span style={{ fontSize: 12, background: t.system ? 'rgba(22,163,74,0.1)' : 'rgba(109,94,212,0.1)', color: t.system ? '#16a34a' : '#6d5ed4', padding: '1px 6px', borderRadius: 4 }}>{t.system ? 'System-built' : 'Custom'}</span>
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text3)', lineHeight: 1.5 }}>{t.examples}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text3)', lineHeight: 1.5 }}>{t.examples}</div>
                     </div>
                   ))}
                 </div>
@@ -1389,16 +1389,16 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Smart Views */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 4 }}>Smart Views — two modes</div>
-                <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 12 }}>Always-updated (live filter) vs Fixed snapshot (pinned at creation). Personal Views private by default. Dept views shared.</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 4 }}>Smart Views — two modes</div>
+                <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 12 }}>Always-updated (live filter) vs Fixed snapshot (pinned at creation). Personal Views private by default. Dept views shared.</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 6 }}>
                   {smartViews.map((v, i) => (
                     <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 12px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 13 }}>📁</span>
+                      <span style={{ fontSize: 14.5 }}>📁</span>
                       <div>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text)' }}>{v.view}</div>
-                        <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>{v.filter}</div>
-                        {v.private && <span style={{ fontSize: 9, color: '#6b7280', background: 'rgba(107,114,128,0.1)', padding: '1px 5px', borderRadius: 3, marginTop: 3, display: 'inline-block' }}>private</span>}
+                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{v.view}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 2 }}>{v.filter}</div>
+                        {v.private && <span style={{ fontSize: 12, color: '#6b7280', background: 'rgba(107,114,128,0.1)', padding: '1px 5px', borderRadius: 3, marginTop: 3, display: 'inline-block' }}>private</span>}
                       </div>
                     </div>
                   ))}
@@ -1407,7 +1407,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Versioning model */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Versioning model — every edit creates an immutable version</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Versioning model — every edit creates an immutable version</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
                   {[
                     { scenario: 'Faculty creates question', orig: 'Prof. Gupta', editor: '—', v: 'V1' },
@@ -1416,26 +1416,26 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                     { scenario: 'Another faculty forks', orig: 'Prof. Sharma (new Q)', editor: '—', v: 'V1' },
                   ].map((r, i) => (
                     <div key={i} style={{ padding: '10px 12px', borderRadius: 8, background: 'var(--bg)', border: '1px solid var(--border)' }}>
-                      <div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 6, lineHeight: 1.4 }}>{r.scenario}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text2)' }}>Orig: <strong style={{ color: 'var(--text)' }}>{r.orig}</strong></div>
-                      <div style={{ fontSize: 11, color: 'var(--text2)' }}>Editor: {r.editor || '—'}</div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#6d5ed4', marginTop: 4 }}>{r.v}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 6, lineHeight: 1.4 }}>{r.scenario}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text2)' }}>Orig: <strong style={{ color: 'var(--text)' }}>{r.orig}</strong></div>
+                      <div style={{ fontSize: 13, color: 'var(--text2)' }}>Editor: {r.editor || '—'}</div>
+                      <div style={{ fontSize: 14.5, fontWeight: 700, color: '#6d5ed4', marginTop: 4 }}>{r.v}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text3)' }}>Original Author never changes. Forks create a new question with a <code style={{ fontSize: 10, background: 'var(--bg)', padding: '1px 4px', borderRadius: 3 }}>derived_from</code> link. Each version stores: editor, timestamp, diff from previous.</div>
+                <div style={{ marginTop: 10, fontSize: 13, color: 'var(--text3)' }}>Original Author never changes. Forks create a new question with a <code style={{ fontSize: 12, background: 'var(--bg)', padding: '1px 4px', borderRadius: 3 }}>derived_from</code> link. Each version stores: editor, timestamp, diff from previous.</div>
               </div>
 
               {/* Competitive comparison */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Competitor question bank models vs Exxat flat pool</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 12 }}>Competitor question bank models vs Exxat flat pool</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {competitors.map((c, i) => (
                     <div key={i} style={{ display: 'grid', gridTemplateColumns: '90px 1fr 1fr 1fr', gap: 12, padding: '10px 12px', borderRadius: 6, background: 'var(--bg)', border: '1px solid var(--border)' }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{c.tool}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text3)' }}><span style={{ fontWeight: 600, color: 'var(--text2)' }}>Model:</span> {c.model}</div>
-                      <div style={{ fontSize: 11, color: '#dc2626' }}><span style={{ fontWeight: 600 }}>Gap:</span> {c.problem}</div>
-                      <div style={{ fontSize: 11, color: '#16a34a' }}><span style={{ fontWeight: 600 }}>Exxat:</span> {c.exxat}</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)' }}>{c.tool}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text3)' }}><span style={{ fontWeight: 600, color: 'var(--text2)' }}>Model:</span> {c.model}</div>
+                      <div style={{ fontSize: 13, color: '#dc2626' }}><span style={{ fontWeight: 600 }}>Gap:</span> {c.problem}</div>
+                      <div style={{ fontSize: 13, color: '#16a34a' }}><span style={{ fontWeight: 600 }}>Exxat:</span> {c.exxat}</div>
                     </div>
                   ))}
                 </div>
@@ -1443,7 +1443,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Design implications */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(13,148,136,0.04)', border: '1px solid rgba(13,148,136,0.2)' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#0d9488', marginBottom: 10 }}>Design implications from architecture — Magic Patterns build priorities</div>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#0d9488', marginBottom: 10 }}>Design implications from architecture — Magic Patterns build priorities</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
                   {[
                     { priority: 'Screen 1 — QB navigation', detail: 'Two entry points: global QB sidebar item + course-level QB with auto-tag. Smart view sidebar with personal + dept views. Draft counter badge.', deadline: 'Apr 3' },
@@ -1451,9 +1451,9 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                     { priority: 'Screen 3 — Question editor', detail: 'Role-gated: Faculty sees create/submit. Dept Head sees approve/reject. Version chain visualization. Edit-in-assessment vs master modal split.', deadline: 'Apr 7' },
                   ].map((s, i) => (
                     <div key={i} style={{ padding: '12px 14px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: '#0d9488', marginBottom: 6 }}>{s.priority}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 6 }}>{s.detail}</div>
-                      <div style={{ fontSize: 10, mono: true, color: '#dc2626' }}>Target: {s.deadline}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#0d9488', marginBottom: 6 }}>{s.priority}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.5, marginBottom: 6 }}>{s.detail}</div>
+                      <div style={{ fontSize: 12, mono: true, color: '#dc2626' }}>Target: {s.deadline}</div>
                     </div>
                   ))}
                 </div>
@@ -1466,8 +1466,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
         {activeTab === 'arun-roadmap' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Arun Gautam - Mar 24, 2026 - session 791334af</div>
-              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Arun Gautam - Mar 24, 2026 - session 791334af</div>
+              <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 10 }}>
                 ExamSoft is publicly against AI. We are going to use it. That is our second differentiator.
               </div>
             </div>
@@ -1479,14 +1479,14 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
               ].map((v, i) => (
                 <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', overflow: 'hidden' }}>
                   <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', borderTop: '3px solid ' + v.color }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: v.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{v.year}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginTop: 3 }}>{v.goal}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: v.color, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{v.year}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginTop: 3 }}>{v.goal}</div>
                   </div>
                   <div style={{ padding: '12px 16px' }}>
                     {v.items.map((item, j) => (
                       <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
                         <span style={{ color: v.color, flexShrink: 0 }}>-</span>
-                        <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
+                        <span style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
                       </div>
                     ))}
                   </div>
@@ -1494,7 +1494,7 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
               ))}
             </div>
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 18px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Design principles from Arun</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Design principles from Arun</div>
               {[
                 { p: 'Speed over design system compliance', d: 'Design system is still a first draft. Freedom to build custom components. Mandate comes when convergence is visible.' },
                 { p: 'AI everywhere on admin side', d: 'AI should reduce time faculty spends designing and conducting exams. Question generation, option generation, gap detection. Not for the exam taker.' },
@@ -1502,8 +1502,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                 { p: 'Prism integration is differentiator 4', d: 'Seamless Prism integration is a key competitive advantage. Data should flow without re-entry.' },
               ].map((r, i) => (
                 <div key={i} style={{ display: 'flex', gap: 14, padding: '10px 0', borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#6d5ed4', flexShrink: 0, width: 220 }}>{r.p}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.55 }}>{r.d}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#6d5ed4', flexShrink: 0, width: 220 }}>{r.p}</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.55 }}>{r.d}</div>
                 </div>
               ))}
             </div>
@@ -1710,8 +1710,8 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 960, margin: '0 auto' }}>
               {/* Header / framing */}
               <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Feature Analogy Mapping — Exam Management · Apr 3, 2026</div>
-                <p style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.65, margin: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Feature Analogy Mapping — Exam Management · Apr 3, 2026</div>
+                <p style={{ fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.65, margin: 0 }}>
                   Every major Exam Management feature maps to a well-known enterprise product that has already solved the UX at scale.
                   Use these analogies to study proven patterns before designing from scratch.
                   The design takeaway and scalability note for each feature are the actionable outputs — not the analogies themselves.
@@ -1725,30 +1725,30 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border)', borderTop: `3px solid ${f.color}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: f.color, background: `${f.color}15`, padding: '2px 7px', borderRadius: 6 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: f.color, background: `${f.color}15`, padding: '2px 7px', borderRadius: 6 }}>
                           {String(f.id).padStart(2, '0')}
                         </span>
-                        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)', fontFamily: 'DM Serif Display, Georgia, serif' }}>{f.name}</span>
+                        <span style={{ fontSize: 16.5, fontWeight: 700, color: 'var(--text)', fontFamily: 'DM Serif Display, Georgia, serif' }}>{f.name}</span>
                       </div>
-                      <div style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.5 }}>{f.exxat}</div>
+                      <div style={{ fontSize: 13.5, color: 'var(--text3)', lineHeight: 1.5 }}>{f.exxat}</div>
                     </div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', flexShrink: 0 }}>{f.analogies.length} analogies</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text3)', flexShrink: 0 }}>{f.analogies.length} analogies</div>
                   </div>
 
                   {/* Analogies grid */}
                   <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>Product analogies — study these UX patterns</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text3)', marginBottom: 10 }}>Product analogies — study these UX patterns</div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {f.analogies.map((a, i) => (
                         <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '8px 10px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
                           <div style={{ flexShrink: 0, marginTop: 1 }}>
-                            <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 4, background: `${typeColors[a.type] ?? '#6b7280'}15`, color: typeColors[a.type] ?? '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                            <span style={{ fontSize: 12, fontWeight: 700, padding: '1px 6px', borderRadius: 4, background: `${typeColors[a.type] ?? '#6b7280'}15`, color: typeColors[a.type] ?? '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
                               {typeLabels[a.type] ?? a.type}
                             </span>
                           </div>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{a.product}</div>
-                            <div style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.5 }}>{a.pattern}</div>
+                            <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{a.product}</div>
+                            <div style={{ fontSize: 13.5, color: 'var(--text3)', lineHeight: 1.5 }}>{a.pattern}</div>
                           </div>
                         </div>
                       ))}
@@ -1758,12 +1758,12 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
                   {/* Design takeaway + scalability note */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                     <div style={{ padding: '12px 20px', borderRight: '1px solid var(--border)', background: `${f.color}06` }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: f.color, marginBottom: 6 }}>Design takeaway</div>
-                      <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>{f.takeaway}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: f.color, marginBottom: 6 }}>Design takeaway</div>
+                      <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>{f.takeaway}</div>
                     </div>
                     <div style={{ padding: '12px 20px', background: 'rgba(109,94,212,0.03)' }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Scalability note</div>
-                      <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>{f.scalability}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 6 }}>Scalability note</div>
+                      <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>{f.scalability}</div>
                     </div>
                   </div>
                 </div>
@@ -1771,13 +1771,13 @@ export function ExamManagementView({ initialTab }: { initialTab?: TabId } = {}) 
 
               {/* Summary reference panel */}
               <div style={{ padding: '16px 20px', borderRadius: 12, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Pattern type legend</div>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Pattern type legend</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {Object.entries(typeLabels).map(([k, v]) => (
-                    <span key={k} style={{ fontSize: 10, fontWeight: 600, padding: '3px 9px', borderRadius: 20, background: `${typeColors[k]}15`, color: typeColors[k] }}>{v}</span>
+                    <span key={k} style={{ fontSize: 12, fontWeight: 600, padding: '3px 9px', borderRadius: 20, background: `${typeColors[k]}15`, color: typeColors[k] }}>{v}</span>
                   ))}
                 </div>
-                <div style={{ marginTop: 14, fontSize: 11, color: 'var(--text3)', lineHeight: 1.6 }}>
+                <div style={{ marginTop: 14, fontSize: 13, color: 'var(--text3)', lineHeight: 1.6 }}>
                   <strong style={{ color: 'var(--text2)' }}>How to use this view:</strong>{' '}
                   Before designing a new feature area, read the analogies for that feature and open 1–2 of the referenced products.
                   Study how they handle the specific pattern (not the product as a whole).

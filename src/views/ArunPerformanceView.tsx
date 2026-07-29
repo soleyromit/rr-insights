@@ -255,7 +255,7 @@ const STATUS_CFG = {
   'at-risk':       { label:'At Risk',      color:'#dc2626', bg:'rgba(220,38,38,0.08)'   },
 };
 const SC  = s => s>=85?'#16a34a':s>=70?'#d97706':'#dc2626';
-const CS  = { fontSize:10, fill:'#6b7280' };
+const CS  = { fontSize: 12, fill:'#6b7280' };
 const radarData = CRITERIA.map(c=>({ subject:c.shortLabel, Romit:c.score, Target:85 }));
 const barData   = [...CRITERIA].sort((a,b)=>b.score-a.score);
 const velocityData = [
@@ -288,7 +288,7 @@ const TC = { start:'#6d5ed4', session:'#0d9488', milestone:'#d97706', design:'#3
 
 function Pill({ status }) {
   const c = STATUS_CFG[status]||STATUS_CFG['in-progress'];
-  return <span className="text-[9px] font-semibold mono px-2 py-0.5 rounded-full" style={{ background:c.bg, color:c.color }}>{c.label}</span>;
+  return <span className="text-[12px] font-semibold mono px-2 py-0.5 rounded-full" style={{ background:c.bg, color:c.color }}>{c.label}</span>;
 }
 
 function Card({ c, expanded, onToggle }) {
@@ -299,67 +299,67 @@ function Card({ c, expanded, onToggle }) {
         <div className="px-4 py-3 flex items-start gap-3">
           <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
             style={{ background:`${SC(c.score)}15`, border:`2px solid ${SC(c.score)}` }}>
-            <span className="text-[13px] font-bold" style={{ color:SC(c.score) }}>{c.score}</span>
+            <span className="text-[14.5px] font-bold" style={{ color:SC(c.score) }}>{c.score}</span>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1.5">
-              <span className="text-[14px] font-semibold" style={{ color:'var(--text)' }}>{c.shortLabel}</span>
+              <span className="text-[15px] font-semibold" style={{ color:'var(--text)' }}>{c.shortLabel}</span>
               <Pill status={c.status}/>
-              <span className="text-[10px] mono" style={{ color:'var(--text3)' }}>weight {c.weight}%</span>
+              <span className="text-[12px] mono" style={{ color:'var(--text3)' }}>weight {c.weight}%</span>
             </div>
             <div className="w-full h-1.5 rounded-full" style={{ background:'var(--border)' }}>
               <div className="h-1.5 rounded-full" style={{ width:`${c.score}%`, background:SC(c.score) }}/>
             </div>
-            <div className="mt-1.5 text-[11px] leading-[1.4] line-clamp-1" style={{ color:'var(--text3)' }}>{c.offerText}</div>
+            <div className="mt-1.5 text-[13px] leading-[1.4] line-clamp-1" style={{ color:'var(--text3)' }}>{c.offerText}</div>
           </div>
-          <span className="text-[11px] flex-shrink-0 pt-3" style={{ color:'var(--text3)' }}>{expanded?'▲':'▼'}</span>
+          <span className="text-[13px] flex-shrink-0 pt-3" style={{ color:'var(--text3)' }}>{expanded?'▲':'▼'}</span>
         </div>
       </button>
       {expanded && (
         <div className="px-4 pb-5 pt-2 space-y-4" style={{ background:'var(--bg)' }}>
           {/* Offer letter */}
-          <div className="p-3 rounded-lg border text-[12px] leading-[1.55]" style={{ borderColor:'var(--border)', color:'var(--text2)', background:'var(--bg2)' }}>
-            <div className="text-[9px] font-semibold uppercase tracking-widest mb-1" style={{ color:'var(--text3)' }}>Offer letter requirement — Kunal Vaishnav · Mar 15, 2026</div>
+          <div className="p-3 rounded-lg border text-[13.5px] leading-[1.55]" style={{ borderColor:'var(--border)', color:'var(--text2)', background:'var(--bg2)' }}>
+            <div className="text-[12px] font-semibold uppercase tracking-widest mb-1" style={{ color:'var(--text3)' }}>Offer letter requirement — Kunal Vaishnav · Mar 15, 2026</div>
             {c.offerText}
           </div>
           {/* Arun verbatim */}
-          <div className="p-3 rounded-lg border-l-2 italic text-[12px] leading-[1.55]"
+          <div className="p-3 rounded-lg border-l-2 italic text-[13.5px] leading-[1.55]"
             style={{ borderColor:'#6d5ed4', background:'rgba(109,94,212,0.04)', color:'var(--text2)' }}>
-            <div className="text-[9px] not-italic font-semibold uppercase tracking-widest mb-1" style={{ color:'#6d5ed4' }}>Arun verbatim — {c.arunSource}</div>
+            <div className="text-[12px] not-italic font-semibold uppercase tracking-widest mb-1" style={{ color:'#6d5ed4' }}>Arun verbatim — {c.arunSource}</div>
             {c.arunVerbatim}
           </div>
           {/* Score rationale */}
-          <div className="p-3 rounded-lg text-[11px] leading-[1.55]"
+          <div className="p-3 rounded-lg text-[13px] leading-[1.55]"
             style={{ background:`${SC(c.score)}08`, borderLeft:`3px solid ${SC(c.score)}`, color:'var(--text2)' }}>
             <span className="font-semibold" style={{ color:SC(c.score) }}>Why {c.score}/100: </span>{c.scoreRationale}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{ color:'#16a34a' }}>Evidence — what has been done ({c.evidence.length})</div>
+              <div className="text-[12px] font-semibold uppercase tracking-widest mb-2" style={{ color:'#16a34a' }}>Evidence — what has been done ({c.evidence.length})</div>
               <ul className="space-y-1.5">
                 {c.evidence.map((e,i)=>(
-                  <li key={i} className="flex gap-2 text-[12px] leading-[1.4]" style={{ color:'var(--text2)' }}>
+                  <li key={i} className="flex gap-2 text-[13.5px] leading-[1.4]" style={{ color:'var(--text2)' }}>
                     <span style={{ color:'#16a34a', flexShrink:0 }}>✓</span><span>{e}</span>
                   </li>
                 ))}
               </ul>
             </div>
             <div>
-              <div className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{ color:'#dc2626' }}>Gaps ({c.gaps.length})</div>
+              <div className="text-[12px] font-semibold uppercase tracking-widest mb-2" style={{ color:'#dc2626' }}>Gaps ({c.gaps.length})</div>
               <ul className="space-y-1.5 mb-4">
                 {c.gaps.map((g,i)=>(
-                  <li key={i} className="flex gap-2 text-[12px] leading-[1.4]" style={{ color:'var(--text2)' }}>
+                  <li key={i} className="flex gap-2 text-[13.5px] leading-[1.4]" style={{ color:'var(--text2)' }}>
                     <span style={{ color:'#dc2626', flexShrink:0 }}>◯</span><span>{g}</span>
                   </li>
                 ))}
               </ul>
-              <div className="text-[9px] font-semibold uppercase tracking-widest mb-2" style={{ color:'#0d9488' }}>Action plan</div>
+              <div className="text-[12px] font-semibold uppercase tracking-widest mb-2" style={{ color:'#0d9488' }}>Action plan</div>
               <ul className="space-y-1.5">
                 {c.actions.map((a,i)=>(
-                  <li key={i} className="flex gap-2 text-[12px] leading-[1.4]" style={{ color:'var(--text2)' }}>
+                  <li key={i} className="flex gap-2 text-[13.5px] leading-[1.4]" style={{ color:'var(--text2)' }}>
                     <span style={{ color:'#0d9488', flexShrink:0 }}>→</span>
                     <span className="flex-1">{a.what}</span>
-                    <span className="mono text-[10px] flex-shrink-0" style={{ color:'#dc2626' }}>{a.by}</span>
+                    <span className="mono text-[12px] flex-shrink-0" style={{ color:'#dc2626' }}>{a.by}</span>
                   </li>
                 ))}
               </ul>
@@ -387,11 +387,11 @@ export function ArunPerformanceView() {
           <h1 className="text-[24px] font-semibold mb-1" style={{ fontFamily:'DM Serif Display, Georgia, serif', color:'var(--text)' }}>
             Arun Performance Tracker
           </h1>
-          <p className="text-[13px]" style={{ color:'var(--text3)', maxWidth:640 }}>
+          <p className="text-[14.5px]" style={{ color:'var(--text3)', maxWidth:640 }}>
             7 criteria from the official offer letter (Kunal Vaishnav · Mar 15, 2026) cross-referenced with the raw Granola transcript of the Arun session (791334af · Mar 24, 2026) and all Marriott day sessions. Every Arun quote is verbatim from the transcript — not paraphrased.
           </p>
         </div>
-        <div className="flex gap-2 flex-wrap text-[11px] mono">
+        <div className="flex gap-2 flex-wrap text-[13px] mono">
           <span className="px-3 py-1.5 rounded-full border" style={{ borderColor:'var(--border)', color:'var(--text3)' }}>Start: Mar 16, 2026</span>
           <span className="px-3 py-1.5 rounded-full border" style={{ borderColor:'var(--border)', color:'var(--text3)' }}>Reports to: Arun Gautam</span>
           <span className="px-3 py-1.5 rounded-full" style={{ background:'#6d5ed415', color:'#6d5ed4' }}>Day 12 · v2 (Granola-verified)</span>
@@ -402,12 +402,12 @@ export function ArunPerformanceView() {
       <div className="p-5 rounded-2xl border" style={{ background:'var(--bg2)', borderColor:'var(--border)' }}>
         <div className="flex items-center gap-8 flex-wrap">
           <div>
-            <div className="text-[10px] uppercase tracking-widest mb-1" style={{ color:'var(--text3)' }}>Weighted score — offer letter criteria</div>
+            <div className="text-[12px] uppercase tracking-widest mb-1" style={{ color:'var(--text3)' }}>Weighted score — offer letter criteria</div>
             <div className="flex items-end gap-1.5">
               <span className="text-[56px] font-bold leading-none" style={{ color:SC(OVERALL_SCORE) }}>{OVERALL_SCORE}</span>
               <span className="text-[20px] mb-1.5" style={{ color:'var(--text3)' }}>/100</span>
             </div>
-            <div className="text-[12px] mt-1" style={{ color:'var(--text2)', maxWidth:280 }}>
+            <div className="text-[13.5px] mt-1" style={{ color:'var(--text2)', maxWidth:280 }}>
               Strong on research, requirements translation, and accessibility. Jan 20 MVP delivery is the primary risk.
             </div>
           </div>
@@ -415,18 +415,18 @@ export function ArunPerformanceView() {
             {[['Strong','strong','#16a34a'],['On Track','on-track','#0d9488'],['In Progress','in-progress','#d97706'],['At Risk','at-risk','#dc2626']].map(([l,k,c])=>(
               <div key={k} className="text-center">
                 <div className="text-[28px] font-bold leading-none" style={{ color:c }}>{counts[k]}</div>
-                <div className="text-[10px] mono mt-1" style={{ color:'var(--text3)' }}>{l}</div>
+                <div className="text-[12px] mono mt-1" style={{ color:'var(--text3)' }}>{l}</div>
               </div>
             ))}
           </div>
           <div className="flex-1 min-w-[240px] space-y-1.5">
             {CRITERIA.map(c=>(
               <div key={c.id} className="flex items-center gap-2">
-                <div className="w-[110px] min-w-[110px] text-[10px] truncate" style={{ color:'var(--text3)' }}>{c.shortLabel}</div>
+                <div className="w-[110px] min-w-[110px] text-[12px] truncate" style={{ color:'var(--text3)' }}>{c.shortLabel}</div>
                 <div className="flex-1 h-2 rounded-full" style={{ background:'var(--border)' }}>
                   <div className="h-2 rounded-full" style={{ width:`${c.score}%`, background:SC(c.score) }}/>
                 </div>
-                <span className="mono text-[10px] w-6 text-right" style={{ color:SC(c.score) }}>{c.score}</span>
+                <span className="mono text-[12px] w-6 text-right" style={{ color:SC(c.score) }}>{c.score}</span>
               </div>
             ))}
           </div>
@@ -438,17 +438,17 @@ export function ArunPerformanceView() {
         <button onClick={()=>setShowQuotes(p=>!p)} className="w-full text-left px-4 py-3 flex items-center justify-between"
           style={{ background:'rgba(109,94,212,0.04)' }}>
           <div>
-            <div className="text-[12px] font-semibold" style={{ color:'#6d5ed4' }}>Arun verbatim — raw Granola transcript (791334af · Mar 24, 2026)</div>
-            <div className="text-[11px] mt-0.5" style={{ color:'var(--text3)' }}>{ARUN_VERBATIM.length} direct quotes. Not paraphrased. Not summarised. Click to expand.</div>
+            <div className="text-[13.5px] font-semibold" style={{ color:'#6d5ed4' }}>Arun verbatim — raw Granola transcript (791334af · Mar 24, 2026)</div>
+            <div className="text-[13px] mt-0.5" style={{ color:'var(--text3)' }}>{ARUN_VERBATIM.length} direct quotes. Not paraphrased. Not summarised. Click to expand.</div>
           </div>
-          <span className="text-[11px]" style={{ color:'var(--text3)' }}>{showQuotes?'▲':'▼'}</span>
+          <span className="text-[13px]" style={{ color:'var(--text3)' }}>{showQuotes?'▲':'▼'}</span>
         </button>
         {showQuotes && (
           <div className="p-4 space-y-3" style={{ background:'var(--bg)' }}>
             {ARUN_VERBATIM.map((q,i)=>(
               <div key={i} className="p-3 rounded-lg border" style={{ background:'var(--bg2)', borderColor:'var(--border)' }}>
-                <div className="text-[12px] italic leading-[1.6] mb-1.5" style={{ color:'var(--text)' }}>"{q.quote}"</div>
-                <div className="text-[10px]" style={{ color:'var(--text3)' }}>{q.context} · <span className="mono">{q.source}</span></div>
+                <div className="text-[13.5px] italic leading-[1.6] mb-1.5" style={{ color:'var(--text)' }}>"{q.quote}"</div>
+                <div className="text-[12px]" style={{ color:'var(--text3)' }}>{q.context} · <span className="mono">{q.source}</span></div>
               </div>
             ))}
           </div>
@@ -458,27 +458,27 @@ export function ArunPerformanceView() {
       {/* CHARTS */}
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border" style={{ background:'var(--bg2)', borderColor:'var(--border)' }}>
-          <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color:'var(--text3)' }}>Coverage vs Arun target (85) — by offer letter criterion</div>
-          <div className="text-[10px] mb-3" style={{ color:'var(--text3)' }}>Dashed = standard expected at 3 months. Gap between dashed and filled = design work to close.</div>
+          <div className="text-[12px] uppercase tracking-widest mb-0.5" style={{ color:'var(--text3)' }}>Coverage vs Arun target (85) — by offer letter criterion</div>
+          <div className="text-[12px] mb-3" style={{ color:'var(--text3)' }}>Dashed = standard expected at 3 months. Gap between dashed and filled = design work to close.</div>
           <ResponsiveContainer width="100%" height={220}>
             <RadarChart data={radarData}>
               <PolarGrid stroke="var(--border)"/>
-              <PolarAngleAxis dataKey="subject" tick={{ fontSize:9, fill:'#6b7280' }}/>
+              <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12, fill:'#6b7280' }}/>
               <Radar name="Romit (Day 12)" dataKey="Romit" stroke="#6d5ed4" fill="#6d5ed4" fillOpacity={0.25}/>
               <Radar name="Target (85)" dataKey="Target" stroke="#dc2626" fill="none" strokeDasharray="4 2"/>
-              <Legend iconSize={8} wrapperStyle={{ fontSize:10 }}/>
+              <Legend iconSize={8} wrapperStyle={{ fontSize: 12 }}/>
             </RadarChart>
           </ResponsiveContainer>
         </div>
         <div className="p-4 rounded-xl border" style={{ background:'var(--bg2)', borderColor:'var(--border)' }}>
-          <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color:'var(--text3)' }}>Score ranked — all 7 criteria · dashed = 85 target</div>
-          <div className="text-[10px] mb-3" style={{ color:'var(--text3)' }}>Two criteria at risk (below 70). One in progress. Four at or above target.</div>
+          <div className="text-[12px] uppercase tracking-widest mb-0.5" style={{ color:'var(--text3)' }}>Score ranked — all 7 criteria · dashed = 85 target</div>
+          <div className="text-[12px] mb-3" style={{ color:'var(--text3)' }}>Two criteria at risk (below 70). One in progress. Four at or above target.</div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={barData} layout="vertical" margin={{ left:90, right:20 }}>
               <CartesianGrid horizontal={false} stroke="var(--border)"/>
               <XAxis type="number" domain={[0,100]} tick={CS}/>
-              <YAxis type="category" dataKey="shortLabel" tick={{ fontSize:9, fill:'#6b7280' }} width={90}/>
-              <Tooltip contentStyle={{ fontSize:11, background:'var(--bg2)', border:'1px solid var(--border)' }}
+              <YAxis type="category" dataKey="shortLabel" tick={{ fontSize: 12, fill:'#6b7280' }} width={90}/>
+              <Tooltip contentStyle={{ fontSize: 13, background:'var(--bg2)', border:'1px solid var(--border)' }}
                 formatter={(v,_,p)=>[`${v}/100 · weight ${p.payload.weight}%`, p.payload.shortLabel]}/>
               <ReferenceLine x={85} stroke="#dc2626" strokeDasharray="4 2"/>
               <Bar dataKey="score" radius={[0,4,4,0]}>
@@ -492,24 +492,24 @@ export function ArunPerformanceView() {
       {/* VELOCITY + NPS */}
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border" style={{ background:'var(--bg2)', borderColor:'var(--border)' }}>
-          <div className="text-[10px] uppercase tracking-widest mb-0.5" style={{ color:'var(--text3)' }}>Research velocity — first 12 days (sessions · insights · artifacts)</div>
-          <div className="text-[10px] mb-3" style={{ color:'var(--text3)' }}>Week 2 shows clear acceleration — 9 sessions vs 4. Next step: artifacts must accelerate equally.</div>
+          <div className="text-[12px] uppercase tracking-widest mb-0.5" style={{ color:'var(--text3)' }}>Research velocity — first 12 days (sessions · insights · artifacts)</div>
+          <div className="text-[12px] mb-3" style={{ color:'var(--text3)' }}>Week 2 shows clear acceleration — 9 sessions vs 4. Next step: artifacts must accelerate equally.</div>
           <ResponsiveContainer width="100%" height={130}>
             <LineChart data={velocityData}>
               <CartesianGrid stroke="var(--border)"/>
-              <XAxis dataKey="week" tick={{ fontSize:9, fill:'#6b7280' }}/>
+              <XAxis dataKey="week" tick={{ fontSize: 12, fill:'#6b7280' }}/>
               <YAxis tick={CS}/>
-              <Tooltip contentStyle={{ fontSize:11, background:'var(--bg2)', border:'1px solid var(--border)' }}/>
+              <Tooltip contentStyle={{ fontSize: 13, background:'var(--bg2)', border:'1px solid var(--border)' }}/>
               <Line type="monotone" dataKey="sessions" stroke="#6d5ed4" dot strokeWidth={2} name="Sessions"/>
               <Line type="monotone" dataKey="insights" stroke="#0d9488" dot strokeWidth={2} name="Insights"/>
               <Line type="monotone" dataKey="artifacts" stroke="#d97706" dot strokeWidth={2} name="Artifacts"/>
-              <Legend iconSize={8} wrapperStyle={{ fontSize:10 }}/>
+              <Legend iconSize={8} wrapperStyle={{ fontSize: 12 }}/>
             </LineChart>
           </ResponsiveContainer>
         </div>
         <div className="p-4 rounded-xl border" style={{ background:'rgba(220,38,38,0.03)', borderColor:'rgba(220,38,38,0.2)' }}>
-          <div className="text-[10px] uppercase tracking-widest font-semibold mb-0.5" style={{ color:'#dc2626' }}>Why this work matters — NPS 2025 baseline</div>
-          <div className="text-[10px] mb-3" style={{ color:'var(--text3)' }}>1,494 responses. Arun's metric: "How much faculty time did we save?" This is the starting line.</div>
+          <div className="text-[12px] uppercase tracking-widest font-semibold mb-0.5" style={{ color:'#dc2626' }}>Why this work matters — NPS 2025 baseline</div>
+          <div className="text-[12px] mb-3" style={{ color:'var(--text3)' }}>1,494 responses. Arun's metric: "How much faculty time did we save?" This is the starting line.</div>
           <div className="grid grid-cols-3 gap-3 mb-3">
             {[
               { l:'Student NPS', v:'-47.5', sub:'n=1,282', note:'65% detractors', c:'#dc2626' },
@@ -517,14 +517,14 @@ export function ArunPerformanceView() {
               { l:'Admin NPS',  v:'-4.8',  sub:'n=104',   note:'Best segment',   c:'#d97706' },
             ].map(m=>(
               <div key={m.l} className="p-3 rounded-lg text-center" style={{ background:'var(--bg2)' }}>
-                <div className="text-[9px] uppercase tracking-widest" style={{ color:'var(--text3)' }}>{m.l}</div>
+                <div className="text-[12px] uppercase tracking-widest" style={{ color:'var(--text3)' }}>{m.l}</div>
                 <div className="text-[24px] font-bold leading-none my-1" style={{ color:m.c }}>{m.v}</div>
-                <div className="text-[9px] mono" style={{ color:'var(--text3)' }}>{m.sub}</div>
-                <div className="text-[9px] mt-0.5" style={{ color:'var(--text2)' }}>{m.note}</div>
+                <div className="text-[12px] mono" style={{ color:'var(--text3)' }}>{m.sub}</div>
+                <div className="text-[12px] mt-0.5" style={{ color:'var(--text2)' }}>{m.note}</div>
               </div>
             ))}
           </div>
-          <div className="text-[11px] leading-[1.5]" style={{ color:'var(--text2)' }}>
+          <div className="text-[13px] leading-[1.5]" style={{ color:'var(--text2)' }}>
             Top 5 detractors: navigation · mobile clocking · preceptor form length · login friction · compliance false positives. Nursing = 47% of volume — highest NPS recovery lever.
           </div>
         </div>
@@ -533,8 +533,8 @@ export function ArunPerformanceView() {
       {/* 7 CRITERIA DETAIL */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <div className="text-[14px] font-semibold" style={{ color:'var(--text)' }}>7 Criteria — offer letter · Arun verbatim · evidence · gaps · actions</div>
-          <div className="text-[11px]" style={{ color:'var(--text3)' }}>Click any row to expand</div>
+          <div className="text-[15px] font-semibold" style={{ color:'var(--text)' }}>7 Criteria — offer letter · Arun verbatim · evidence · gaps · actions</div>
+          <div className="text-[13px]" style={{ color:'var(--text3)' }}>Click any row to expand</div>
         </div>
         <div className="space-y-2">
           {CRITERIA.map(c=><Card key={c.id} c={c} expanded={exp===c.id} onToggle={()=>toggle(c.id)}/>)}
@@ -543,27 +543,27 @@ export function ArunPerformanceView() {
 
       {/* MILESTONE TIMELINE */}
       <div className="p-5 rounded-2xl border" style={{ background:'var(--bg2)', borderColor:'var(--border)' }}>
-        <div className="text-[10px] uppercase tracking-widest mb-3" style={{ color:'var(--text3)' }}>Design milestone timeline — completed vs upcoming</div>
+        <div className="text-[12px] uppercase tracking-widest mb-3" style={{ color:'var(--text3)' }}>Design milestone timeline — completed vs upcoming</div>
         <div className="grid grid-cols-2 gap-x-8">
           <div>
-            <div className="text-[10px] mono font-semibold mb-2 pb-1 border-b" style={{ color:'#16a34a', borderColor:'var(--border)' }}>Completed · Day 1–12</div>
+            <div className="text-[12px] mono font-semibold mb-2 pb-1 border-b" style={{ color:'#16a34a', borderColor:'var(--border)' }}>Completed · Day 1–12</div>
             {MILESTONES.filter(m=>m.done).map(m=>(
               <div key={m.date+m.label} className="flex items-start gap-2.5 py-1.5 border-b last:border-0" style={{ borderColor:'var(--border)' }}>
-                <span className="mono text-[10px] w-14 flex-shrink-0 pt-0.5" style={{ color:'var(--text3)' }}>{m.date}</span>
+                <span className="mono text-[12px] w-14 flex-shrink-0 pt-0.5" style={{ color:'var(--text3)' }}>{m.date}</span>
                 <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background:TC[m.type], opacity:0.6 }}/>
-                <span className="text-[12px]" style={{ color:'var(--text2)', opacity:0.7 }}>{m.label}</span>
+                <span className="text-[13.5px]" style={{ color:'var(--text2)', opacity:0.7 }}>{m.label}</span>
               </div>
             ))}
           </div>
           <div>
-            <div className="text-[10px] mono font-semibold mb-2 pb-1 border-b" style={{ color:'#dc2626', borderColor:'var(--border)' }}>Upcoming — critical 3 weeks</div>
+            <div className="text-[12px] mono font-semibold mb-2 pb-1 border-b" style={{ color:'#dc2626', borderColor:'var(--border)' }}>Upcoming — critical 3 weeks</div>
             {MILESTONES.filter(m=>!m.done).map(m=>(
               <div key={m.date+m.label} className="flex items-start gap-2.5 py-1.5 border-b last:border-0" style={{ borderColor:'var(--border)' }}>
-                <span className="mono text-[10px] w-14 flex-shrink-0 pt-0.5" style={{ color:'var(--text3)' }}>{m.date}</span>
+                <span className="mono text-[12px] w-14 flex-shrink-0 pt-0.5" style={{ color:'var(--text3)' }}>{m.date}</span>
                 <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 border-2" style={{ borderColor:TC[m.type], background:'transparent' }}/>
                 <div className="flex-1 flex items-start justify-between gap-2">
-                  <span className="text-[12px]" style={{ color:'var(--text)' }}>{m.label}</span>
-                  <span className="text-[9px] mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ background:`${TC[m.type]}15`, color:TC[m.type] }}>{m.type}</span>
+                  <span className="text-[13.5px]" style={{ color:'var(--text)' }}>{m.label}</span>
+                  <span className="text-[12px] mono px-1.5 py-0.5 rounded flex-shrink-0" style={{ background:`${TC[m.type]}15`, color:TC[m.type] }}>{m.type}</span>
                 </div>
               </div>
             ))}
@@ -573,8 +573,8 @@ export function ArunPerformanceView() {
 
       {/* 3-WEEK MANDATE */}
       <div className="p-5 rounded-2xl border" style={{ background:'rgba(109,94,212,0.04)', borderColor:'rgba(109,94,212,0.2)' }}>
-        <div className="text-[10px] uppercase tracking-widest mb-3" style={{ color:'#6d5ed4' }}>What closing the gap looks like — Jan 20 MVP mandate</div>
-        <div className="grid grid-cols-3 gap-4 text-[12px]" style={{ color:'var(--text2)' }}>
+        <div className="text-[12px] uppercase tracking-widest mb-3" style={{ color:'#6d5ed4' }}>What closing the gap looks like — Jan 20 MVP mandate</div>
+        <div className="grid grid-cols-3 gap-4 text-[13.5px]" style={{ color:'var(--text2)' }}>
           <div>
             <div className="font-semibold mb-1" style={{ color:'var(--text)' }}>Apr 1–7: First prototypes</div>
             Arun said "top top top priority is this only." Two senior engineers join April 1 needing design assets. QB navigation and student exam flow in MP are the two artifacts that unblock the React rebuild and lift the prototype score from 55 to above 70.
@@ -590,7 +590,7 @@ export function ArunPerformanceView() {
         </div>
       </div>
 
-      <div className="text-center text-[11px] mono pb-4" style={{ color:'var(--text3)' }}>
+      <div className="text-center text-[13px] mono pb-4" style={{ color:'var(--text3)' }}>
         rr-insights · Arun Performance Tracker v2 · Offer letter: Kunal Vaishnav Mar 15 2026 · Granola: 791334af Mar 24 2026 (verbatim transcript) · NPS 2025: 1,494 responses · Mar 28, 2026
       </div>
     </div>

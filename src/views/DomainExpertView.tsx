@@ -118,7 +118,7 @@ export function DomainExpertView() {
         <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px', fontFamily: 'DM Serif Display, Georgia, serif' }}>
           Domain Expert Intelligence
         </h1>
-        <p style={{ fontSize: 13, color: 'var(--text2)', margin: 0 }}>
+        <p style={{ fontSize: 14.5, color: 'var(--text2)', margin: 0 }}>
           Aarti, Kunal, Vishaka, and David — broken into layers so you know exactly what to build before it goes to Magic Patterns.
         </p>
       </div>
@@ -128,12 +128,12 @@ export function DomainExpertView() {
         {EXPERTS.map(e => (
           <button key={e.id} onClick={() => { setActiveExpert(e.id); setActiveLayer(null); setSelectedSignal(null); }}
             style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 10, border: `2px solid ${activeExpert === e.id ? e.accentColor : 'var(--border)'}`, background: activeExpert === e.id ? `${e.accentColor}0d` : '#fff', cursor: 'pointer' }}>
-            <div style={{ width: 30, height: 30, borderRadius: '50%', background: e.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+            <div style={{ width: 30, height: 30, borderRadius: '50%', background: e.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
               {e.name.slice(0, 2).toUpperCase()}
             </div>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: activeExpert === e.id ? e.accentColor : 'var(--text)' }}>{e.name}</div>
-              <div style={{ fontSize: 10, color: 'var(--text3)' }}>{e.role}</div>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: activeExpert === e.id ? e.accentColor : 'var(--text)' }}>{e.name}</div>
+              <div style={{ fontSize: 12, color: 'var(--text3)' }}>{e.role}</div>
             </div>
           </button>
         ))}
@@ -141,43 +141,43 @@ export function DomainExpertView() {
 
       {/* Expert header */}
       <div style={{ padding: '16px 20px', borderRadius: 12, background: `${expert.accentColor}08`, border: `1px solid ${expert.accentColor}25`, marginBottom: 20, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-        <div style={{ width: 48, height: 48, borderRadius: '50%', background: expert.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', background: expert.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16.5, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
           {expert.name.slice(0, 2).toUpperCase()}
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
-            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text)', fontFamily: 'DM Serif Display, Georgia, serif' }}>{expert.name}</div>
-            <div style={{ fontSize: 12, color: 'var(--text3)' }}>{expert.role} · {expert.product}</div>
+            <div style={{ fontSize: 18.5, fontWeight: 700, color: 'var(--text)', fontFamily: 'DM Serif Display, Georgia, serif' }}>{expert.name}</div>
+            <div style={{ fontSize: 13.5, color: 'var(--text3)' }}>{expert.role} · {expert.product}</div>
           </div>
-          <div style={{ fontSize: 14, fontStyle: 'italic', color: expert.accentColor, fontFamily: 'DM Serif Display, Georgia, serif', lineHeight: 1.5, borderLeft: `3px solid ${expert.accentColor}`, paddingLeft: 12 }}>
+          <div style={{ fontSize: 15, fontStyle: 'italic', color: expert.accentColor, fontFamily: 'DM Serif Display, Georgia, serif', lineHeight: 1.5, borderLeft: `3px solid ${expert.accentColor}`, paddingLeft: 12 }}>
             "{expert.tagline}"
           </div>
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <div style={{ fontSize: 28, fontWeight: 800, color: expert.accentColor, fontFamily: 'JetBrains Mono, monospace' }}>{expert.signals.length}</div>
-          <div style={{ fontSize: 10, color: 'var(--text3)' }}>confirmed signals</div>
+          <div style={{ fontSize: 12, color: 'var(--text3)' }}>confirmed signals</div>
         </div>
       </div>
 
       {/* Layer selector — radial visual */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
         <button onClick={() => setActiveLayer(null)}
-          style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${!activeLayer ? expert.accentColor : 'var(--border)'}`, background: !activeLayer ? `${expert.accentColor}12` : '#fff', color: !activeLayer ? expert.accentColor : 'var(--text3)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${!activeLayer ? expert.accentColor : 'var(--border)'}`, background: !activeLayer ? `${expert.accentColor}12` : '#fff', color: !activeLayer ? expert.accentColor : 'var(--text3)', fontSize: 13.5, fontWeight: 600, cursor: 'pointer' }}>
           All layers
         </button>
         {layerCounts.map(l => (
           <button key={l.id} onClick={() => setActiveLayer(prev => prev === l.id ? null : l.id)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 20, border: `1px solid ${activeLayer === l.id ? LAYER_COLORS[l.id] : 'var(--border)'}`, background: activeLayer === l.id ? `${LAYER_COLORS[l.id]}12` : '#fff', color: activeLayer === l.id ? LAYER_COLORS[l.id] : 'var(--text3)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 20, border: `1px solid ${activeLayer === l.id ? LAYER_COLORS[l.id] : 'var(--border)'}`, background: activeLayer === l.id ? `${LAYER_COLORS[l.id]}12` : '#fff', color: activeLayer === l.id ? LAYER_COLORS[l.id] : 'var(--text3)', fontSize: 13.5, fontWeight: 600, cursor: 'pointer' }}>
             <span>{l.icon}</span>
             <span>Layer {l.id}: {l.label}</span>
-            <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', opacity: 0.7 }}>({l.count})</span>
+            <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', opacity: 0.7 }}>({l.count})</span>
           </button>
         ))}
       </div>
 
       {/* Layer description */}
       {activeLayer && (
-        <div style={{ padding: '10px 14px', borderRadius: 9, background: `${LAYER_COLORS[activeLayer]}08`, border: `1px solid ${LAYER_COLORS[activeLayer]}20`, marginBottom: 16, fontSize: 13, color: 'var(--text2)' }}>
+        <div style={{ padding: '10px 14px', borderRadius: 9, background: `${LAYER_COLORS[activeLayer]}08`, border: `1px solid ${LAYER_COLORS[activeLayer]}20`, marginBottom: 16, fontSize: 14.5, color: 'var(--text2)' }}>
           {expert.layers.find(l => l.id === activeLayer)?.desc}
         </div>
       )}
@@ -194,23 +194,23 @@ export function DomainExpertView() {
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                 {/* Layer indicator */}
                 <div style={{ width: 28, height: 28, borderRadius: '50%', background: `${LAYER_COLORS[signal.layer]}15`, border: `1.5px solid ${LAYER_COLORS[signal.layer]}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: LAYER_COLORS[signal.layer], fontFamily: 'JetBrains Mono, monospace' }}>L{signal.layer}</span>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: LAYER_COLORS[signal.layer], fontFamily: 'JetBrains Mono, monospace' }}>L{signal.layer}</span>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', lineHeight: 1.4, marginBottom: 4 }}>{signal.signal}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)', lineHeight: 1.4, marginBottom: 4 }}>{signal.signal}</div>
                   {signal.verbatim && (
-                    <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text2)', fontFamily: 'DM Serif Display, Georgia, serif', borderLeft: `2px solid ${expert.accentColor}60`, paddingLeft: 8, marginBottom: 6, lineHeight: 1.5 }}>
+                    <div style={{ fontSize: 13.5, fontStyle: 'italic', color: 'var(--text2)', fontFamily: 'DM Serif Display, Georgia, serif', borderLeft: `2px solid ${expert.accentColor}60`, paddingLeft: 8, marginBottom: 6, lineHeight: 1.5 }}>
                       {signal.verbatim}
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>
+                    <span style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>
                       Session {signal.source.slice(0, 8)} · {signal.date}
                     </span>
-                    <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 8, background: `${STATUS_COLORS[signal.status]}12`, color: STATUS_COLORS[signal.status] }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, padding: '1px 6px', borderRadius: 8, background: `${STATUS_COLORS[signal.status]}12`, color: STATUS_COLORS[signal.status] }}>
                       {signal.status}
                     </span>
-                    <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 8, background: `${signal.confidence === 'high' ? '#16a34a' : '#d97706'}12`, color: signal.confidence === 'high' ? '#16a34a' : '#d97706' }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, padding: '1px 6px', borderRadius: 8, background: `${signal.confidence === 'high' ? '#16a34a' : '#d97706'}12`, color: signal.confidence === 'high' ? '#16a34a' : '#d97706' }}>
                       {signal.confidence} confidence
                     </span>
                   </div>
@@ -219,10 +219,10 @@ export function DomainExpertView() {
               {/* Magic Patterns impact */}
               {selectedSignal?.id === signal.id && (
                 <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, background: 'var(--bg2)', border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
                     Magic Patterns impact
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>{signal.mpImpact}</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>{signal.mpImpact}</div>
                 </div>
               )}
             </div>
@@ -232,15 +232,15 @@ export function DomainExpertView() {
         {/* Status summary */}
         <div style={{ width: 220, flexShrink: 0 }}>
           <div style={{ border: '1px solid var(--border)', borderRadius: 12, background: '#fff', padding: 16, marginBottom: 12 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Build status</div>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Build status</div>
             {(['built', 'in-progress', 'pending'] as const).map(status => {
               const count = expert.signals.filter(s => s.status === status).length;
               const pct = Math.round((count / expert.signals.length) * 100);
               return (
                 <div key={status} style={{ marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                    <span style={{ fontSize: 11, color: STATUS_COLORS[status], fontWeight: 600, textTransform: 'capitalize' }}>{status.replace('-', ' ')}</span>
-                    <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{count}/{expert.signals.length}</span>
+                    <span style={{ fontSize: 13, color: STATUS_COLORS[status], fontWeight: 600, textTransform: 'capitalize' }}>{status.replace('-', ' ')}</span>
+                    <span style={{ fontSize: 13, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)' }}>{count}/{expert.signals.length}</span>
                   </div>
                   <div style={{ height: 5, borderRadius: 3, background: 'var(--bg3)', overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${pct}%`, background: STATUS_COLORS[status], borderRadius: 3 }} />
@@ -252,16 +252,16 @@ export function DomainExpertView() {
 
           {/* Layer breakdown */}
           <div style={{ border: '1px solid var(--border)', borderRadius: 12, background: '#fff', padding: 16 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Signal layers</div>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Signal layers</div>
             {layerCounts.map(l => (
               <div key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, cursor: 'pointer' }}
                 onClick={() => setActiveLayer(prev => prev === l.id ? null : l.id)}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: LAYER_COLORS[l.id], flexShrink: 0 }} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 11, color: 'var(--text)', fontWeight: 500 }}>L{l.id}: {l.label}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>{l.desc.slice(0, 40)}…</div>
+                  <div style={{ fontSize: 13, color: 'var(--text)', fontWeight: 500 }}>L{l.id}: {l.label}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text3)' }}>{l.desc.slice(0, 40)}…</div>
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: LAYER_COLORS[l.id] }}>{l.count}</div>
+                <div style={{ fontSize: 13.5, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: LAYER_COLORS[l.id] }}>{l.count}</div>
               </div>
             ))}
           </div>

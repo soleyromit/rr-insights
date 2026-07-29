@@ -139,7 +139,7 @@ export function SkillsChecklistView() {
 
   const tabStyle = (id: TabId) => ({
     padding: '10px 18px',
-    fontSize: 13,
+    fontSize: 14.5,
     fontWeight: tab === id ? 600 : 400,
     color: tab === id ? 'var(--brand)' : 'var(--text-secondary)',
     borderBottom: `2px solid ${tab === id ? 'var(--brand)' : 'transparent'}`,
@@ -172,12 +172,12 @@ export function SkillsChecklistView() {
             <Card>
               <CardTitle sub="Current vs target state — Day 4 Marriott">The core problem in one sentence</CardTitle>
               <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)', marginBottom: 12 }}>
-                <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 4px' }}>Current state</p>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>Skills are locked inside individual placement forms. Cannot answer: "Has this student completed venipuncture at least once across all 8 rotations?" Students lack a comprehensive view of their progress toward graduation. Faculty cannot see aggregate competency achievement across a program cohort.</p>
+                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 4px' }}>Current state</p>
+                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>Skills are locked inside individual placement forms. Cannot answer: "Has this student completed venipuncture at least once across all 8 rotations?" Students lack a comprehensive view of their progress toward graduation. Faculty cannot see aggregate competency achievement across a program cohort.</p>
               </div>
               <div style={{ padding: '14px 16px', borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 4px' }}>Target state</p>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>Skills exist at student program level — a cross-cutting entity above courses, placements, and evaluations. Student initiates assessment when ready. Aggregates across all placements automatically. Graduation clearance dashboard shows at-risk students weeks before the deadline.</p>
+                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 4px' }}>Target state</p>
+                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0 }}>Skills exist at student program level — a cross-cutting entity above courses, placements, and evaluations. Student initiates assessment when ready. Aggregates across all placements automatically. Graduation clearance dashboard shows at-risk students weeks before the deadline.</p>
               </div>
             </Card>
 
@@ -186,12 +186,12 @@ export function SkillsChecklistView() {
               <ResponsiveContainer width="100%" height={200}>
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="var(--border)" />
-                  <PolarAngleAxis dataKey="area" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} />
+                  <PolarAngleAxis dataKey="area" tick={{ fontSize: 13, fill: 'var(--text-secondary)' }} />
                   <Radar name="Coverage" dataKey="completeness" stroke="#10B981" fill="#10B981" fillOpacity={0.15} />
                   <Radar name="Complexity" dataKey="complexity" stroke="#E31C79" fill="#E31C79" fillOpacity={0.1} />
                 </RadarChart>
               </ResponsiveContainer>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center' }}>Green = research coverage · Pink = implementation complexity</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>Green = research coverage · Pink = implementation complexity</div>
             </Card>
 
             {insights.slice(0, 5).map((ins, i) => <InsightRow key={i} insight={ins} />)}
@@ -208,8 +208,8 @@ export function SkillsChecklistView() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {[{ label: 'Rationale', text: a.rationale, color: '#10B981' }, { label: 'Tradeoff', text: a.tradeoff, color: '#F59E0B' }].map(row => (
                     <div key={row.label} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: row.color, width: 72, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{row.text}</p>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: row.color, width: 72, flexShrink: 0, marginTop: 2 }}>{row.label}</span>
+                      <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{row.text}</p>
                     </div>
                   ))}
                 </div>
@@ -227,8 +227,8 @@ export function SkillsChecklistView() {
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
                   <Badge variant="default">{t.trigger}</Badge>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 2px' }}>{t.desc}</p>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Used by: {t.programs}</span>
+                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 2px' }}>{t.desc}</p>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Used by: {t.programs}</span>
                   </div>
                 </div>
               ))}
@@ -244,7 +244,7 @@ export function SkillsChecklistView() {
               <Card key={i}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                   <Badge variant="default">{d.name}</Badge>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{d.ref}</span>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{d.ref}</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
                   {[
@@ -255,14 +255,14 @@ export function SkillsChecklistView() {
                     { label: 'Primary evaluator', val: d.evaluator },
                   ].map(row => (
                     <div key={row.label}>
-                      <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 2 }}>{row.label}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{row.val}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: 2 }}>{row.label}</div>
+                      <div style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{row.val}</div>
                     </div>
                   ))}
                 </div>
                 <div style={{ marginTop: 10, padding: '8px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)' }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#EF4444' }}>Design gap: </span>
-                  <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{d.gaps}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#EF4444' }}>Design gap: </span>
+                  <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{d.gaps}</span>
                 </div>
               </Card>
             ))}
@@ -271,9 +271,9 @@ export function SkillsChecklistView() {
               {evaluationApproaches.map((e, i) => (
                 <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < evaluationApproaches.length - 1 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{e.method}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 2 }}>Used by: {e.programs}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{e.note}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{e.method}</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text-muted)', marginBottom: 2 }}>Used by: {e.programs}</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{e.note}</div>
                   </div>
                 </div>
               ))}
@@ -338,8 +338,8 @@ export function SkillsChecklistView() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {w.steps.map((s, si) => (
                     <div key={si} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{si + 1}</span>
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{s}</p>
+                      <span style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{si + 1}</span>
+                      <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{s}</p>
                     </div>
                   ))}
                 </div>
@@ -363,12 +363,12 @@ export function SkillsChecklistView() {
               <Card key={i}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                   <Badge variant="default">{a.body}</Badge>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>{a.standard}</span>
+                  <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--text-primary)' }}>{a.standard}</span>
                 </div>
-                <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.6 }}>{a.detail}</p>
+                <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.6 }}>{a.detail}</p>
                 <div style={{ padding: '8px 12px', borderRadius: 8, background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)' }}>Report required: </span>
-                  <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{a.reportNeeded}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>Report required: </span>
+                  <span style={{ fontSize: 13.5, color: 'var(--text-secondary)' }}>{a.reportNeeded}</span>
                 </div>
               </Card>
             ))}
@@ -391,12 +391,12 @@ export function SkillsChecklistView() {
             ].map((s, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{ fontSize: 11, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>{s.id}</span>
+                  <span style={{ fontSize: 13, fontFamily: 'monospace', fontWeight: 700, color: 'var(--brand)', background: 'rgba(227,28,121,0.08)', padding: '2px 6px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>{s.id}</span>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
+                    <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 4px' }}>
                       <strong>As a</strong> {s.who}, <strong>I need to</strong> {s.what}, <strong>so that</strong> {s.why}.
                     </p>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Source: {s.src}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Source: {s.src}</span>
                   </div>
                 </div>
               </Card>
@@ -430,13 +430,13 @@ export function SkillsChecklistView() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* The "just the reds" story */}
               <div style={{ padding: '14px 18px', borderRadius: 12, background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.2)', borderLeft: '4px solid #dc2626' }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>
                   Dr. T, Touro PA Program · Mar 11, 2026 · session 92bef6ba
                 </div>
-                <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+                <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.6, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
                   "I just want the reds. Just the students missing their procedure minimums."
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>
+                <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>
                   This is a confirmed UX decision: the program director wants a toggle that shows <strong>only</strong> deficient students —
                   not all students with a red indicator mixed in. The difference is intent: this is an action-oriented view,
                   not an overview. Default to reds-only on load.
@@ -445,17 +445,17 @@ export function SkillsChecklistView() {
 
               {/* Controls */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 10, background: '#fff', border: '1px solid var(--border)' }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>
+                <span style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--text)' }}>
                   {showOnlyReds ? `${displayed.length} students below threshold` : `${STUDENTS.length} students total`}
                 </span>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', marginLeft: 'auto' }}>
-                  <span style={{ fontSize: 12, color: 'var(--text2)' }}>Show only reds</span>
+                  <span style={{ fontSize: 13.5, color: 'var(--text2)' }}>Show only reds</span>
                   <div style={{ width: 36, height: 20, borderRadius: 10, background: showOnlyReds ? '#dc2626' : 'var(--border2)', position: 'relative', cursor: 'pointer', flexShrink: 0 }}
                     onClick={() => setShowOnlyReds(!showOnlyReds)}>
                     <div style={{ position: 'absolute', top: 3, width: 14, height: 14, borderRadius: '50%', background: '#fff', left: showOnlyReds ? 19 : 3, transition: 'left 0.12s' }} />
                   </div>
                 </label>
-                <div style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', color: '#dc2626', fontWeight: 600 }}>
+                <div style={{ fontSize: 13, padding: '4px 10px', borderRadius: 8, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', color: '#dc2626', fontWeight: 600 }}>
                   Threshold: 3 per procedure
                 </div>
               </div>
@@ -465,13 +465,13 @@ export function SkillsChecklistView() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 800 }}>
                   <thead>
                     <tr style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--border)' }}>
-                      <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em', minWidth: 120 }}>Student</th>
+                      <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: 13, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em', minWidth: 120 }}>Student</th>
                       {PROCEDURES.map(p => (
-                        <th key={p} style={{ padding: '8px 6px', fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', minWidth: 72 }}>
+                        <th key={p} style={{ padding: '8px 6px', fontSize: 12, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', minWidth: 72 }}>
                           {p.split(' ')[0]}
                         </th>
                       ))}
-                      <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gaps</th>
+                      <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: 13, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gaps</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -480,21 +480,21 @@ export function SkillsChecklistView() {
                       return (
                         <tr key={s.name} style={{ borderBottom: si < displayed.length - 1 ? '1px solid var(--border)' : 'none', background: s.risk ? 'rgba(220,38,38,0.02)' : 'transparent' }}>
                           <td style={{ padding: '10px 14px' }}>
-                            <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text)' }}>{s.name}</div>
-                            <div style={{ fontSize: 11, color: 'var(--text3)' }}>{s.cohort}</div>
+                            <div style={{ fontWeight: 600, fontSize: 14.5, color: 'var(--text)' }}>{s.name}</div>
+                            <div style={{ fontSize: 13, color: 'var(--text3)' }}>{s.cohort}</div>
                           </td>
                           {s.counts.map((count, pi) => {
                             const isRed = count < s.threshold;
                             return (
                               <td key={pi} style={{ padding: '8px 6px', textAlign: 'center' }}>
                                 <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 28, borderRadius: 6, background: isRed ? 'rgba(220,38,38,0.1)' : count >= s.threshold * 2 ? 'rgba(16,163,74,0.08)' : 'rgba(217,119,6,0.08)', border: `1px solid ${isRed ? 'rgba(220,38,38,0.25)' : count >= s.threshold * 2 ? 'rgba(16,163,74,0.2)' : 'rgba(217,119,6,0.2)'}` }}>
-                                  <span style={{ fontSize: 12, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: isRed ? '#dc2626' : count >= s.threshold * 2 ? '#16a34a' : '#d97706' }}>{count}</span>
+                                  <span style={{ fontSize: 13.5, fontWeight: 700, fontFamily: 'JetBrains Mono, monospace', color: isRed ? '#dc2626' : count >= s.threshold * 2 ? '#16a34a' : '#d97706' }}>{count}</span>
                                 </div>
                               </td>
                             );
                           })}
                           <td style={{ padding: '10px 14px', textAlign: 'center' }}>
-                            <span style={{ fontSize: 13, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: gaps > 0 ? '#dc2626' : '#16a34a' }}>
+                            <span style={{ fontSize: 14.5, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: gaps > 0 ? '#dc2626' : '#16a34a' }}>
                               {gaps > 0 ? `${gaps} gaps` : '✓'}
                             </span>
                           </td>
@@ -510,14 +510,14 @@ export function SkillsChecklistView() {
                 {[['rgba(220,38,38,0.1)', '#dc2626', 'Below threshold (< 3)'], ['rgba(217,119,6,0.08)', '#d97706', 'Near threshold (3–5)'], ['rgba(16,163,74,0.08)', '#16a34a', 'Well above (6+)']].map(([bg, color, label]) => (
                   <div key={label as string} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <div style={{ width: 24, height: 20, borderRadius: 5, background: bg as string, border: `1px solid ${color as string}40` }} />
-                    <span style={{ fontSize: 11, color: 'var(--text3)' }}>{label as string}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text3)' }}>{label as string}</span>
                   </div>
                 ))}
-                <div style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text3)' }}>Threshold per Dr. T: 3 per procedure · Source: session 92bef6ba</div>
+                <div style={{ marginLeft: 'auto', fontSize: 13, color: 'var(--text3)' }}>Threshold per Dr. T: 3 per procedure · Source: session 92bef6ba</div>
               </div>
 
               {/* Overflow / culminating slot note */}
-              <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.15)', fontSize: 12, color: 'var(--text2)' }}>
+              <div style={{ padding: '12px 16px', borderRadius: 10, background: 'rgba(109,94,212,0.05)', border: '1px solid rgba(109,94,212,0.15)', fontSize: 13.5, color: 'var(--text2)' }}>
                 <span style={{ fontWeight: 700, color: '#6d5ed4' }}>Edge case (Dr. T, session 92bef6ba):</span>{' '}
                 "We need a space where if a student comes back and says I never did an IV on all my clinicals."
                 Skills checklist must support an overflow/culminating rotation slot (rotation 10 at Touro) where students can log

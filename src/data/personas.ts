@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v15.2',
+    date: '2026-07-28',
+    summary: 'Research Repository Benchmark v1: competitor matrix, enterprise feature grades, Mobbin pattern study (Dovetail/TheyDo) with six design directives replacing the generated-dashboard chart language. Type scale raised across 35 files, 12px hard floor. P6-P9 build order committed.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['RESEARCH_REPO_BENCHMARK_v1.html', '35 source files (type scale)'],
+  },
+  {
     version: 'v15.1',
     date: '2026-07-28',
     summary: 'Data-integrity pass: phase state now date-derived (was positional fabrication), invented anchor percentages removed, Cohere Aug/Sep source conflict surfaced with confirmation flag, signal matchers word-bounded, deadline labels name their target date. Data-integrity rules codified in PRODUCT.md.',

@@ -39,19 +39,19 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
     }}
       onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--bg)'; }}
       onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = '#fff'; }}>
-      <span className="mono" style={{ fontSize: 11, fontWeight: active ? 700 : 400, color: active ? def.color : 'var(--text3)', width: 22, flexShrink: 0 }}>{String(index + 1).padStart(2, '0')}</span>
+      <span className="mono" style={{ fontSize: 13, fontWeight: active ? 700 : 400, color: active ? def.color : 'var(--text3)', width: 22, flexShrink: 0 }}>{String(index + 1).padStart(2, '0')}</span>
       <span style={{ width: 8, height: 8, borderRadius: '50%', background: def.color, flexShrink: 0 }} />
       <span style={{ flex: 1, minWidth: 0 }}>
         <span className="rr-serif" style={{ display: 'block', fontSize: compact ? 15 : 16.5, color: 'var(--text)', lineHeight: 1.25 }}>{def.title}</span>
-        {!compact && <span className="serif" style={{ display: 'block', fontSize: 13, color: 'var(--text2)', lineHeight: 1.4, marginTop: 2 }}>{def.question}</span>}
+        {!compact && <span className="serif" style={{ display: 'block', fontSize: 14.5, color: 'var(--text2)', lineHeight: 1.4, marginTop: 2 }}>{def.question}</span>}
       </span>
       {!compact && (
-        <span className="mono flex-shrink-0" style={{ fontSize: 10, color: 'var(--text3)', textAlign: 'right', lineHeight: 1.6 }}>
+        <span className="mono flex-shrink-0" style={{ fontSize: 12, color: 'var(--text3)', textAlign: 'right', lineHeight: 1.6 }}>
           {Object.keys(byProduct).length} products<br />{insights.length} insights
         </span>
       )}
       <span className="mono flex-shrink-0" style={{
-        fontSize: 9.5, fontWeight: 600, padding: '2.5px 8px', borderRadius: 3,
+        fontSize: 12, fontWeight: 600, padding: '2.5px 8px', borderRadius: 3,
         background: `${SEV_COLORS[topSeverity] ?? '#8a8580'}16`, color: SEV_COLORS[topSeverity] ?? '#8a8580',
       }}>{topSeverity.toUpperCase()}</span>
       <ChevronRightIcon size={15} style={{ color: 'var(--text3)', flexShrink: 0, opacity: active ? 1 : 0.45 }} />
@@ -99,16 +99,16 @@ export function SignalsView() {
     title: { text: undefined }, credits: { enabled: false },
     xAxis: {
       categories: signals.map(s => SHORT[s.def.id]), lineColor: '#e3ddd4', tickLength: 0,
-      labels: { style: { fontSize: '10px', color: '#4a4844', fontFamily: MONO } },
+      labels: { style: { fontSize: '12px', color: '#4a4844', fontFamily: MONO } },
     },
     yAxis: {
       title: { text: undefined }, gridLineColor: '#ede9e3', tickInterval: 10,
-      labels: { style: { fontSize: '9.5px', color: '#6b6660', fontFamily: MONO } },
+      labels: { style: { fontSize: '12px', color: '#6b6660', fontFamily: MONO } },
     },
-    legend: { itemStyle: { fontSize: '10px', fontWeight: '400', color: '#4a4844', fontFamily: MONO }, symbolRadius: 2, symbolHeight: 9 },
+    legend: { itemStyle: { fontSize: '12px', fontWeight: '400', color: '#4a4844', fontFamily: MONO }, symbolRadius: 2, symbolHeight: 9 },
     tooltip: {
       shared: true, backgroundColor: '#1a1917', borderRadius: 8, borderWidth: 0, shadow: false,
-      style: { color: '#faf9f7', fontSize: '11px', fontFamily: MONO },
+      style: { color: '#faf9f7', fontSize: '13px', fontFamily: MONO },
     },
     plotOptions: { series: { stacking: 'normal', borderWidth: 0, pointPadding: 0.06, groupPadding: 0.07, animation: { duration: 500 } } },
     series: SEVERITIES.map(sev => ({
@@ -133,7 +133,7 @@ export function SignalsView() {
               <PlotFigure minHeight={signals.length * 36 + 60} deps={[heatCells]} build={() => ({
                 height: signals.length * 36 + 58,
                 marginLeft: 138, marginTop: 26, marginBottom: 4, marginRight: 8,
-                style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+                style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
                 x: { axis: 'top', label: null, domain: PERSONA_ORDER, tickSize: 0, padding: 0.06 },
                 y: { label: null, tickSize: 0, padding: 0.12 },
                 color: { type: 'linear', range: ['#f4f2ee', '#e8604a'], domain: [0, maxWeight] },
@@ -141,7 +141,7 @@ export function SignalsView() {
                   Plot.cell(heatCells, { x: 'persona', y: 'signal', fill: 'weight', rx: 4, inset: 1.5 }),
                   Plot.text(heatCells, {
                     x: 'persona', y: 'signal', text: d => String(d.count),
-                    fill: d => (d.weight > maxWeight * 0.55 ? '#fff' : '#4a4844'), fontSize: 10.5,
+                    fill: d => (d.weight > maxWeight * 0.55 ? '#fff' : '#4a4844'), fontSize: 12.5,
                   }),
                 ],
               })} />
@@ -158,7 +158,7 @@ export function SignalsView() {
               <PlotFigure minHeight={signals.length * 30 + 70} deps={[timelineRows]} build={() => ({
                 height: signals.length * 30 + 66,
                 marginLeft: 138, marginTop: 8, marginBottom: 26, marginRight: 12,
-                style: { fontFamily: MONO, fontSize: '10.5px', background: 'transparent' },
+                style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
                 x: { type: 'time', label: null, tickFormat: '%b' },
                 y: { label: null, tickSize: 0, padding: 0.5 },
                 color: { domain: [...SEVERITIES], range: SEVERITIES.map(s => SEV_COLORS[s]), legend: true, label: 'severity' },
@@ -177,7 +177,7 @@ export function SignalsView() {
 
         {/* ── Signal index ── */}
         <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
             Signal index, ranked by severity — open a row for its evidence
           </div>
           {signals.map((s, i) => (

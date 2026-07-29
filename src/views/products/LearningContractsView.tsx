@@ -17,7 +17,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'exactone', label: '★ ExactOne north star' },
 ];
 const ts = (t: TabId, cur: TabId) => ({
-  padding: '10px 18px', fontSize: 13,
+  padding: '10px 18px', fontSize: 14.5,
   fontWeight: cur === t ? 600 : 400,
   color: cur === t ? 'var(--brand)' : 'var(--text-secondary)',
   borderBottom: `2px solid ${cur === t ? 'var(--brand)' : 'transparent'}`,
@@ -69,7 +69,7 @@ export function LearningContractsView() {
           <button key={t.id} onClick={() => setTab(t.id)} style={ts(t.id, tab)}>
             {t.label}
             {t.id === 'gaps' && critical > 0 && (
-              <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{critical}</span>
+              <span style={{ marginLeft: 6, fontSize: 12, fontWeight: 800, background: '#EF4444', color: 'white', padding: '1px 5px', borderRadius: 10 }}>{critical}</span>
             )}
           </button>
         ))}
@@ -87,7 +87,7 @@ export function LearningContractsView() {
             </div>
             <Card>
               <CardTitle sub="Three parties, one agreement, every rotation">What Learning Contracts does</CardTitle>
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, margin: '0 0 12px' }}>
+              <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.7, margin: '0 0 12px' }}>
                 A Learning Contract formalises the objectives a student will work toward during a clinical rotation. It involves three parties: the student, their DCE (academic side), and the SCCE (clinical site side). Contracts run across every rotation in a clinical year and must link to competency frameworks for accreditation evidence.
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
@@ -97,9 +97,9 @@ export function LearningContractsView() {
                   { role: 'SCCE', job: 'Review student objectives, add site expectations, confirm completion at rotation end.', gap: 'Platform unfamiliar — re-learns each rotation. No student context on arrival.' },
                 ].map((p, i) => (
                   <div key={i} style={{ padding: '12px 14px', borderRadius: 10, background: 'var(--surface-secondary)', border: '1px solid var(--border)' }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', marginBottom: 6 }}>{p.role}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 6 }}><strong>Job: </strong>{p.job}</div>
-                    <div style={{ fontSize: 11, color: '#EF4444' }}><strong>Gap: </strong>{p.gap}</div>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--brand)', marginBottom: 6 }}>{p.role}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 6 }}><strong>Job: </strong>{p.job}</div>
+                    <div style={{ fontSize: 13, color: '#EF4444' }}><strong>Gap: </strong>{p.gap}</div>
                   </div>
                 ))}
               </div>
@@ -108,10 +108,10 @@ export function LearningContractsView() {
               <CardTitle sub="The untapped connection: Learning Contracts plus Skills Checklist">The missing link</CardTitle>
               <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, margin: '0 0 10px' }}>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.7, margin: '0 0 10px' }}>
                     Contracts set goals: <em>perform 10 IV insertions by end of rotation.</em> Skills Checklist tracks competency: <em>IV insertion — observed / performed.</em> These two systems are entirely disconnected. A student can complete the Skills item without the contract knowing.
                   </p>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>
+                  <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>
                     Connecting them creates a closed-loop competency system. Every contract objective maps to Skills Checklist items. Completing one drives progress in the other. No competitor has this.
                   </p>
                 </div>
@@ -119,13 +119,13 @@ export function LearningContractsView() {
                   <ResponsiveContainer width="100%" height={180}>
                     <RadarChart data={RADAR_DATA}>
                       <PolarGrid stroke="var(--border)" />
-                      <PolarAngleAxis dataKey="axis" tick={{ fontSize: 10, fill: 'var(--text-secondary)' }} />
+                      <PolarAngleAxis dataKey="axis" tick={{ fontSize: 12, fill: 'var(--text-secondary)' }} />
                       <Radar name="Current" dataKey="current" stroke="#EF4444" fill="#EF4444" fillOpacity={0.15} />
                       <Radar name="Target" dataKey="target" stroke="var(--brand)" fill="var(--brand)" fillOpacity={0.1} />
-                      <Tooltip contentStyle={{ background: 'var(--surface-primary)', border: '1px solid var(--border)', fontSize: 11 }} />
+                      <Tooltip contentStyle={{ background: 'var(--surface-primary)', border: '1px solid var(--border)', fontSize: 13 }} />
                     </RadarChart>
                   </ResponsiveContainer>
-                  <p style={{ fontSize: 10, color: 'var(--text-muted)', textAlign: 'center', margin: 0 }}>Current vs target (1-10)</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', margin: 0 }}>Current vs target (1-10)</p>
                 </div>
               </div>
             </Card>
@@ -138,15 +138,15 @@ export function LearningContractsView() {
             {LIFECYCLE.map((stage, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', gap: 16 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, flexShrink: 0 }}>{i + 1}</div>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13.5, fontWeight: 800, flexShrink: 0 }}>{i + 1}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{stage.stage}</span>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{stage.stage}</span>
                       <Badge variant="default">{stage.owner}</Badge>
                       {stage.nps && <Badge variant="error">NPS signal</Badge>}
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 6 }}><strong>Action: </strong>{stage.action}</div>
-                    <div style={{ fontSize: 12, color: '#EF4444', padding: '6px 10px', background: 'rgba(239,68,68,0.06)', borderRadius: 8, borderLeft: '2px solid #EF4444' }}>
+                    <div style={{ fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 6 }}><strong>Action: </strong>{stage.action}</div>
+                    <div style={{ fontSize: 13.5, color: '#EF4444', padding: '6px 10px', background: 'rgba(239,68,68,0.06)', borderRadius: 8, borderLeft: '2px solid #EF4444' }}>
                       <strong>Pain: </strong>{stage.pain}
                     </div>
                   </div>
@@ -164,9 +164,9 @@ export function LearningContractsView() {
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={PERSONA_DATA} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="persona" tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} />
-                  <YAxis tick={{ fontSize: 11, fill: 'var(--text-secondary)' }} domain={[0, 6]} />
-                  <Tooltip contentStyle={{ background: 'var(--surface-primary)', border: '1px solid var(--border)', fontSize: 11 }} />
+                  <XAxis dataKey="persona" tick={{ fontSize: 13, fill: 'var(--text-secondary)' }} />
+                  <YAxis tick={{ fontSize: 13, fill: 'var(--text-secondary)' }} domain={[0, 6]} />
+                  <Tooltip contentStyle={{ background: 'var(--surface-primary)', border: '1px solid var(--border)', fontSize: 13 }} />
                   <Bar dataKey="pain" fill="#EF4444" name="Pain level" radius={[4,4,0,0]} />
                   <Bar dataKey="mobile" fill="#D97706" name="Mobile need" radius={[4,4,0,0]} />
                   <Bar dataKey="awareness" fill="var(--brand)" name="Platform awareness" radius={[4,4,0,0]} />
@@ -180,15 +180,15 @@ export function LearningContractsView() {
             ].map((p, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: p.color }}>{p.persona}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: p.color }}>{p.persona}</div>
                   <Badge variant={p.risk === 'Highest risk' ? 'error' : p.risk === 'High risk' ? 'warning' : 'default'}>{p.risk}</Badge>
                 </div>
                 {p.points.map((pt, j) => (
-                  <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 12, color: 'var(--text-secondary)' }}>
+                  <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 13.5, color: 'var(--text-secondary)' }}>
                     <span style={{ color: p.color, flexShrink: 0 }}>•</span>{pt}
                   </div>
                 ))}
-                <div style={{ marginTop: 8, padding: '8px 12px', borderRadius: 8, background: `${p.color}08`, borderLeft: `2px solid ${p.color}`, fontSize: 12, color: 'var(--text-secondary)' }}>
+                <div style={{ marginTop: 8, padding: '8px 12px', borderRadius: 8, background: `${p.color}08`, borderLeft: `2px solid ${p.color}`, fontSize: 13.5, color: 'var(--text-secondary)' }}>
                   <strong style={{ color: p.color }}>Design direction: </strong>{p.design}
                 </div>
               </Card>
@@ -204,12 +204,12 @@ export function LearningContractsView() {
               if (!items.length) return null;
               return (
                 <div key={sev}>
-                  <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', marginBottom: 8 }}>{sev} ({items.length})</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: sev === 'Critical' ? '#EF4444' : sev === 'High' ? '#D97706' : '#3B82F6', marginBottom: 8 }}>{sev} ({items.length})</div>
                   {items.map((g, i) => (
                     <Card key={i}>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{g.area}</div>
-                      <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.6 }}>{g.detail}</p>
-                      <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(16,185,129,0.07)', borderLeft: '2px solid #10B981', fontSize: 12, color: 'var(--text-secondary)' }}>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{g.area}</div>
+                      <p style={{ fontSize: 14.5, color: 'var(--text-secondary)', margin: '0 0 8px', lineHeight: 1.6 }}>{g.detail}</p>
+                      <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(16,185,129,0.07)', borderLeft: '2px solid #10B981', fontSize: 13.5, color: 'var(--text-secondary)' }}>
                         <strong style={{ color: '#10B981' }}>Fix: </strong>{g.fix}
                       </div>
                     </Card>
@@ -226,11 +226,11 @@ export function LearningContractsView() {
             {ROADMAP.map((phase, i) => (
               <Card key={i}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                  <div style={{ padding: '6px 12px', borderRadius: 8, background: 'var(--brand)', color: 'white', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{phase.phase}</div>
+                  <div style={{ padding: '6px 12px', borderRadius: 8, background: 'var(--brand)', color: 'white', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>{phase.phase}</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>{phase.label}</div>
+                    <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>{phase.label}</div>
                     {phase.items.map((item, j) => (
-                      <div key={j} style={{ display: 'flex', gap: 8, fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4 }}>
+                      <div key={j} style={{ display: 'flex', gap: 8, fontSize: 13.5, color: 'var(--text-secondary)', marginBottom: 4 }}>
                         <span style={{ color: 'var(--brand)', flexShrink: 0 }}>→</span>{item}
                       </div>
                     ))}
@@ -245,11 +245,11 @@ export function LearningContractsView() {
         {tab === 'exactone' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ padding: '16px 20px', borderRadius: 12, background: 'rgba(109,94,212,0.04)', border: '1px solid rgba(109,94,212,0.2)', borderLeft: '4px solid #6d5ed4' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Aarti · ExxatOne Student + School · Feb 25 · sessions d4c622ef + 72f8b82e</div>
-              <div style={{ fontSize: 15, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6d5ed4', marginBottom: 8 }}>Aarti · ExxatOne Student + School · Feb 25 · sessions d4c622ef + 72f8b82e</div>
+              <div style={{ fontSize: 16, color: 'var(--text)', lineHeight: 1.65, fontFamily: 'DM Serif Display, Georgia, serif', fontStyle: 'italic', marginBottom: 8 }}>
                 "We are creating the concept of an allied health care student — just like Airbnb created the concept of a traveler."
               </div>
-              <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6 }}>ExactOne is not a schedule viewer. It is the student-facing platform for the entire allied health career lifecycle.</div>
+              <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.6 }}>ExactOne is not a schedule viewer. It is the student-facing platform for the entire allied health career lifecycle.</div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {[
@@ -257,18 +257,18 @@ export function LearningContractsView() {
                 { title: 'Uber model', items: ['Payment-first: sooner student pays, sooner Exact gets paid', 'Reserve model: commit + pay ahead, remove friction', 'Every new module (jobs, CME) advertised inside app', 'Consolidated account for rides, food, groceries = one ID'], color: '#e8604a' },
               ].map((col, i) => (
                 <div key={i} style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', borderLeft: '3px solid ' + col.color, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: col.color, marginBottom: 10 }}>{col.title}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: col.color, marginBottom: 10 }}>{col.title}</div>
                   {col.items.map((item, j) => (
                     <div key={j} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
                       <span style={{ color: col.color, flexShrink: 0 }}>·</span>
-                      <span style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
+                      <span style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.5 }}>{item}</span>
                     </div>
                   ))}
                 </div>
               ))}
             </div>
             <div style={{ borderRadius: 12, background: '#fff', border: '1px solid var(--border)', padding: '14px 16px' }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Confirmed UX decisions from Aarti (Feb 25)</div>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Confirmed UX decisions from Aarti (Feb 25)</div>
               {[
                 { decision: 'Payment is primary CTA', detail: 'First element on student dashboard when payment is due. Exact makes money only when student pays.', source: 'd4c622ef' },
                 { decision: 'Calendar view removed', detail: 'Rotations happen in 35-40 of 150 grad school weeks. Daily calendar not useful.', source: 'd4c622ef' },
@@ -278,10 +278,10 @@ export function LearningContractsView() {
               ].map((d, i) => (
                 <div key={i} style={{ display: 'flex', gap: 14, padding: '10px 0', borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
                   <div style={{ flexShrink: 0, width: 180 }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{d.decision}</div>
-                    <div style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 2 }}>{d.source}</div>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)' }}>{d.decision}</div>
+                    <div style={{ fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text3)', marginTop: 2 }}>{d.source}</div>
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.55 }}>{d.detail}</div>
+                  <div style={{ fontSize: 13.5, color: 'var(--text2)', lineHeight: 1.55 }}>{d.detail}</div>
                 </div>
               ))}
             </div>
