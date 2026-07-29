@@ -99,7 +99,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                   tooltip="Search everything (⌘K)"
                   onClick={() => setPaletteOpen(true)}
                 />
-                <Badge>{`v${VERSION} · ${LAST_UPDATED}`}</Badge>
+                <Badge label={`v${VERSION} · ${LAST_UPDATED}`} />
               </>
             }
           />
@@ -151,7 +151,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <Text type="body" style={{ flex: 1 }}>
               {item.label}
             </Text>
-            {item.auxiliaryData?.hint && <Text type="meta">{item.auxiliaryData.hint}</Text>}
+            {item.auxiliaryData?.hint && <Text type="supporting">{item.auxiliaryData.hint}</Text>}
           </>
         )}
       />
