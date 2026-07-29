@@ -31,9 +31,12 @@ web (desktop-first; Vite + React SPA on GitHub Pages, base `/rr-insights/`). Dep
 
 ## Information architecture (UX Audit v1, Jul 2026)
 
-Four layers: The Story (Command Center, Connect the Dots) → Evidence (Signals, Persona Atlas, Competitive Parity, Source Library) → Products (5) → Outputs (Briefings, Portfolio + Deliverables). Migration phases P3–P5 pending; pre-audit views live in a collapsed Archive until merged.
+Four layers: The Story (Command Center, Connect the Dots) → Evidence (Signals, Persona Atlas, Competitive Parity, Source Library) → Products (5) → Outputs (Briefings, Portfolio + Deliverables). Migration phases P3–P6 shipped (v14.0–v16.0); P7 shipped v17.0 (scoring engine, insight-as-document, live briefings); P8–P9 remain on the Benchmark backlog. Pre-audit deep specs live on -spec routes and in the collapsed Archive.
 
-## Data integrity rules (v15.1)
+## Data integrity rules (v15.1, extended v17.0)
+
+- **Severity is graded against a written rubric** (`src/data/taxonomy.ts`): four levels with testable definitions. v17.0 regraded 195 insights; a grade that cannot cite its rubric line reverts.
+- **Priority is a scored matrix, not a sorted list**: opportunity score = severity × evidence class × persona priority (`src/lib/score.ts`), formula rendered wherever it ranks.
 
 - **State is derived, never positional**: phase/milestone state comes from parseable dates compared to today; undated items render as unscheduled and claim nothing.
 - **No invented numbers**: a percentage or progress value must trace to data or be removed; estimates are labeled as estimates in the UI.
@@ -42,7 +45,6 @@ Four layers: The Story (Command Center, Connect the Dots) → Evidence (Signals,
 
 ## Open decisions
 
-- Highcharts licensing for commercial contexts (fine for this internal tool; confirm with Arun before the pattern spreads to Exxat product work; ECharts is the Apache-2.0 fallback).
 - ExxatOne: register as a sixth product or fold into platform signals.
-- **Cohere date conflict**: milestones data says Aug 2026 (hard deadline); product plan (pilotDate, roadmap phases, v11 notes) says Sep 2026. UI renders Aug conservatively and flags the conflict. Confirm with Arun and correct one source.
+- **Cohere date conflict**: milestones data says Aug 2026 (hard deadline); product plan (pilotDate, roadmap phases, v11 notes) says Sep 2026. Both claims now live once in `COHERE_LAUNCH` (`src/data/taxonomy.ts`); the UI renders Aug conservatively and flags the conflict. Confirm with Arun and correct the constant.
 - Product `daysToDeadline` (176d) tracks planned launch Jan 20, 2027, not the next hard deadline; labels now say so.

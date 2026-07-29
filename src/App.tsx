@@ -24,6 +24,9 @@ import { ArunPerformanceView } from './views/ArunPerformanceView';
 import { NPSView } from './views/NPSView';
 import { NarrativeView } from './views/NarrativeView';
 import { ProductPage } from './views/products/ProductPage';
+import { NavIAView } from './views/products/NavIAView';
+import { InsightIndexView } from './views/InsightIndexView';
+import { HighlightsView } from './views/HighlightsView';
 import type { ProductId } from './types';
 
 const PRODUCT_IDS = new Set<ProductId>(['exam-management','faas','course-eval','skills-checklist','learning-contracts']);
@@ -41,8 +44,10 @@ export function App() {
     if (activeView === 'whiteboard')       return <WhiteboardView onNav={handleNav} />;
     if (activeView === 'competitive')      return <CompetitiveView />;
     if (activeView === 'changelog')        return <ChangelogView />;
-    if (activeView === 'personas')         return <PersonaMapView />;
+    if (activeView === 'personas')         return <PersonaMapView onNav={handleNav} />;
     if (activeView === 'signals')          return <SignalsView onNav={handleNav} />;
+    if (activeView === 'insights')         return <InsightIndexView onNav={handleNav} />;
+    if (activeView === 'highlights')       return <HighlightsView onNav={handleNav} />;
     if (activeView === 'themes')           return <SignalsView onNav={handleNav} />; // legacy route → Signals
     if (activeView === 'roadmap')          return <RoadmapView />;
     if (activeView === 'portfolio')        return <PortfolioView />;
@@ -54,7 +59,7 @@ export function App() {
     if (activeView === 'arun-performance') return <ArunPerformanceView />;
     if (activeView === 'nps')              return <NPSView />;
     if (activeView === 'narrative')        return <NarrativeView onNav={handleNav} />;
-    if (activeView === 'nav-ia')           return <ExamManagementView initialTab="nav-ia" />;
+    if (activeView === 'nav-ia')           return <NavIAView />;
     // Product pages — four-act contextual template (P4); pre-audit deep specs preserved on -spec routes
     if (PRODUCT_IDS.has(activeView as ProductId)) return <ProductPage productId={activeView} onNav={handleNav} />;
     if (activeView === 'exam-spec')        return <ExamManagementView />;

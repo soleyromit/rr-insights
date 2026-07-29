@@ -3,7 +3,6 @@
 //  AnalyticsView.tsx
 //  Data intelligence — insight distribution, session velocity, product coverage
 //  Uses: D3 (direct DOM), Observable Plot (declarative), Recharts (React-native)
-//  Packages added by Romit: d3, @observablehq/plot, @highcharts/react
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState, useEffect, useRef } from 'react';
 import { INSIGHTS } from '../data/insights';

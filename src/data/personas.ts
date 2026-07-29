@@ -1,4 +1,5 @@
 import type { PersonaMeta, WhiteboardArtifact, VersionEntry, Milestone, TimelineItem } from '../types';
+import { COHERE_LAUNCH } from './taxonomy';
 
 export const PERSONAS: PersonaMeta[] = [
   {
@@ -92,7 +93,7 @@ export const EXAM_TIMELINE: TimelineItem[] = [
   { title: 'Apr 17, 2026', date: 'April 17', description: 'Student + Admin + Faculty experience demo', color: '#dc2626', status: 'upcoming' },
   { title: 'May 2026', date: 'May', description: 'AI capabilities integration sprint', color: '#b45309', status: 'upcoming' },
   { title: 'Jul 2026', date: 'July', description: 'AI heavy — working demo components', color: '#b45309', status: 'upcoming' },
-  { title: 'Aug 2026', date: 'August', description: 'Cohere conference readiness', color: '#16a34a', status: 'upcoming' },
+  { title: COHERE_LAUNCH.rendered, date: 'August', description: `Cohere conference readiness (${COHERE_LAUNCH.note})`, color: '#16a34a', status: 'upcoming' },
   { title: 'Nov-Dec 2026', date: 'Nov-Dec', description: 'ExamSoft-competitive full launch', color: '#6d5ed4', status: 'upcoming' },
 ];
 
@@ -115,7 +116,7 @@ export const MILESTONES: Milestone[] = [
   { date: 'Apr 15, 2026', label: 'FaaS compliance planning', status: 'upcoming', productId: 'faas', description: 'ASU team stakeholder alignment. Fast migration coordination.', isHardDeadline: true },
   { date: 'Apr 2026', label: 'Course Eval design workshop', status: 'upcoming', productId: 'course-eval', description: 'Full module scope. Hybrid form design. Touro survey coverage.' },
   { date: 'May 2026', label: 'Exam AI integration', status: 'upcoming', productId: 'exam-management', description: 'Blueprint assembly. PANCE predictor. Personalized remediation.' },
-  { date: 'Aug 2026', label: 'Cohere conference', status: 'upcoming', productId: 'exam-management', description: 'ExamSoft-competitive feature set. First migration target.', isHardDeadline: true },
+  { date: COHERE_LAUNCH.rendered, label: 'Cohere conference', status: 'upcoming', productId: 'exam-management', description: `ExamSoft-competitive feature set. First migration target. ${COHERE_LAUNCH.note}`, isHardDeadline: true },
   { date: 'Mar 27, 2026', label: 'PCE follow-up design session', status: 'upcoming', productId: 'course-eval', description: 'Monil + Romit. Resolve: who distributes surveys. Analytics differentiation brainstorm.', isHardDeadline: false },
   { date: 'Apr 2026', label: 'PCE full design spec', status: 'upcoming', productId: 'course-eval', description: 'All 3 layers: template setup, distribution, analytics. Engineering handoff May 2026.', isHardDeadline: true },
   { date: 'Apr 1, 2026', label: '2 senior engineers join Exam team', status: 'upcoming', productId: 'exam-management', description: 'React rebuild begins. Himanshu design system target. No dev cap.', isHardDeadline: false },
@@ -151,6 +152,30 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 ];
 
 export const VERSION_HISTORY: VersionEntry[] = [
+  {
+    version: 'v17.2',
+    date: '2026-07-29',
+    summary: 'Freshness sync: three unsynced Granola sessions (Jul 24 survey workflow, Jul 28 survey cadence, Jul 28 Course Eval sync) synthesized into 10 new course-eval insights: push wizard four-step split, instance-grain duplicate definition, soft-warning-over-hard-block, evaluatee role model, nursing multi-component consolidation vs Watermark, template builder role-play findings, course vs course-director split ambiguity. One live source conflict surfaced, not resolved: vault Jul 27 says communication rules are per-survey with visibility; Jul 28 sync summary says centralized settings. Cohere note enriched with vault reading (Aug = readiness gate, Sep = conference demo, unconfirmed). Corpus 420 insights, 76 sessions.',
+    insightCount: 420,
+    sessionsAdded: 3,
+    changedFiles: ['src/data/insights.ts', 'src/data/version.ts', 'src/data/taxonomy.ts'],
+  },
+  {
+    version: 'v17.1',
+    date: '2026-07-29',
+    summary: 'Mobbin pattern build from live competitor analysis (TheyDo, Dovetail, Maze production screens). Insight Index: first flat, filterable table of the whole corpus with type chips, persona avatars, evidence class, and score bars, closing the arbitrary-query gap. Highlights: a quote wall of all direct quotes (named voices + insight pull quotes) as tinted highlight spans with speakers attached. Insight-as-document: full-width overlay with product-hue cover band, 28px display title, trust strip (evidence-class meaning, Granola session verification path, freshness age, hypothesis warning), properties row, cross-corpus related evidence. Persona Atlas rebuilt: identity cards with per-persona evidence stats, plus an evidence rail of top-scored insights and named voices so no persona claim is a dead end.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/views/InsightIndexView.tsx', 'src/views/HighlightsView.tsx', 'src/views/PersonaMapView.tsx', 'src/components/drilldown/InsightDocument.tsx', 'src/components/layout/Sidebar.tsx', 'src/components/layout/Topbar.tsx', 'src/App.tsx'],
+  },
+  {
+    version: 'v17.0',
+    date: '2026-07-29',
+    summary: 'S1 close-out + P7. Severity rubric codified in taxonomy.ts and 195 insights regraded against it (74 critical / 142 high / 166 medium / 28 low; the low band now exists). Opportunity scoring engine (severity x evidence x persona priority) ranks the design-next queue and signal index with the formula shown inline. Evidence panel L2 is a document: serif title, contributor row, highlight-span quotes, related evidence. Briefings computed live from data, zero static prose. Cohere date conflict single-sourced in COHERE_LAUNCH, still surfaced. Highcharts dependency and ~2,000 lines of dead views removed; nav-ia route repaired.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/data/taxonomy.ts', 'src/lib/score.ts', 'src/data/insights.ts', 'src/data/briefings.ts', 'src/components/drilldown/EvidencePanel.tsx', 'src/views/SignalsView.tsx', 'src/views/OverviewView.tsx', 'src/views/StakeholderView.tsx', 'src/App.tsx', 'package.json'],
+  },
   {
     version: 'v16.0',
     date: '2026-07-29',

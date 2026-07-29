@@ -12,10 +12,8 @@ import { VolumeArea } from '../components/charts/VolumeArea';
 import { useDrilldown } from '../hooks/useDrilldown';
 import { Figure, Masthead } from '../components/ui/Figure';
 import type { ComputedSignal } from '../data/signals';
-
-const SEV_COLORS: Record<string, string> = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0' };
-const SEVERITIES = ['critical', 'high', 'medium', 'low'] as const;
-const SEV_WEIGHT: Record<string, number> = { critical: 3, high: 2, medium: 1, low: 0.5, na: 0.25 };
+import { SEV_COLORS, SEVERITY_WEIGHT } from '../data/taxonomy';
+import { sumScores } from '../lib/score';
 const SHORT: Record<string, string> = {
   overload: 'Cognitive overload', reporting: 'Reporting deficit', 'ai-layer': 'AI layer',
   'config-debt': 'Config debt', multicampus: 'Multi-campus', 'skills-entity': 'Skills entity',
@@ -27,8 +25,8 @@ const PERSONA_LABELS: Record<string, string> = {
 const PERSONA_ORDER = ['Student', 'DCE / Faculty', 'SCCE', 'Program Dir.', 'Cross-persona'];
 const MONO = "'JetBrains Mono', monospace";
 
-function SignalIndexRow({ signal, index, active, compact, onOpen }: {
-  signal: ComputedSignal; index: number; active: boolean; compact: boolean; onOpen: (id: string) => void;
+function SignalIndexRow({ signal, score, index, active, compact, onOpen }: {
+  signal: ComputedSignal; score: number; index: number; active: boolean; compact: boolean; onOpen: (id: string) => void;
 }) {
   const { def, insights, topSeverity, byProduct } = signal;
   return (
@@ -50,6 +48,10 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
           {Object.keys(byProduct).length} products<br />{insights.length} insights
         </span>
       )}
+      <span className="mono flex-shrink-0" title="Opportunity score: sum over member insights of severity × evidence class × persona priority"
+        style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', width: 52, textAlign: 'right' }}>
+        {Math.round(score)}
+      </span>
       <span className="mono flex-shrink-0" style={{
         fontSize: 12, fontWeight: 600, padding: '2.5px 8px', borderRadius: 3,
         background: `${SEV_COLORS[topSeverity] ?? '#8a8580'}16`, color: SEV_COLORS[topSeverity] ?? '#8a8580',
@@ -60,7 +62,11 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
 }
 
 export function SignalsView({ onNav }) {
-  const signals = useMemo(() => computeAllSignals(), []);
+  const ranked = useMemo(() => computeAllSignals()
+    .map(s => ({ signal: s, score: sumScores(s.insights) }))
+    .sort((a, b) => b.score - a.score), []);
+  const signals = useMemo(() => ranked.map(r => r.signal), [ranked]);
+  const scoreById = useMemo(() => new Map(ranked.map(r => [r.signal.def.id, r.score])), [ranked]);
   const { state, apply } = useDrilldown();
   const active = signals.find(s => s.def.id === state.signal);
   const panelOpen = !!active;
@@ -69,8 +75,8 @@ export function SignalsView({ onNav }) {
     const top = signals[0];
     const newest = signals.flatMap(s => s.insights).sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))[0];
     const critTotal = signals.reduce((n, s) => n + (s.bySeverity.critical ?? 0), 0);
-    return `${SHORT[top.def.id]} leads with ${top.insights.length} insights (${top.bySeverity.critical ?? 0} of ${critTotal} platform criticals); newest evidence landed ${newest?.createdAt ?? 'n/a'} from ${newest?.source ?? ''}.`;
-  }, [signals]);
+    return `${SHORT[top.def.id]} leads at opportunity score ${Math.round(scoreById.get(top.def.id) ?? 0)} with ${top.insights.length} insights (${top.bySeverity.critical ?? 0} of ${critTotal} platform criticals); newest evidence landed ${newest?.createdAt ?? 'n/a'} from ${newest?.source ?? ''}.`;
+  }, [signals, scoreById]);
 
   // ── Heatmap cells: signal × persona, severity-weighted ──
   const heatCells = useMemo(() => {
@@ -82,7 +88,7 @@ export function SignalsView({ onNav }) {
           persona: PERSONA_LABELS[pid] ?? pid,
           signal: SHORT[s.def.id],
           count: items.length,
-          weight: items.reduce((w, i) => w + (SEV_WEIGHT[i.severity ?? 'na'] ?? 0), 0),
+          weight: items.reduce((w, i) => w + (SEVERITY_WEIGHT[i.severity ?? 'na'] ?? 0), 0),
         });
       }
     }
@@ -147,11 +153,12 @@ export function SignalsView({ onNav }) {
 
         {/* ── Signal index ── */}
         <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-            Signal index, ranked by severity — open a row for its evidence
+          <div className="flex items-baseline justify-between" style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)', padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
+            <span>Signal index, ranked by opportunity score — open a row for its evidence</span>
+            <span className="mono" style={{ fontSize: 12, fontWeight: 400, color: 'var(--text3)' }}>score = Σ severity × evidence × persona priority</span>
           </div>
           {signals.map((s, i) => (
-            <SignalIndexRow key={s.def.id} signal={s} index={i} compact={panelOpen}
+            <SignalIndexRow key={s.def.id} signal={s} score={scoreById.get(s.def.id) ?? 0} index={i} compact={panelOpen}
               active={s.def.id === state.signal}
               onOpen={(id) => apply(id === state.signal ? {} : { signal: id })} />
           ))}

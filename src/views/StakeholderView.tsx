@@ -5,6 +5,8 @@
 import { useState } from 'react';
 import { CopyIcon, CheckIcon } from 'lucide-react';
 import { DECKS, SIGNAL_RISKS } from '../data/briefings';
+import { ALL_INSIGHTS } from '../data/insights';
+import { SESSIONS_SYNCED } from '../data/version';
 import { Masthead } from '../components/ui/Figure';
 
 const clean = (t) => t.replace(/\s+—\s+/g, ', ').replace(/—/g, ', ');
@@ -32,7 +34,7 @@ export function StakeholderView() {
     <div style={{ padding: '30px 34px 48px', maxWidth: 1080 }}>
       <Masthead title="Briefings"
         lede="The same research, three registers: evidence-grounded for Arun, business-outcome for Kunal, decision-only for Aarti. Pick the audience, copy the letter, send it."
-        byline={`3 audiences · sourced from 39 stakeholder sessions and NPS 2025 · copy strips em dashes per writing rules`} />
+        byline={`${DECKS.length} audiences · computed live from ${ALL_INSIGHTS.length} insights across ${SESSIONS_SYNCED} synced sessions · copy strips em dashes per writing rules`} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.5fr) minmax(0,1fr)', gap: 16 }}>
         <div>

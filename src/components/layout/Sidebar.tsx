@@ -5,7 +5,7 @@ import { useState } from 'react';
 import {
   LayoutDashboardIcon, SparklesIcon, RadioIcon, UsersIcon, GitBranchIcon, LayersIcon,
   FileTextIcon, FormInputIcon, GraduationCapIcon, CheckSquareIcon, FileSignatureIcon,
-  PresentationIcon, TrendingUpIcon, MapIcon, BookOpenIcon, ArchiveIcon, ChevronRightIcon,
+  PresentationIcon, TrendingUpIcon, MapIcon, BookOpenIcon, ArchiveIcon, ChevronRightIcon, ListIcon, QuoteIcon,
   FlameIcon, AlertTriangleIcon, CheckCircleIcon,
 } from 'lucide-react';
 import { PRODUCTS } from '../../data/products';
@@ -88,6 +88,8 @@ export function Sidebar({ activeView, onNav }: Props) {
 
         <Section label="Evidence" sub="signals before pages" />
         <NavItem id="signals" label="Signals" icon={RadioIcon} active={activeView === 'signals' || activeView === 'themes'} onNav={onNav} badge="7" badgeColor="#6d5ed4" />
+        <NavItem id="insights" label="Insight Index" icon={ListIcon} active={activeView === 'insights'} onNav={onNav} />
+        <NavItem id="highlights" label="Highlights" icon={QuoteIcon} active={activeView === 'highlights'} onNav={onNav} />
         <NavItem id="personas" label="Persona Atlas" icon={UsersIcon} active={activeView === 'personas'} onNav={onNav} />
         <NavItem id="competitive" label="Competitive Parity" icon={GitBranchIcon} active={activeView === 'competitive'} onNav={onNav} />
         <NavItem id="whiteboard" label="Source Library" icon={LayersIcon} active={activeView === 'whiteboard'} onNav={onNav} />

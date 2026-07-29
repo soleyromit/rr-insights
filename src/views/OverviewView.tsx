@@ -9,9 +9,10 @@ import { ALL_INSIGHTS, getInsightsByProduct } from '../data/insights';
 import { MILESTONES } from '../data/personas';
 import { Figure, Masthead } from '../components/ui/Figure';
 import { RankedBars } from '../components/charts/RankedBars';
+import { SEV_COLORS } from '../data/taxonomy';
+import { scoreInsight } from '../lib/score';
 
 const MONO = "'JetBrains Mono', monospace";
-const SEV_COLORS = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0' };
 const SEVERITIES = ['critical', 'high', 'medium', 'low'];
 const URGENCY = { fire: { icon: FlameIcon, color: '#dc2626' }, warn: { icon: AlertTriangleIcon, color: '#b45309' }, ok: { icon: CheckCircleIcon, color: '#16a34a' } };
 
@@ -42,7 +43,8 @@ export function OverviewView({ onNav }) {
 
   const designNext = useMemo(() => ALL_INSIGHTS
     .filter(i => i.severity === 'critical' && i.soWhat)
-    .sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))
+    .map(i => ({ insight: i, score: scoreInsight(i) }))
+    .sort((a, b) => b.score.total - a.score.total || (b.insight.createdAt > a.insight.createdAt ? 1 : -1))
     .slice(0, 5), []);
 
   return (
@@ -91,10 +93,11 @@ export function OverviewView({ onNav }) {
       {/* Design-next queue — critical findings that already name their response */}
       <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
         <div className="flex items-center justify-between" style={{ padding: '11px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)' }}>Design next — latest critical findings with a named response</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text2)' }}>Design next — critical findings ranked by opportunity score</span>
+          <span className="mono" style={{ fontSize: 12, color: 'var(--text3)' }}>score = severity × evidence × persona priority</span>
           <button className="press mono" onClick={() => onNav('signals')} style={{ fontSize: 12.5, color: 'var(--accent)', cursor: 'pointer' }}>all signals →</button>
         </div>
-        {designNext.map(i => (
+        {designNext.map(({ insight: i, score }) => (
           <button key={i.id} className="press w-full text-left flex items-start gap-3" onClick={() => onNav('signals')}
             style={{ padding: '13px 18px', borderBottom: '1px solid var(--bg3)', cursor: 'pointer', background: '#fff' }}
             onMouseEnter={e => e.currentTarget.style.background = 'var(--bg)'}
@@ -104,6 +107,8 @@ export function OverviewView({ onNav }) {
               <span style={{ display: 'block', fontSize: 14.5, color: 'var(--text)', lineHeight: 1.5 }}>{i.soWhat}</span>
               <span className="mono" style={{ fontSize: 12, color: 'var(--text2)' }}>{i.productIds.join(' · ')} · {i.source}</span>
             </span>
+            <span className="mono" title="severity × evidence class × persona priority"
+              style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text2)', flexShrink: 0, marginTop: 2 }}>{score.label}</span>
             <ChevronRightIcon size={14} style={{ color: 'var(--text3)', flexShrink: 0, marginTop: 2, opacity: 0.5 }} />
           </button>
         ))}

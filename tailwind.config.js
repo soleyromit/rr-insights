@@ -22,8 +22,8 @@ const config: Config = {
       },
       fontFamily: {
         display: ['DM Serif Display', 'serif'],
-        mono: ['DM Mono', 'monospace'],
-        sans: ['Instrument Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Schibsted Grotesk', 'sans-serif'],
       },
     },
   },

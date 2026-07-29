@@ -28,7 +28,7 @@ Warm paper neutrals from `src/index.css`: `--bg #faf9f7`, surfaces `#fff`, borde
 - No colored side/top stripe borders above 1px (Impeccable side-tab ban). Signal identity = 8–9px dot + colored rank number/label.
 - No kicker/eyebrow above headings. Provenance lines go below the heading as a mono byline.
 - Numbered lists only where order carries information (signal index = severity rank, figure numbers = references).
-- Charts: Observable Plot for editorial small multiples (heatmaps, timelines), Highcharts for interactive composition. Transparent backgrounds, mono axis labels ≥`#6b6660`, dark tooltip `#1a1917`. Every figure ends in a caption naming its decision.
+- Charts: Dovetail-pattern components first (RankedBars, VolumeArea), Observable Plot for editorial small multiples (heatmaps, matrices). Highcharts retired in v16.0; no legend-dependent chart returns. Transparent backgrounds, mono axis labels ≥`#6b6660`, dark tooltip `#1a1917`. Every figure ends in a caption naming its decision.
 - Drill-down contract (L0 signal → L1 evidence set → L2 insight card → L3 action) is the one interaction pattern; new evidence surfaces reuse it rather than inventing layouts.
 
 ## Motion
@@ -39,7 +39,7 @@ Warm paper neutrals from `src/index.css`: `--bg #faf9f7`, surfaces `#fff`, borde
 
 Two design skills govern this repo; where they and the brief disagree, **the brief wins** (both skills' own rule).
 
-**Impeccable** (pbakaus/impeccable): `bash scripts/design-check.sh` runs its 60-rule deterministic detector and must return 0 findings on new/rebuilt surfaces before push. Legacy pre-audit views are exempt until their P4 rebuild, at which point they adopt this world.
+**Impeccable** (pbakaus/impeccable): `bash scripts/design-check.sh` runs its 60-rule deterministic detector and must return 0 findings on new/rebuilt surfaces before push. The -spec archive views (pre-audit deep dives) remain exempt until they are rebuilt or retired.
 
 **taste-skill** (Leonxlnx/taste-skill): guidance layer, no CLI. Its configuration for this product:
 

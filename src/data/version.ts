@@ -1,17 +1,17 @@
-// Auto-updated by Claude — 2026-07-28 (v16.0)
-export const VERSION = '16.0.0';
-export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-29 (v16.0: P6/S1 chart-language conversion shipped per Benchmark directives D1/D2/D5. Highcharts removed from the bundle entirely; all legend-dependent stacked charts and dot-field timelines retired. New Dovetail-pattern components: RankedBars (label + bar + count-at-end, critical mass as a named red segment, clickable rows) and VolumeArea (single monthly evidence line with critical split on hover). Converted: Signals Fig 2/3, Command Center Fig 1, ProductPage Fig 1, Competitive Fig 2. Computed TODAY digest lines on Signals, Command Center, all five product pages, Competitive, Persona Atlas (states the measured coverage imbalance on the page itself), and Roadmap — every page now carries its own context, none of it static. Proper links restored: ranked bars navigate to their subject, evidence-panel product chips navigate to product pages. Persona and parity cell grids retained deliberately: a matrix is the true shape of that data.)';
+// Auto-updated by Claude — 2026-07-29 (v17.0)
+export const VERSION = '17.2.0';
+export const LAST_UPDATED = '2026-07-29';
+export const LAST_PUSH = 'Claude automated push — 2026-07-29 (v17.0: S1 content close-out + P7 per Benchmark D3/D4/D6 and Audit C1. Severity rubric written into taxonomy.ts with four testable levels; 195 insights regraded against it, ending the zero-low inflation (now 74 critical / 142 high / 166 medium / 28 low). Opportunity scoring engine in lib/score.ts: severity x evidence class x persona priority, formula rendered inline everywhere it ranks (design-next queue, signal index, briefings). Evidence panel L2 upgraded to insight-as-document: serif title, contributor and score row, pull quotes as tinted highlight spans with the evidence-class chip attached, related evidence jump links. Briefings assembled live from products, signals, milestones, and score data; zero static prose paragraphs remain. Cohere Aug/Sep conflict single-sourced into COHERE_LAUNCH (taxonomy.ts), still surfaced with owner. Removed: @highcharts/react dependency, HighchartFigure, four dead views, duplicate src scaffold. nav-ia route now renders NavIAView.)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
-export const SESSIONS_SYNCED = 73;
-export const INSIGHTS_TOTAL = 292;
+export const SESSIONS_SYNCED = 76;
+export const INSIGHTS_TOTAL = 420; // = ALL_INSIGHTS.length; keep in step when adding insights
 export const PRODUCTS_COVERED = 5;
 export const MAGIC_PATTERNS_PCE = 'https://project-truthful-apricot-326.magicpatterns.app';
 export const MAGIC_PATTERNS_EXAM_ADMIN = 'https://project-rich-macaroni-332.magicpatterns.app';
 export const MAGIC_PATTERNS_UNIVERSITY = 'https://project-precious-cranberry-828.magicpatterns.app';
 export const EXXATLY_DS_URL = 'https://www.magicpatterns.com/design-system/ds-712de3ba-b73d-407d-9d94-a149d8f9d481';
-export const VIEWS_COUNT = 17;
+export const VIEWS_COUNT = 19;
 export const SESSIONS_RAW_READ = 76;
 export const DS_TOKENS_CONFIRMED = 263;
 export const DS_COMPONENTS_BUILT = 31;

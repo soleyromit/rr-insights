@@ -26,7 +26,7 @@ export function PortfolioView() {
             y: { label: null, domain: sorted.map(d => d.label), tickSize: 0, padding: 0.3 },
             marks: [
               Plot.ruleX([70], { stroke: '#cdc8bf', strokeDasharray: '3 3' }),
-              Plot.text([70], { x: d => d, frameAnchor: 'bottom', text: () => 'self-set bar: 70', dy: 14, fill: '#6b6660', fontSize: 12 }),
+              Plot.text([70], { x: d => d, frameAnchor: 'top', text: () => 'self-set bar: 70', dy: -6, fill: '#6b6660', fontSize: 12 }),
               Plot.barX(sorted, { x: 'value', y: 'label', fill: d => d.value < 70 ? '#e8604a' : '#8a8580', rx: 3, tip: true, title: d => d.note }),
               Plot.text(sorted, { x: 'value', y: 'label', text: d => String(d.value), dx: 14, fill: '#4a4844', fontSize: 12.5 }),
             ],

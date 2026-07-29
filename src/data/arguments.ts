@@ -1,5 +1,6 @@
 // data/arguments.ts — the five defended arguments (Connect the Dots), extracted verbatim from NarrativeView v12.
 // Each claim is defended with evidence from Granola sessions, NPS data, interviews, and competitive analysis.
+import { COHERE_LAUNCH } from './taxonomy';
 
 export const ARGUMENTS = [
   {
@@ -87,7 +88,7 @@ export const ARGUMENTS = [
     borderColor: 'rgba(13,148,136,0.15)',
     sources: [
       { label: 'PCE demo with Trey · Apr 23', stat: 'Missing', statLabel: 'Dr. Wu from grid', context: 'Anthology fails to show all instructors on the initial survey screen. Dr. Wu appears later in the flow — students do not know he needs to be evaluated. This is the primary Anthology UX failure.' },
-      { label: 'PCE workflow design · Apr 21', stat: 'Q3 2026', statLabel: 'Production target', context: 'Design begins June 1. Development June-August. Production September — before Cohere conference. Monthly iterations.' },
+      { label: 'PCE workflow design · Apr 21', stat: 'Q3 2026', statLabel: 'Production target', context: `Design begins June 1. Development June-August. Production September — before Cohere conference. Monthly iterations. (${COHERE_LAUNCH.note})` },
       { label: 'Touro ExamSoft meeting · Mar 11', stat: '7 types', statLabel: 'Surveys outside Exxat', context: 'Faculty peer review, didactic eval, orientation, end-of-didactic, clinical eval, exit survey, graduate survey — all running in Blue/Canvas. These are the surveys Exxat should own.' },
     ],
     evidence: [

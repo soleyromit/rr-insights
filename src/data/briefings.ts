@@ -1,44 +1,118 @@
-// data/briefings.ts — audience briefing content (Arun / Kunal / Aarti) + live signal risks.
-// Extracted verbatim from StakeholderView v12; rendered by the Briefings page.
+// data/briefings.ts — audience briefings computed live from the evidence base (P7, v17.0).
+// No static prose: every sentence below is assembled from data fields at load time, so a data
+// change can never silently invalidate a briefing. Registers per audience are preserved:
+// Arun evidence-grounded, Kunal business-outcome, Aarti decision-only.
+import type { Insight } from '../types';
+import { PRODUCTS } from './products';
+import { ALL_INSIGHTS as RAW_INSIGHTS, getInsightsByProduct } from './insights';
+const ALL_INSIGHTS = RAW_INSIGHTS as Insight[];
+import { MILESTONES } from './personas';
+import { computeAllSignals } from './signals';
+import { COHERE_LAUNCH } from './taxonomy';
+import { scoreInsight, sumScores } from '../lib/score';
 
+const today = new Date();
+const parseMs = (s: string) => new Date(s);
+
+// ---- Shared computed facts ----
+const rankedSignals = computeAllSignals()
+  .map(s => ({ s, score: sumScores(s.insights) }))
+  .sort((a, b) => b.score - a.score);
+
+const productStats = PRODUCTS.map(p => {
+  const ins = getInsightsByProduct(p.id);
+  return { p, total: ins.length, critical: ins.filter(i => i.severity === 'critical').length };
+}).sort((a, b) => b.critical - a.critical);
+
+const criticals = ALL_INSIGHTS.filter(i => i.severity === 'critical');
+const quotedCriticals = criticals.filter(i => i.pullQuote);
+const fires = PRODUCTS.filter(p => p.urgencyLevel === 'fire');
+
+const upcomingHard = MILESTONES
+  .filter(m => m.isHardDeadline && parseMs(m.date) >= today)
+  .sort((a, b) => parseMs(a.date).getTime() - parseMs(b.date).getTime());
+
+const designNext = criticals
+  .filter(i => i.soWhat)
+  .map(i => ({ i, score: scoreInsight(i) }))
+  .sort((a, b) => b.score.total - a.score.total);
+
+const faas = PRODUCTS.find(p => p.id === 'faas');
+const topSignals = rankedSignals.slice(0, 3);
+const aiSignal = rankedSignals.find(r => r.s.def.id === 'ai-layer');
+
+const list = (items: string[]) => items.join(' ');
+const n = (v: number | undefined) => (v ?? 0).toLocaleString('en-US');
+
+// ---- Decks ----
 export const DECKS = [
-{
-  audience: 'Arun Gautam',
-  role: 'Direct manager',
-  color: '#8b7ff5',
-  problem:
-  'Exxat\'s five clinical education products carry unresolved friction that compounds at scale. FaaS runs at 95,000 support tickets annually with a 2/5 NPS. Exam Management lacks accessibility and multi-campus capabilities that competitors already provide. Skills Checklist cannot answer the question every student asks: "have I met my requirements?" These are symptoms of missing platform-level architecture, not isolated product bugs.',
-  findings:
-  'Across 39 stakeholder sessions (March 2026), six platform-level signals emerged. Three are new this week: an AI opportunity layer confirmed across all five products, multi-campus fragmentation affecting an estimated 30–40% of the client base, and a standalone skills entity gap that blocks three personas simultaneously. Most urgent near-term finding: Touro runs seven survey types outside Exxat in Blue and Canvas because our survey UX lost their trust.',
-  recommendation:
-  'Three actions with the highest cross-product leverage: (1) Ship the accessibility layer for Exam Management before the UNF pilot in July — this is also the platform\'s first public commitment to WCAG 2.1 AA. (2) Begin the standalone skills entity architecture in Q2 — every day it delays, the SCCE and student personas remain underserved across two products at once. (3) Run the course evaluation module design workshop in April as planned — this is how Exxat gets back the survey surface it has already lost to competitors.'
-},
-{
-  audience: 'Kunal',
-  role: 'COO',
-  color: '#2ec4a0',
-  problem:
-  'Three products are carrying risk that affects renewal and expansion. FaaS\'s NPS 2/5 and 95k tickets represent a retention risk at programme renewal. Exam Management\'s accessibility gaps create a compliance liability for accredited programmes. Course Eval has already lost seven survey types at Touro to Blue and Canvas — an estimated $5k/year per programme in addressable revenue.',
-  findings:
-  'AI is the single highest-leverage investment across all five products. Confirmed use cases from Touro alone: blueprint-based exam assembly, PANCE readiness predictor, personalised remediation, and survey theme extraction. These are not speculative — they were requested by name in session. KKR\'s expectation of TAM expansion from $300M to $1B requires this AI layer to be live and demonstrable before the next board cycle.',
-  recommendation:
-  'Prioritise AI feature completeness for the August Cohere conference. This is the primary external proof point. A November–December ExamSoft-competitive launch without AI features is not viable — it does not differentiate from an LMS. The multi-campus sharing architecture (flat tagging) is ready and should lead the ExamSoft displacement conversation starting now.'
-},
-{
-  audience: 'Aarti',
-  role: 'CEO',
-  color: '#e87ab5',
-  problem: 'Exam Management and FaaS carry the two largest platform-level risks in the current quarter.',
-  findings:
-  'AI is confirmed as a competitive necessity, not a roadmap nice-to-have. Touro named specific features they need. Cohere August is the external deadline.',
-  recommendation:
-  'Two decisions needed from Aarti: (1) Confirm AI sprint in July as a resource priority. (2) Approve the dedicated course evaluation module build to recover the survey surface lost to Blue/Canvas.'
-}];
+  {
+    audience: 'Arun Gautam',
+    role: 'Direct manager',
+    color: '#8b7ff5',
+    problem: list([
+      `The evidence base holds ${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products, of which ${criticals.length} are graded critical under the severity rubric.`,
+      `${productStats[0].p.name} carries the largest critical load (${productStats[0].critical} of ${productStats[0].total} insights), followed by ${productStats[1].p.name} (${productStats[1].critical}).`,
+      `${quotedCriticals.length} of ${criticals.length} criticals carry a direct quote; the rest are synthesis or hypothesis grade, which is the current evidence debt.`,
+    ]),
+    findings: list([
+      `Ranked by opportunity score (severity times evidence class times persona priority), the top signals are: ${topSignals.map((r, idx) => `(${idx + 1}) ${r.s.def.title}, score ${Math.round(r.score)} across ${r.s.insights.length} insights`).join('; ')}.`,
+      `The single highest-scored critical finding reads: "${designNext[0]?.i.soWhat ?? 'none graded'}" (${designNext[0]?.score.label ?? ''}).`,
+      `${COHERE_LAUNCH.note}`,
+    ]),
+    recommendation: list([
+      `The three highest-scored critical findings with a named design response, in order:`,
+      ...designNext.slice(0, 3).map(({ i, score }, idx) => `(${idx + 1}) ${i.soWhat} [${i.productIds.join(', ')} · ${score.label}]`),
+    ]),
+  },
+  {
+    audience: 'Kunal',
+    role: 'COO',
+    color: '#2ec4a0',
+    problem: list([
+      faas ? `${faas.name} runs at ${n(faas.ticketsPerYear)} support tickets annually with an NPS of ${faas.nps}/5, a retention risk at renewal.` : '',
+      fires.length ? `${fires.map(p => p.shortName).join(' and ')} ${fires.length === 1 ? 'is' : 'are'} on fire watch by deadline pressure.` : '',
+      `${criticals.length} critical findings are open across the portfolio; ${productStats[0].p.shortName} alone holds ${productStats[0].critical}.`,
+    ].filter(Boolean)),
+    findings: list([
+      aiSignal ? `The AI opportunity layer carries ${aiSignal.s.insights.length} confirmed insights (opportunity score ${Math.round(aiSignal.score)}), the broadest cross-product leverage in the base.` : '',
+      `The next hard deadlines are: ${upcomingHard.slice(0, 3).map(m => `${m.label} (${m.date})`).join('; ')}.`,
+    ].filter(Boolean)),
+    recommendation: list([
+      `Resource the top-scored signal first: ${topSignals[0].s.def.title}. ${topSignals[0].s.def.designResponse}`,
+      `Cohere readiness renders as ${COHERE_LAUNCH.rendered} (${COHERE_LAUNCH.status}; confirmation owner ${COHERE_LAUNCH.owner}).`,
+    ]),
+  },
+  {
+    audience: 'Aarti',
+    role: 'CEO',
+    color: '#e87ab5',
+    problem: fires.length
+      ? `${fires.map(p => p.name).join(' and ')} carry the largest deadline-pressure risk this quarter (${fires.map(p => `${p.daysToDeadline ?? '?'} days to ${p.launchDate ?? p.pilotDate ?? 'launch'}`).join('; ')}).`
+      : `No product is on fire watch today; the portfolio risk is concentrated in ${productStats[0].p.name} (${productStats[0].critical} criticals).`,
+    findings: `${topSignals[0].s.def.title} is the top platform signal at score ${Math.round(topSignals[0].score)}. ${topSignals[0].s.def.question}`,
+    recommendation: list([
+      `Decisions needed:`,
+      ...upcomingHard.slice(0, 2).map((m, idx) => `(${idx + 1}) Confirm resourcing for ${m.label} (${m.date}): ${m.description}`),
+    ]),
+  },
+];
 
+// ---- Risk register — top-scored signals plus hard deadlines, typed by top severity ----
 export const SIGNAL_RISKS = [
-{ signal: 'Course Eval: 7 survey types at Touro outside Exxat', type: 'Risk', color: '#e8604a' },
-{ signal: 'ExamSoft launch without AI in Nov–Dec = not viable', type: 'Risk', color: '#e8604a' },
-{ signal: 'Multi-campus sharing: flat tagging ready → lead ExamSoft displacement with this now', type: 'Opportunity', color: '#2ec4a0' },
-{ signal: 'PA Student Dashboard (Touro/Aarti session) — new product surface not previously scoped', type: 'Opportunity', color: '#2ec4a0' },
-{ signal: 'Skills standalone entity unblocks 3 personas simultaneously', type: 'Priority', color: '#f5a623' },
-{ signal: 'UNF pilot is July — accessibility V0 is the hard deadline, not a best-effort', type: 'Priority', color: '#f5a623' }];
+  ...topSignals.map(({ s, score }) => ({
+    signal: `${s.def.title}: ${s.insights.length} insights, ${s.bySeverity.critical ?? 0} critical (score ${Math.round(score)})`,
+    type: s.topSeverity === 'critical' ? 'Risk' : 'Priority',
+    color: s.topSeverity === 'critical' ? '#e8604a' : '#f5a623',
+  })),
+  ...upcomingHard.slice(0, 2).map(m => ({
+    signal: `${m.label} (${m.date}): ${m.description}`,
+    type: 'Priority',
+    color: '#f5a623',
+  })),
+  ...(aiSignal ? [{
+    signal: `AI opportunity layer: ${aiSignal.s.insights.length} confirmed insights across ${Object.keys(aiSignal.s.byProduct).length} products`,
+    type: 'Opportunity',
+    color: '#2ec4a0',
+  }] : []),
+];
