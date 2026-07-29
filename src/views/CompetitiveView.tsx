@@ -7,7 +7,7 @@ import { COMPETITOR_FEATURES, MILESTONES } from '../data/personas';
 import { getProduct } from '../data/products';
 import { Figure, Masthead } from '../components/ui/Figure';
 import { PlotFigure } from '../components/charts/PlotFigure';
-import { HighchartFigure } from '../components/charts/HighchartFigure';
+import { RankedBars } from '../components/charts/RankedBars';
 
 const MONO = "'JetBrains Mono', monospace";
 const PLATFORMS = [
@@ -54,22 +54,16 @@ export function CompetitiveView() {
   const cohereConflict = coherePlan && cohereDate && !coherePlan.toLowerCase().startsWith(cohereDate.toLocaleDateString('en-US', { month: 'short' }).toLowerCase());
   const daysToCohere = cohereDate ? Math.max(0, Math.round((cohereDate - new Date()) / 86400000)) : null;
 
-  const hcScores = useMemo(() => ({
-    chart: { type: 'bar', backgroundColor: 'transparent', height: PLATFORMS.length * 40 + 70, spacing: [4, 4, 4, 0], style: { fontFamily: MONO } },
-    title: { text: undefined }, credits: { enabled: false }, legend: { enabled: false },
-    xAxis: { categories: parityScores.map(s => s.platform), lineColor: '#e3ddd4', tickLength: 0, labels: { style: { fontSize: '12px', color: '#4a4844', fontFamily: MONO } } },
-    yAxis: { max: 100, title: { text: undefined }, gridLineColor: '#ede9e3', labels: { format: '{value}%', style: { fontSize: '12px', color: '#6b6660', fontFamily: MONO } } },
-    tooltip: { backgroundColor: '#1a1917', borderRadius: 8, borderWidth: 0, shadow: false, style: { color: '#faf9f7', fontSize: '13px', fontFamily: MONO }, pointFormat: '<b>{point.y}%</b> of 12 tracked features' },
-    plotOptions: { series: { borderWidth: 0, pointPadding: 0.08, groupPadding: 0.1, animation: { duration: 500 },
-      dataLabels: { enabled: true, format: '{y}%', style: { fontSize: '12px', fontWeight: '600', color: '#4a4844', fontFamily: MONO, textOutline: 'none' } } } },
-    series: [{ type: 'bar', name: 'parity', data: parityScores.map(s => ({ y: s.pct, color: s.platform === 'Exxat' ? '#6d5ed4' : '#b8b2a8' })) }],
-  }), [parityScores]);
+  const exxatPct = parityScores.find(sc => sc.platform === 'Exxat')?.pct ?? 0;
+  const leader = parityScores.slice().sort((a, b) => b.pct - a.pct)[0];
+  const digest = `Exxat sits at ${exxatPct}% weighted parity (${leader.platform === 'Exxat' ? 'leading the tracked set' : leader.platform + ' leads at ' + leader.pct + '%'}); ${differentiators.length} tracked features remain open territory no platform ships.`;
 
   return (
     <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
       <Masthead title="Competitive parity"
         lede="Twelve tracked features across four platforms, and the three reasons programs actually stay on ExamSoft. Displacement happens at the switching moment; these are the switching conditions."
-        byline={`Cohere in ${daysToCohere} days per milestones (Aug 2026)${cohereConflict ? ` · CONFLICT: product plan says ${coherePlan}, confirm with Arun` : ''} · feature evidence from Granola sessions Mar 2026`} />
+        byline={`Cohere in ${daysToCohere} days per milestones (Aug 2026)${cohereConflict ? ` · CONFLICT: product plan says ${coherePlan}, confirm with Arun` : ''} · feature evidence from Granola sessions Mar 2026`}
+        digest={digest} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.4fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
         <Figure title="Fig. 1 · Feature parity matrix" caption="Full ✓, partial ◐, absent blank. Decision: blank Exxat cells in rows where any competitor is green are the build queue; rows where every column is blank are open territory.">
@@ -87,8 +81,12 @@ export function CompetitiveView() {
           })} />
         </Figure>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <Figure title="Fig. 2 · Parity score" caption="Weighted coverage of the tracked set (full = 1, partial = ½). Decision: the Exxat bar is the number to move before Cohere; report it in every Arun check-in.">
-            <HighchartFigure options={hcScores} deps={[parityScores]} />
+          <Figure title="Fig. 2 · Parity score" caption="Weighted coverage of the 12 tracked features (full = 1, partial = half). Decision: the Exxat number is the one to move before Cohere; report it in every Arun check-in. Exam-heavy feature set — per-product extension is in the content plan.">
+            <RankedBars maxHint={100} rows={parityScores.slice().sort((a, b) => b.pct - a.pct).map(sc => ({
+              key: sc.platform, label: sc.platform, total: sc.pct,
+              barColor: sc.platform === 'Exxat' ? '#6d5ed4' : '#b8b2a8',
+              sub: sc.platform === 'Exxat' ? 'us — weighted coverage %' : 'weighted coverage %',
+            }))} />
           </Figure>
           <Figure title="Fig. 3 · Open territory" caption="Features no tracked platform ships. Decision: these are launch-moment differentiators; they lead the Cohere story, not the parity table.">
             <div>

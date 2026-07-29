@@ -1,7 +1,7 @@
-// Auto-updated by Claude — 2026-07-28 (v15.2)
-export const VERSION = '15.2.0';
+// Auto-updated by Claude — 2026-07-28 (v16.0)
+export const VERSION = '16.0.0';
 export const LAST_UPDATED = '2026-07-28';
-export const LAST_PUSH = 'Claude automated push — 2026-07-28 (v15.2: Research Repository Benchmark v1 delivered (RESEARCH_REPO_BENCHMARK_v1.html) — competitor landscape (Dovetail, Marvin, Condens, Looppanel, Notably, Aurelius, EnjoyHQ, TheyDo, Notion/Airtable), 7-group enterprise feature spec graded against v15.1, Mobbin pattern study of Dovetail and TheyDo production screens yielding six design directives, chart-language conversion spec, P6-P9 build order. P6 first slice shipped: type scale raised across all 35 source files with a hard 12px floor — body 15-16, metadata and mono 12.5+, captions 13+, chart axes 12+. Standing rule created: every page owns its context via computed digest lines and decision captions; no static context pages.)';
+export const LAST_PUSH = 'Claude automated push — 2026-07-29 (v16.0: P6/S1 chart-language conversion shipped per Benchmark directives D1/D2/D5. Highcharts removed from the bundle entirely; all legend-dependent stacked charts and dot-field timelines retired. New Dovetail-pattern components: RankedBars (label + bar + count-at-end, critical mass as a named red segment, clickable rows) and VolumeArea (single monthly evidence line with critical split on hover). Converted: Signals Fig 2/3, Command Center Fig 1, ProductPage Fig 1, Competitive Fig 2. Computed TODAY digest lines on Signals, Command Center, all five product pages, Competitive, Persona Atlas (states the measured coverage imbalance on the page itself), and Roadmap — every page now carries its own context, none of it static. Proper links restored: ranked bars navigate to their subject, evidence-panel product chips navigate to product pages. Persona and parity cell grids retained deliberately: a matrix is the true shape of that data.)';
 export const PUSH_METHOD = 'Direct git push via PAT — zero manual steps';
 export const SKILL_VERSION = '5.0.0';
 export const SESSIONS_SYNCED = 73;

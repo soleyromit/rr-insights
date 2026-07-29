@@ -152,6 +152,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v16.0',
+    date: '2026-07-29',
+    summary: 'P6/S1: Dovetail-pattern chart conversion. RankedBars + VolumeArea replace Highcharts stacks and dot timelines (Highcharts out of the bundle). Computed TODAY digests on nine pages. Clickable ranked bars and evidence-panel product chips restore cross-links. Matrix grids retained where a matrix is the true data shape. Gate: 0 findings.',
+    insightCount: 292,
+    sessionsAdded: 0,
+    changedFiles: ['src/components/charts/RankedBars.tsx', 'src/components/charts/VolumeArea.tsx', 'src/views/SignalsView.tsx', 'src/views/OverviewView.tsx', 'src/views/products/ProductPage.tsx', 'src/views/CompetitiveView.tsx', 'src/views/PersonaMapView.tsx', 'src/views/RoadmapView.tsx', 'src/components/ui/Figure.tsx', 'src/components/drilldown/EvidencePanel.tsx', 'src/App.tsx'],
+  },
+  {
     version: 'v15.2',
     date: '2026-07-28',
     summary: 'Research Repository Benchmark v1: competitor matrix, enterprise feature grades, Mobbin pattern study (Dovetail/TheyDo) with six design directives replacing the generated-dashboard chart language. Type scale raised across 35 files, 12px hard floor. P6-P9 build order committed.',

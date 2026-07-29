@@ -15,13 +15,18 @@ export function Figure({ title, caption, ariaLabel, children }: {
 }
 
 // Page masthead — serif title, serif lede, mono provenance byline BELOW (no eyebrow kickers).
-export function Masthead({ title, lede, byline, compact }: {
-  title: string; lede: string; byline?: string; compact?: boolean;
+export function Masthead({ title, lede, byline, digest, compact }: {
+  title: string; lede: string; byline?: string; digest?: string; compact?: boolean;
 }) {
   return (
     <div style={{ borderBottom: '2px solid var(--text)', paddingBottom: 18, marginBottom: 22 }}>
       <h1 className="rr-serif" style={{ fontSize: compact ? 26 : 34, color: 'var(--text)', lineHeight: 1.1, marginBottom: 8 }}>{title}</h1>
       <p className="serif" style={{ fontSize: 15.5, color: 'var(--text2)', maxWidth: 620, lineHeight: 1.55 }}>{lede}</p>
+      {digest && (
+        <p style={{ fontSize: 15, color: 'var(--text)', maxWidth: 680, lineHeight: 1.55, marginTop: 12, marginBottom: 0 }}>
+          <span className="mono" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', color: 'var(--accent)', marginRight: 8 }}>TODAY</span>{digest}
+        </p>
+      )}
       {byline && <div className="mono" style={{ fontSize: 12.5, color: 'var(--text2)', marginTop: 10 }}>{byline}</div>}
     </div>
   );

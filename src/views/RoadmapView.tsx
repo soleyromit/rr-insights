@@ -43,11 +43,16 @@ export function RoadmapView() {
   const nextHard = upcoming.filter(r => r.hard).slice(0, 3);
   const dLeft = d => Math.max(0, Math.round((d - today) / 86400000));
 
+  const nextDiamond = nextHard[0];
+  const digest = nextDiamond
+    ? `${dLeft(nextDiamond.date)} days to ${nextDiamond.label} (${nextDiamond.lane}); ${upcoming.length} milestones ahead, ${rows.length - upcoming.length} passed and rendered as passed.`
+    : `No hard deadlines ahead on the current plan; ${upcoming.length} working milestones remain.`;
+
   return (
     <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
       <Masthead title="Roadmap"
         lede="Every milestone on one calendar, product by product, with the hard deadlines that do not move. Past dates render as passed; the countdown only counts what is ahead."
-        byline={`${rows.length} milestones · ${upcoming.length} ahead · today is ${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`} />
+        byline={`${rows.length} milestones · ${upcoming.length} ahead · today is ${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`} digest={digest} />
 
       {/* Countdown to the immovable dates — big serif numbers are data, not decoration */}
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.max(nextHard.length, 1)}, 1fr)`, gap: 14, marginBottom: 16 }}>

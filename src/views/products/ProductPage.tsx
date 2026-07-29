@@ -3,14 +3,13 @@
 // Acts, not tabs: a narrative has an order. Act 1 stakes, Act 2 evidence, Act 3 response, Act 4 scoreboard.
 // Every act leads with structure or a figure; prose is capped, deep spec stays one click away.
 import { useMemo, useRef, useState } from 'react';
-import * as Plot from '@observablehq/plot';
 import { ChevronRightIcon, ArrowRightIcon } from 'lucide-react';
 import { getProduct, PRODUCTS } from '../../data/products';
 import { getInsightsByProduct } from '../../data/insights';
 import { MILESTONES } from '../../data/personas';
 import { PERSONAS } from '../../data/personas';
 import { Figure, Masthead } from '../../components/ui/Figure';
-import { PlotFigure } from '../../components/charts/PlotFigure';
+import { VolumeArea } from '../../components/charts/VolumeArea';
 import { computePhaseStates } from '../../lib/phaseDates';
 
 const MONO = "'JetBrains Mono', monospace";
@@ -55,6 +54,13 @@ export function ProductPage({ productId, onNav }) {
     .sort((a, b) => a.d - b.d), [productId]);
   const today = new Date();
 
+  const digest = useMemo(() => {
+    const newest = [...insights].sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))[0];
+    const topReq = p.amPmPipeline.enhancementRequests[0];
+    return `${critical.length} critical findings open; newest evidence ${newest?.createdAt ?? 'n/a'} (${newest?.source ?? ''}); loudest field request: ${topReq?.request ?? 'none logged'}.`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId]);
+
   if (!p) return null;
 
   const stats = [
@@ -72,7 +78,7 @@ export function ProductPage({ productId, onNav }) {
     <div style={{ padding: '30px 34px 48px', maxWidth: 1080 }}>
       <Masthead title={p.name}
         lede={p.description}
-        byline={`${p.status} · ${p.userCount ?? 'internal'} · pilot ${p.pilotDate ?? 'tbd'} · launch ${p.launchDate ?? 'tbd'}`} />
+        byline={`${p.status} · ${p.userCount ?? 'internal'} · pilot ${p.pilotDate ?? 'tbd'} · launch ${p.launchDate ?? 'tbd'}`} digest={digest} />
 
       {/* Act tracker — the narrative order, sticky */}
       <nav aria-label="Page acts" className="flex gap-1.5 flex-wrap" style={{ position: 'sticky', top: 0, zIndex: 5, background: 'var(--bg)', padding: '8px 0 10px', marginBottom: 6 }}>
@@ -111,19 +117,11 @@ export function ProductPage({ productId, onNav }) {
       {/* ── ACT 2 · THE EVIDENCE ── */}
       <SectionHead id="evidence" refs={refs}>What the research says</SectionHead>
       <div style={{ marginBottom: 14 }}>
-        <Figure title={`Fig. 1 · Evidence accumulation, by severity`}
-          caption="Each dot is one finding landing, lane per severity. Decision: a critical lane still filling means the problem space is live; a settled lane is ready for its design response. Hover any dot for the finding.">
-          <PlotFigure minHeight={4 * 30 + 66} deps={[timelineRows]} build={() => ({
-            height: 4 * 30 + 62,
-            marginLeft: 76, marginTop: 8, marginBottom: 26, marginRight: 12,
-            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
-            x: { type: 'time', label: null, tickFormat: '%b' },
-            y: { label: null, domain: SEVERITIES, tickSize: 0, padding: 0.5 },
-            marks: [
-              Plot.ruleY(SEVERITIES, { y: d => d, stroke: '#ede9e3' }),
-              Plot.dot(timelineRows, { x: 'date', y: 'severity', fill: d => SEV_COLORS[d.severity], r: 3.2, fillOpacity: 0.85, stroke: '#fff', strokeWidth: 0.6, tip: true, title: d => `${d.text.slice(0, 120)}${d.text.length > 120 ? '…' : ''}` }),
-            ],
-          })} />
+        <Figure title="Fig. 1 — Evidence volume by month"
+          caption="How much research landed on this product each month; hover a point for the critical split. Decision: a rising line means the problem space is live and design responses stay provisional; a settled line clears the way to commit.">
+          <VolumeArea accent={p.accentColor}
+            dates={timelineRows.map(r => r.date)}
+            criticalDates={timelineRows.filter(r => r.severity === 'critical').map(r => r.date)} />
         </Figure>
       </div>
       <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 14 }}>

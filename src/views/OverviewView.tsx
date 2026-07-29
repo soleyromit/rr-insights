@@ -3,13 +3,12 @@
 // The entry answers one question: what should be designed next, and why.
 // Product-state strip + severity mix + design-next queue; repo bookkeeping lives in Changelog.
 import { useMemo } from 'react';
-import * as Plot from '@observablehq/plot';
 import { ChevronRightIcon, FlameIcon, AlertTriangleIcon, CheckCircleIcon } from 'lucide-react';
 import { PRODUCTS } from '../data/products';
 import { ALL_INSIGHTS, getInsightsByProduct } from '../data/insights';
 import { MILESTONES } from '../data/personas';
 import { Figure, Masthead } from '../components/ui/Figure';
-import { PlotFigure } from '../components/charts/PlotFigure';
+import { RankedBars } from '../components/charts/RankedBars';
 
 const MONO = "'JetBrains Mono', monospace";
 const SEV_COLORS = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0' };
@@ -29,19 +28,17 @@ export function OverviewView({ onNav }) {
     return { p, total: ins.length, critical: ins.filter(i => i.severity === 'critical').length };
   }), []);
 
-  const sevMix = useMemo(() => {
-    const rows = [];
-    for (const { p } of productRows)
-      for (const sev of SEVERITIES)
-        rows.push({ product: p.shortName, severity: sev, count: getInsightsByProduct(p.id).filter(i => i.severity === sev).length });
-    return rows;
-  }, [productRows]);
-
   const nextHard = useMemo(() => MILESTONES
     .map(m => ({ ...m, d: parseMs(m.date) }))
     .filter(m => m.isHardDeadline && m.d >= today)
     .sort((a, b) => a.d - b.d)[0], []);
   const daysLeft = nextHard ? Math.round((nextHard.d - today) / 86400000) : null;
+
+  const digest = useMemo(() => {
+    const worst = [...productRows].sort((a, b) => b.critical - a.critical)[0];
+    const fires = PRODUCTS.filter(p => p.urgencyLevel === 'fire').map(p => p.shortName);
+    return `${worst.p.shortName} carries the largest critical load (${worst.critical} of ${worst.total} insights); ${fires.length ? fires.join(' + ') + ' on fire watch; ' : ''}next hard deadline is ${nextHard?.label ?? 'unscheduled'} in ${daysLeft} days.`;
+  }, [productRows, nextHard, daysLeft]);
 
   const designNext = useMemo(() => ALL_INSIGHTS
     .filter(i => i.severity === 'critical' && i.soWhat)
@@ -52,7 +49,7 @@ export function OverviewView({ onNav }) {
     <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
       <Masthead title="Command Center"
         lede="The state of five products in one view: deadline pressure, evidence mass, and the queue of critical findings that already name their design response. Everything links into its evidence."
-        byline={`${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products · next hard deadline: ${nextHard?.label ?? 'none scheduled'} in ${daysLeft} days (${nextHard?.date ?? ''})`} />
+        byline={`${ALL_INSIGHTS.length} insights across ${PRODUCTS.length} products · next hard deadline: ${nextHard?.label ?? 'none scheduled'} in ${daysLeft} days (${nextHard?.date ?? ''})`} digest={digest} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.2fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
         {/* Product state — each row is a door, not a card */}
@@ -84,16 +81,10 @@ export function OverviewView({ onNav }) {
           })}
         </div>
 
-        <Figure title="Fig. 1 · Evidence mass by severity" caption="Insight counts per product, stacked by severity. Decision: red mass is design debt — a product whose bar is mostly critical outranks a longer but calmer bar.">
-          <PlotFigure minHeight={PRODUCTS.length * 42 + 60} deps={[sevMix]} build={() => ({
-            height: PRODUCTS.length * 42 + 56,
-            marginLeft: 90, marginTop: 8, marginBottom: 28, marginRight: 16,
-            style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
-            x: { label: 'insights', tickSize: 0 },
-            y: { label: null, domain: PRODUCTS.map(p => p.shortName), tickSize: 0, padding: 0.3 },
-            color: { domain: SEVERITIES, range: SEVERITIES.map(s => SEV_COLORS[s]), legend: true },
-            marks: [Plot.barX(sevMix, { x: 'count', y: 'product', fill: 'severity', order: SEVERITIES, rx: 2, tip: true })],
-          })} />
+        <Figure title="Fig. 1 — Evidence mass, ranked" caption="Products ranked by evidence, critical mass as the red segment with its count inline. Decision: red mass is design debt — the largest red segment outranks the longest bar. Click a bar to open the product.">
+          <RankedBars onRowClick={(id) => onNav(id)} rows={productRows
+            .slice().sort((a, b) => b.critical - a.critical || b.total - a.total)
+            .map(({ p, total, critical }) => ({ key: p.id, label: p.shortName, color: p.accentColor, total, critical }))} />
         </Figure>
       </div>
 

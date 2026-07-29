@@ -1,5 +1,5 @@
 // views/SignalsView.tsx — Evidence layer home, editorial edition (P2.1 visual upgrade)
-// Charts: Observable Plot (persona heatmap, evidence timeline) + Highcharts (severity composition).
+// Charts: Dovetail-pattern ranked bars + monthly volume area (Benchmark D1/D2); Observable Plot heatmap retained (matrix is the true shape).
 // Chart discipline (SKILL §7): every figure carries the decision it supports in its caption.
 import { useMemo } from 'react';
 import * as Plot from '@observablehq/plot';
@@ -7,11 +7,11 @@ import { ChevronRightIcon } from 'lucide-react';
 import { computeAllSignals } from '../data/signals';
 import { EvidencePanel } from '../components/drilldown/EvidencePanel';
 import { PlotFigure } from '../components/charts/PlotFigure';
-import { HighchartFigure } from '../components/charts/HighchartFigure';
+import { RankedBars } from '../components/charts/RankedBars';
+import { VolumeArea } from '../components/charts/VolumeArea';
 import { useDrilldown } from '../hooks/useDrilldown';
 import { Figure, Masthead } from '../components/ui/Figure';
 import type { ComputedSignal } from '../data/signals';
-import type Highcharts from 'highcharts';
 
 const SEV_COLORS: Record<string, string> = { critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0' };
 const SEVERITIES = ['critical', 'high', 'medium', 'low'] as const;
@@ -59,12 +59,18 @@ function SignalIndexRow({ signal, index, active, compact, onOpen }: {
   );
 }
 
-export function SignalsView() {
+export function SignalsView({ onNav }) {
   const signals = useMemo(() => computeAllSignals(), []);
   const { state, apply } = useDrilldown();
   const active = signals.find(s => s.def.id === state.signal);
   const panelOpen = !!active;
   const totalEvidence = signals.reduce((n, s) => n + s.insights.length, 0);
+  const digest = useMemo(() => {
+    const top = signals[0];
+    const newest = signals.flatMap(s => s.insights).sort((a, b) => (b.createdAt > a.createdAt ? 1 : -1))[0];
+    const critTotal = signals.reduce((n, s) => n + (s.bySeverity.critical ?? 0), 0);
+    return `${SHORT[top.def.id]} leads with ${top.insights.length} insights (${top.bySeverity.critical ?? 0} of ${critTotal} platform criticals); newest evidence landed ${newest?.createdAt ?? 'n/a'} from ${newest?.source ?? ''}.`;
+  }, [signals]);
 
   // ── Heatmap cells: signal × persona, severity-weighted ──
   const heatCells = useMemo(() => {
@@ -93,30 +99,6 @@ export function SignalsView() {
     return rows;
   }, [signals]);
 
-  // ── Highcharts severity composition ──
-  const hcOptions = useMemo((): Highcharts.Options => ({
-    chart: { type: 'bar', backgroundColor: 'transparent', height: signals.length * 36 + 92, spacing: [4, 4, 4, 0], style: { fontFamily: MONO } },
-    title: { text: undefined }, credits: { enabled: false },
-    xAxis: {
-      categories: signals.map(s => SHORT[s.def.id]), lineColor: '#e3ddd4', tickLength: 0,
-      labels: { style: { fontSize: '12px', color: '#4a4844', fontFamily: MONO } },
-    },
-    yAxis: {
-      title: { text: undefined }, gridLineColor: '#ede9e3', tickInterval: 10,
-      labels: { style: { fontSize: '12px', color: '#6b6660', fontFamily: MONO } },
-    },
-    legend: { itemStyle: { fontSize: '12px', fontWeight: '400', color: '#4a4844', fontFamily: MONO }, symbolRadius: 2, symbolHeight: 9 },
-    tooltip: {
-      shared: true, backgroundColor: '#1a1917', borderRadius: 8, borderWidth: 0, shadow: false,
-      style: { color: '#faf9f7', fontSize: '13px', fontFamily: MONO },
-    },
-    plotOptions: { series: { stacking: 'normal', borderWidth: 0, pointPadding: 0.06, groupPadding: 0.07, animation: { duration: 500 } } },
-    series: SEVERITIES.map(sev => ({
-      type: 'bar' as const, name: sev, color: SEV_COLORS[sev],
-      data: signals.map(s => s.bySeverity[sev] ?? 0),
-    })),
-  }), [signals]);
-
   return (
     <div className="flex h-full" style={{ minHeight: 0 }}>
       <div className="flex-1 overflow-y-auto" style={{ padding: '30px 34px 48px' }}>
@@ -124,7 +106,7 @@ export function SignalsView() {
         <Masthead compact={panelOpen}
           title="Seven platform signals"
           lede="Cross-product patterns with drill-down evidence: grouped by persona, sorted by severity, every card ending in an action. The URL follows your drill, so any state is a shareable link."
-          byline={`Computed live from ${totalEvidence} insight-signal pairs · insights.ts`} />
+          byline={`Computed live from ${totalEvidence} insight-signal pairs · insights.ts`} digest={digest} />
 
         {/* ── Figures ── */}
         {!panelOpen && (
@@ -146,31 +128,19 @@ export function SignalsView() {
                 ],
               })} />
             </Figure>
-            <Figure title="Fig. 2 — Severity composition" caption="Insight counts stacked by severity per signal. Decision: where critical mass justifies escalating a signal into the next stakeholder briefing.">
-              <HighchartFigure options={hcOptions} deps={[signals]} />
+            <Figure title="Fig. 2 — Evidence mass, ranked" caption="Signals ranked by supporting evidence; the red segment is critical mass with its count inline. Decision: rank order is the escalation order for the next stakeholder briefing. Click a bar to open its evidence.">
+              <RankedBars onRowClick={(id) => apply({ signal: id })} rows={signals.map(s => ({
+                key: s.def.id, label: SHORT[s.def.id], color: s.def.color,
+                total: s.insights.length, critical: s.bySeverity.critical ?? 0,
+              }))} />
             </Figure>
           </div>
         )}
 
         {!panelOpen && (
           <div style={{ marginBottom: 20 }}>
-            <Figure title="Fig. 3 — Evidence accumulation, Feb → Jul 2026" caption="Each dot is one insight landing on a signal, colored by severity. Decision: which signals are still accumulating evidence (research is live) versus settled (ready for design response). Hover any dot for its finding.">
-              <PlotFigure minHeight={signals.length * 30 + 70} deps={[timelineRows]} build={() => ({
-                height: signals.length * 30 + 66,
-                marginLeft: 138, marginTop: 8, marginBottom: 26, marginRight: 12,
-                style: { fontFamily: MONO, fontSize: '12.5px', background: 'transparent' },
-                x: { type: 'time', label: null, tickFormat: '%b' },
-                y: { label: null, tickSize: 0, padding: 0.5 },
-                color: { domain: [...SEVERITIES], range: SEVERITIES.map(s => SEV_COLORS[s]), legend: true, label: 'severity' },
-                marks: [
-                  Plot.ruleY([...new Set(timelineRows.map(r => r.signal))], { y: d => d, stroke: '#ede9e3', strokeWidth: 1 }),
-                  Plot.dot(timelineRows, {
-                    x: 'date', y: 'signal', fill: 'severity', r: 3.4, fillOpacity: 0.85,
-                    stroke: '#fff', strokeWidth: 0.6,
-                    tip: true, title: d => `${d.text.slice(0, 120)}${d.text.length > 120 ? '…' : ''}`,
-                  }),
-                ],
-              })} />
+            <Figure title="Fig. 3 — Evidence volume by month" caption="One line: how much evidence landed each month across all signals; hover a point for the critical split. Decision: a rising line means the problem space is still live and design responses stay provisional; a settled line is a green light.">
+              <VolumeArea dates={timelineRows.map(r => r.date)} criticalDates={timelineRows.filter(r => r.severity === 'critical').map(r => r.date)} />
             </Figure>
           </div>
         )}
@@ -196,6 +166,7 @@ export function SignalsView() {
           onPersona={(p) => apply({ signal: state.signal, persona: p, insight: undefined })}
           onInsight={(i) => apply({ signal: state.signal, persona: state.persona, insight: i })}
           onClose={() => apply({})}
+          onNav={onNav}
         />
       )}
     </div>

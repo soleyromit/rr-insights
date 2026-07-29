@@ -44,13 +44,19 @@ export function PersonaMapView() {
     })), []);
   const maxCoverage = Math.max(...coverage.map(c => c.insights), 1);
 
+  const digest = useMemo(() => {
+    const sorted = [...coverage].sort((a, b) => a.insights - b.insights);
+    const thin = sorted[0]; const rich = sorted[sorted.length - 1];
+    return `${rich.persona} evidence outweighs ${thin.persona} ${Math.round(rich.insights / Math.max(thin.insights, 1))}:1 (${rich.insights} vs ${thin.insights}); the ${thin.persona} sessions in the content plan close the loudest silence in the corpus.`;
+  }, [coverage]);
+
   const personaName = (pid) => PERSONAS.find(p => p.id === pid)?.name ?? pid;
 
   return (
     <div style={{ padding: '30px 34px 48px', maxWidth: 1120 }}>
       <Masthead title="Persona Atlas"
         lede="Four personas, five products: friction severity computed against every surface, research coverage counted honestly. Select a persona for their situation, day shape, and open frictions."
-        byline={`Friction matrix from research synthesis · coverage from ${coverage.reduce((n, c) => n + c.insights, 0)} tagged insights`} />
+        byline={`Friction matrix from research synthesis · coverage from ${coverage.reduce((n, c) => n + c.insights, 0)} tagged insights`} digest={digest} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.25fr) minmax(0,1fr)', gap: 16, marginBottom: 16 }}>
         <Figure title="Fig. 1 · Friction heat grid" caption="Severity of each persona's experience per product. Decision: the darkest row is the persona whose next release matters most — SCCE and Student rows carry the critical mass.">

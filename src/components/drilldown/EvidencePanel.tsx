@@ -45,8 +45,8 @@ function Chip({ children, color }: { children: React.ReactNode; color?: string }
   );
 }
 
-function InsightCardV2({ insight, expanded, onToggle }: {
-  insight: Insight; expanded: boolean; onToggle: () => void;
+function InsightCardV2({ insight, expanded, onToggle, onNav }: {
+  insight: Insight; expanded: boolean; onToggle: () => void; onNav?: (view: string) => void;
 }) {
   const [copied, setCopied] = useState(false);
   const [flagged, setFlagged] = useState(false);
@@ -79,7 +79,9 @@ function InsightCardV2({ insight, expanded, onToggle }: {
           <div className="flex flex-wrap gap-1.5 items-center" style={{ marginBottom: 10 }}>
             <Chip color={EVIDENCE_COLORS[ec]}>{ec}</Chip>
             {insight.confidence && <Chip>confidence: {insight.confidence}</Chip>}
-            {insight.productIds.map(p => <Chip key={p}>{getProduct(p)?.shortName ?? p}</Chip>)}
+            {insight.productIds.map(p => onNav
+              ? <button key={p} className="press mono" onClick={() => onNav(p)} style={{ fontSize: 12, fontWeight: 500, padding: '2px 8px', borderRadius: 3, background: 'var(--bg2)', color: 'var(--accent)', border: '1px solid var(--bg3)', cursor: 'pointer' }}>{getProduct(p)?.shortName ?? p} →</button>
+              : <Chip key={p}>{getProduct(p)?.shortName ?? p}</Chip>)}
           </div>
           <div className="mono" style={{ fontSize: 12, color: 'var(--text3)', marginBottom: insight.soWhat ? 10 : 12 }}>{insight.source} · {insight.createdAt}</div>
           {insight.soWhat && (
@@ -118,13 +120,14 @@ function actionStyle(active: boolean): React.CSSProperties {
   };
 }
 
-export function EvidencePanel({ signal, activePersona, activeInsight, onPersona, onInsight, onClose }: {
+export function EvidencePanel({ signal, activePersona, activeInsight, onPersona, onInsight, onClose, onNav }: {
   signal: ComputedSignal;
   activePersona?: string;
   activeInsight?: string;
   onPersona: (p?: string) => void;
   onInsight: (id?: string) => void;
   onClose: () => void;
+  onNav?: (view: string) => void;
 }) {
   const { def, insights, byPersona } = signal;
   const groups = useMemo(() =>
@@ -195,7 +198,7 @@ export function EvidencePanel({ signal, activePersona, activeInsight, onPersona,
               </div>
             )}
             {g.items.map(i => (
-              <InsightCardV2 key={`${g.id}-${i.id}`} insight={i} expanded={activeInsight === i.id}
+              <InsightCardV2 key={`${g.id}-${i.id}`} insight={i} onNav={onNav} expanded={activeInsight === i.id}
                 onToggle={() => { onInsight(activeInsight === i.id ? undefined : i.id); if (!activePersona) onPersona(g.id); }} />
             ))}
           </div>

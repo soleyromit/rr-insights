@@ -42,8 +42,8 @@ export function App() {
     if (activeView === 'competitive')      return <CompetitiveView />;
     if (activeView === 'changelog')        return <ChangelogView />;
     if (activeView === 'personas')         return <PersonaMapView />;
-    if (activeView === 'signals')          return <SignalsView />;
-    if (activeView === 'themes')           return <SignalsView />; // legacy route → Signals
+    if (activeView === 'signals')          return <SignalsView onNav={handleNav} />;
+    if (activeView === 'themes')           return <SignalsView onNav={handleNav} />; // legacy route → Signals
     if (activeView === 'roadmap')          return <RoadmapView />;
     if (activeView === 'portfolio')        return <PortfolioView />;
     if (activeView === 'stakeholder')      return <StakeholderView />;
