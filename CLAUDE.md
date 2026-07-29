@@ -33,6 +33,14 @@ Live at: https://soleyromit.github.io/rr-insights/
 
 ## How Claude syncs data (the loop)
 
+**Preferred: run `/sync-sources`** (project skill, `.claude/skills/sync-sources/`).
+It finds everything newer than the corpus anchor in Granola + the Obsidian vault
+(`~/Documents/research-repos`), synthesizes insights with the taxonomy rules,
+refreshes the Performance Ledger from Arun sessions (privacy gate: no
+immigration/HR content — the site is public), bumps the version, and publishes.
+Note: push goes to the `claude-container` remote on this machine, not `origin`.
+
+
 ```
 Granola session / doc uploaded
   → Claude reads + synthesizes
