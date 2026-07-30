@@ -8,24 +8,24 @@
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { VStack } from '@astryxdesign/core/VStack';
-import { HStack } from '@astryxdesign/core/HStack';
+import { Grid } from '@astryxdesign/core/Grid';
 import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
-import { RankedList } from '../components/charts/RankedList';
 import { SeverityStackChart } from '../components/charts/SeverityStackChart';
 import { SmallMultiples } from '../components/charts/SmallMultiples';
 import { ALL_INSIGHTS } from '../data/insights';
 import { getProduct } from '../data/products';
 import { getTheme } from '../data/themes';
 import { PERSONAS } from '../data/personas';
-import { dimensionCounts, monthlyVolume, severityMix, fillMonths, monthDomain } from '../lib/series';
+import { dimensionCounts, monthlyVolume, severityMix, fillMonths, monthDomain, tierMassByDimension } from '../lib/series';
+import { scoreInsight } from '../lib/score';
+import { TierBars } from '../components/charts/TierBars';
 import { hrefInsights } from '../lib/links';
 import type { Insight } from '../types';
 import type { InsightFilter } from '../lib/links';
 
 type Dim = 'product' | 'theme' | 'persona' | 'severity' | 'tag';
-type Viz = 'ranked' | 'severity' | 'volume';
 
 const DIM_ACCESSOR: Record<Dim, (i: Insight) => string[] | string | undefined> = {
   product: (i) => i.productIds,
@@ -53,7 +53,6 @@ function labelFor(dim: Dim, key: string): string {
 export function ChartsView() {
   const [params, setParams] = useSearchParams();
   const dim = (params.get('dim') as Dim | null) ?? 'product';
-  const viz = (params.get('viz') as Viz | null) ?? 'ranked';
 
   const set = (key: string, value: string, def: string) => {
     setParams(
@@ -79,13 +78,15 @@ export function ChartsView() {
     return (dim === 'tag' ? all.filter((c) => c.key !== 'new') : all).slice(0, 12);
   }, [dim]);
 
-  const rankedRows = counts.map((c) => ({
-    key: c.key,
-    label: labelFor(dim, c.key),
-    value: c.count,
-    hint: c.critical ? `${c.critical} critical` : undefined,
-    href: hrefInsights(DIM_FILTER[dim](c.key)),
-  }));
+  // Ranked by opportunity mass (summed score), tier-stacked — not raw counts.
+  const massRows = useMemo(() => {
+    const all = tierMassByDimension(ALL_INSIGHTS, DIM_ACCESSOR[dim], (i) => scoreInsight(i).tier);
+    return (dim === 'tag' ? all.filter((c) => c.key !== 'new') : all).slice(0, 12).map((r) => ({
+      ...r,
+      label: labelFor(dim, r.key),
+      href: hrefInsights(DIM_FILTER[dim](r.key)),
+    }));
+  }, [dim]);
 
   const sevData = useMemo(
     () =>
@@ -120,38 +121,40 @@ export function ChartsView() {
     <VStack gap={5} padding={6}>
       <PageHeader
         title="Charts"
-        lede="The corpus along any dimension — click any bar to open the insights that produce it."
-        meta={`${ALL_INSIGHTS.length} insights · dimension: ${dim} · form: ${viz}`}
+        lede="One dimension, three honest views: where the opportunity mass sits, what it's made of, and how it moved."
+        meta={`${ALL_INSIGHTS.length} insights · dimension: ${dim}`}
       />
 
-      <HStack gap={3} vAlign="center" wrap="wrap">
-        <SegmentedControl label="Dimension" value={dim} onChange={(v) => set('dim', v, 'product')} size="sm">
-          <SegmentedControlItem value="product" label="Product" />
-          <SegmentedControlItem value="theme" label="Theme" />
-          <SegmentedControlItem value="persona" label="Persona" />
-          <SegmentedControlItem value="severity" label="Severity" />
-          <SegmentedControlItem value="tag" label="Tag" />
-        </SegmentedControl>
-        <SegmentedControl label="Visualize as" value={viz} onChange={(v) => set('viz', v, 'ranked')} size="sm">
-          <SegmentedControlItem value="ranked" label="Ranked bars" />
-          <SegmentedControlItem value="severity" label="Severity mix" />
-          <SegmentedControlItem value="volume" label="Volume over time" />
-        </SegmentedControl>
-      </HStack>
+      <SegmentedControl label="Dimension" value={dim} onChange={(v) => set('dim', v, 'product')} size="sm">
+        <SegmentedControlItem value="product" label="Product" />
+        <SegmentedControlItem value="theme" label="Theme" />
+        <SegmentedControlItem value="persona" label="Persona" />
+        <SegmentedControlItem value="severity" label="Severity" />
+        <SegmentedControlItem value="tag" label="Tag" />
+      </SegmentedControl>
 
-      {viz === 'ranked' && (
-        <Fig
-          title={`Insights by ${dim}`}
-          n={ALL_INSIGHTS.length}
-          caption="Counts along the chosen dimension; the trailing hint is the critical share. Every row opens its query."
-          note={tagNote}
-          link={{ href: hrefInsights(), count: ALL_INSIGHTS.length, label: 'insights, full corpus query' }}
-        >
-          <RankedList rows={rankedRows} format={(r) => String(r.value)} />
-        </Fig>
-      )}
+      <Fig
+        title={`Opportunity mass by ${dim} — tier-stacked`}
+        n={ALL_INSIGHTS.length}
+        caption="Ranked by summed opportunity score, not row count — a value with many P2s can outrank one with a few P0s, and the stack shows exactly why. Segment colors are the P0–P3 tiers."
+        note={tagNote}
+        exportData={massRows.map((r) => ({
+          [dim]: r.label,
+          mass: Math.round(r.mass),
+          insights: r.n,
+          critical: r.critical,
+          P0: Math.round(r.tiers.P0 ?? 0),
+          P1: Math.round(r.tiers.P1 ?? 0),
+          P2: Math.round(r.tiers.P2 ?? 0),
+          P3: Math.round(r.tiers.P3 ?? 0),
+        }))}
+        exportName={`opportunity-mass-${dim}`}
+        link={{ href: hrefInsights(), count: ALL_INSIGHTS.length, label: 'insights, full corpus query' }}
+      >
+        <TierBars rows={massRows} />
+      </Fig>
 
-      {viz === 'severity' && (
+      <Grid columns={{ minWidth: 420, max: 2 }} gap={4}>
         <Fig
           title={`Severity mix by ${dim}`}
           n={ALL_INSIGHTS.length}
@@ -160,18 +163,16 @@ export function ChartsView() {
         >
           <SeverityStackChart data={sevData} height={300} />
         </Fig>
-      )}
 
-      {viz === 'volume' && (
         <Fig
           title={`Volume over time by ${dim}`}
           n={ALL_INSIGHTS.length}
-          caption="Aligned small multiples for the top values of the chosen dimension — shared axes, zero-filled months, so shapes compare honestly. Each cell opens its query."
+          caption="Aligned small multiples for the top values — shared axes, zero-filled months, so shapes compare honestly. Each cell opens its query."
           note={tagNote}
         >
           <SmallMultiples groups={volumeGroups} />
         </Fig>
-      )}
+      </Grid>
     </VStack>
   );
 }

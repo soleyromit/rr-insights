@@ -228,6 +228,70 @@ export function evidenceFlow(
   return { productTheme, themeTier };
 }
 
+/** Opportunity mass per dimension value, split by tier — ranks by what matters
+ * (summed score), not by row count. */
+export function tierMassByDimension(
+  insights: Insight[],
+  dim: (i: Insight) => string[] | string | undefined,
+  tierOfInsight: (i: Insight) => string
+): { key: string; mass: number; n: number; critical: number; tiers: Record<string, number> }[] {
+  const map = new Map<string, { key: string; mass: number; n: number; critical: number; tiers: Record<string, number> }>();
+  for (const i of insights) {
+    const raw = dim(i);
+    const keys = raw === undefined ? [] : Array.isArray(raw) ? raw : [raw];
+    const s = scoreOf(i);
+    const tier = tierOfInsight(i);
+    for (const k of keys) {
+      const e = map.get(k) ?? { key: k, mass: 0, n: 0, critical: 0, tiers: {} };
+      e.mass += s;
+      e.n += 1;
+      if (i.severity === 'critical') e.critical += 1;
+      e.tiers[tier] = (e.tiers[tier] ?? 0) + s;
+      map.set(k, e);
+    }
+  }
+  return [...map.values()].sort((a, b) => b.mass - a.mass);
+}
+
+/** Theme co-occurrence via shared sessions (source string = session key):
+ * which themes travel together in the same conversations. */
+export function themeCooccurrence(insights: Insight[]): {
+  nodes: { id: string; n: number }[];
+  links: { a: string; b: string; sessions: number; ids: string[] }[];
+} {
+  const bySession = new Map<string, Insight[]>();
+  for (const i of insights) {
+    const list = bySession.get(i.source) ?? [];
+    list.push(i);
+    bySession.set(i.source, list);
+  }
+  const pair = new Map<string, { sessions: number; ids: Set<string> }>();
+  for (const list of bySession.values()) {
+    const themes = [...new Set(list.map((i) => i.themeId))].sort();
+    if (themes.length < 2) continue;
+    for (let x = 0; x < themes.length; x++) {
+      for (let y = x + 1; y < themes.length; y++) {
+        const k = `${themes[x]}|${themes[y]}`;
+        const e = pair.get(k) ?? { sessions: 0, ids: new Set<string>() };
+        e.sessions += 1;
+        for (const i of list) if (i.themeId === themes[x] || i.themeId === themes[y]) e.ids.add(i.id);
+        pair.set(k, e);
+      }
+    }
+  }
+  const counts = new Map<string, number>();
+  for (const i of insights) counts.set(i.themeId, (counts.get(i.themeId) ?? 0) + 1);
+  return {
+    nodes: [...counts.entries()].map(([id, n]) => ({ id, n })).sort((a, b) => b.n - a.n),
+    links: [...pair.entries()]
+      .map(([k, e]) => {
+        const [a, b] = k.split('|');
+        return { a, b, sessions: e.sessions, ids: [...e.ids] };
+      })
+      .sort((x, y) => y.sessions - x.sessions),
+  };
+}
+
 /** Computed persona × product counts — the honest twin of the curated friction grid. */
 export function personaProductMatrix(
   insights: Insight[],
