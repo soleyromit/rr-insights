@@ -11,6 +11,8 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import { Token } from '@astryxdesign/core/Token';
 import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
+import { List } from '@astryxdesign/core/List';
+import { Item } from '@astryxdesign/core/Item';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { Link } from '@astryxdesign/core/Link';
 import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
@@ -257,19 +259,19 @@ export function InsightIndexView() {
                   />
                 ))}
               </HStack>
-              <VStack gap={1.5}>
+              <List density="compact" hasDividers>
                 {g.insights.slice(0, 5).map((i) => (
-                  <HStack key={i.id} gap={2} vAlign="center">
-                    <SevDot severity={i.severity} />
-                    <Link href={hrefInsight(i.id)}>
-                      <Text type="body" maxLines={1} hasTruncateTooltip={false}>
-                        {i.text}
-                      </Text>
-                    </Link>
-                    <ScoreTier breakdown={scoreInsight(i)} showFormula={false} />
-                  </HStack>
+                  <Item
+                    key={i.id}
+                    as="li"
+                    href={hrefInsight(i.id)}
+                    startContent={<SevDot severity={i.severity} />}
+                    label={i.text}
+                    labelLines={1}
+                    endContent={<ScoreTier breakdown={scoreInsight(i)} showFormula={false} />}
+                  />
                 ))}
-              </VStack>
+              </List>
             </VStack>
           ))}
         </VStack>
