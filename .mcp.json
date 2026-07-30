@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "rr-insights": {
+      "command": "npx",
+      "args": ["tsx", "scripts/mcp-server.ts"]
+    }
+  }
+}
