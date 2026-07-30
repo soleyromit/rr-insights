@@ -13,6 +13,7 @@ import { Token } from '@astryxdesign/core/Token';
 import { Link } from '@astryxdesign/core/Link';
 import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { SevBadge } from '../ui/sev';
+import { ScoreTier } from '../ui/ScoreTier';
 import { scoreInsight } from '../../lib/score';
 import { evidenceClass, relatedInsights, signalsOf, voiceForInsight } from '../../lib/selectors';
 import { getProduct } from '../../data/products';
@@ -36,9 +37,7 @@ export function InsightDoc({ insight }: { insight: Insight }) {
         <VStack gap={2}>
           <HStack gap={2} vAlign="center">
             <SevBadge severity={insight.severity} />
-            <Text type="supporting" hasTabularNumbers>
-              opportunity {score.label}
-            </Text>
+            <ScoreTier breakdown={score} />
           </HStack>
           <Heading level={2} textWrap="balance">
             {insight.text}

@@ -22,7 +22,8 @@ import { StatTile, StatTileRow } from '../components/story/StatTile';
 import { SevDot } from '../components/ui/sev';
 import { insightsWhere, evidenceClass } from '../lib/selectors';
 import { monthlyVolume } from '../lib/series';
-import { scoreOf } from '../lib/score';
+import { scoreOf, scoreInsight } from '../lib/score';
+import { ScoreTier } from '../components/ui/ScoreTier';
 import { formatDay } from '../lib/format';
 import { PRODUCTS, getProduct } from '../data/products';
 import { PERSONAS } from '../data/personas';
@@ -230,14 +231,9 @@ export function InsightIndexView() {
           },
           {
             key: 'score',
-            header: 'Score',
-            width: pixel(70),
-            align: 'end',
-            renderCell: (r: Row) => (
-              <Text type="body" hasTabularNumbers>
-                {r.score}
-              </Text>
-            ),
+            header: 'Priority',
+            width: pixel(140),
+            renderCell: (r: Row) => <ScoreTier breakdown={scoreInsight(r.insight)} />,
           },
           { key: 'date', header: 'Captured', width: pixel(110), renderCell: (r: Row) => <Text type="supporting">{formatDay(r.insight.createdAt)}</Text> },
         ]}
