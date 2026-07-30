@@ -14,6 +14,21 @@ export interface Insight {
   createdAt: string; confidence?: 'high' | 'medium' | 'inferred'; soWhat?: string;
 }
 
+// Recommendations — the Aurelius-style decision chain: every action links to the
+// insights that argue for it, so research → decision stays traceable.
+export type RecommendationStatus = 'proposed' | 'aligned' | 'approved' | 'shipped' | 'rejected';
+export interface Recommendation {
+  id: string;
+  text: string;                 // the action, imperative
+  rationale?: string;           // why, in one sentence
+  insightIds: string[];         // evidence chain — must reference real insights
+  productIds: ProductId[];
+  owner?: string;
+  status: RecommendationStatus; // proposed → aligned (verbal) → approved (sign-off) → shipped | rejected
+  statusDate: string;           // ISO day of the last status change
+  createdAt: string;
+}
+
 export interface GapsByDiscipline { dev: string[]; ux: string[]; ui: string[]; product: string[]; }
 export interface AIFeatureOpportunity { feature: string; problem: string; status: string; }
 export interface NewFeatureFramework { aiOpportunities: AIFeatureOpportunity[]; designSystemComponents: string[]; microInteractions: string[]; }

@@ -48,6 +48,7 @@ export const ROUTES: RouteDef[] = [
   { path: '/products/exam-management/ia', label: 'Nav IA · Apr 1', section: 'archive', productId: 'exam-management', component: v(() => import('../views/products/NavIAView'), 'NavIAView') },
   { path: '/platform', label: 'Platform', section: 'products', component: v(() => import('../views/products/ExxatOneView'), 'ExxatOneView') },
 
+  { path: '/decisions', label: 'Decisions', section: 'story', component: v(() => import('../views/DecisionsView'), 'DecisionsView') },
   { path: '/story', label: 'Connect the Dots', section: 'story', component: v(() => import('../views/NarrativeView'), 'NarrativeView'), needsOnNav: true },
   { path: '/roadmap', label: 'Roadmap', section: 'story', component: v(() => import('../views/RoadmapView'), 'RoadmapView') },
   { path: '/competitive', label: 'Competitive Parity', section: 'story', component: v(() => import('../views/CompetitiveView'), 'CompetitiveView') },

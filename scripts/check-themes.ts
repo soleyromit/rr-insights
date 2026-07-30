@@ -2,6 +2,7 @@
 // Run: npx tsx scripts/check-themes.ts   (exit 1 on violation)
 import { ALL_INSIGHTS } from '../src/data/insights';
 import { THEMES, getTheme } from '../src/data/themes';
+import { RECOMMENDATIONS } from '../src/data/recommendations';
 import { scoreInsight } from '../src/lib/score';
 
 let fail = 0;
@@ -16,6 +17,16 @@ for (const t of THEMES) {
   const n = counts.get(t.id) ?? 0;
   if (n < 5) err(`theme ${t.id} has only ${n} members (<5)`);
   if (n > ALL_INSIGHTS.length * 0.4) err(`theme ${t.id} has ${n} members (>40% of corpus)`);
+}
+
+// Recommendations: every evidence link must reference a real insight.
+{
+  const ids = new Set(ALL_INSIGHTS.map(i => i.id));
+  for (const r of RECOMMENDATIONS) {
+    const dead = r.insightIds.filter(id => !ids.has(id));
+    if (dead.length) err(`recommendation ${r.id} cites missing insights: ${dead.join(', ')}`);
+    if (!r.insightIds.length) err(`recommendation ${r.id} has no evidence chain`);
+  }
 }
 
 const tiers = new Map<string, number>();
