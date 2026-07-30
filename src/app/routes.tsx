@@ -31,6 +31,7 @@ export const ROUTES: RouteDef[] = [
   { path: '/signals/:signalId', label: 'Signal', component: v(() => import('../views/SignalDetailView'), 'SignalDetailView') },
   { path: '/personas', label: 'Persona Atlas', section: 'explore', component: v(() => import('../views/PersonasView'), 'PersonasView') },
   { path: '/personas/:personaId', label: 'Persona', component: v(() => import('../views/PersonaDetailView'), 'PersonaDetailView') },
+  { path: '/stakeholders', label: 'Stakeholders', section: 'explore', component: v(() => import('../views/StakeholderAtlasView'), 'StakeholderAtlasView') },
   { path: '/participants', label: 'Participants', section: 'explore', component: v(() => import('../views/ParticipantsView'), 'ParticipantsView') },
   { path: '/participants/:voiceId', label: 'Participant', component: v(() => import('../views/ParticipantDetailView'), 'ParticipantDetailView') },
   { path: '/graph', label: 'Knowledge Graph', section: 'explore', component: v(() => import('../views/KnowledgeGraphView'), 'KnowledgeGraphView') },
