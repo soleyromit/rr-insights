@@ -3,10 +3,20 @@
 import { ALL_INSIGHTS } from '../src/data/insights';
 import { THEMES, getTheme } from '../src/data/themes';
 import { RECOMMENDATIONS } from '../src/data/recommendations';
+import { CONFLICTS } from '../src/data/conflicts';
 import { scoreInsight } from '../src/lib/score';
 
 let fail = 0;
 const err = (m: string) => { console.error('FAIL:', m); fail = 1; };
+
+// Unique ids: insightById and every ids= link silently break on duplicates.
+{
+  const seen = new Set<string>();
+  for (const i of ALL_INSIGHTS) {
+    if (seen.has(i.id)) err(`duplicate insight id: ${i.id}`);
+    seen.add(i.id);
+  }
+}
 
 const missing = ALL_INSIGHTS.filter(i => !i.themeId || !getTheme(i.themeId));
 if (missing.length) err(`${missing.length} insights without a valid themeId: ${missing.slice(0, 10).map(i => i.id).join(', ')}${missing.length > 10 ? ', …' : ''}`);
@@ -26,6 +36,10 @@ for (const t of THEMES) {
     const dead = r.insightIds.filter(id => !ids.has(id));
     if (dead.length) err(`recommendation ${r.id} cites missing insights: ${dead.join(', ')}`);
     if (!r.insightIds.length) err(`recommendation ${r.id} has no evidence chain`);
+  }
+  for (const c of CONFLICTS) {
+    const dead = c.insightIds.filter(id => !ids.has(id));
+    if (dead.length) err(`conflict ${c.id} cites missing insights: ${dead.join(', ')}`);
   }
 }
 

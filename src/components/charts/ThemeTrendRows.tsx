@@ -19,6 +19,10 @@ export interface ThemeTrendRow {
   points: MonthPoint[];
   current: number;
   prior: number;
+  /** Custom display label — defaults to the theme title for the key. */
+  label?: string;
+  /** Custom door — defaults to the theme-filtered index. */
+  href?: string;
 }
 
 export function ThemeTrendRows({ rows }: { rows: ThemeTrendRow[] }) {
@@ -27,9 +31,9 @@ export function ThemeTrendRows({ rows }: { rows: ThemeTrendRow[] }) {
       {rows.map((r) => (
         <HStack key={r.key} gap={3} vAlign="center" hAlign="between">
           <HStack gap={2} vAlign="center">
-            <Link href={hrefInsights({ theme: r.key })}>
+            <Link href={r.href ?? hrefInsights({ theme: r.key })}>
               <Text type="supporting" maxLines={1} hasTruncateTooltip={false}>
-                {getTheme(r.key)?.title ?? r.key}
+                {r.label ?? getTheme(r.key)?.title ?? r.key}
               </Text>
             </Link>
             <Badge variant="neutral" label={`n = ${r.n}`} />

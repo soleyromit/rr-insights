@@ -51,8 +51,14 @@ deterministic: same inputs → same procedure → published update.
     is in context — this is highlight-level provenance and upgrades the
     insight's evidence class to DIRECT QUOTE. Never paraphrase into an excerpt;
     if no verbatim span exists, omit the field.
-- NO fabrication. If two sources conflict, record the conflict (see
-  `COHERE_LAUNCH` in taxonomy.ts) instead of picking a side silently.
+- NO fabrication. If two sources conflict, add an entry to
+  `src/data/conflicts.ts` (both claims, owner, what it blocks, evidence
+  insightIds) instead of picking a side silently. Resolve entries by setting
+  `status:'resolved'` + `resolution` — never delete them.
+- BACKFILL while you're there: whenever a session transcript is loaded for
+  synthesis, also add `evidence` spans to EXISTING insights from that same
+  session that lack them (grep insights.ts for the session id). This is how the
+  evidence-debt floors in Analytics rise over time.
 - Counts are DERIVED everywhere (productFacts/corpusFacts) — never edit
   declared numbers.
 

@@ -31,7 +31,10 @@ import {
   personaProductMatrix,
   perProductMonthly,
   evidenceDebt,
+  termWatch,
+  evidenceDebtByTheme,
 } from '../lib/series';
+import { evidenceClass } from '../lib/selectors';
 import { scoreOf, scoreInsight } from '../lib/score';
 import { hrefInsights, hrefPersona } from '../lib/links';
 import type { SeverityLevel } from '../types';
@@ -67,6 +70,42 @@ export function AnalyticsView() {
 
   // Valence: pain (gap) vs opportunity share per month, tag-derived.
   const valence = useMemo(() => valenceByMonth(ALL_INSIGHTS), []);
+
+  // Term watch — curated watch terms tied to live product questions.
+  const WATCH_TERMS = [
+    { key: 'offline', label: 'offline (exam download)', pattern: 'offline', q: 'offline' },
+    { key: 'accommodation', label: 'accommodations', pattern: 'accommodations?', q: 'accommodation' },
+    { key: 'template', label: 'templates', pattern: 'templates?', q: 'template' },
+    { key: 'self-service', label: 'self-service', pattern: 'self[- ]service', q: 'self-service' },
+    { key: 'preview', label: 'preview / simulator', pattern: 'preview|simulator', q: 'preview' },
+    { key: 'versioning', label: 'versioning', pattern: 'versioning|version chain|versions?', q: 'versioning' },
+    { key: 'anonymity', label: 'anonymity', pattern: 'anonym\\w*', q: 'anonymity' },
+    { key: 'accreditation', label: 'accreditation', pattern: 'accreditat\\w*|arc-pa|capte|ccne', q: 'accreditation' },
+  ];
+  const watch = useMemo(
+    () =>
+      termWatch(ALL_INSIGHTS, WATCH_TERMS, CORPUS_ANCHOR).map((r) => {
+        const def = WATCH_TERMS.find((t) => t.key === r.key)!;
+        return { ...r, label: def.label, href: hrefInsights({ q: def.q }) };
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  // Evidence debt: direct-quote share per theme (weakest-evidenced first).
+  const debtByTheme = useMemo(
+    () =>
+      evidenceDebtByTheme(ALL_INSIGHTS, THEMES.map((t) => t.id), (i) => evidenceClass(i) === 'DIRECT QUOTE').map(
+        (r) => ({
+          key: r.key,
+          label: getTheme(r.key)?.title ?? r.key,
+          value: r.share,
+          hint: `${r.quoted}/${r.n} direct-quoted`,
+          href: hrefInsights({ theme: r.key }),
+        })
+      ),
+    []
+  );
 
   // Evidence flow: product → theme → tier.
   const flow = useMemo(() => {
@@ -259,6 +298,28 @@ export function AnalyticsView() {
             legend
             tooltip
           />
+        </Fig>
+      </Grid>
+
+      <Grid columns={{ minWidth: 420, max: 2 }} gap={4}>
+        <Fig
+          title="Term watch — mention trends for live product questions"
+          n={corpus.n}
+          caption="Curated watch terms (Channels-lite): monthly mention volume across text, quotes, and so-whats, with 30d momentum. A term heating up means that question is being re-litigated in sessions right now."
+          exportData={watch.map((w) => ({ term: w.label, mentions: w.n, last30d: w.current, prior30d: w.prior }))}
+          exportName="term-watch"
+        >
+          <ThemeTrendRows rows={watch} />
+        </Fig>
+
+        <Fig
+          title="Evidence debt — direct-quote share by theme"
+          n={corpus.n}
+          caption="Weakest-evidenced themes first: a low share means the theme's claims rest on synthesis rather than verbatim voices. The evidence-span backfill (next syncs) should raise these floors."
+          exportData={debtByTheme.map((d) => ({ theme: d.label, quotedSharePct: d.value, detail: d.hint }))}
+          exportName="evidence-debt-by-theme"
+        >
+          <RankedList rows={debtByTheme} format={(r) => `${r.value}%`} errorBelow={10} />
         </Fig>
       </Grid>
 

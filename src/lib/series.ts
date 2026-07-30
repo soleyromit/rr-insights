@@ -228,6 +228,43 @@ export function evidenceFlow(
   return { productTheme, themeTier };
 }
 
+/** Term watch — Channels-lite: monthly mention counts for curated watch terms
+ * over text + quote + soWhat, with 30d-vs-prior windows. */
+export function termWatch(
+  insights: Insight[],
+  terms: { key: string; pattern: string }[],
+  anchorISO: string
+): { key: string; n: number; points: MonthPoint[]; current: number; prior: number }[] {
+  const domain = monthDomain(insights);
+  return terms
+    .map((t) => {
+      const re = new RegExp(`\\b(${t.pattern})\\b`, 'i');
+      const list = insights.filter((i) => re.test(`${i.text} ${i.pullQuote ?? ''} ${i.soWhat ?? ''}`));
+      return {
+        key: t.key,
+        n: list.length,
+        points: fillMonths(monthlyVolume(list), domain),
+        ...recentCounts(list, 30, anchorISO),
+      };
+    })
+    .sort((a, b) => b.current - a.current || b.n - a.n);
+}
+
+/** Direct-quote share per theme — where the corpus's claims are weakest. */
+export function evidenceDebtByTheme(
+  insights: Insight[],
+  themeIds: string[],
+  isQuoted: (i: Insight) => boolean
+): { key: string; n: number; quoted: number; share: number }[] {
+  return themeIds
+    .map((t) => {
+      const list = insights.filter((i) => i.themeId === t);
+      const quoted = list.filter(isQuoted).length;
+      return { key: t, n: list.length, quoted, share: list.length ? Math.round((quoted / list.length) * 100) : 0 };
+    })
+    .sort((a, b) => a.share - b.share);
+}
+
 /** Opportunity mass per dimension value, split by tier — ranks by what matters
  * (summed score), not by row count. */
 export function tierMassByDimension(

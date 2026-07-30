@@ -11,7 +11,8 @@ import { THEMES, getTheme } from '../src/data/themes';
 import { SIGNAL_DEFS } from '../src/data/signals';
 import { PRODUCTS } from '../src/data/products';
 import { PERSONAS } from '../src/data/personas';
-import { COHERE_LAUNCH, SCORE_TIERS } from '../src/data/taxonomy';
+import { SCORE_TIERS } from '../src/data/taxonomy';
+import { CONFLICTS } from '../src/data/conflicts';
 import { RECOMMENDATIONS } from '../src/data/recommendations';
 import { insightsWhere, allSignals, signalsOf, evidenceClass, corpusFacts, productFacts } from '../src/lib/selectors';
 import { scoreInsight } from '../src/lib/score';
@@ -133,8 +134,8 @@ server.tool(
   async ({ status }) => json(status ? RECOMMENDATIONS.filter((r) => r.status === status) : RECOMMENDATIONS)
 );
 
-server.tool('open_conflicts', 'Contested facts: competing claims, rendered value, confirmation owner.', {}, async () =>
-  json([{ fact: 'Cohere launch date', ...COHERE_LAUNCH }])
+server.tool('open_conflicts', 'Contested facts: competing claims, what each blocks, resolution owner.', {}, async () =>
+  json(CONFLICTS)
 );
 
 await server.connect(new StdioServerTransport());

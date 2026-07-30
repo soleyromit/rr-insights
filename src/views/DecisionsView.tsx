@@ -12,10 +12,12 @@ import { Item } from '@astryxdesign/core/Item';
 import { PageHeader } from '../components/ui/PageHeader';
 import { StatTile, StatTileRow } from '../components/story/StatTile';
 import { RECOMMENDATIONS, REC_STATUS_ORDER, REC_STATUS_META } from '../data/recommendations';
+import { openConflicts } from '../data/conflicts';
 import { getProduct } from '../data/products';
 import { hrefInsights } from '../lib/links';
 import { formatDay } from '../lib/format';
 import type { Recommendation, RecommendationStatus } from '../types';
+import { Card } from '@astryxdesign/core/Card';
 
 const STATUS_TOKEN_COLOR: Record<RecommendationStatus, 'gray' | 'orange' | 'teal' | 'green' | 'red'> = {
   proposed: 'gray', aligned: 'orange', approved: 'teal', shipped: 'green', rejected: 'red',
@@ -68,12 +70,46 @@ export function DecisionsView() {
       />
 
       <StatTileRow>
+        <StatTile value={openConflicts().length} label="open conflicts" />
         {counts
           .filter((c) => c.n > 0)
           .map((c) => (
             <StatTile key={c.status} value={c.n} label={REC_STATUS_META[c.status].label.toLowerCase()} />
           ))}
       </StatTileRow>
+
+      {openConflicts().length > 0 && (
+        <VStack gap={2}>
+          <HStack gap={2} vAlign="center">
+            <Token label="Conflicts" color="red" />
+            <Text type="supporting">Two sources disagree — both claims on record, nothing designed against either until the owner resolves it.</Text>
+          </HStack>
+          {openConflicts().map((c) => (
+            <Card key={c.id} variant="muted" padding={4}>
+              <VStack gap={1.5}>
+                <HStack gap={2} vAlign="center" hAlign="between" wrap="wrap">
+                  <Text type="body" weight="semibold">
+                    {c.fact}
+                  </Text>
+                  <Text type="supporting">
+                    owner {c.owner} · raised {formatDay(c.raisedAt)} ·{' '}
+                    <Link href={hrefInsights({ ids: c.insightIds })}>evidence</Link>
+                  </Text>
+                </HStack>
+                {c.claims.map((cl, i) => (
+                  <Text key={i} type="supporting" as="p">
+                    {i === 0 ? 'A' : 'B'}: {cl.claim} — {cl.source}
+                  </Text>
+                ))}
+                <Text type="supporting" as="p" textWrap="pretty">
+                  Blocks: {c.blocks}
+                  {c.rendered ? ` Rendered conservatively as ${c.rendered}.` : ''}
+                </Text>
+              </VStack>
+            </Card>
+          ))}
+        </VStack>
+      )}
 
       {REC_STATUS_ORDER.filter((s) => (byStatus.get(s)?.length ?? 0) > 0).map((status) => {
         const recs = [...(byStatus.get(status) ?? [])].sort((a, b) => (b.statusDate > a.statusDate ? 1 : -1));

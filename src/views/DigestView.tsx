@@ -18,7 +18,7 @@ import { insightsWhere, productFacts, CORPUS_ANCHOR } from '../lib/selectors';
 import { scoreInsight } from '../lib/score';
 import { getTheme } from '../data/themes';
 import { PRODUCTS } from '../data/products';
-import { COHERE_LAUNCH } from '../data/taxonomy';
+import { openConflicts } from '../data/conflicts';
 import { RECOMMENDATIONS } from '../data/recommendations';
 import { hrefInsights, hrefProduct } from '../lib/links';
 import { formatDay } from '../lib/format';
@@ -97,21 +97,29 @@ export function DigestView() {
         </VStack>
       )}
 
-      {COHERE_LAUNCH.status === 'unconfirmed' && (
+      {openConflicts().length > 0 && (
         <VStack gap={2}>
           <Text type="large" weight="semibold">
-            Open conflicts
+            Open conflicts ({openConflicts().length})
           </Text>
-          <Card variant="muted" padding={4}>
-            <VStack gap={1}>
-              <Text type="body">
-                Cohere launch date: {COHERE_LAUNCH.claims.map((c) => `${c.date} (${c.source})`).join(' vs ')}
-              </Text>
-              <Text type="supporting">
-                Rendered conservatively as {COHERE_LAUNCH.rendered} · confirmation owner: {COHERE_LAUNCH.owner}
-              </Text>
-            </VStack>
-          </Card>
+          <List density="compact" hasDividers>
+            {openConflicts().map((c) => (
+              <Item
+                key={c.id}
+                as="li"
+                href="/decisions"
+                label={c.fact}
+                labelLines={1}
+                description={`owner ${c.owner} — blocks: ${c.blocks}`}
+                descriptionLines={1}
+                endContent={
+                  <Text type="supporting" hasTabularNumbers>
+                    since {formatDay(c.raisedAt)}
+                  </Text>
+                }
+              />
+            ))}
+          </List>
         </VStack>
       )}
 
