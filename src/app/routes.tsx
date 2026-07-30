@@ -22,6 +22,7 @@ const v = (loader: () => Promise<Record<string, any>>, name: string) =>
 
 export const ROUTES: RouteDef[] = [
   { path: '/', label: 'Overview', section: 'home', component: v(() => import('../views/OverviewView'), 'OverviewView'), needsOnNav: true },
+  { path: '/digest', label: 'This Week', section: 'home', component: v(() => import('../views/DigestView'), 'DigestView') },
 
   { path: '/insights', label: 'Insight Index', section: 'explore', component: v(() => import('../views/InsightIndexView'), 'InsightIndexView') },
   { path: '/insights/:insightId', label: 'Insight', component: v(() => import('../views/InsightDetailView'), 'InsightDetailView') },
