@@ -17,17 +17,19 @@ import { SeverityStackChart } from '../components/charts/SeverityStackChart';
 import { SmallMultiples } from '../components/charts/SmallMultiples';
 import { ALL_INSIGHTS } from '../data/insights';
 import { getProduct } from '../data/products';
+import { getTheme } from '../data/themes';
 import { PERSONAS } from '../data/personas';
 import { dimensionCounts, monthlyVolume, severityMix, fillMonths, monthDomain } from '../lib/series';
 import { hrefInsights } from '../lib/links';
 import type { Insight } from '../types';
 import type { InsightFilter } from '../lib/links';
 
-type Dim = 'product' | 'persona' | 'severity' | 'tag';
+type Dim = 'product' | 'theme' | 'persona' | 'severity' | 'tag';
 type Viz = 'ranked' | 'severity' | 'volume';
 
 const DIM_ACCESSOR: Record<Dim, (i: Insight) => string[] | string | undefined> = {
   product: (i) => i.productIds,
+  theme: (i) => i.themeId,
   persona: (i) => i.personaIds,
   severity: (i) => i.severity,
   tag: (i) => i.tags as string[],
@@ -35,6 +37,7 @@ const DIM_ACCESSOR: Record<Dim, (i: Insight) => string[] | string | undefined> =
 
 const DIM_FILTER: Record<Dim, (key: string) => InsightFilter> = {
   product: (key) => ({ product: key }),
+  theme: (key) => ({ theme: key }),
   persona: (key) => ({ persona: key }),
   severity: (key) => ({ severity: key as InsightFilter['severity'] }),
   tag: (key) => ({ tag: key }),
@@ -42,6 +45,7 @@ const DIM_FILTER: Record<Dim, (key: string) => InsightFilter> = {
 
 function labelFor(dim: Dim, key: string): string {
   if (dim === 'product') return getProduct(key)?.name ?? key;
+  if (dim === 'theme') return getTheme(key)?.title ?? key;
   if (dim === 'persona') return PERSONAS.find((p) => p.id === key)?.name ?? key;
   return key;
 }
@@ -123,6 +127,7 @@ export function ChartsView() {
       <HStack gap={3} vAlign="center" wrap="wrap">
         <SegmentedControl label="Dimension" value={dim} onChange={(v) => set('dim', v, 'product')} size="sm">
           <SegmentedControlItem value="product" label="Product" />
+          <SegmentedControlItem value="theme" label="Theme" />
           <SegmentedControlItem value="persona" label="Persona" />
           <SegmentedControlItem value="severity" label="Severity" />
           <SegmentedControlItem value="tag" label="Tag" />

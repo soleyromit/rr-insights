@@ -19,6 +19,7 @@ import { PERSONAS } from '../data/personas';
 import { PRODUCTS } from '../data/products';
 import { ALL_INSIGHTS } from '../data/insights';
 import { PERSONA_PRODUCT_FRICTION } from '../data/personaFriction';
+import { JOURNEY_STAGES } from '../data/journeys';
 import { insightsWhere } from '../lib/selectors';
 import { personaProductMatrix } from '../lib/series';
 import { hrefInsights, hrefPersona } from '../lib/links';
@@ -32,6 +33,23 @@ export function PersonasView() {
         ALL_INSIGHTS,
         PERSONAS.map((p) => p.id),
         PRODUCTS.map((p) => p.id)
+      ),
+    []
+  );
+
+  // Journey friction: persona × workflow stage, membership via each stage's
+  // theme set (curated in journeys.ts), counts computed live.
+  const journey = useMemo(
+    () =>
+      PERSONAS.map((pe) =>
+        JOURNEY_STAGES.map((st) => {
+          const list = insightsWhere({ persona: pe.id }).filter((i) => st.themeIds.includes(i.themeId));
+          return {
+            n: list.length,
+            critical: list.filter((i) => i.severity === 'critical').length,
+            ids: list.map((i) => i.id),
+          };
+        })
       ),
     []
   );
@@ -104,6 +122,38 @@ export function PersonasView() {
           />
         </Fig>
       </Grid>
+
+      <Fig
+        title="Journey friction — persona × workflow stage"
+        n={ALL_INSIGHTS.length}
+        caption="Stages are curated theme groupings (journeys.ts); counts are computed live. Read a row left-to-right as that persona's path through the platform — the hottest cell is where their journey breaks down. Cell title shows the critical count."
+        note="Cross-cutting themes (AI layer, competitive, process) are excluded — they are not journey stages."
+        exportData={PERSONAS.flatMap((pe, r) =>
+          JOURNEY_STAGES.map((st, c) => ({
+            persona: pe.name,
+            stage: st.title,
+            insights: journey[r][c].n,
+            critical: journey[r][c].critical,
+          }))
+        )}
+        exportName="journey-friction"
+      >
+        <HeatGrid
+          rows={PERSONAS.map((p) => p.name)}
+          cols={JOURNEY_STAGES.map((s) => s.title)}
+          rowHref={(r) => hrefPersona(PERSONAS[r].id)}
+          emptyHint="no evidence at this stage"
+          cell={(r, c) => {
+            const d = journey[r][c];
+            return {
+              value: d.n,
+              href: d.n > 0 ? hrefInsights({ ids: d.ids }) : undefined,
+              title: `${PERSONAS[r].name} × ${JOURNEY_STAGES[c].title}: ${d.n} insights, ${d.critical} critical — ${JOURNEY_STAGES[c].description}`,
+            };
+          }}
+          legend={{ low: 'smooth stage', high: 'journey breakdown' }}
+        />
+      </Fig>
 
       <List
         density="spacious"

@@ -5,12 +5,13 @@
 import { useMemo } from 'react';
 import { VStack } from '@astryxdesign/core/VStack';
 import { Grid } from '@astryxdesign/core/Grid';
-import { Chart, ChartAxis, ChartGrid, area, useChartColors } from '@astryxdesign/charts';
+import { Chart, ChartAxis, ChartGrid, area, line, useChartColors } from '@astryxdesign/charts';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Fig } from '../components/charts/Fig';
 import { SeverityStackChart } from '../components/charts/SeverityStackChart';
-import { DivergingBarChart } from '../components/charts/DivergingBarChart';
-import { ScatterChart } from '../components/charts/ScatterChart';
+import { QuadrantChart } from '../components/charts/QuadrantChart';
+import { ThemeTrendRows } from '../components/charts/ThemeTrendRows';
+import { FlowChart } from '../components/charts/FlowChart';
 import { SmallMultiples } from '../components/charts/SmallMultiples';
 import { HeatGrid } from '../components/charts/HeatGrid';
 import { RankedList } from '../components/charts/RankedList';
@@ -18,20 +19,22 @@ import { StatTile, StatTileRow } from '../components/story/StatTile';
 import { ALL_INSIGHTS } from '../data/insights';
 import { PRODUCTS, getProduct } from '../data/products';
 import { PERSONAS } from '../data/personas';
+import { THEMES, getTheme } from '../data/themes';
+import { SCORE_TIERS } from '../data/taxonomy';
 import { corpusFacts, insightsWhere, CORPUS_ANCHOR } from '../lib/selectors';
 import {
   monthlyVolume,
   severityByMonth,
-  tagTrends,
+  themeTrendRows,
+  valenceByMonth,
+  evidenceFlow,
   personaProductMatrix,
   perProductMonthly,
   evidenceDebt,
 } from '../lib/series';
-import { scoreOf } from '../lib/score';
+import { scoreOf, scoreInsight } from '../lib/score';
 import { hrefInsights, hrefPersona } from '../lib/links';
 import type { SeverityLevel } from '../types';
-
-const TAG_SPLIT_MONTH = '2026-04'; // Mar '26 spike vs everything after
 
 export function AnalyticsView() {
   const colors = useChartColors();
@@ -56,14 +59,35 @@ export function AnalyticsView() {
     []
   );
 
-  // Tag movers — 'new' excluded (92% of corpus, no signal).
-  const movers = useMemo(
-    () =>
-      tagTrends(ALL_INSIGHTS, { splitMonth: TAG_SPLIT_MONTH })
-        .slice(0, 8)
-        .map((t) => ({ label: t.tag, value: t.delta })),
+  // Theme trends — longitudinal per-theme momentum (the Channels-style view).
+  const themeRows = useMemo(
+    () => themeTrendRows(ALL_INSIGHTS, THEMES.map((t) => t.id), CORPUS_ANCHOR),
     []
   );
+
+  // Valence: pain (gap) vs opportunity share per month, tag-derived.
+  const valence = useMemo(() => valenceByMonth(ALL_INSIGHTS), []);
+
+  // Evidence flow: product → theme → tier.
+  const flow = useMemo(() => {
+    const { productTheme, themeTier } = evidenceFlow(ALL_INSIGHTS, (i) => scoreInsight(i).tier);
+    const links = [
+      ...[...productTheme.entries()].map(([k, value]) => {
+        const [from, to] = k.split('→');
+        return { from: `p:${from}`, to: `t:${to}`, value };
+      }),
+      ...[...themeTier.entries()].map(([k, value]) => {
+        const [from, to] = k.split('→');
+        return { from: `t:${from}`, to: `r:${to}`, value };
+      }),
+    ];
+    const columns = [
+      PRODUCTS.map((p) => ({ id: `p:${p.id}`, label: p.shortName, color: p.accentColor })),
+      THEMES.map((t) => ({ id: `t:${t.id}`, label: t.title, color: t.color })),
+      SCORE_TIERS.map((t) => ({ id: `r:${t.tier}`, label: t.tier, color: t.color })),
+    ];
+    return { columns, links };
+  }, []);
 
   const matrix = useMemo(
     () =>
@@ -174,33 +198,79 @@ export function AnalyticsView() {
         </Fig>
       </Grid>
 
+      <Fig
+        title="Theme trends — 30d momentum per theme"
+        n={corpus.n}
+        caption="Aligned sparklines on the shared month domain; the delta compares the last 30 days to the 30 before. Rising themes are where research attention is flowing right now."
+        exportData={themeRows.map((r) => ({
+          theme: getTheme(r.key)?.title ?? r.key,
+          insights: r.n,
+          last30d: r.current,
+          prior30d: r.prior,
+          delta: r.current - r.prior,
+        }))}
+        exportName="theme-trends"
+        detail={<SeverityStackChart data={sevMonths} height={200} />}
+        detailLabel="Severity backdrop"
+      >
+        <ThemeTrendRows rows={themeRows} />
+      </Fig>
+
       <Grid columns={{ minWidth: 420, max: 2 }} gap={4}>
         <Fig
-          title="Theme movers — tag volume after the March spike"
-          n={corpus.n}
-          note="'new' excluded (on 92% of the corpus — no signal). Split at Apr 2026."
-          caption="Right of zero: tags still accumulating evidence. Left: themes that peaked in the discovery burst and have gone quiet."
-        >
-          <DivergingBarChart
-            data={movers}
-            height={240}
-            poles={{ positive: 'growing since Apr', negative: 'faded after Mar spike' }}
-          />
-        </Fig>
-
-        <Fig
-          title="Backlog aging — open critical + high findings"
+          title="Priority quadrant — open critical + high findings"
           n={aging.length}
-          caption={`x = days since captured, y = opportunity score, color = severity. Top-right is the danger zone: high-scoring findings going stale — ${oldHeavy} are older than 90 days with score ≥ 24.`}
+          caption={`x = days since captured, y = opportunity score, color = severity. Reference lines split the plane at 90 days and the P0 floor (24): top-right is the danger quadrant — ${oldHeavy} high-scoring findings are aging past 90 days.`}
+          exportData={aging.map((d) => ({ ageDays: d.x, score: d.y, severity: d.severity, insight: d.label }))}
+          exportName="priority-quadrant"
           link={{
             href: hrefInsights({ severity: 'critical', sort: 'score' }),
             count: corpus.critical,
             label: 'critical findings, score-ranked',
           }}
         >
-          <ScatterChart data={aging} height={240} xFormat={(v) => `${v}d`} />
+          <QuadrantChart data={aging} xSplit={90} ySplit={24} height={260} />
+        </Fig>
+
+        <Fig
+          title="Evidence valence — pain vs opportunity share by month"
+          n={corpus.n}
+          note="Tag-derived (gap = pain, opportunity = opportunity); months with fewer than 3 insights excluded. A synced sentiment field can replace the accessor later."
+          caption="When the pain line runs above the opportunity line, the month's research surfaced more broken workflow than open headroom."
+          exportData={valence.map((v) => ({ month: v.month, painPct: v.pain, opportunityPct: v.opportunity }))}
+          exportName="evidence-valence"
+        >
+          <Chart
+            data={valence as unknown as Record<string, unknown>[]}
+            xKey="label"
+            height={260}
+            yDomain={[0, 100]}
+            series={[
+              line('pain', { color: colors.semantic.negative, strokeWidth: 2, label: 'Pain (gap-tagged) %' }),
+              line('opportunity', { color: blue, strokeWidth: 2, label: 'Opportunity-tagged %' }),
+            ]}
+            grid={<ChartGrid horizontal tickCount={4} />}
+            axes={
+              <>
+                <ChartAxis position="bottom" maxTicks={8} />
+                <ChartAxis position="left" tickCount={4} tickFormat={(v: unknown) => `${v}%`} />
+              </>
+            }
+            legend
+            tooltip
+          />
         </Fig>
       </Grid>
+
+      <Fig
+        title="Evidence flow — product → theme → priority tier"
+        n={corpus.n}
+        caption="Ribbon width is insight count (multi-product insights count once per product). Read left to right: which products feed which themes, and how each theme's evidence distributes across the P0–P3 action tiers."
+        exportData={flow.links.map((l) => ({ from: l.from.slice(2), to: l.to.slice(2), insights: l.value }))}
+        exportName="evidence-flow"
+      >
+        <FlowChart columns={flow.columns} links={flow.links} height={440} />
+      </Fig>
 
       <Fig
         title="Persona coverage × product — computed from tags"

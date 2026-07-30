@@ -20,6 +20,9 @@ export interface Insight {
   tags: InsightTag[]; themeId: ThemeId; source: string; severity?: SeverityLevel;
   productIds: ProductId[]; personaIds?: PersonaId[];
   createdAt: string; confidence?: 'high' | 'medium' | 'inferred'; soWhat?: string;
+  /** Graded at sync time from the source material; when absent, charts fall
+   * back to tag-derived valence (gap = pain, opportunity = positive). */
+  sentiment?: 'positive' | 'negative' | 'mixed';
 }
 
 // Recommendations — the Aurelius-style decision chain: every action links to the

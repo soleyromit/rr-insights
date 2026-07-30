@@ -43,6 +43,9 @@ deterministic: same inputs → same procedure → published update.
     `npx tsx scripts/check-themes.ts` must pass before publishing.
   - `soWhat` + `confidence` whenever the note supports them; `pullQuote` only
     for true verbatim quotes with `pullQuoteSource`.
+  - `sentiment`: grade `'positive' | 'negative' | 'mixed'` from the source
+    material's tone about the product (not the meeting mood); omit when unclear.
+    Powers the valence trend in Analytics.
   - `evidence`: capture 1–3 VERBATIM spans per insight as
     `evidence:[{excerpt:'…', source:'Speaker · session'}]` while the transcript
     is in context — this is highlight-level provenance and upgrades the

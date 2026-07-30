@@ -147,6 +147,87 @@ export function tagTrends(
     .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
 }
 
+/** Per-theme monthly totals on a shared zero-filled domain + 30d windows — the
+ * theme trend explorer's data (Dovetail-Channels-style longitudinal theming). */
+export function themeTrendRows(
+  insights: Insight[],
+  themeIds: string[],
+  anchorISO: string
+): { key: string; n: number; points: MonthPoint[]; current: number; prior: number }[] {
+  const domain = monthDomain(insights);
+  return themeIds
+    .map((t) => {
+      const list = insights.filter((i) => i.themeId === t);
+      return {
+        key: t,
+        n: list.length,
+        points: fillMonths(monthlyVolume(list), domain),
+        ...recentCounts(list, 30, anchorISO),
+      };
+    })
+    .sort((a, b) => b.current - a.current || b.n - a.n);
+}
+
+/** Opportunity score vs evidence age — the "act now vs fading urgency" quadrant. */
+export function scoreVsAge(
+  insights: Insight[],
+  anchorISO: string
+): { x: number; y: number; label: string; severity?: Insight['severity'] }[] {
+  const anchor = new Date(anchorISO).getTime();
+  return insights.map((i) => ({
+    x: Math.max(0, Math.round((anchor - new Date(i.createdAt).getTime()) / 86400000)),
+    y: scoreOf(i),
+    label: i.text.slice(0, 90),
+    severity: i.severity,
+  }));
+}
+
+/** Monthly share of pain (gap-tagged) vs opportunity-tagged evidence — the
+ * valence trend. Tag-derived and labeled as such; a future synced `sentiment`
+ * field can replace the accessor without changing the chart. */
+export function valenceByMonth(
+  insights: Insight[]
+): { month: string; label: string; pain: number; opportunity: number }[] {
+  const domain = monthDomain(insights);
+  return domain
+    .map((m) => {
+      const inMonth = insights.filter((i) => i.createdAt.slice(0, 7) === m);
+      const n = inMonth.length;
+      const [y, mo] = m.split('-').map(Number);
+      return {
+        month: m,
+        label: `${MONTHS[mo - 1]} ${String(y).slice(2)}`,
+        n,
+        pain: n ? Math.round((inMonth.filter((i) => (i.tags as string[]).includes('gap')).length / n) * 100) : 0,
+        opportunity: n
+          ? Math.round((inMonth.filter((i) => (i.tags as string[]).includes('opportunity')).length / n) * 100)
+          : 0,
+      };
+    })
+    .filter((p) => p.n >= 3); // months with <3 insights produce meaningless shares
+}
+
+/** product → theme and theme → tier link weights for the evidence-flow diagram. */
+export function evidenceFlow(
+  insights: Insight[],
+  tierOfInsight: (i: Insight) => string
+): {
+  productTheme: Map<string, number>; // "productId→themeId"
+  themeTier: Map<string, number>; // "themeId→tier"
+} {
+  const productTheme = new Map<string, number>();
+  const themeTier = new Map<string, number>();
+  for (const i of insights) {
+    for (const p of i.productIds as string[]) {
+      const k = `${p}→${i.themeId}`;
+      productTheme.set(k, (productTheme.get(k) ?? 0) + 1);
+    }
+    const k2 = `${i.themeId}→${tierOfInsight(i)}`;
+    themeTier.set(k2, (themeTier.get(k2) ?? 0) + 1);
+  }
+  return { productTheme, themeTier };
+}
+
 /** Computed persona × product counts — the honest twin of the curated friction grid. */
 export function personaProductMatrix(
   insights: Insight[],
