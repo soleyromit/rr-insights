@@ -49,6 +49,7 @@ export function insightsWhere(f: InsightFilter): Insight[] {
     const member = new Set((sig?.insights ?? []).map((i) => i.id));
     list = list.filter((i) => member.has(i.id));
   }
+  if (f.theme) list = list.filter((i) => i.themeId === f.theme);
   if (f.product) list = list.filter((i) => i.productIds.includes(f.product as Insight['productIds'][number]));
   if (f.persona) list = list.filter((i) => (i.personaIds ?? []).includes(f.persona as NonNullable<Insight['personaIds']>[number]));
   if (f.severity) list = list.filter((i) => i.severity === f.severity);

@@ -11,6 +11,7 @@ export interface InsightFilter {
   product?: string;
   persona?: string;
   signal?: string;
+  theme?: string;
   source?: string;
   /** Inclusive ISO-day bounds on createdAt; lexicographic compare is safe on ISO. */
   since?: string;
@@ -37,6 +38,7 @@ export function parseInsightFilter(params: URLSearchParams): InsightFilter {
     product: get('product'),
     persona: get('persona'),
     signal: get('signal'),
+    theme: get('theme'),
     source: get('source'),
     since: get('since'),
     until: get('until'),
@@ -60,6 +62,7 @@ export const hrefInsights = (f: InsightFilter = {}) =>
     product: f.product,
     persona: f.persona,
     signal: f.signal,
+    theme: f.theme,
     source: f.source,
     since: f.since,
     until: f.until,
