@@ -51,6 +51,19 @@ export function InsightDoc({ insight }: { insight: Insight }) {
           </Blockquote>
         )}
 
+        {(insight.evidence?.length ?? 0) > 0 && (
+          <VStack gap={2}>
+            <Text type="label" color="secondary">
+              Evidence — verbatim spans
+            </Text>
+            {insight.evidence!.map((e, idx) => (
+              <Blockquote key={idx} cite={e.source && formatSource(e.source)}>
+                {e.excerpt}
+              </Blockquote>
+            ))}
+          </VStack>
+        )}
+
         {insight.soWhat && (
           <Card variant="muted" padding={4}>
             <VStack gap={1}>

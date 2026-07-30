@@ -43,6 +43,11 @@ deterministic: same inputs → same procedure → published update.
     `npx tsx scripts/check-themes.ts` must pass before publishing.
   - `soWhat` + `confidence` whenever the note supports them; `pullQuote` only
     for true verbatim quotes with `pullQuoteSource`.
+  - `evidence`: capture 1–3 VERBATIM spans per insight as
+    `evidence:[{excerpt:'…', source:'Speaker · session'}]` while the transcript
+    is in context — this is highlight-level provenance and upgrades the
+    insight's evidence class to DIRECT QUOTE. Never paraphrase into an excerpt;
+    if no verbatim span exists, omit the field.
 - NO fabrication. If two sources conflict, record the conflict (see
   `COHERE_LAUNCH` in taxonomy.ts) instead of picking a side silently.
 - Counts are DERIVED everywhere (productFacts/corpusFacts) — never edit

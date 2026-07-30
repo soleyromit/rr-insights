@@ -151,7 +151,7 @@ export const computeAllSignals = (): ComputedSignal[] =>
 // Evidence-class labeling (Lens 8/9): what kind of claim is this?
 export type EvidenceClass = 'DIRECT QUOTE' | 'SYNTHESIS' | 'HYPOTHESIS';
 export function evidenceClass(i: Insight): EvidenceClass {
-  if (i.pullQuote) return 'DIRECT QUOTE';
+  if (i.pullQuote || (i.evidence?.length ?? 0) > 0) return 'DIRECT QUOTE';
   if (i.confidence === 'inferred') return 'HYPOTHESIS';
   return 'SYNTHESIS';
 }

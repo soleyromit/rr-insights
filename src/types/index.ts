@@ -7,8 +7,16 @@ export type InsightTag = 'theme' | 'gap' | 'opportunity' | 'persona' | 'platform
 export type PersonaId = 'student' | 'dce' | 'scce' | 'program-director';
 export type UrgencyLevel = 'fire' | 'warn' | 'ok';
 
+/** A verbatim span from a source session — highlight-level provenance.
+ * Captured at sync time by /sync-sources; multiple spans per insight. */
+export interface EvidenceSpan {
+  excerpt: string;   // verbatim text from the transcript/note
+  source?: string;   // speaker/session attribution when it differs from the insight's source
+}
+
 export interface Insight {
   id: string; text: string; pullQuote?: string; pullQuoteSource?: string;
+  evidence?: EvidenceSpan[];
   tags: InsightTag[]; themeId: ThemeId; source: string; severity?: SeverityLevel;
   productIds: ProductId[]; personaIds?: PersonaId[];
   createdAt: string; confidence?: 'high' | 'medium' | 'inferred'; soWhat?: string;
