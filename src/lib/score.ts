@@ -6,7 +6,9 @@ import { PERSONAS } from '../data/personas';
 import { evidenceClass } from '../data/signals';
 import {
   SEVERITY_WEIGHT, EVIDENCE_WEIGHT, PERSONA_PRIORITY_WEIGHT, UNASSIGNED_PERSONA_WEIGHT,
+  tierOf,
 } from '../data/taxonomy';
+import type { TierId } from '../data/taxonomy';
 
 export interface ScoreBreakdown {
   total: number;
@@ -14,6 +16,7 @@ export interface ScoreBreakdown {
   evidence: number;   // 1–3, from EVIDENCE_WEIGHT
   persona: number;    // 1–3 (1.5 when unassigned)
   label: string;      // "4×3×2 = 24" — the inspectable formula
+  tier: TierId;       // presentation tier from SCORE_TIERS
 }
 
 const personaWeightById = new Map(
@@ -32,6 +35,7 @@ export function scoreInsight(i: Insight): ScoreBreakdown {
   return {
     total, severity, evidence, persona,
     label: `${fmt(severity)}×${fmt(evidence)}×${fmt(persona)} = ${fmt(total)}`,
+    tier: tierOf(total).tier,
   };
 }
 

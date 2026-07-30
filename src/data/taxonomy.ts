@@ -50,6 +50,20 @@ export const PERSONA_PRIORITY_WEIGHT: Record<'very-high' | 'high' | 'medium', nu
 // Insights with no persona take the midpoint so unassigned evidence is neither privileged nor buried.
 export const UNASSIGNED_PERSONA_WEIGHT = 1.5;
 
+// P7 presentation tiers: the score's 11 possible values cluster (65% of the
+// corpus lands on 12 or 18), so ranks render as tiers + visible formula, never
+// a bare number pretending to be continuous.
+export type TierId = 'P0' | 'P1' | 'P2' | 'P3';
+export interface ScoreTierDef { tier: TierId; min: number; color: string; meaning: string; }
+export const SCORE_TIERS: ScoreTierDef[] = [
+  { tier: 'P0', min: 24, color: '#e8604a', meaning: 'Act now — top of the design queue' },
+  { tier: 'P1', min: 18, color: '#f5a623', meaning: 'Next — schedule into upcoming sprints' },
+  { tier: 'P2', min: 12, color: '#6d5ed4', meaning: 'Backlog — real but bounded value' },
+  { tier: 'P3', min: 0,  color: '#8a8580', meaning: 'Watch — no near-term decision attached' },
+];
+export const tierOf = (total: number): ScoreTierDef =>
+  SCORE_TIERS.find(t => total >= t.min) ?? SCORE_TIERS[SCORE_TIERS.length - 1];
+
 // Severity colors — the one place these hex values live (DESIGN.md color contract).
 export const SEV_COLORS: Record<SeverityLevel, string> = {
   critical: '#e8604a', high: '#f5a623', medium: '#6d5ed4', low: '#2ec4a0', na: '#8a8580',
