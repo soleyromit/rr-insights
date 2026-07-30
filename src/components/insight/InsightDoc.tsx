@@ -17,8 +17,9 @@ import { ScoreTier } from '../ui/ScoreTier';
 import { scoreInsight } from '../../lib/score';
 import { evidenceClass, relatedInsights, signalsOf, voiceForInsight } from '../../lib/selectors';
 import { getProduct } from '../../data/products';
+import { getTheme } from '../../data/themes';
 import { PERSONAS } from '../../data/personas';
-import { hrefInsight, hrefParticipant, hrefPersona, hrefProduct, hrefSignal, hrefSources } from '../../lib/links';
+import { hrefInsight, hrefInsights, hrefParticipant, hrefPersona, hrefProduct, hrefSignal, hrefSources } from '../../lib/links';
 import { formatSource, formatDay } from '../../lib/format';
 import type { Insight } from '../../types';
 
@@ -70,6 +71,11 @@ export function InsightDoc({ insight }: { insight: Insight }) {
           <MetadataListItem label="Captured">{formatDay(insight.createdAt)}</MetadataListItem>
           <MetadataListItem label="Evidence class">{evidenceClass(insight)}</MetadataListItem>
           <MetadataListItem label="Confidence">{insight.confidence ?? 'unstated'}</MetadataListItem>
+          <MetadataListItem label="Theme">
+            <Link href={hrefInsights({ theme: insight.themeId })}>
+              {getTheme(insight.themeId)?.title ?? insight.themeId}
+            </Link>
+          </MetadataListItem>
         </MetadataList>
       </VStack>
 

@@ -17,6 +17,7 @@ import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { ThemeStrip } from '../../components/insight/ThemeStrip';
 import { Fig } from '../../components/charts/Fig';
 import { Sparkline } from '../../components/charts/Sparkline';
 import { TrendDelta } from '../../components/charts/TrendDelta';
@@ -155,6 +156,7 @@ export function ProductPage({ productId }: { productId: string }) {
           />
           <StatTile value={p.granolaSessions} label="research sessions" />
         </StatTileRow>
+        <ThemeStrip productId={productId} />
         <Blockquote cite={p.keyQuoteSource}>{p.keyQuote}</Blockquote>
         <Grid columns={{ minWidth: 240, max: 3 }} gap={3}>
           {Object.entries(p.dayInLife).map(([pid, day]) => (
