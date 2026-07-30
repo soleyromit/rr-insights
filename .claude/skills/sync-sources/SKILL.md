@@ -36,6 +36,11 @@ deterministic: same inputs → same procedure → published update.
   - `source`: `"<Session label> · <Mon DD> (<8-hex granola id>)"`
   - `createdAt`: the MEETING date (ISO), not today.
   - severity per the rubric in `src/data/taxonomy.ts`; personaIds/productIds required.
+  - `themeId` REQUIRED (compile fails without it): the single primary theme from
+    `src/data/themes.ts` (12 themes). Pick by the insight's primary decision, not
+    keyword surface — e.g. an AI feature → `ai-layer`, a dashboard spec →
+    `reporting-analytics`, a competitor gap → `competitive`. After appending,
+    `npx tsx scripts/check-themes.ts` must pass before publishing.
   - `soWhat` + `confidence` whenever the note supports them; `pullQuote` only
     for true verbatim quotes with `pullQuoteSource`.
 - NO fabrication. If two sources conflict, record the conflict (see

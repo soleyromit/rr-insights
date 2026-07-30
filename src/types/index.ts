@@ -9,7 +9,7 @@ export type UrgencyLevel = 'fire' | 'warn' | 'ok';
 
 export interface Insight {
   id: string; text: string; pullQuote?: string; pullQuoteSource?: string;
-  tags: InsightTag[]; themeId?: ThemeId; source: string; severity?: SeverityLevel;
+  tags: InsightTag[]; themeId: ThemeId; source: string; severity?: SeverityLevel;
   productIds: ProductId[]; personaIds?: PersonaId[];
   createdAt: string; confidence?: 'high' | 'medium' | 'inferred'; soWhat?: string;
 }
