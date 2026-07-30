@@ -27,7 +27,10 @@ import { ScoreTier } from '../components/ui/ScoreTier';
 import { formatDay } from '../lib/format';
 import { PRODUCTS, getProduct } from '../data/products';
 import { PERSONAS } from '../data/personas';
+import { THEMES } from '../data/themes';
 import { ALL_INSIGHTS } from '../data/insights';
+import { sumScores } from '../lib/score';
+import { hrefInsights } from '../lib/links';
 import { hrefInsight, parseInsightFilter } from '../lib/links';
 import type { Insight } from '../types';
 
@@ -45,9 +48,10 @@ export function InsightIndexView() {
 
   const filter = parseInsightFilter(params);
   const q = filter.q ?? '';
-  const { product, persona, severity, signal, tag, since, until } = filter;
+  const { product, persona, severity, signal, tag, theme, since, until } = filter;
   const sort = filter.sort ?? 'score';
   const page = Math.max(1, Number(params.get('page') ?? 1));
+  const view = params.get('view') === 'themes' ? 'themes' : 'flat';
 
   const set = (key: string, value?: string) => {
     setParams(
@@ -108,6 +112,19 @@ export function InsightIndexView() {
     .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
     .map((i) => ({ id: i.id, insight: i, score: scoreOf(i) }));
 
+  // Grouped view: same filtered set, sectioned by theme, ordered by opportunity mass.
+  const themeGroups = useMemo(() => {
+    const by = new Map<string, Insight[]>();
+    for (const i of filtered) {
+      const list = by.get(i.themeId) ?? [];
+      list.push(i);
+      by.set(i.themeId, list);
+    }
+    return THEMES.map((t) => ({ theme: t, insights: by.get(t.id) ?? [] }))
+      .filter((g) => g.insights.length > 0)
+      .sort((a, b) => sumScores(b.insights) - sumScores(a.insights));
+  }, [filtered]);
+
   return (
     <VStack gap={5} padding={6}>
       <PageHeader
@@ -140,6 +157,10 @@ export function InsightIndexView() {
             <SegmentedControlItem value="score" label="by score" />
             <SegmentedControlItem value="newest" label="newest" />
           </SegmentedControl>
+          <SegmentedControl label="View" value={view} onChange={(v) => set('view', v === 'flat' ? undefined : v)} size="sm">
+            <SegmentedControlItem value="flat" label="flat" />
+            <SegmentedControlItem value="themes" label="by theme" />
+          </SegmentedControl>
           <DateRangeInput
             label="Captured between"
             isLabelHidden
@@ -164,6 +185,14 @@ export function InsightIndexView() {
               label={p.name}
               color={persona === p.id ? 'purple' : 'default'}
               onClick={() => set('persona', persona === p.id ? undefined : p.id)}
+            />
+          ))}
+          {THEMES.map((t) => (
+            <Token
+              key={t.id}
+              label={t.title}
+              color={theme === t.id ? 'teal' : 'default'}
+              onClick={() => set('theme', theme === t.id ? undefined : t.id)}
             />
           ))}
           {signal && <Token label={`signal: ${signal}`} color="teal" onRemove={() => set('signal', undefined)} />}
@@ -194,6 +223,59 @@ export function InsightIndexView() {
         <VolumeChart data={volume} height={140} />
       </Fig>
 
+      {view === 'themes' && (
+        <VStack gap={6}>
+          {themeGroups.map((g) => (
+            <VStack key={g.theme.id} gap={2}>
+              <HStack hAlign="between" vAlign="center" wrap="wrap" gap={2}>
+                <HStack gap={2} vAlign="center">
+                  <Text type="large" weight="semibold">{g.theme.title}</Text>
+                  <Text type="supporting">
+                    {g.insights.length} insights · {g.insights.filter((i) => i.severity === 'critical').length} critical
+                  </Text>
+                </HStack>
+                <Link href={hrefInsights({ ...filter, theme: g.theme.id })}>view all {g.insights.length}</Link>
+              </HStack>
+              <Text type="supporting">{g.theme.description}</Text>
+              <HStack gap={1.5} wrap="wrap" vAlign="center">
+                {PRODUCTS.filter((p) => g.insights.some((i) => i.productIds.includes(p.id))).map((p) => (
+                  <Token
+                    key={p.id}
+                    size="sm"
+                    label={`${p.shortName} · ${g.insights.filter((i) => i.productIds.includes(p.id)).length}`}
+                    color={product === p.id ? 'blue' : 'default'}
+                    onClick={() => set('product', product === p.id ? undefined : p.id)}
+                  />
+                ))}
+                {PERSONAS.filter((pe) => g.insights.some((i) => (i.personaIds ?? []).includes(pe.id))).map((pe) => (
+                  <Token
+                    key={pe.id}
+                    size="sm"
+                    label={pe.name}
+                    color={persona === pe.id ? 'purple' : 'default'}
+                    onClick={() => set('persona', persona === pe.id ? undefined : pe.id)}
+                  />
+                ))}
+              </HStack>
+              <VStack gap={1.5}>
+                {g.insights.slice(0, 5).map((i) => (
+                  <HStack key={i.id} gap={2} vAlign="center">
+                    <SevDot severity={i.severity} />
+                    <Link href={hrefInsight(i.id)}>
+                      <Text type="body" maxLines={1} hasTruncateTooltip={false}>
+                        {i.text}
+                      </Text>
+                    </Link>
+                    <ScoreTier breakdown={scoreInsight(i)} showFormula={false} />
+                  </HStack>
+                ))}
+              </VStack>
+            </VStack>
+          ))}
+        </VStack>
+      )}
+
+      {view === 'flat' && (
       <Table<Row>
         data={pageRows}
         idKey="id"
@@ -238,20 +320,23 @@ export function InsightIndexView() {
           { key: 'date', header: 'Captured', width: pixel(110), renderCell: (r: Row) => <Text type="supporting">{formatDay(r.insight.createdAt)}</Text> },
         ]}
       />
+      )}
 
-      <HStack hAlign="between" vAlign="center">
-        <Text type="supporting">
-          {filtered.length === 0 ? '0' : `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, filtered.length)}`} of {filtered.length}
-        </Text>
-        <Pagination
-          page={page}
-          onChange={(p) => set('page', p === 1 ? undefined : String(p))}
-          totalItems={filtered.length}
-          pageSize={PAGE_SIZE}
-          variant="pages"
-          size="sm"
-        />
-      </HStack>
+      {view === 'flat' && (
+        <HStack hAlign="between" vAlign="center">
+          <Text type="supporting">
+            {filtered.length === 0 ? '0' : `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, filtered.length)}`} of {filtered.length}
+          </Text>
+          <Pagination
+            page={page}
+            onChange={(p) => set('page', p === 1 ? undefined : String(p))}
+            totalItems={filtered.length}
+            pageSize={PAGE_SIZE}
+            variant="pages"
+            size="sm"
+          />
+        </HStack>
+      )}
     </VStack>
   );
 }
