@@ -80,7 +80,25 @@ Filtered for what actually fits rr-insights' architecture (static site + code-as
 - **AI-moderated interviews / recruiting-ops** (Strella/GQ territory) — different product.
 - **Multi-user editing, comments, RBAC** — the single-researcher + agent model is the point; revisit only if the team grows.
 
-## 6. Positioning takeaway
+## 6. Implementation status (addendum, same day — v19.4 → v19.6)
+
+The Tier-1 recommendations and several follow-ons shipped the same day this analysis was written:
+
+| Gap / recommendation | Status | Shipped as |
+|---|---|---|
+| MCP server over the corpus (G2) | ✅ Shipped | v19.4 — `scripts/mcp-server.ts`, 7 tools, `.mcp.json` |
+| Evidence spans / provenance (G1) | ✅ Data model + UI + sync rule | v19.4 — `Insight.evidence[]`, doc drawer; corpus backfills via future syncs |
+| Recommendations as first-class objects (G3) | ✅ Shipped | v19.4 — `/decisions`, 10 seeded, evidence-chain validated |
+| Weekly digest (G5) | ✅ Shipped | v19.4 — `/digest`, computed live |
+| Longitudinal theme trending (viz) | ✅ Shipped | v19.5 — Theme Trend Explorer |
+| Quadrants, valence, flow sankey, journey map, chart export | ✅ Shipped | v19.5 — Analytics + Persona Atlas + Fig PNG/CSV |
+| Meaningful Charts + Knowledge Graph | ✅ Rebuilt | v19.5.x — opportunity-mass tier bars; computed theme co-occurrence |
+| Internal stakeholder layer (not in original gap list — user-identified) | ✅ Shipped | v19.6 — Stakeholder Atlas, influence + theme footprints |
+| Sentiment field (valence upgrade) | ◐ Field + sync rule shipped; data accrues from next sync | v19.5 |
+
+**Still open (Tier-2 and beyond):** Streams/Channels-lite for recurring NPS/ticket imports (G4), taxonomy health view, conflict queue generalization, private session-level transcript search (G6), duplicate-insight-id cleanup. Deliberately skipped: video reels, AI moderation, multi-user editing.
+
+## 7. Positioning takeaway
 
 rr-insights shouldn't chase Dovetail — it should lean into being what the market is converging toward but can't ship cleanly: an **agent-native, evidence-honest, decision-forcing repository**. The four Tier-1 features (MCP access, evidence spans, recommendation tracking, weekly digest) each extend an existing strength, cost little, and together close the credibility and consumption gaps that actually matter for a solo researcher publishing to stakeholders.
 
