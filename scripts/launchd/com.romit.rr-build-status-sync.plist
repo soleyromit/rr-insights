@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS launchd plist — weekday BUILD_STATUS sync from exxat-admin-workspace.
+
+  Install (one-time):
+    cp scripts/launchd/com.romit.rr-build-status-sync.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.romit.rr-build-status-sync.plist
+
+  Verify:   launchctl list | grep rr-build-status-sync
+  Unload:   launchctl unload ~/Library/LaunchAgents/com.romit.rr-build-status-sync.plist
+  Logs:     tail -f /tmp/rr-build-status-sync.log
+
+  Cadence: weekdays 10:07am local — after the 9:00 exxat-vault-pull and 9:37
+  rr-insights-sync (no-collision offset pattern). If the machine is asleep
+  at fire time, launchd runs it on next wake.
+
+  What it does: runs Claude Code headless with /sync-build-status — diffs
+  exxat-admin-workspace commits since the last check, extracts user flow +
+  functional logic for touched features, cross-references research,
+  publishes to src/data/buildStatus.ts. Auto-pushes with no review gate
+  (explicit design choice — see docs/superpowers/specs/2026-08-01-build-status-sync-design.md).
+  Costs Claude API/plan usage on days where there is new material.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.romit.rr-build-status-sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/romitsoley/rr-insights/scripts/launchd/build-status-sync.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/romitsoley/rr-insights</string>
+
+    <key>StartCalendarInterval</key>
+    <array>
+        <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>7</integer></dict>
+        <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>7</integer></dict>
+        <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>7</integer></dict>
+        <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>7</integer></dict>
+        <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>10</integer><key>Minute</key><integer>7</integer></dict>
+    </array>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/rr-build-status-sync.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/rr-build-status-sync.err</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/romitsoley/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/romitsoley</string>
+    </dict>
+</dict>
+</plist>
