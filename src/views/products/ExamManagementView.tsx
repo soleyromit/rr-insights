@@ -17,6 +17,7 @@ import { Builder } from './exam/Builder';
 import { Accessibility } from './exam/Accessibility';
 import { Analytics } from './exam/Analytics';
 import { Decisions } from './exam/Decisions';
+import { BuildStatus } from '../../components/build-status/BuildStatus';
 
 const PRODUCT_ID = 'exam-management';
 
@@ -26,6 +27,7 @@ const SECTIONS = [
   { id: 'accessibility', label: 'Accessibility' },
   { id: 'analytics', label: 'Analytics' },
   { id: 'decisions', label: 'Decisions + Gaps' },
+  { id: 'build-status', label: 'Build Status' },
 ];
 
 // Promoted from Architecture's "Delivery state" section (Granola Jul 23 +
@@ -93,6 +95,7 @@ export function ExamManagementView() {
       {section === 'accessibility' && <Accessibility />}
       {section === 'analytics' && <Analytics />}
       {section === 'decisions' && <Decisions />}
+      {section === 'build-status' && <BuildStatus productId={PRODUCT_ID} />}
 
       <SpecFooter
         productId={PRODUCT_ID}

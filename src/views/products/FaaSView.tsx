@@ -20,6 +20,7 @@ import { StoryTable } from './spec/StoryTable';
 import type { StoryRow } from './spec/StoryTable';
 import { SectionTabs, useSection } from './spec/SectionTabs';
 import { SpecFooter } from './spec/SpecFooter';
+import { BuildStatus } from '../../components/build-status/BuildStatus';
 import { insightsWhere } from '../../lib/selectors';
 import { hrefInsights } from '../../lib/links';
 
@@ -31,6 +32,7 @@ const SECTIONS = [
   { id: 'scope', label: 'Q2 scope + stories' },
   { id: 'architecture', label: 'Architecture' },
   { id: 'decisions', label: 'Decisions' },
+  { id: 'build-status', label: 'Build Status' },
 ];
 
 const USAGE = [
@@ -412,6 +414,7 @@ export function FaaSView() {
           </Grid>
         </SpecSection>
       )}
+      {section === 'build-status' && <BuildStatus productId={PRODUCT_ID} />}
       <SpecFooter productId={PRODUCT_ID} />
     </VStack>
   );
