@@ -41,6 +41,7 @@ export const ROUTES: RouteDef[] = [
   { path: '/products/course-eval', label: 'Course Eval', section: 'products', productId: 'course-eval', component: v(() => import('../views/products/ProductPage'), 'ProductPage') },
   { path: '/products/skills-checklist', label: 'Skills', section: 'products', productId: 'skills-checklist', component: v(() => import('../views/products/ProductPage'), 'ProductPage') },
   { path: '/products/learning-contracts', label: 'LC', section: 'products', productId: 'learning-contracts', component: v(() => import('../views/products/ProductPage'), 'ProductPage') },
+  { path: '/products/portal', label: 'Portal', section: 'products', productId: 'portal', component: v(() => import('../views/products/PortalView'), 'PortalView') },
   { path: '/products/exam-management/spec', label: 'Exam — Spec', productId: 'exam-management', component: v(() => import('../views/products/ExamManagementView'), 'ExamManagementView') },
   { path: '/products/faas/spec', label: 'FaaS — Spec', productId: 'faas', component: v(() => import('../views/products/FaaSView'), 'FaaSView') },
   { path: '/products/course-eval/spec', label: 'Course Eval — Spec', productId: 'course-eval', component: v(() => import('../views/products/CourseEvalView'), 'CourseEvalView') },
