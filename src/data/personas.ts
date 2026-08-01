@@ -153,6 +153,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v19.8',
+    date: '2026-07-31',
+    summary: 'Vault reconcile: research-repos was 19 days behind origin on this machine — uncommitted local curation to _Insights.md/MOC-decisions.md was correctly blocking exxat-vault-pull\'s safe fast-forward since Jul 13, even though the cloud granola-obsidian-sync routine kept committing fine. Reconciled and pushed. Synced two sessions from the resulting fresh window: Exam management weekly call (Jul 30) — repurpose-first assessment creation, AI blueprint intake via course objectives, QB auto-filter by lecture range without hard restriction, pre-assessment point-biserial flagging as a configurable quality gate. Exact Prism evaluation setup (Jul 31) — setup dashboard confirmed as master config screen with three explicit states, settling the dense-table-vs-simplified-wizard debate; in-workflow faculty edit; bulk-select restricted to unconfigured courses; template-shortcut gap on cold-start dashboards.',
+    insightCount: 429,
+    sessionsAdded: 2,
+    changedFiles: ['src/data/insights.ts', 'src/data/version.ts', 'src/data/personas.ts'],
+  },
+  {
     version: 'v19.2',
     date: '2026-07-29',
     summary: 'Performance Ledger refreshed from four months of unsynced sources: seven Arun sessions (Mar 24 → Jul 20) pulled from Granola transcripts + Obsidian meeting notes. New 1:1 arc timeline (firefighting → stabilizing → candid reset → positive turn). Criteria rescored with dated rationale: Prototypes 55→82 (designs now run AHEAD of documentation, ~80–85% of Course Eval designed — the Mar "no prototype exists" rationale was obsolete), UI Design 68→78, Collaboration re-based 76→72 against Arun\'s new consensus expectation ("skills we got… the teamwork is not up to the standard I want"), Reviews+Specs stays the weak axis at 58. Weighted overall 72→79. Seven new verbatim Jul 20 Arun quotes added (speed-is-skill, executed ideas, consensus bar, throwaway-work reassurance, intelligent-professional product standard).',
