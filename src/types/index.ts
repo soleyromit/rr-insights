@@ -69,6 +69,40 @@ export interface PersonaMeta {
   frictions: string[]; motivations: string[]; povStatement: string;
 }
 
+export type BuildStatusProductId = ProductId | 'portal';
+
+export interface BuildStatusEvidence {
+  file: string;        // repo-relative path within exxat-admin-workspace
+  commit: string;       // short SHA
+  checkedAt: string;    // ISO date
+  note?: string;         // one-line "what this file shows"
+}
+
+export interface BuildStatusEntry {
+  id: string;                       // 'bs-em-question-bank'
+  productId: BuildStatusProductId;
+  featureArea: string;              // "Question Bank"
+  status: 'built' | 'partial' | 'gap' | 'not-started';
+  confidence: 'high' | 'medium' | 'low';
+  personaIds: PersonaId[];          // [] for portal entries — no persona taxonomy for an internal tool
+  summary: string;
+  userFlow: string;
+  functionalLogic: string;
+  relatedInsightIds: string[];      // [] when net-new (no linked research)
+  evidence: BuildStatusEvidence[];
+  lastCheckedAt: string;             // ISO date
+}
+
+export interface InternalToolMeta {
+  id: 'portal';
+  name: string;
+  description: string;
+  status: ProductMeta['status'];
+  accentColor: string;
+  owner: string;
+  users: string;
+}
+
 export interface WhiteboardArtifact {
   id: string; title: string; source: string;
   category: 'product-context' | 'persona' | 'competitor' | 'strategic' | 'feature' | 'exam-intel';
