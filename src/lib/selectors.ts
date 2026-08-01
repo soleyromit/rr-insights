@@ -7,8 +7,9 @@ import { computeAllSignals, evidenceClass } from '../data/signals';
 import type { ComputedSignal } from '../data/signals';
 import { REAL_VOICES } from '../data/voices';
 import type { RealVoice } from '../data/voices';
+import { BUILD_STATUS } from '../data/buildStatus';
 import { scoreOf } from './score';
-import type { Insight } from '../types';
+import type { Insight, BuildStatusEntry, BuildStatusProductId } from '../types';
 import type { InsightFilter } from './links';
 
 const byId = new Map<string, Insight>(ALL_INSIGHTS.map((i) => [i.id, i]));
@@ -175,3 +176,11 @@ export function corpusFacts(): ProductFacts {
 }
 
 export { evidenceClass };
+
+export function buildStatusForProduct(productId: BuildStatusProductId): BuildStatusEntry[] {
+  return BUILD_STATUS.filter((b) => b.productId === productId);
+}
+
+export function buildStatusForInsight(insightId: string): BuildStatusEntry[] {
+  return BUILD_STATUS.filter((b) => b.relatedInsightIds.includes(insightId));
+}
