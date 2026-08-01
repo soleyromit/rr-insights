@@ -14,8 +14,9 @@ import { Link } from '@astryxdesign/core/Link';
 import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { SevBadge } from '../ui/sev';
 import { ScoreTier } from '../ui/ScoreTier';
+import { BuildStatusPill } from '../build-status/BuildStatusPill';
 import { scoreInsight } from '../../lib/score';
-import { evidenceClass, relatedInsights, signalsOf, voiceForInsight } from '../../lib/selectors';
+import { buildStatusForInsight, evidenceClass, relatedInsights, signalsOf, voiceForInsight } from '../../lib/selectors';
 import { getProduct } from '../../data/products';
 import { getTheme } from '../../data/themes';
 import { PERSONAS } from '../../data/personas';
@@ -25,6 +26,7 @@ import type { Insight } from '../../types';
 
 export function InsightDoc({ insight }: { insight: Insight }) {
   const score = scoreInsight(insight);
+  const shipped = buildStatusForInsight(insight.id);
   const memberOf = signalsOf(insight.id);
   const related = relatedInsights(insight.id);
   const voice = voiceForInsight(insight);
@@ -36,9 +38,12 @@ export function InsightDoc({ insight }: { insight: Insight }) {
     <Grid columns={{ minWidth: 320, max: 3 }} gap={5}>
       <VStack gap={4}>
         <VStack gap={2}>
-          <HStack gap={2} vAlign="center">
+          <HStack gap={2} vAlign="center" wrap="wrap">
             <SevBadge severity={insight.severity} />
             <ScoreTier breakdown={score} />
+            {shipped.map((b) => (
+              <BuildStatusPill key={b.id} status={b.status} confidence={b.confidence} />
+            ))}
           </HStack>
           <Heading level={2} textWrap="balance">
             {insight.text}
