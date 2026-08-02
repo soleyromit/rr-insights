@@ -93,9 +93,10 @@ For each feature area with changes, describe:
 - Commit message: `chore(build-status): sync N updates from exxat-admin-workspace@<short-sha>`.
 - **Push to the `claude-container` remote, not `origin`** — per this
   project's `CLAUDE.md` §"The push problem."
-- Fire a macOS notification (`osascript`, same pattern as the
-  vault-freshness check in `daily-rr-sync.sh`) summarizing the run: N
-  entries updated, which products, or "no changes" on a quiet day.
+- Notification is handled outside this skill: `scripts/launchd/build-status-sync.sh`
+  fires a macOS notification (`osascript`) after this session exits,
+  reporting success or failure based on the `claude -p` process's exit
+  status. Nothing in this step needs to invoke `osascript` itself.
 
 ## Non-negotiables
 
