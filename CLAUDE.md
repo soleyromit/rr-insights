@@ -40,6 +40,10 @@ refreshes the Performance Ledger from Arun sessions (privacy gate: no
 immigration/HR content — the site is public), bumps the version, and publishes.
 Note: push goes to the `claude-container` remote on this machine, not `origin`.
 
+**Build status** syncs separately via `/sync-build-status` (`.claude/skills/sync-build-status/`),
+on its own weekday LaunchAgent — see `docs/superpowers/specs/2026-08-01-build-status-sync-design.md`.
+It cross-references `exxat-admin-workspace` against this corpus for exam-management,
+course-eval, faas, and portal; it never touches `insights.ts`.
 
 ```
 Granola session / doc uploaded
@@ -64,6 +68,8 @@ Files Claude typically updates:
 |------|-------|
 | Insight data | `src/data/insights.ts` |
 | Product registry | `src/data/products.ts` |
+| Build status (shipped-vs-researched) | `src/data/buildStatus.ts` |
+| Internal tools registry (Portal) | `src/data/internalTools.ts` |
 | Exam Management view | `src/views/products/ExamManagementView.tsx` |
 | All product views | `src/views/products/` |
 | SKILL.md (Claude context) | `/mnt/skills/user/rr-insights/SKILL.md` |
