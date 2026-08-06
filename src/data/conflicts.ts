@@ -68,6 +68,20 @@ export const CONFLICTS: Conflict[] = [
     insightIds: ['ins-em-may-05', 'ins-em-may-09', 'ins-em-jul-04'],
     raisedAt: '2026-05-28',
   },
+  {
+    id: 'conf-duplicate-mode',
+    fact: 'Is duplicate evaluatee/aspect detection on the Step 2 survey screen a soft warning (overridable) or a hard block (auto-deselect)?',
+    claims: [
+      { claim: 'Soft warning: renders in step 2, admin can uncheck or accept the duplicate, review step re-confirms — chosen over a hard block to avoid P0 support tickets from legitimate re-evaluation', source: 'Survey workflow session · Jul 24 (10d48960)' },
+      { claim: 'Hard block: system auto-deselects the duplicate course-content aspect and routes the admin back to edit the existing template instead of allowing an override', source: 'Step two design note · Aug 4 (5f6c8679)' },
+    ],
+    status: 'open',
+    owner: 'Romit',
+    blocks: 'The Step 2 duplicate-handling UI cannot be finalized until it is clear whether faculty-role duplicates and course-content-aspect duplicates get the same treatment, or the Jul 24 soft-warning decision was superseded.',
+    productIds: ['course-eval'],
+    insightIds: ['ins-ce-jul24-03', 'ins-ce-aug04-02'],
+    raisedAt: '2026-08-04',
+  },
 ];
 
 export const openConflicts = () => CONFLICTS.filter((c) => c.status === 'open');

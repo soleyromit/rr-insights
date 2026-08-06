@@ -153,6 +153,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v19.9',
+    date: '2026-08-04',
+    summary: 'PCE Step 2 design session (Aug 4): template-switch on the setup dashboard confirmed as override-vs-new-survey; aspect deduplication specified as a hard block (auto-deselect + route back to the existing template), which contradicts the Jul 24 soft-warning decision for duplicate evaluatees — opened as conf-duplicate-mode rather than silently resolved; auto-update toggle for post-setup Prism faculty inclusion and mid-setup draft-resume confirmed; unassigned-faculty visibility gap flagged with a proposed (not yet approved) external list-view.',
+    insightCount: 433,
+    sessionsAdded: 1,
+    changedFiles: ['src/data/insights.ts', 'src/data/conflicts.ts', 'src/data/version.ts', 'src/data/personas.ts'],
+  },
+  {
     version: 'v19.8',
     date: '2026-07-31',
     summary: 'Vault reconcile: research-repos was 19 days behind origin on this machine — uncommitted local curation to _Insights.md/MOC-decisions.md was correctly blocking exxat-vault-pull\'s safe fast-forward since Jul 13, even though the cloud granola-obsidian-sync routine kept committing fine. Reconciled and pushed. Synced two sessions from the resulting fresh window: Exam management weekly call (Jul 30) — repurpose-first assessment creation, AI blueprint intake via course objectives, QB auto-filter by lecture range without hard restriction, pre-assessment point-biserial flagging as a configurable quality gate. Exact Prism evaluation setup (Jul 31) — setup dashboard confirmed as master config screen with three explicit states, settling the dense-table-vs-simplified-wizard debate; in-workflow faculty edit; bulk-select restricted to unconfigured courses; template-shortcut gap on cold-start dashboards.',

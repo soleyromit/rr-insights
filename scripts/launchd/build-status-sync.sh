@@ -14,6 +14,7 @@ echo "── rr-insights build-status sync · $(date) ──"
 set +e
 claude -p "Run /sync-build-status. This is a HEADLESS scheduled run. Follow every rule in the skill exactly, including the read-only constraint on /Users/romitsoley/Work and the gate order before publishing. If nothing matched changed since the last check, make no changes and exit." \
   --permission-mode acceptEdits \
+  --add-dir /Users/romitsoley/Work \
   --allowedTools "Bash(git -C:*)" "Bash(git add:*)" "Bash(git commit:*)" "Bash(git push:*)" "Bash(git status:*)" \
     "Bash(npx tsc:*)" "Bash(npx tsx:*)" "Bash(npm run build:*)" "Bash(find:*)" "Bash(grep:*)" "Bash(ls:*)" "Bash(cat:*)" \
   --max-turns 300
