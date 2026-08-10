@@ -153,6 +153,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v19.10',
+    date: '2026-08-10',
+    summary: 'Headless weekday sync: Granola MCP unavailable, Obsidian vault only, tsc + build as the gate (no Chrome visual check). Vault mtimes were bulk-touched across nearly every file, so staleness was verified by content (frontmatter/filename dates, in-scope-folder scan) rather than raw mtime. One in-window, in-scope change found: a Decisions/pce/ note resolved the previously-untracked Jul 22 PCE template-builder layout dispute between Monil (horizontal aspect-tabs) and Romit (nested templates) — source-code verification (not a recorded stakeholder meeting) confirms Variant B "guided rail" shipped as the literal default (components/pce/template-editor.tsx:418), keeping Monil\'s Course→Faculty→General stop order inside a left checklist rail that resolves Romit\'s chrome-above-content objection (ins-ce-aug07-01). The Aug 4 PCE Step 2 session was already fully synced (v19.9); a portfolio-curation project note (projects/, out of the skill\'s scoped vault folders) was excluded as personal/portfolio content per the sync skill\'s skip rules, except for this one decision-note resolution it linked to.',
+    insightCount: 434,
+    sessionsAdded: 0,
+    changedFiles: ['src/data/insights.ts', 'src/data/version.ts', 'src/data/personas.ts'],
+  },
+  {
     version: 'v19.9',
     date: '2026-08-04',
     summary: 'PCE Step 2 design session (Aug 4): template-switch on the setup dashboard confirmed as override-vs-new-survey; aspect deduplication specified as a hard block (auto-deselect + route back to the existing template), which contradicts the Jul 24 soft-warning decision for duplicate evaluatees — opened as conf-duplicate-mode rather than silently resolved; auto-update toggle for post-setup Prism faculty inclusion and mid-setup draft-resume confirmed; unassigned-faculty visibility gap flagged with a proposed (not yet approved) external list-view.',
