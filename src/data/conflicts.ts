@@ -79,7 +79,7 @@ export const CONFLICTS: Conflict[] = [
     owner: 'Romit',
     blocks: 'The Step 2 duplicate-handling UI cannot be finalized until it is clear whether faculty-role duplicates and course-content-aspect duplicates get the same treatment, or the Jul 24 soft-warning decision was superseded.',
     productIds: ['course-eval'],
-    insightIds: ['ins-ce-jul24-03', 'ins-ce-aug04-02'],
+    insightIds: ['ins-ce-jul24-03', 'ins-ce-aug04-02', 'ins-ce-aug11-03'],
     raisedAt: '2026-08-04',
   },
 ];
