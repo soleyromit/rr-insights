@@ -1,9 +1,12 @@
-// views/ArunPerformanceView.tsx — Performance Ledger (v19.2 refresh).
+// views/ArunPerformanceView.tsx — Performance Ledger (v19.11 refresh).
 // Source 1: Offer of Appointment — Kunal Vaishnav / Exxat Inc · Mar 15, 2026.
-// Source 2: Granola raw transcripts + Obsidian meeting notes — seven Arun
-// sessions Mar 24 → Jul 20, 2026 (791334af, 277a02d9, a4a0e1db, 84c5d242,
-// e69904b6, a1eda6e2, 2870dd23). Seven offer-letter criteria scored with
-// dated rationale, the 1:1 arc as a timeline, and verbatim Arun quotes only.
+// Source 2: Granola raw transcripts + Obsidian meeting notes — eight Arun
+// sessions Mar 24 → Aug 12, 2026 (791334af, 277a02d9, a4a0e1db, 84c5d242,
+// e69904b6, a1eda6e2, 2870dd23, 77e5276a). Seven offer-letter criteria scored
+// with dated rationale, the 1:1 arc as a timeline, and verbatim Arun quotes
+// only. The Aug 12 session covered individual performance feedback beyond
+// the process fix recorded here — captured only the collaboration-process
+// takeaways per an explicit privacy decision; the rest was not published.
 import { VStack } from '@astryxdesign/core/VStack';
 import { HStack } from '@astryxdesign/core/HStack';
 import { Card } from '@astryxdesign/core/Card';
@@ -36,6 +39,7 @@ const REVIEW_TIMELINE = [
   { date: 'Jul 6', title: '1:1 — oversight change', signal: 'stabilizing', note: 'Aarti steps back; Yash + PMs drive approvals. 100% focus on PM-driven work. Role boundary: share design ideas, PMs decide. Time-zone concern raised by others — Arun not entertaining it yet.' },
   { date: 'Jul 13', title: '1:1 — process gaps', signal: 'candid', note: 'Romit raises: assessment-creation designs bypassed (devs built below-standard screens), no PRDs/tracker, pixel-perfect double standard. Arun: establish collaboration first; design iterates post-build; daily syncs agreed.' },
   { date: 'Jul 20', title: '1:1 — positive turn', signal: 'positive', note: 'Designs and prototypes AHEAD of documentation — endorsed as "absolutely the right approach". ~80–85% of Course Eval designed. Speed reframed as the skill signal; consensus plans expected over individual escalations; AI feature decisions PM-owned.' },
+  { date: 'Aug 12', title: '1:1 — communication root cause', signal: 'process-reset', note: 'Root cause named for the PM/design review-cycle friction: static documentation carries only a fraction of the necessary context. Prescribed fix: daily video syncs with PMs, camera on, working through open questions in real time rather than over documents. Guidance for the current phase: UI execution first, hold broader UX judgment calls until the foundation stabilizes, and stay scoped to what PMs explicitly ask for rather than over-delivering. Two-sided — the same communication-gap message is being delivered to the PM team directly, not just this side.' },
 ];
 
 // ── Verbatim Arun quotes — not paraphrased. Mar 24 set from transcript
@@ -58,6 +62,7 @@ const ARUN_VERBATIM = [
   { quote: "The dev team's primary job is to execute what the three of you — you, Vishakha, and Nipun — propose.", context: 'Clarifying design-PM-engineering authority structure', source: 'Raw transcript · Mar 24' },
   { quote: 'Current product requirements — the alignment with the high-level strategic differentiation is not as visible as it should be.', context: 'Arun agreeing with Romit\'s observation about PRD quality gap', source: 'Raw transcript · Mar 24' },
   { quote: 'I would say it is more of a first draft than the final design system. We do not quite have a design system at this point.', context: 'Arun\'s own characterization of Himanshu\'s DS — removes the blocker', source: 'Raw transcript · Mar 24' },
+  { quote: 'You got to work with the PMs daily for several hours...the video needs to be on, the screen needs to be on...if you just rely on some document...there is nothing at all in a static document.', context: 'The prescribed fix for the PM/design communication gap — daily video syncs over static docs', source: 'Raw transcript · Aug 12' },
 ];
 
 type Status = 'strong' | 'on-track' | 'in-progress' | 'at-risk';
@@ -153,7 +158,7 @@ export function ArunPerformanceView() {
       <PageHeader
         title="Performance Ledger"
         lede="Seven criteria from the official offer letter, cross-referenced with seven Arun sessions from the Granola transcripts and Obsidian notes — every Arun quote is verbatim, not paraphrased. The Jul 20 arc: skills endorsed, speed reframed as the skill signal, team consensus named as the growth axis."
-        meta={`Weighted score ${OVERALL}/100 · offer letter: Kunal Vaishnav · Mar 15, 2026 · sessions Mar 24 → Jul 20, 2026 · reports to Arun Gautam · updated Jul 29`}
+        meta={`Weighted score ${OVERALL}/100 · offer letter: Kunal Vaishnav · Mar 15, 2026 · sessions Mar 24 → Aug 12, 2026 · reports to Arun Gautam · updated Aug 12`}
       />
 
       <Fig
@@ -165,9 +170,9 @@ export function ArunPerformanceView() {
       </Fig>
 
       <Fig
-        title="The 1:1 arc — seven sessions, Mar 24 → Jul 20"
+        title="The 1:1 arc — eight sessions, Mar 24 → Aug 12"
         n={REVIEW_TIMELINE.length}
-        caption="Sourced from Granola transcripts and the Obsidian meeting notes. The trajectory is the review: firefighting (Jun 9) → stabilizing (Jun 30–Jul 6) → candid process reset (Jul 13) → the positive turn (Jul 20)."
+        caption="Sourced from Granola transcripts and the Obsidian meeting notes. The trajectory is the review: firefighting (Jun 9) → stabilizing (Jun 30–Jul 6) → candid process reset (Jul 13) → the positive turn (Jul 20) → communication root cause named (Aug 12)."
       >
         <List density="balanced" hasDividers>
           {REVIEW_TIMELINE.map((t) => (
