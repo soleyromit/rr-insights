@@ -37,7 +37,7 @@ export const CONFLICTS: Conflict[] = [
     owner: 'Arun',
     blocks: 'Deadline-pressure math sitewide renders the conservative Aug date; every countdown is only as honest as this fact.',
     productIds: ['exam-management', 'course-eval'],
-    insightIds: ['ins-platform-002'],
+    insightIds: ['ins-platform-002', 'ins-ce-aug20-01'],
     raisedAt: '2026-07-29',
   },
   {
