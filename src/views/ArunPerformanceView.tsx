@@ -40,6 +40,7 @@ const REVIEW_TIMELINE = [
   { date: 'Jul 13', title: '1:1 — process gaps', signal: 'candid', note: 'Romit raises: assessment-creation designs bypassed (devs built below-standard screens), no PRDs/tracker, pixel-perfect double standard. Arun: establish collaboration first; design iterates post-build; daily syncs agreed.' },
   { date: 'Jul 20', title: '1:1 — positive turn', signal: 'positive', note: 'Designs and prototypes AHEAD of documentation — endorsed as "absolutely the right approach". ~80–85% of Course Eval designed. Speed reframed as the skill signal; consensus plans expected over individual escalations; AI feature decisions PM-owned.' },
   { date: 'Aug 12', title: '1:1 — communication root cause', signal: 'process-reset', note: 'Root cause named for the PM/design review-cycle friction: static documentation carries only a fraction of the necessary context. Prescribed fix: daily video syncs with PMs, camera on, working through open questions in real time rather than over documents. Guidance for the current phase: UI execution first, hold broader UX judgment calls until the foundation stabilizes, and stay scoped to what PMs explicitly ask for rather than over-delivering. Two-sided — the same communication-gap message is being delivered to the PM team directly, not just this side.' },
+  { date: 'Aug 24', title: '1:1 — delay-tracking dashboard', signal: 'data-driven', note: 'Romit shared a live delay-tracking dashboard (MS Teams/SharePoint data) quantifying two patterns: redesign cycles and long review times, some features 50+ days. Arun: useful data to have, but the goal is smooth collaboration, not justification — the dashboard "shouldn\'t ideally be necessary." Will ask to see it if needed; no immediate action. Focus areas confirmed: course eval dashboard plus expanded scope (learning contracts, skill checklist, emerging domain research).' },
 ];
 
 // ── Verbatim Arun quotes — not paraphrased. Mar 24 set from transcript
@@ -63,6 +64,7 @@ const ARUN_VERBATIM = [
   { quote: 'Current product requirements — the alignment with the high-level strategic differentiation is not as visible as it should be.', context: 'Arun agreeing with Romit\'s observation about PRD quality gap', source: 'Raw transcript · Mar 24' },
   { quote: 'I would say it is more of a first draft than the final design system. We do not quite have a design system at this point.', context: 'Arun\'s own characterization of Himanshu\'s DS — removes the blocker', source: 'Raw transcript · Mar 24' },
   { quote: 'You got to work with the PMs daily for several hours...the video needs to be on, the screen needs to be on...if you just rely on some document...there is nothing at all in a static document.', context: 'The prescribed fix for the PM/design communication gap — daily video syncs over static docs', source: 'Raw transcript · Aug 12' },
+  { quote: 'The goal is for us to be able to get along and work, not justify on either party side. That should not be even necessary...it should not even be necessary to do this sort of a thing.', context: 'On the delay-tracking dashboard — reframing the goal as collaboration, not justification', source: 'Raw transcript · Aug 24' },
 ];
 
 type Status = 'strong' | 'on-track' | 'in-progress' | 'at-risk';
@@ -158,7 +160,7 @@ export function ArunPerformanceView() {
       <PageHeader
         title="Performance Ledger"
         lede="Seven criteria from the official offer letter, cross-referenced with seven Arun sessions from the Granola transcripts and Obsidian notes — every Arun quote is verbatim, not paraphrased. The Jul 20 arc: skills endorsed, speed reframed as the skill signal, team consensus named as the growth axis."
-        meta={`Weighted score ${OVERALL}/100 · offer letter: Kunal Vaishnav · Mar 15, 2026 · sessions Mar 24 → Aug 12, 2026 · reports to Arun Gautam · updated Aug 12`}
+        meta={`Weighted score ${OVERALL}/100 · offer letter: Kunal Vaishnav · Mar 15, 2026 · sessions Mar 24 → Aug 24, 2026 · reports to Arun Gautam · updated Aug 24`}
       />
 
       <Fig
@@ -170,9 +172,9 @@ export function ArunPerformanceView() {
       </Fig>
 
       <Fig
-        title="The 1:1 arc — eight sessions, Mar 24 → Aug 12"
+        title="The 1:1 arc — nine sessions, Mar 24 → Aug 24"
         n={REVIEW_TIMELINE.length}
-        caption="Sourced from Granola transcripts and the Obsidian meeting notes. The trajectory is the review: firefighting (Jun 9) → stabilizing (Jun 30–Jul 6) → candid process reset (Jul 13) → the positive turn (Jul 20) → communication root cause named (Aug 12)."
+        caption="Sourced from Granola transcripts and the Obsidian meeting notes. The trajectory is the review: firefighting (Jun 9) → stabilizing (Jun 30–Jul 6) → candid process reset (Jul 13) → the positive turn (Jul 20) → communication root cause named (Aug 12) → delay pattern quantified with dashboard data (Aug 24)."
       >
         <List density="balanced" hasDividers>
           {REVIEW_TIMELINE.map((t) => (
