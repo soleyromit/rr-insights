@@ -19,6 +19,7 @@ import { Stakeholders } from './pce/Stakeholders';
 import { Questions } from './pce/Questions';
 import { Strategy } from './pce/Strategy';
 import { Build } from './pce/Build';
+import { DelayDrivers } from './pce/DelayDrivers';
 import { BuildStatus } from '../../components/build-status/BuildStatus';
 
 const PRODUCT_ID = 'course-eval';
@@ -30,6 +31,7 @@ const SECTIONS = [
   { id: 'questions', label: 'Open questions' },
   { id: 'strategy', label: 'North star' },
   { id: 'build', label: 'Build plan' },
+  { id: 'delay-drivers', label: 'Delay Drivers' },
   { id: 'build-status', label: 'Build Status' },
 ];
 
@@ -70,6 +72,7 @@ export function CourseEvalView() {
       {section === 'questions' && <Questions />}
       {section === 'strategy' && <Strategy />}
       {section === 'build' && <Build />}
+      {section === 'delay-drivers' && <DelayDrivers />}
       {section === 'build-status' && <BuildStatus productId={PRODUCT_ID} />}
       <SpecFooter productId={PRODUCT_ID} />
     </VStack>
