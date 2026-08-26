@@ -19,6 +19,10 @@ import { Item } from '@astryxdesign/core/Item';
 import { Table, pixel, proportional } from '@astryxdesign/core/Table';
 import { Timestamp } from '@astryxdesign/core/Timestamp';
 import { ChatMessageList, ChatMessage, ChatMessageBubble, ChatMessageMetadata, ChatSystemMessage } from '@astryxdesign/core/Chat';
+import { Avatar } from '@astryxdesign/core/Avatar';
+import { AvatarStatusDot } from '@astryxdesign/core/Avatar';
+import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Icon } from '@astryxdesign/core/Icon';
 import { StatTile, StatTileRow } from '../../../components/story/StatTile';
 import { ColumnBarChart } from '../../../components/charts/ColumnBarChart';
 import { StackedBarChart } from '../../../components/charts/StackedBarChart';
@@ -74,10 +78,10 @@ export function DelayDrivers() {
         sub="Re-pulled live Aug 26, 2026 — the SharePoint tracker, Outlook, Teams, and this corpus's own Aug 24 sync. Every claim below is dated and sourced; carried-forward figures are labeled, not silently repeated as fresh."
       >
         <StatTileRow>
-          <StatTile value={CHANGE_REQUEST_FLOOR.count} label="design change requests documented — twice independently, Aug 19 &amp; Aug 24" />
-          <StatTile value="2" label={'confirmed "too slow" callouts — Jun 3 & Aug 12'} />
-          <StatTile value={`${vishalPct}%`} label={`${vishal.person}'s sync-acceptance rate — ${vishal.accepted} of ${vishal.total} occurrences since May 12`} />
-          <StatTile value={`${worst.overallPct}%`} label={`${worst.feature} — now the single worst performer, ETA ${worst.designEta}`} />
+          <StatTile icon="wrench" value={CHANGE_REQUEST_FLOOR.count} label="design change requests documented — twice independently, Aug 19 &amp; Aug 24" />
+          <StatTile icon="warning" iconColor="warning" value="2" label={'confirmed "too slow" callouts — Jun 3 & Aug 12'} />
+          <StatTile icon="error" iconColor="error" value={`${vishalPct}%`} label={`${vishal.person}'s sync-acceptance rate — ${vishal.accepted} of ${vishal.total} occurrences since May 12`} />
+          <StatTile icon="clock" iconColor="error" value={`${worst.overallPct}%`} label={`${worst.feature} — now the single worst performer, ETA ${worst.designEta}`} />
         </StatTileRow>
       </SpecSection>
 
@@ -159,6 +163,24 @@ export function DelayDrivers() {
         title="Product-side review attendance"
         sub="Every 'Course Eval sync up' occurrence since it started, read individually via Microsoft Graph today — 20 of 20, not sampled. Same series, same cadence, same two required attendees."
       >
+        <HStack gap={5} wrap="wrap">
+          {ATTENDANCE.map((a) => {
+            const pct = Math.round((a.accepted / a.total) * 100);
+            return (
+              <HStack key={a.key} gap={2} vAlign="center">
+                <Avatar
+                  name={a.person}
+                  size="md"
+                  status={<AvatarStatusDot variant={pct >= 70 ? 'success' : 'error'} label={pct >= 70 ? 'on pace' : 'at risk'} />}
+                />
+                <VStack gap={0}>
+                  <Text type="body" weight="semibold">{a.person}</Text>
+                  <Text type="supporting">{a.role} · {pct}% accepted</Text>
+                </VStack>
+              </HStack>
+            );
+          })}
+        </HStack>
         <Fig
           title="Sync response, by person"
           n={ATTENDANCE.length}
@@ -194,12 +216,13 @@ export function DelayDrivers() {
               );
             }
             return (
-              <ChatMessage key={first.ts} sender={first.sender} name={first.who}>
+              <ChatMessage key={first.ts} sender={first.sender} avatar={<Avatar name={first.who} size="sm" />}>
                 {turn.map((m, i) => (
                   <ChatMessageBubble
                     key={m.ts}
                     variant="filled"
                     group={turn.length === 1 ? undefined : i === 0 ? 'first' : i === turn.length - 1 ? 'last' : 'middle'}
+                    name={i === 0 ? <Text type="supporting" weight="semibold" color="secondary">{first.who}</Text> : undefined}
                     metadata={
                       i === turn.length - 1 ? (
                         <ChatMessageMetadata
@@ -250,11 +273,17 @@ export function DelayDrivers() {
       </SpecSection>
 
       <SpecSection title="Verification, Aug 26" sub="Same honesty convention as the rest of this corpus — floors, not totals; gaps shown, not hidden.">
-        <VStack gap={2}>
-          <Text type="supporting" as="p" textWrap="pretty"><Text as="span" weight="semibold">Reverified today: </Text>{CLOSING_NOTE.reverifiedToday}</Text>
-          <Text type="supporting" as="p" textWrap="pretty"><Text as="span" weight="semibold">Carried forward, not re-verified this session: </Text>{CLOSING_NOTE.carriedForward}</Text>
-          <Text type="supporting" as="p" textWrap="pretty"><Text as="span" weight="semibold">Explicit gaps: </Text>{CLOSING_NOTE.gaps}</Text>
-        </VStack>
+        <MetadataList label={{ position: 'top' }}>
+          <MetadataListItem label="Reverified today" icon={<Icon icon="success" color="success" size="sm" />}>
+            <Text type="supporting" as="p" textWrap="pretty">{CLOSING_NOTE.reverifiedToday}</Text>
+          </MetadataListItem>
+          <MetadataListItem label="Carried forward, not re-verified this session" icon={<Icon icon="clock" color="secondary" size="sm" />}>
+            <Text type="supporting" as="p" textWrap="pretty">{CLOSING_NOTE.carriedForward}</Text>
+          </MetadataListItem>
+          <MetadataListItem label="Explicit gaps" icon={<Icon icon="warning" color="warning" size="sm" />}>
+            <Text type="supporting" as="p" textWrap="pretty">{CLOSING_NOTE.gaps}</Text>
+          </MetadataListItem>
+        </MetadataList>
       </SpecSection>
     </VStack>
   );

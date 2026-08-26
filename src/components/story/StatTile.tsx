@@ -6,6 +6,8 @@ import { HStack } from '@astryxdesign/core/HStack';
 import { Text } from '@astryxdesign/core/Text';
 import { Link } from '@astryxdesign/core/Link';
 import { Divider } from '@astryxdesign/core/Divider';
+import { Icon } from '@astryxdesign/core/Icon';
+import type { IconName } from '@astryxdesign/core/Icon';
 import { TrendDelta } from '../charts/TrendDelta';
 import type { TrendDeltaProps } from '../charts/TrendDelta';
 import { Sparkline } from '../charts/Sparkline';
@@ -18,14 +20,20 @@ export interface StatTileProps {
   delta?: TrendDeltaProps;
   spark?: SparklinePoint[];
   hint?: string;
+  /** Optional leading icon — a quick-scan cue for what kind of number this is (a risk, a person, a deadline). */
+  icon?: IconName;
+  iconColor?: 'primary' | 'secondary' | 'accent' | 'success' | 'error' | 'warning';
 }
 
-export function StatTile({ value, label, href, delta, spark, hint }: StatTileProps) {
+export function StatTile({ value, label, href, delta, spark, hint, icon, iconColor = 'secondary' }: StatTileProps) {
   return (
     <VStack gap={0.5}>
-      <Text type="display-3" hasTabularNumbers>
-        {String(value)}
-      </Text>
+      <HStack gap={1.5} vAlign="center">
+        {icon && <Icon icon={icon} color={iconColor} size="sm" />}
+        <Text type="display-3" hasTabularNumbers>
+          {String(value)}
+        </Text>
+      </HStack>
       {href ? (
         <Link href={href}>{label}</Link>
       ) : (
