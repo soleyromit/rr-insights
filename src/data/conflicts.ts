@@ -37,7 +37,7 @@ export const CONFLICTS: Conflict[] = [
     owner: 'Arun',
     blocks: 'Deadline-pressure math sitewide renders the conservative Aug date; every countdown is only as honest as this fact.',
     productIds: ['exam-management', 'course-eval'],
-    insightIds: ['ins-platform-002', 'ins-ce-aug20-01'],
+    insightIds: ['ins-platform-002', 'ins-ce-aug20-01', 'ins-em-aug24-02'],
     raisedAt: '2026-07-29',
   },
   {
@@ -51,7 +51,7 @@ export const CONFLICTS: Conflict[] = [
     owner: 'Romit',
     blocks: 'The communication step of the survey push wizard cannot be designed against either model until reconciled.',
     productIds: ['course-eval'],
-    insightIds: ['ins-ce-jul28-01', 'ins-ce-jun-05'],
+    insightIds: ['ins-ce-jul28-01', 'ins-ce-jun-05', 'ins-ce-aug27-01'],
     raisedAt: '2026-07-28',
   },
   {
