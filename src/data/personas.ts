@@ -153,6 +153,14 @@ export const WHITEBOARD_ARTIFACTS: WhiteboardArtifact[] = [
 
 export const VERSION_HISTORY: VersionEntry[] = [
   {
+    version: 'v19.20',
+    date: '2026-10-26',
+    summary: 'Headless vault-only sync (Oct 26); window Sep 18-Oct 5, anchor Sep 18. Sessions synced: learning contract configuration review (Sep 18), Ayaz/Pinaz AM review (Sep 23), skills checklist with Sankalp (Sep 23), Trevor Utley DO domain review (Sep 24), Prism essentials Day 2 and placement workflows (Sep 25), strategy cascade (Sep 28), post-Cohere Days 3-5 (Sep 30, Oct 1, Oct 2), pharmacy competitive analysis (Sep 20 + Oct 1), pharmacy accreditation session with Dr. Gilzai (Oct 5). 13 new insights; opened conf-pharmacy-program-count. Personal and consulting-side content excluded.',
+    insightCount: 488,
+    sessionsAdded: 13,
+    changedFiles: ['src/data/insights.ts', 'src/data/conflicts.ts', 'src/data/version.ts', 'src/data/personas.ts'],
+  },
+  {
     version: 'v19.19',
     date: '2026-09-21',
     summary: 'Headless vault-only sync (Sep 21); Granola MCP unavailable, Obsidian vault the sole source. Anchor was Sep 8 (last insight ins-process-sep08-01); window covered Sep 8-21. Vault mtimes were again bulk-touched across the whole tree, so staleness was verified by filename and frontmatter date, not raw mtime — three genuinely new, in-scope notes, all Course Eval. Sessions synced: "Course content and faculty evaluation UI review" with Monil (Sep 17, granola 5fae379c, raw-transcript vault note) → ins-ce-sep17-01 (five settled results-page rules: Overview · Course Content · Faculty tab purity, role named in the Faculty tab body, "Course" → "Course Content", season-only terms with the year on the AY, two demo roles; closes the Aug 25 role-label gap; solo-faculty KPI-card render bug accepted for the demo, not fixed) and ins-ce-sep17-02 (Summary/Highlights/Scope for improvement called "very vanilla", rebuilt with DS-native Leo vocabulary only); Vishal written feedback on the PCE demo (Sep 18, vault decision note) → ins-ce-sep18-01 ("Leo" / "Leo insights" locked as the AI provenance labels after a Design OS check; demo default reinstated to Johns Hopkins DPT with the live term stripped so every course opens Not set up, reversing a Sep 16 flip that undid the Sep 14 directive). Five verbatim evidence spans captured. No conflicts opened. No Arun 1:1 in this window — Performance Ledger untouched. No immigration/HR/personal content in scope. tsc --noEmit and npm run build passed clean; no Chrome visual spot-check per headless instructions.',

@@ -82,6 +82,21 @@ export const CONFLICTS: Conflict[] = [
     insightIds: ['ins-ce-jul24-03', 'ins-ce-aug04-02', 'ins-ce-aug11-03'],
     raisedAt: '2026-08-04',
   },
+  {
+    id: 'conf-pharmacy-program-count',
+    fact: 'How many US pharmacy programs are in the addressable set — 144, 145 or 149?',
+    claims: [
+      { claim: '145 pharmacy universities to map to competitor products', source: 'Strategy cascade framework · Sep 28 (dbcb6c52)' },
+      { claim: 'Competitors mapped across all 149 pharmacy programs', source: 'Meeting with Ruchi, PPT analysis · Oct 1 (778e947e)' },
+      { claim: 'ACPE accredits all 144 US pharmacy programs', source: 'Pharmacy accreditation session with Dr. Gilzai · Oct 5 (1dfa0f00)' },
+    ],
+    status: 'open',
+    owner: 'Romit',
+    blocks: 'Any pharmacy slide total, footprint percentage or priority table until one counted list (accredited vs. candidate/probation programs) is agreed.',
+    productIds: ['faas'],
+    insightIds: ['ins-process-sep28-01', 'ins-comp-oct01-01', 'ins-ce-oct05-01'],
+    raisedAt: '2026-10-05',
+  },
 ];
 
 export const openConflicts = () => CONFLICTS.filter((c) => c.status === 'open');
